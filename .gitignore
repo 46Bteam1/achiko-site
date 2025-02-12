@@ -19,3 +19,124 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Java 관련 무시 파일 ###
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.iml
+
+### Gradle 관련 무시 파일 ###
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+.gradle/**
+
+### STS (Spring Tool Suite) / Eclipse 관련 무시 파일 ###
+.metadata/
+*.iws
+*.ipr
+*.iml
+/.project
+/.settings
+/.classpath
+/.metadata
+/.factorypath
+
+### IntelliJ 관련 무시 파일 ###
+.idea/
+*.iws
+*.ipr
+*.iml
+*.jpb
+*.jpda
+*.jpda.lock
+/.idea
+/.run
+/.vscode
+
+### OS 관련 무시 파일 (Mac / Windows) ###
+.DS_Store
+Thumbs.db
+
+### 로그 및 환경 설정 파일 ###
+logs/
+*.log
+config/
+.env
+.env.local
+.env.production
+.env.development
+
+### Lombok 관련 무시 파일 ###
+.lombok/
+
+### 실행 파일 무시 ###
+*.exe
+*.bat
+*.sh
+*.cmd
+*.ps1
+*.dll
+*.so
+*.dylib
+
+### Node 관련 파일 (프론트엔드와 함께 개발할 경우) ###
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+
+### 배포 관련 무시 파일 ###
+/target/  # 빌드된 JAR 파일이 올라가지 않도록 함
+/.mvn/
+/.idea/
+/.vscode/
+*.pid  # 서버 프로세스 PID 파일 무시
+nohup.out  # EC2에서 nohup으로 실행할 때 생성되는 로그 파일 무시
+*.pem  # AWS 프라이빗 키 파일 (절대 업로드하면 안 됨!)
+*.key  # SSL 인증서 키 파일 무시
+
+### 기타 ###
+/tmp/
