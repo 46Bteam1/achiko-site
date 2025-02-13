@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AchikoBackApplication {
+public class AchikoSiteApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AchikoBackApplication.class, args);
+		SpringApplication.run(AchikoSiteApplication.class, args);
 	}
 
 }

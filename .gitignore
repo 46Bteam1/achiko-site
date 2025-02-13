@@ -140,3 +140,31 @@ nohup.out  # EC2에서 nohup으로 실행할 때 생성되는 로그 파일 무�
 
 ### 기타 ###
 /tmp/
+
+# FastAPI
+fastapi/__pycache__/
+fastapi/.venv/
+fastapi/venv/
+
+# Python
+*.pyc
+__pycache__/
+
+# MySQL
+database/*.sql
+
+# Node.js (혹시 나중에 추가될 경우 대비)
+node_modules/
+npm-debug.log
+
+# Logs
+logs/
+*.log
+
+# Docker
+*.env
+docker-compose.override.yml
+
+# Misc
+.DS_Store
+Thumbs.db
