@@ -22,6 +22,5 @@ public class ChatParticipantDTO {
 	private Integer chatroomId;
 	private Integer hostId;
 	private Integer guestId;
-	private String role;
 	private LocalDateTime joinedAt;
 }

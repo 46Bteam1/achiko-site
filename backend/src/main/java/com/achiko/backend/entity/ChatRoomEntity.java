@@ -34,10 +34,10 @@ public class ChatRoomEntity {
 	private Integer chatroomId;
 	
 	@ManyToOne
-	@JoinColumn(name="shareId", referencedColumnName="shareId")
+	@JoinColumn(name="share_id", referencedColumnName="share_id")
 	private ShareEntity share;
 	
-	@Column(name="createdAt")
+	@Column(name="created_at")
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
