@@ -210,7 +210,6 @@ create table favorite (
     unique (user_id, share_id)
 );
 
----------------------------------------------------
 
 INSERT INTO province (name_kanji, name_en) VALUES
 ('北海道', 'Hokkaido'),
