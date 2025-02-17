@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://thymeleaf.org">
+<html lang="ko" xmlns:th ="http://thymeleaf.org"
+                xmlns:sec="http://thymeleaf.org/extras/spring-security">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,8 +9,17 @@
   <body>
 		<h2>START!!!</h2>
 		
-		<li>
-			<a th:href="@{/user/regist}">회원가입</a>
-		</li>
+	    <!-- 인증되지 않은 사용자 -->
+	    <th:block sec:authorize="isAnonymous()">
+            <li><a th:href="@{/user/regist}">회원가입</a></li>
+            <li><a th:href="@{/user/login}">로그인</a></li>
+        </th:block>
+        
+		<!-- 인증된 사용자 -->
+	    <th:block sec:authorize="isAuthenticated()">
+            <li><a th:href="@{/user/logout}">로그아웃</a></li>
+            <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
+        </th:block>
+        
 	</body>
 </html>

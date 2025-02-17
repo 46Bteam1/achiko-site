@@ -6,4 +6,6 @@ import com.achiko.backend.entity.UserEntity;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
+	UserEntity findByLoginId(String loginId);
+
 }
