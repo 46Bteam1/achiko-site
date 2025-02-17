@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.achiko.backend.dto.ChatParticipantDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -35,7 +37,7 @@ public class ChatParticipantEntity {
 	
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="chatroom_id", referencedColumnName="chatroom_id")
-	private ChatRoomEntity chatroomEntity;
+	private ChatRoomEntity chatroom;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="host_id", referencedColumnName="user_id")
@@ -43,9 +45,18 @@ public class ChatParticipantEntity {
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="guest_id", referencedColumnName="user_id")
-	private UserEntity guestId;
+	private UserEntity guest;
 	
 	@Column(name="joined_at")
 	@CreationTimestamp
 	private LocalDateTime joinedAt;
+	
+	public static ChatParticipantEntity toEntity(ChatParticipantDTO participantDTO, ChatRoomEntity roomEntity, UserEntity hostEntity, UserEntity guestEntity) {
+		return ChatParticipantEntity.builder()
+				.participantId(participantDTO.getParticipantId())
+				.chatroom(roomEntity)
+				.host(hostEntity)
+				.guest(guestEntity)
+				.build();
+	}
 }
