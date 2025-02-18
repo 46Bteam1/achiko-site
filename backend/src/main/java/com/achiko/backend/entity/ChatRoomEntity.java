@@ -41,11 +41,17 @@ public class ChatRoomEntity {
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
-	public static ChatRoomEntity toEntity(ChatRoomDTO roomDTO, ShareDTO shareDTO) {
+	public static ChatRoomEntity toEntity(ChatRoomDTO roomDTO) {
 		return ChatRoomEntity.builder().
 				chatroomId(roomDTO.getChatroomId())
-				.share(shareDTO)
 				.build();
 	}
+	
+//	public static ChatRoomEntity toEntity(ChatRoomDTO roomDTO, ShareDTO shareDTO) {
+//		return ChatRoomEntity.builder().
+//				chatroomId(roomDTO.getChatroomId())
+//				.share(shareDTO)
+//				.build();
+//	}
 }
  
