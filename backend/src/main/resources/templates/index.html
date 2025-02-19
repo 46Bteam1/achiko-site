@@ -22,23 +22,7 @@
     <script th:src="@{./js/index.js}" defer></script>
   </head>
   <body>
-<<<<<<< HEAD
-		<h2>START!!!</h2>
-		
-	    <!-- 인증되지 않은 사용자 -->
-	    <th:block sec:authorize="isAnonymous()">
-            <li><a th:href="@{/user/regist}">회원가입</a></li>
-            <li><a th:href="@{/user/login}">로그인</a></li>
-        </th:block>
-        
-		<!-- 인증된 사용자 -->
-	    <th:block sec:authorize="isAuthenticated()">
-            <li><a th:href="@{/user/logout}">로그아웃</a></li>
-            <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
-        </th:block>
-        
-	</body>
-=======
+
     <header>
       <div class="header-col">
         <div class="header-col">
@@ -56,6 +40,17 @@
           <li><span>체험</span></li>
           <li><a href="#">온라인 체험</a></li>
           <li><a th:href="@{/testTemp/testPage}">testpage</a></li>
+          <!-- 인증되지 않은 사용자 -->
+	    <th:block sec:authorize="isAnonymous()">
+            <li><a th:href="@{/user/regist}">회원가입</a></li>
+            <li><a th:href="@{/user/login}">로그인</a></li>
+        </th:block>
+        
+		<!-- 인증된 사용자 -->
+	    <th:block sec:authorize="isAuthenticated()">
+            <li><a th:href="@{/user/logout}">로그아웃</a></li>
+            <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
+        </th:block>
         </ul>
         <div class="query-form">
           <div class="query-col query-location">
@@ -436,5 +431,4 @@
       </div>
     </footer>
   </body>
->>>>>>> back
 </html>
