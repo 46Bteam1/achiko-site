@@ -11,8 +11,8 @@ public class ChatViewController {
 		return "chat/chatList";
 	}
 	
-	@GetMapping("/chatRoom")
+	@GetMapping("/chatRooms")
 	public String chatRoom() {
-		return "chat/chatRoom";
+		return "chat/chatRooms";
 	}
 }

@@ -1,10 +1,25 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatList</title>
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script th:src="@{/js/testJS.js}"></script>
+  </head>
+  <body>
+    <div id="logos"></div>
+    <div id="users"></div>
 
-</body>
+    <div id="descriptionBox"></div>
+
+    <div id="chatBox">
+      <div id="chats"></div>
+
+      <div id="writeBox">
+        <input type="text" name="message" />
+        <input type="button" id="sendMessage" value="전송" />
+      </div>
+    </div>
+  </body>
 </html>
