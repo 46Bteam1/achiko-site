@@ -30,7 +30,7 @@ import lombok.ToString;
 @Entity(name="chat_message")
 public class ChatMessageEntity {
 	@Id
-	@Column(name="participant_id")
+	@Column(name="message_id")
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long messageId;
 	

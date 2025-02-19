@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.ChatParticipantDTO;
 import com.achiko.backend.dto.ChatRoomDTO;
 import com.achiko.backend.service.ChatService;
@@ -45,8 +46,9 @@ public class ChatController {
 	// 특정 채팅방의 채팅 메세지들 조회 메서드
 	@GetMapping("/selectRoom")
 	@Operation(summary = "특정 채팅방의 채팅 메세지들 조회 메서드", description = "특정 채팅방의 채팅 메세지들을 조회합니다.")
-	public String selectRoom() {
-		return "";
+	public List<ChatMessageDTO> selectRoom(@RequestParam("chatRoomId") Long chatRoomId) {
+		List<ChatMessageDTO> list = chatService.selectMessages(chatRoomId);
+		return list;
 	}
 	
 	// 채팅방 삭제 메서드

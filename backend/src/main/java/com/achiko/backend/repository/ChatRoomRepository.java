@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.achiko.backend.entity.ChatRoomEntity;
 
-public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Integer> {
+public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> {
 
 }

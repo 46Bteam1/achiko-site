@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.achiko.backend.entity.ChatParticipantEntity;
 import com.achiko.backend.entity.UserEntity;
 
-public interface ChatParticipantRepository extends JpaRepository<ChatParticipantEntity, Integer> {
+public interface ChatParticipantRepository extends JpaRepository<ChatParticipantEntity, Long> {
 
 	List<ChatParticipantEntity> findByHost_UserId(Long hostId);
 
