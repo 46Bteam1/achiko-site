@@ -32,7 +32,7 @@ public class ChatMessageEntity {
 	@Id
 	@Column(name="participant_id")
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	private Integer messageId;
+	private Long messageId;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="chatroom_id", referencedColumnName="chatroom_id")

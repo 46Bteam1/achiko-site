@@ -18,9 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 @Builder
 public class ChatMessageDTO {
-	private Integer messageId;
-	private Integer chatroomId;
-	private Integer senderId;
+	private Long messageId;
+	private Long chatroomId;
+	private Long senderId;
 	private String message;
 	private String fileUrl;
 	private LocalDateTime sentAt;

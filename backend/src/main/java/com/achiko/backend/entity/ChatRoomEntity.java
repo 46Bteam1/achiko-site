@@ -31,7 +31,7 @@ public class ChatRoomEntity {
 	@Id
 	@Column(name="chatroom_id")
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	private Integer chatroomId;
+	private Long chatroomId;
 	
 	@ManyToOne
 	@JoinColumn(name="share_id", referencedColumnName="share_id")
@@ -41,9 +41,10 @@ public class ChatRoomEntity {
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
-	public static ChatRoomEntity toEntity(ChatRoomDTO roomDTO) {
+	public static ChatRoomEntity toEntity(ChatRoomDTO roomDTO, ShareEntity shareEntity) {
 		return ChatRoomEntity.builder().
 				chatroomId(roomDTO.getChatroomId())
+				.share(shareEntity)
 				.build();
 	}
 	

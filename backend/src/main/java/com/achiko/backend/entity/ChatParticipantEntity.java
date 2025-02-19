@@ -33,7 +33,7 @@ public class ChatParticipantEntity {
 	@Id
 	@Column(name="participant_id")
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	private Integer participantId;
+	private Long participantId;
 	
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="chatroom_id", referencedColumnName="chatroom_id")
