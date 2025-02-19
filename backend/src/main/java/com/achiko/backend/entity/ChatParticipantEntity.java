@@ -28,7 +28,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-@Entity
+@Entity(name="chat_participant")
 public class ChatParticipantEntity {
 	@Id
 	@Column(name="participant_id")

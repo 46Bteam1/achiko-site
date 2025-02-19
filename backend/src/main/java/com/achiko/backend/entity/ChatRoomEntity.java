@@ -26,7 +26,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-@Entity
+@Entity(name="chat_room")
 public class ChatRoomEntity {
 	@Id
 	@Column(name="chatroom_id")
@@ -47,12 +47,5 @@ public class ChatRoomEntity {
 				.share(shareEntity)
 				.build();
 	}
-	
-//	public static ChatRoomEntity toEntity(ChatRoomDTO roomDTO, ShareDTO shareDTO) {
-//		return ChatRoomEntity.builder().
-//				chatroomId(roomDTO.getChatroomId())
-//				.share(shareDTO)
-//				.build();
-//	}
 }
  
