@@ -23,6 +23,8 @@ public class LoginUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String loginId) 
 			throws UsernameNotFoundException {
+
+		
 		UserEntity userEntity = userRepository.findByLoginId(loginId);
 		if(userEntity == null) {
 			throw new UsernameNotFoundException("ID나 비밀번호가 틀렸습니다.");
