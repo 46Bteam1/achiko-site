@@ -80,6 +80,22 @@ public class ChatService {
 		// 3. DTO list로 내보내기
 		return list;
 	}
+
+	public void saveMessage(ChatMessageDTO chatMessage) {
+		
+		// user와 chatroom
+		Optional<UserEntity> temp1 = userRepository.findById(chatMessage.getSenderId());
+		
+		if(temp1.isEmpty()) return;
+		UserEntity user = temp1.get();
+		
+		Optional<ChatRoomEntity> temp2 = roomRepository.findById(chatMessage.getChatroomId());
+		if(temp2.isEmpty()) return;
+		ChatRoomEntity room = temp2.get();
+		
+		ChatMessageEntity messageEntity = ChatMessageEntity.toEntity(chatMessage, room, user);
+		messageRepository.save(messageEntity);
+	}
 	
 
 }

@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ChatList</title>
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
-    <script th:src="@{/js/chatList.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:src="@{/js/chatSocket.js}"></script>
   </head>
   <body>
     <div id="logos"></div>
@@ -18,7 +20,7 @@
       <div id="chats"></div>
 
       <div id="writeBox">
-        <input type="text" name="message" />
+        <input type="text" id="message" />
         <input type="button" id="sendMessage" value="전송" />
       </div>
     </div>
