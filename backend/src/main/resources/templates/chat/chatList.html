@@ -14,7 +14,10 @@
 
     <div id="users"></div>
 
-    <div id="descriptionBox"></div>
+    <div id="descriptionBox">
+      <input type="hidden" th:value="${chatroomId}" id="chatroomId" />
+      <input type="hidden" th:value="${userId}" id="userId" />
+    </div>
 
     <div id="chatBox">
       <div id="chats"></div>

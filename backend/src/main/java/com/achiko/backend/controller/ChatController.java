@@ -2,6 +2,7 @@ package com.achiko.backend.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.ChatParticipantDTO;
 import com.achiko.backend.dto.ChatRoomDTO;
+import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.service.ChatService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,8 +40,8 @@ public class ChatController {
 	// 채팅방들 조회 메서드
 	@GetMapping("/selectRooms")
 	@Operation(summary = "채팅방들 조회 메서드", description = "내가 속한 채팅방들을 조회합니다.")
-	public List<ChatParticipantDTO> selectRooms(@RequestParam("userId") Long userId) {
-		List<ChatParticipantDTO> list = chatService.selectRooms(userId);
+	public List<ChatParticipantDTO> selectRooms(@AuthenticationPrincipal LoginUserDetails loginUser) {
+		List<ChatParticipantDTO> list = chatService.selectRooms(loginUser.getUsername());
 		return list;
 	}
 	

@@ -23,4 +23,13 @@ public class UserService {
         
 		userRepository.save(UserEntity.toEntity(userDTO));
 	}
+
+	public Long getUserId(String loginId) {
+		UserEntity user = userRepository.findByLoginId(loginId);
+		if(user == null) return null;
+		
+		Long userId = user.getUserId();
+		
+		return userId;
+	}
 }

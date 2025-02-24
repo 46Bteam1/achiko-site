@@ -28,6 +28,7 @@ public class SecurityConfig {
 						.permitAll()
 						.requestMatchers("/admin").hasRole("ADMIN")
 						.requestMatchers("/user/mypage").hasAnyRole("ADMIN", "USER")
+						.requestMatchers("/chat/**", "/chatList", "/chatRooms").authenticated()
 						.anyRequest().authenticated());
 		// Custom Login 설정
 		http

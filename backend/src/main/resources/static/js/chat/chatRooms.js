@@ -1,6 +1,4 @@
 $(function () {
-  // TODO: 로그인한 유저 아이디 받아오기
-
   // 유저가 속한 전체 채팅방들 출력
   initChatRooms();
 });
@@ -9,7 +7,6 @@ function initChatRooms() {
   $.ajax({
     url: "/chat/selectRooms",
     method: "GET",
-    data: { userId: 1 },
     success: output,
   });
 }
@@ -62,8 +59,13 @@ function deleteRoom() {
 /* 채팅방 입장 함수 */
 function enterRoom() {
   let chatroomId = $(this).attr("data-seq");
+  console.log(chatroomId);
 
   $.ajax({
-    url: "/chat",
+    url: "/chatList",
+    data: { chatroomId: chatroomId },
+    success: function (response) {
+      window.location.href = "/chatList?chatroomId=" + chatroomId;
+    },
   });
 }

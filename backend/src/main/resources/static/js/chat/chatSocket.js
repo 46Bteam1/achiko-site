@@ -1,7 +1,9 @@
 $(function () {
   const socket = new SockJS("http://localhost:8080/ws");
   const stompClient = Stomp.over(socket);
-  const chatRoomId = 1;
+  const chatRoomId = $("#chatroomId").val();
+
+  const userId = $("#userId").val();
 
   stompClient.connect({}, function () {
     // 채팅 내역 불러오기
@@ -16,11 +18,25 @@ $(function () {
 
     // 메시지 전송 버튼 이벤트
     $("#sendMessage").on("click", function () {
-      sendChat(chatRoomId);
+      sendChat(chatRoomId, userId);
     });
   });
 
-  function sendChat(roomId) {
+  // 로그인한 유저의 아이디 가져오기
+  function getUserId() {
+    $.ajax({
+      url: "/user/getId",
+      method: "GET",
+      success: function (resp) {
+        console.log(typeof resp);
+        console.log(resp);
+
+        return resp;
+      },
+    });
+  }
+
+  function sendChat(roomId, userId) {
     const messageContent = $("#message").val().trim();
     if (messageContent !== "") {
       stompClient.send(
@@ -28,7 +44,7 @@ $(function () {
         {},
         JSON.stringify({
           chatroomId: roomId, // 채팅방 ID 전달
-          senderId: 1, // 보낸 사람 정보 (이 변수는 필요하면 설정해야 함)
+          senderId: userId, // 보낸 사람 정보 (이 변수는 필요하면 설정해야 함)
           message: messageContent,
           sentAt: new Date(),
         })

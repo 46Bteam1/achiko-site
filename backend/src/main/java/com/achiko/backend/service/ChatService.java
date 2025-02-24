@@ -32,12 +32,11 @@ public class ChatService {
 	private final ShareRepository shareRepository;
 	
 	// 본인이 속한 채팅방들 조회
-	public List<ChatParticipantDTO> selectRooms(Long userId) {
+	public List<ChatParticipantDTO> selectRooms(String loginId) {
 		// 1. userId로 UserEntity 가져오기
-		Optional<UserEntity> temp = userRepository.findById(userId);
+		UserEntity user = userRepository.findByLoginId(loginId);
 		
-		if(temp.isEmpty()) return null;
-		UserEntity user = temp.get();
+		if(user == null) return null;
 		
 		List<ChatParticipantDTO> list = new ArrayList<>();
 		
