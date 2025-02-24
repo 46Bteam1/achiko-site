@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+
+    <!-- jQuery -->
+    <script src="../../static/js/jquery-3.7.1.min.js" th:src="@{/js/jquery-3.7.1.min.js}"></script>
+
+</head>
+
+<body>
+    <h2>로그인</h2>
+    <!-- 로그인 처리 -->
+    <div class="content">
+        <form th:action="@{/user/loginProc}" method="POST">
+	        <ul>
+	            <li>
+	                아이디 : <input type="text" name="loginId" id="loginId" placeholder="ID 입력">
+	            </li>
+	            <li>
+	                비밀번호 : <input type="password" name="password" id="password" placeholder="Password 입력">
+	            </li>
+	        </ul>
+	        
+	
+	        <div class="btns">
+	            <input type="submit" id="submitBtn" value="로그인" class="btn btn-primary">&nbsp;
+	            <input type="reset" id="resetBtn" value="초기화" class="btn btn-light">
+	        </div>
+        </form>
+    </div>
+</body>
+
+</html>
