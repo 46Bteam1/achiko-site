@@ -94,6 +94,10 @@ public class UserEntity {
 	@CurrentTimestamp
 	private LocalDateTime createdAt;
 	
+	@Column(name = "is_subscribed")
+	@Builder.Default
+	private int isSubscribed = 0; // 0: 결제 안함, 1: 결제 완료
+	
 	public static UserEntity toEntity(UserDTO userDTO) {
 		return UserEntity.builder()
 				.userId(userDTO.getUserId())

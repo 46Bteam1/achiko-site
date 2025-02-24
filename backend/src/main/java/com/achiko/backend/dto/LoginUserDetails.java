@@ -26,6 +26,7 @@ import lombok.ToString;
 public class LoginUserDetails implements UserDetails {
  	private static final long serialVersionUID = 1L;
 	
+ 	private Long userId;
 	private String loginId;
 	private String password;
 	private String nickname;
@@ -65,6 +66,7 @@ public class LoginUserDetails implements UserDetails {
 	
 	public static LoginUserDetails toDTO(UserEntity userEntity) {
 		return LoginUserDetails.builder()
+				.userId(userEntity.getUserId())
 				.loginId(userEntity.getLoginId())
 				.password(userEntity.getPassword())
 				.nickname(userEntity.getNickname())
