@@ -1,4 +1,4 @@
--- 0216
+-- 0224
 drop database if exists achiko;
 create database achiko;
 use achiko;
@@ -19,6 +19,7 @@ drop table if exists review_reply;
 drop table if exists user_preference;
 drop table if exists favorite;
 drop table if exists region;
+drop table if exists email_auth;
 
 -- 지방 이름 (관동, 관서 등)
 CREATE TABLE province (
@@ -71,7 +72,8 @@ create table users (
     religion varchar(100) default null,
     gender tinyint default 0 check (gender in (0,1,2)),
     bio text,
-    created_at timestamp default current_timestamp
+    created_at timestamp default current_timestamp,
+    is_subscribed tinyint default 0 check (is_subscribed in (0,1)) -- 0:구독 안함, 1: 구독함
 );
 
 CREATE TABLE share (
@@ -135,7 +137,6 @@ create table chat_participant (
     chatroom_id int not null,
     host_id int not null,  
     guest_id int not null,  
-    role varchar(30) check (role in ('host', 'guest')),  
     joined_at timestamp default current_timestamp,
     foreign key (chatroom_id) references chat_room(chatroom_id) on delete cascade,
     foreign key (host_id) references users(user_id) on delete cascade,
@@ -208,6 +209,15 @@ create table favorite (
     foreign key (user_id) references users(user_id) on delete cascade,
     foreign key (share_id) references share(share_id) on delete cascade,
     unique (user_id, share_id)
+);
+
+-- 이메일 인증 테이블
+create table email_auth(
+   email_auth_id int auto_increment PRIMARY KEY,
+    email varchar(255) not null,
+    auth_code varchar(255) not null,
+    expired_at timestamp not null,
+    verified boolean default false
 );
 
 ---------------------------------------------------
@@ -1673,7 +1683,7 @@ INSERT INTO town (name_kanji, city_id) VALUES
 ('高松市', (SELECT city_id FROM city WHERE name_kanji = '香川県')),
 ('丸亀市', (SELECT city_id FROM city WHERE name_kanji = '香川県')),
 ('坂出市', (SELECT city_id FROM city WHERE name_kanji = '香川県')),
-('善通寺市', (SELECT city_id FROM city WHERE name_kanji = '香川県')),	
+('善通寺市', (SELECT city_id FROM city WHERE name_kanji = '香川県')),
 ('観音寺市', (SELECT city_id FROM city WHERE name_kanji = '香川県')),
 ('さぬき市', (SELECT city_id FROM city WHERE name_kanji = '香川県')),
 ('東かがわ市', (SELECT city_id FROM city WHERE name_kanji = '香川県')),
