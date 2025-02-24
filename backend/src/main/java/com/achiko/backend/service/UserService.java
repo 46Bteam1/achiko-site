@@ -23,4 +23,14 @@ public class UserService {
         
 		userRepository.save(UserEntity.toEntity(userDTO));
 	}
+
+	public String findLoginId(UserDTO userDTO) {
+		UserEntity findedEntity = userRepository.findByEmail(userDTO.getEmail());
+		
+		if(userDTO.getRealName().equals(findedEntity.getRealName())) {
+			return findedEntity.getLoginId();
+		}
+		return null;
+	}
+	
 }

@@ -1,6 +1,7 @@
 package com.achiko.backend.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,21 +19,32 @@ public class UserController {
 	
 	private final UserService userService;
 	
-	@GetMapping("/regist")
+	@GetMapping("/regist")	// 회원가입 페이지
 	public String regist() {
 		return "/user/regist";
 	}
 	
-	@PostMapping("/regist")
+	@PostMapping("/regist")		// 회원가입
 	public String regist(@ModelAttribute UserDTO userDTO) {
 		
 		userService.regist(userDTO);
 		return "redirect:/";
 	}
 	
-	@GetMapping("/login")
+	@GetMapping("/login")		// 로그인페이지
 	public String login() {
 		return "/user/login";
 	}
 	
+	@GetMapping("/findLoginId")
+	public String findLoginId() {
+		return "/user/findLoginId";
+	}
+	
+	@PostMapping("/findLoginId")
+	public String findLoginId(@ModelAttribute UserDTO userDTO, Model model) {
+		String findedId = userService.findLoginId(userDTO);
+		model.addAttribute("findedId", findedId);
+		return "/user/findLoginIdResult";
+	}
 }
