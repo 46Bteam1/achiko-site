@@ -1,3 +1,4 @@
+
 package com.achiko.backend.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,13 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public void regist(UserDTO userDTO) {
-        
+
         userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-        
-		userRepository.save(UserEntity.toEntity(userDTO));
-	}
+
+        userRepository.save(UserEntity.toEntity(userDTO));
+    }
 }

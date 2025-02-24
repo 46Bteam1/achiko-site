@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Page</title>
+  <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+  <script th:src="@{/js/adminJS.js}"></script>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+
+<body>
+
+  <!-- 사이드바 -->
+  <aside class="sidebar">
+    <h2>관리자 메뉴</h2>
+    <ul>
+      <li><a href="#" id="user-monitoring">회원 모니터링</a></li>
+      <li><a href="#" id="post-management">게시글 관리</a></li>
+      <li><a href="#" id="viewing-monitoring">거래 모니터링</a></li>
+      <li><a href="#" id="review-monitoring">리뷰 모니터링</a></li>
+      <li><a href="#" id="report-management">신고 내역 관리</a></li>
+      <li><a href="#" id="chat-monitoring">채팅방 조회</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <h1>관리자 대시보드</h1>
+
+    <!-- 관리자 대시보드 -->
+    <div id="dashboard">
+      <h2>대시보드</h2>
+      <div id="stats">
+        <p>활성화된 채팅방 수: <span id="activeChatRooms">0</span></p>
+        <p>신고된 글 수: <span id="reportedPosts">0</span></p>
+        <p>성사된 뷰잉 건수: <span id="completedViewings">0</span></p>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- 메인 콘텐츠 -->
+    <!-- 사용자 모니터링 -->
+    <div id="user-monitoring">
+      <h2>사용자 모니터링</h2>
+      <table id="user-monitoring-table">
+        <thead>
+          <tr>
+            <th>사용자 ID</th>
+            <th>상태</th>
+            <th>상세 보기</th>
+          </tr>
+
+        </thead>
+        <tbody>
+
+          <section id="admin-content">
+            <!-- AJAX로 불러올 컨텐츠 영역 -->
+          </section>
+
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+
+
+</body>
+
+</html>
