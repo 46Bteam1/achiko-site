@@ -47,4 +47,16 @@ public class UserController {
 		model.addAttribute("findedId", findedId);
 		return "/user/findLoginIdResult";
 	}
+	
+	@GetMapping("/findPassword")
+	public String findPassword() {
+		return "/user/findPassword";
+	}
+	
+	@PostMapping("/findPassword")
+	public String findPassword(@ModelAttribute UserDTO userDTO, Model model) {
+		String tempPw = userService.findPassword(userDTO);
+		model.addAttribute("tempPw", tempPw);
+		return "/user/findPasswordResult";
+	}
 }
