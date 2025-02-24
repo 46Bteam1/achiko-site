@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CurrentTimestamp;
 
-//import com.achiko.backend.dto.UserDTO;
+import com.achiko.backend.dto.UserDTO;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -94,23 +95,23 @@ public class UserEntity {
 	@CurrentTimestamp
 	private LocalDateTime createdAt;
 	
-//	public static UserEntity toEntity(UserDTO userDTO) {
-//		return UserEntity.builder()
-//				.userId(userDTO.getUserId())
-//				.loginId(userDTO.getLoginId())
-//				.nickname(userDTO.getNickname())
-//				.profileImage(userDTO.getProfileImage())
-//				.realName(userDTO.getRealName())
-//				.email(userDTO.getEmail())
-//				.password(userDTO.getPassword())
-//				.isEmailVerified(userDTO.isEmailVerified())
-//				.isMalicious(userDTO.isMalicious())
-//				.languages(userDTO.getLanguages())
-//				.age(userDTO.getAge())
-//				.nationality(userDTO.getNationality())
-//				.religion(userDTO.getReligion())
-//				.gender(userDTO.getGender())
-//				.bio(userDTO.getBio())
-//				.build();
-//	}
+	public static UserEntity toEntity(UserDTO userDTO) {
+		return UserEntity.builder()
+				.userId(userDTO.getUserId())
+				.loginId(userDTO.getLoginId())
+				.nickname(userDTO.getNickname())
+				.profileImage(userDTO.getProfileImage())
+				.realName(userDTO.getRealName())
+				.email(userDTO.getEmail())
+				.password(userDTO.getPassword())
+				.isEmailVerified(userDTO.isEmailVerified())
+				.isMalicious(userDTO.isMalicious())
+				.languages(userDTO.getLanguages())
+				.age(userDTO.getAge())
+				.nationality(userDTO.getNationality())
+				.religion(userDTO.getReligion())
+				.gender(userDTO.getGender())
+				.bio(userDTO.getBio())
+				.build();
+	}
 }

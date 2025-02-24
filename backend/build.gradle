@@ -24,6 +24,9 @@ repositories {
 }
 
 dependencies {
+    implementation 'io.github.cdimascio:dotenv-java:2.2.0'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
   	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -33,6 +36,7 @@ dependencies {
 	implementation 'org.webjars:sockjs-client:1.5.1'
 	implementation 'org.webjars:stomp-websocket:2.3.3-1'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
