@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+<script src="../../static/js/jquery-3.7.1.min.js" th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script src="../../static/js/user/regist.js" th:src="@{/js/user/regist.js}"></script>
+</head>
+<body>
+    <div class="content">
+        <form th:action="@{/user/regist}" method="POST">
+                <div class="article">
+                    <ul>
+                        <li>ID : <input type="text" name="loginId" id="loginId" placeholder="ID 입력"></li>
+                        <li>PW : <input type="password" name="password" id="password" placeholder="Password 입력"></li>
+                        <li>PW 확인 :<input type="password" id="passwordChk" placeholder="Password 확인"></li>
+                        <li>닉네임 : <input type="text" name="nickname" id="nickname" placeholder="닉네임 입력"></li>
+                        <li>이름 : <input type="text" name="realName" id="realName" placeholder="이름 입력"></li>
+                        <li>이메일 : <input type="email" name="email" id="email" placeholder="email 입력">
+                        	<input type="button" id="authBtn" value="인증번호 전송">
+                        </li>
+                        <li>인증번호 : <input type="text" name="chkAuthCode"id="chkAuthCode">
+                        	<input type="button" id="chkAuthCodeBtn" value="확인">
+                        	<span id="authMsg"></span>
+                        </li>
+                        <li>가능언어 : 
+	                        <input type="checkbox" name="languages" value="한국어">한국어
+                        	<input type="checkbox" name="languages" value="영어">영어
+                        	<input type="checkbox" name="languages" value="중국어">중국어
+                        	<input type="checkbox" name="languages" value="일본어">일본어
+                        </li>
+                        <li>나이 : <input type="number" name="age" id="age"></li>
+                        <li>국적 :
+                        	<select name="nationality" id="nationality">
+                        		<option value="한국">한국</option>
+                        		<option value="미국">미국</option>
+                        		<option value="영국">영국</option>
+                        		<option value="중국">중국</option>
+                        		<option value="일본">일본</option>
+                        	</select>
+                        </li>
+                        <li>종교 : 
+                        	<input type="radio" name="religion" value="기독교">기독교
+                        	<input type="radio" name="religion" value="천주교">천주교
+                        	<input type="radio" name="religion" value="불교">불교
+                        	<input type="radio" name="religion" value="힌두교">힌두교
+                        	<input type="radio" name="religion" value="이슬람">이슬람
+                        	<input type="radio" name="religion" value="기타">기타
+                        </li>
+                        <li>성별 : 
+                        	<input type="radio" name="gender" value="0">남자
+                        	<input type="radio" name="gender" value="1">여자
+                        	<input type="radio" name="gender" value="2">비밀
+                        </li>
+                    </ul>
+
+                    <div class="btns">
+                        <input type="submit" id="submitBtn" value="회원가입">&nbsp;
+                        <input type="reset" id="resetBtn" value="초기화">
+                    </div>
+                </div>
+        </form>
+    </div>
+</body>
+</html>
