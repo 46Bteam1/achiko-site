@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    // ✅ Spring Boot 핵심 의존성
+    // Spring Boot 핵심 의존성
     implementation 'org.springframework.boot:spring-boot-starter-web'  // Spring MVC (REST API)
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA 사용
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf 사용
@@ -28,7 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security 사용
 
     // 환경 변수 관리 (.env 사용)
-    implementation 'io.github.cdimascio:dotenv-java:2.2.0' // dotenv 환경 변수 관리 (최신 버전 2.2.0 유지)
+    implementation 'io.github.cdimascio:dotenv-java:2.2.0' // dotenv 환경 변수 관리 (최신 버전 유지)
 
     // MySQL Database
     runtimeOnly 'com.mysql:mysql-connector-j'

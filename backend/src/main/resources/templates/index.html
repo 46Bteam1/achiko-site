@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-
-<html lang="ko" xmlns:th ="http://thymeleaf.org"
-                xmlns:sec="http://thymeleaf.org/extras/spring-security">
-
+<html
+  lang="ko"
+  xmlns:th="http://thymeleaf.org"
+  xmlns:sec="http://thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,7 +23,6 @@
     <script th:src="@{./js/index.js}" defer></script>
   </head>
   <body>
-
     <header>
       <div class="header-col">
         <div class="header-col">
@@ -41,16 +41,19 @@
           <li><a href="#">온라인 체험</a></li>
           <li><a th:href="@{/testTemp/testPage}">testpage</a></li>
           <!-- 인증되지 않은 사용자 -->
-	    <th:block sec:authorize="isAnonymous()">
+          <th:block sec:authorize="isAnonymous()">
             <li><a th:href="@{/user/regist}">회원가입</a></li>
             <li><a th:href="@{/user/login}">로그인</a></li>
-        </th:block>
-        
-		<!-- 인증된 사용자 -->
-	    <th:block sec:authorize="isAuthenticated()">
+          </th:block>
+
+          <!-- 인증된 사용자 -->
+          <th:block sec:authorize="isAuthenticated()">
             <li><a th:href="@{/user/logout}">로그아웃</a></li>
             <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
-        </th:block>
+          </th:block>
+
+          <li><a th:href="@{/viewSubscribe/subscribePage}">구독page</a></li>
+          <li><a th:href="@{/viewSpline}">SplinePage</a></li>
         </ul>
         <div class="query-form">
           <div class="query-col query-location">

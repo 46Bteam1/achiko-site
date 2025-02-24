@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootpay 샌드박스 결제</title>
+
+    <!-- ✅ Bootpay JavaScript SDK -->
+    <script src="https://js.bootpay.co.kr/bootpay-5.1.0.min.js"></script>
+
+    <!-- ✅ jQuery 추가 -->
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+
+    <!-- ✅ JS 파일 추가 -->
+    <script th:src="@{/js/subscribe.js}"></script>
+</head>
+<body>
+    <h2>Bootpay 샌드박스 결제 테스트</h2>
+
+    <label for="pgSelect">결제 수단 선택:</label>
+    <select id="pgSelect">
+        <option value="tosspay">토스페이</option>
+        <option value="naverpay">네이버페이</option>
+        <option value="kakaopay">카카오페이</option>
+    </select>
+
+    <br><br>
+
+    <label for="price">결제 금액:</label>
+    <input type="number" id="price" placeholder="결제 금액 입력">
+
+    <br><br>
+
+    <label for="userId">유저 ID:</label>
+    <input type="text" id="userId" placeholder="유저 ID 입력">
+
+    <br><br>
+
+    <label for="userPhone">휴대폰 번호:</label>
+    <input type="text" id="userPhone" placeholder="휴대폰 번호 입력">
+
+    <br><br>
+
+    <button id="subscribeButton">결제 요청</button>
+
+    <hr>
+
+    <h2>결제 취소</h2>
+    <label for="receiptId">영수증 ID:</label>
+    <input type="text" id="receiptId" placeholder="결제 후 자동 입력됨" readonly>
+
+    <br><br>
+
+    <label for="cancelReason">취소 사유:</label>
+    <input type="text" id="cancelReason" placeholder="취소 사유 입력">
+
+    <br><br>
+
+    <button id="cancelButton">결제 취소</button>
+</body>
+</html>
