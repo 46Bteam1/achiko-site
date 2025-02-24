@@ -20,6 +20,7 @@ public class ChatMessageController {
     private final ChatService chatService;
     
     // 클라이언트가 "/app/chat.sendMessage"로 메시지를 보내면 실행됨
+    // 특정 채팅방에 메세지 보내기
     @MessageMapping("/chatSendMessage")
     public void sendMessage(ChatMessageDTO chatMessage) {
         log.info("받은 메시지: {}", chatMessage);
@@ -33,6 +34,7 @@ public class ChatMessageController {
     }
 
     // 클라이언트가 "/app/chatEnterRoom"으로 메시지를 보내면 실행됨
+    // 입장 메세지 보내기
     @MessageMapping("/chatEnterRoom")
     public void enterRoom(ChatMessageDTO chatMessage) {
         log.info("사용자 입장: {}", chatMessage);
