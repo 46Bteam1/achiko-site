@@ -3,7 +3,9 @@ package com.achiko.backend.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.service.SubscribeService;
+import com.achiko.backend.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +26,15 @@ import lombok.RequiredArgsConstructor;
 public class SubscribeRestController {
 
     private final SubscribeService subscribeService;
+    private final UserService userService;
+    
+    @Value("${BOOTPAY_APPLICATION_ID}")
+    private String bootpayApplicationId;
+    
+    @GetMapping("/config")
+    public ResponseEntity<?> getBootpayConfig() {
+        return ResponseEntity.ok(Map.of("bootpayApplicationId", bootpayApplicationId));
+    }
 
     /**
      * ✅ Bootpay Access Token 발급 API
@@ -33,6 +46,23 @@ public class SubscribeRestController {
             return ResponseEntity.ok(Map.of("accessToken", accessToken));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("토큰 발급 실패: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * ✅ 결제 성공 후 is_subscribed 변경 API
+     */
+    @PostMapping("/updateSubscription")
+    public ResponseEntity<?> updateSubscription(@AuthenticationPrincipal LoginUserDetails loginUser) {
+        if (loginUser == null) {
+            return ResponseEntity.badRequest().body("로그인이 필요합니다.");
+        }
+
+        try {
+            userService.updateSubscriptionStatus(loginUser.getUserId(), 1); // ✅ 구독 상태를 1로 변경
+            return ResponseEntity.ok(Map.of("message", "구독 상태가 업데이트되었습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("구독 상태 업데이트 실패: " + e.getMessage());
         }
     }
 
