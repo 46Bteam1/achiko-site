@@ -198,8 +198,89 @@ function validateGuestCount() {
 }
 
 // --------------------------------------------------------------------
-// 폼 제출 전 전체 유효성 검사
+// 주소 유효성 검사: address에 선택된 region과 town의 이름이 포함되어야 함
+// (미포함 시 주소와 영어 주소 영역 초기화)
+// --------------------------------------------------------------------
+function validateAddress() {
+  const addressInput = document.getElementById("address");
+  const regionSelect = document.getElementById("regionId");
+  const townSelect = document.getElementById("townId"); // ★ townId 요소 가져오기
+
+  // regionSelect의 선택된 옵션 텍스트 (예: "東京都")
+  const selectedRegionText = regionSelect.options[regionSelect.selectedIndex]?.text || "";
+
+  // ★ townSelect의 선택된 옵션 텍스트 (예: "港区")
+  const selectedTownText = townSelect.options[townSelect.selectedIndex]?.text || "";
+
+  const addressValue = addressInput.value;
+
+  // ★ 지역(region) 검사: 주소에 선택된 지역 텍스트가 포함되어 있는지 확인
+  if (selectedRegionText && !addressValue.includes(selectedRegionText)) {
+    alert("지역을 다시 한번 확인해주세요.");
+    addressInput.value = "";
+    addressInput.focus();
+    document.getElementById("englishAddress").innerHTML = "";
+    return false;
+  }
+
+  // ★ 하위 시/군/구(town) 검사: 주소에 선택된 하위 시/군/구 텍스트가 포함되어 있는지 확인
+  if (selectedTownText && !addressValue.includes(selectedTownText)) {
+    alert("하위 시/군/구를 다시 한번 확인해주세요.");
+    addressInput.value = "";
+    addressInput.focus();
+    document.getElementById("englishAddress").innerHTML = "";
+    return false;
+  }
+
+  return true;
+}
+
+// --------------------------------------------------------------------
+// 요금 입력 유효성 검사: 정수만 허용 (숫자만 입력 가능)
+// --------------------------------------------------------------------
+function validatePrice() {
+    const priceInput = document.getElementById("price");
+    const priceValue = priceInput.value.trim();
+    // 정규식: 하나 이상의 숫자만 허용 (소수점 미포함)
+    const pricePattern = /^[0-9]+$/;
+    
+    if (!pricePattern.test(priceValue)) {
+        alert("요금은 정수(숫자)만 입력 가능합니다.");
+        priceInput.focus();
+        return false;
+    }
+    return true;
+}
+
+
+// --------------------------------------------------------------------
+// 폼 제출 전 전체 유효성 검사: 제목, 본문, 주소
 // --------------------------------------------------------------------
 function validateForm() {
-    return validateAddress();
+  const titleInput = document.getElementById("title");
+  const descriptionInput = document.getElementById("description");
+
+  // 제목은 5글자 이상 (공백 제거 후 검사)
+  if (titleInput.value.trim().length < 5) {
+    alert("제목은 5글자 이상 입력해주세요.");
+    titleInput.focus();
+    return false;
+  }
+  
+  // 본문은 10글자 이상 (공백 제거 후 검사)
+  if (descriptionInput.value.trim().length < 10) {
+    alert("본문은 10글자 이상 입력해주세요.");
+    descriptionInput.focus();
+    return false;
+  }
+  // 요금 입력 유효성 검사 (정수만 허용)
+      if (!validatePrice()) {
+          return false;
+      }
+	  
+  // 주소 유효성 검사
+  return validateAddress();
+  
+  
 }
+
