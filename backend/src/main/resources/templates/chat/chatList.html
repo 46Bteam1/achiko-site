@@ -8,15 +8,48 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script th:src="@{/js/chat/chatSocket.js}"></script>
+    <style>
+      #alertBox {
+        height: 5vh; /* 화면 높이를 기준으로 5%로 설정 */
+        min-height: 50px; /* 최소 높이 50px로 설정 */
+        overflow-y: auto; /* 내용이 넘칠 때 스크롤 표시 */
+        border: 1px solid #ccc; /* 테두리 */
+        padding: 3px; /* 여백 */
+      }
+
+      #alertBox table {
+        width: 100%; /* 테이블 너비 100% */
+        border-collapse: collapse; /* 테이블 경계 합침 */
+      }
+
+      #alertBox td {
+        border-bottom: 1px solid #ddd; /* 각 tr 간 구분선 */
+        padding: 3px;
+      }
+    </style>
   </head>
   <body>
-    <div id="logos"></div>
+    <div id="logos">
+      <div id="logo"></div>
+      <div>
+        <h3>あちこちの夢が集まり、ひとつの物語が生まれる</h3>
+      </div>
+      <div>
+        <input type="button" id="toMyPageBtn" value="My Page" />
+        <input type="button" id="chatRoomsBtn" value="Chat Rooms" />
+      </div>
+    </div>
 
     <div id="users"></div>
 
     <div id="descriptionBox">
       <input type="hidden" th:value="${chatroomId}" id="chatroomId" />
       <input type="hidden" th:value="${userId}" id="userId" />
+      <div id="alertBox">
+        <table>
+          <tbody id="alertTableBody"></tbody>
+        </table>
+      </div>
     </div>
 
     <div id="chatBox">

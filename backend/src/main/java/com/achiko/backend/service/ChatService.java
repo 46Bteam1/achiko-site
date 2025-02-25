@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.ChatMessageDTO;
@@ -30,8 +31,10 @@ public class ChatService {
 	private final ChatRoomRepository roomRepository;
 	private final UserRepository userRepository;
 	private final ShareRepository shareRepository;
+	private final SimpMessagingTemplate messagingTemplate;
 	
-	// 본인이 속한 채팅방들 조회
+	
+	// 본인이 속한 채팅방들 조회 메서드
 	public List<ChatParticipantDTO> selectRooms(String loginId) {
 		// 1. userId로 UserEntity 가져오기
 		UserEntity user = userRepository.findByLoginId(loginId);
@@ -59,6 +62,7 @@ public class ChatService {
 		
 	}
 
+	// 특정 채팅방의 메세지들 조회 메서드
 	public List<ChatMessageDTO> selectMessages(Long chatRoomId) {
 		
 		// 1. chatRoom이 존재하는지 확인
@@ -74,27 +78,47 @@ public class ChatService {
 		
 		entityList.forEach((e)->{
 			list.add(ChatMessageDTO.toDTO(e, e.getChatroom().getChatroomId(), e.getSender().getUserId()));
+			
 		});
 		
 		// 3. DTO list로 내보내기
 		return list;
 	}
-
-	public void saveMessage(ChatMessageDTO chatMessage) {
-		
-		// user와 chatroom
-		Optional<UserEntity> temp1 = userRepository.findById(chatMessage.getSenderId());
-		
-		if(temp1.isEmpty()) return;
-		UserEntity user = temp1.get();
-		
-		Optional<ChatRoomEntity> temp2 = roomRepository.findById(chatMessage.getChatroomId());
-		if(temp2.isEmpty()) return;
-		ChatRoomEntity room = temp2.get();
-		
-		ChatMessageEntity messageEntity = ChatMessageEntity.toEntity(chatMessage, room, user);
-		messageRepository.save(messageEntity);
+	
+	// 메세지 채팅방에 보내기 메서드
+	public void sendMessage(ChatMessageDTO chatMessage) {
+        // DB에 메세지 저장
+        	// user와 chatroom
+     		Optional<UserEntity> temp1 = userRepository.findById(chatMessage.getSenderId());
+     		
+     		if(temp1.isEmpty()) return;
+     		UserEntity user = temp1.get();
+     		
+     		Optional<ChatRoomEntity> temp2 = roomRepository.findById(chatMessage.getChatroomId());
+     		if(temp2.isEmpty()) return;
+     		ChatRoomEntity room = temp2.get();
+     		
+     		ChatMessageEntity messageEntity = ChatMessageEntity.toEntity(chatMessage, room, user);
+     		messageRepository.save(messageEntity);
+     		
+     	// 특정 채팅방을 구독 중인 사용자들에게 메시지 전달
+            String destination = "/topic/chatroom/" + chatMessage.getChatroomId();
+            messagingTemplate.convertAndSend(destination, chatMessage);
 	}
 	
-
+	// 유저 채팅방 입장 시 메세지 보내기 메서드
+	public void enterRoom(ChatMessageDTO chatMessage, String nickname) {
+		chatMessage.setMessage(nickname + "님이 입장하셨습니다.");
+      
+		String destination = "/topic/chatroomAlert/" + chatMessage.getChatroomId();
+		messagingTemplate.convertAndSend(destination, chatMessage);
+	}
+	
+	// 유저 채팅방 퇴장 시 메세지 보내기 메서드
+	public void leaveRoom(ChatMessageDTO chatMessage, String nickname) {
+		chatMessage.setMessage(nickname + "님이 퇴장하셨습니다.");
+        
+        String destination = "/topic/chatroomAlert/" + chatMessage.getChatroomId();
+        messagingTemplate.convertAndSend(destination, chatMessage);
+	}
 }

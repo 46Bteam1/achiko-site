@@ -1,5 +1,7 @@
 package com.achiko.backend.service;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +33,13 @@ public class UserService {
 		Long userId = user.getUserId();
 		
 		return userId;
+	}
+
+	public String getUserName(Long senderId) {
+		Optional<UserEntity> user = userRepository.findById(senderId);
+		if(user.isEmpty()) return null;
+		
+		String nickname = user.get().getNickname();
+		return nickname;
 	}
 }
