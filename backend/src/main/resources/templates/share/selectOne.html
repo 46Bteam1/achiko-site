@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>글 상세 조회</title>
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" th:href="@{/css/share.css}" />
+    
+    <!-- Noto Sans Korean & Japanese 폰트 추가 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- 구글 맵 API 스크립트 -->
+    <script th:src="@{|https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}|}"
+        async defer></script>
+</head>
+<body>
+<!-- 상단 헤더 영역 -->
+<header class="top-header">
+    <div class="logo-area">
+        <!-- 로고 클릭 시 index.html로 이동 -->
+       <a th:href="@{/}">
+            <img th:src="@{/images/achiko-logo3.png}" alt="로고">
+        </a>
+    </div>
+    <div class="header-text">
+        あちこちの夢が集まって、ひとつの物語が生まれる
+    </div>
+    <div class="mypage-area">
+        <!-- 마이페이지 클릭 시 user/selectOne으로 이동 -->
+        <a th:href="@{/user/selectOne}">
+            <button>마이페이지</button>
+        </a>
+    </div>
+</header>
+
+<!-- 메인 컨테이너 -->
+<main>
+    <!-- 글 제목 영역 -->
+    <section class="share-title-section">
+        <h1 class="share-title" th:text="${share.title}">シェアハウス 글 제목</h1>
+    </section>
+    
+    <!-- 방 사진 영역 -->
+    <section class="room-photos">
+        <!-- 사진이 여러 장 있을 경우 반복 렌더링 가능 -->
+        <!-- 예시로 5장 placeholder -->
+        <div class="photo-box">방 사진</div>
+        <div class="photo-box">방 사진</div>
+        <div class="photo-box">방 사진</div>
+        <div class="photo-box">방 사진</div>
+        <div class="photo-box">방 사진</div>
+    </section>
+    
+    <!-- 공유하기, 찜하기 버튼 영역 -->
+    <section class="action-buttons">
+        <button id="shareButton">공유하기</button>
+        
+        <!-- 찜하기/찜취소하기 버튼 (토글) -->
+        <button id="favoriteButton" 
+                th:text="${isFavorite} ? '찜 취소하기' : '찜하기' "
+                data-share-id="[[${share.shareId}]]"
+                data-is-favorite="[[${isFavorite}]]">
+            찜하기
+        </button>
+    </section>
+    
+    <!-- 방의 수 / 기간 / 가격 / 호스트에게 메세지 보내기 -->
+    <section class="share-info">
+        <div class="share-info-left">
+            <p>방의 수: <span th:text="${share.maxGuests}">0</span></p>
+            <p>기간: 예) 1개월 ~ 6개월</p>
+            <p>가격: <span th:text="${share.price}">10000</span> 원</p>
+        </div>
+        <div class="share-info-right">
+            <!-- 호스트에게 메세지 보내기 -->
+            <button id="messageHostBtn">호스트에게 메세지 보내기</button>
+        </div>
+    </section>
+    
+    <!-- 호스트 소개 -->
+    <section class="host-intro">
+        <h2>호스트 소개</h2>
+    </section>
+    
+    <!-- 지도, 편의시설/인원정보 영역 -->
+    <section class="map-facility-section">
+        <div class="map-area">
+            <h3>지도</h3>
+            <div id="map" style="width: 100%; height: 300px;"></div>
+        </div>
+        <div class="facility-info">
+            <h3>편의시설, 현재 확정된 인원 정보</h3>
+            <p>예) 와이파이, 세탁기, 건조기, 주차장 등</p>
+            <p>현재 확정된 인원: <span th:text="${share.currentGuests}">0</span>명</p>
+        </div>
+    </section>
+    
+    <!-- 리뷰 영역 -->
+    <section class="review-section">
+        <h2>리뷰</h2>
+        <!-- user/receivedReview [GET] 로 이동(혹은 Ajax)해서 리뷰 불러오기 -->
+        <a th:href="@{/user/receivedReview}">
+            <button>리뷰 보러가기</button>
+        </a>
+    </section>
+</main>
+
+<!-- 자바스크립트 -->
+<script>
+    // 구글 맵 초기화
+    function initMap() {
+        // 대략적인 위치(도쿄) 예시. 실제 데이터에 따라 좌표를 받아오면 동적으로 변경 가능
+        var mapCenter = { lat: 35.6895, lng: 139.6917 };
+        var map = new google.maps.Map(document.getElementById('map'), {
+            center: mapCenter,
+            zoom: 10
+        });
+    }
+    
+    // 지도 로드
+    window.onload = function() {
+        initMap();
+    };
+    
+    // 공유하기 버튼 예시 (단순 alert)
+    document.getElementById('shareButton').addEventListener('click', function(){
+        alert('현재 페이지 URL을 복사하거나, SNS로 공유하세요.');
+    });
+
+    // 찜하기/찜취소하기 버튼
+    document.getElementById('favoriteButton').addEventListener('click', function(){
+        const button = this;
+        const shareId = button.getAttribute('data-share-id');
+        const isFavorite = button.getAttribute('data-is-favorite') === 'true';
+        
+        if(!isFavorite){
+            // 찜하기(POST)
+            fetch('/favorite/set', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({shareId: shareId})
+            })
+            .then(response => {
+                if(response.ok){
+                    button.innerText = '찜 취소하기';
+                    button.setAttribute('data-is-favorite', 'true');
+                } else {
+                    alert('찜하기 실패!');
+                }
+            })
+            .catch(err => console.error(err));
+        } else {
+            // 찜 취소하기(DELETE)
+            fetch('/favorite/cancel?shareId=' + shareId, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if(response.ok){
+                    button.innerText = '찜하기';
+                    button.setAttribute('data-is-favorite', 'false');
+                } else {
+                    alert('찜 취소 실패!');
+                }
+            })
+            .catch(err => console.error(err));
+        }
+    });
+</script>
+
+</body>
+</html>
