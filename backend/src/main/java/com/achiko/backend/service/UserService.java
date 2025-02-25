@@ -30,10 +30,13 @@ public class UserService {
 	public String findLoginId(UserDTO userDTO) {
 		UserEntity findedEntity = userRepository.findByEmail(userDTO.getEmail());
 		
-		if(userDTO.getRealName().equals(findedEntity.getRealName())) {
-			return findedEntity.getLoginId();
+		if(findedEntity != null) {
+			if(userDTO.getRealName().equals(findedEntity.getRealName())) {
+				return "회원님의 아이디는 " + findedEntity.getLoginId() + " 입니다.";
+			}
 		}
-		return null;
+		
+		return "해당하는 아이디가 없습니다.";
 	}
 	
 	// 비밀번호 찾기(임시 비밀번호로 변경 및 리턴)
@@ -41,12 +44,15 @@ public class UserService {
 	public String findPassword(UserDTO userDTO) {
 		UserEntity findedEntity = userRepository.findByLoginId(userDTO.getLoginId());
 		
+		if(findedEntity == null) {
+			return "해당하는 아이디가 없습니다.";
+		}
 		if(!userDTO.getEmail().equals(findedEntity.getEmail()) || !userDTO.getRealName().equals(findedEntity.getRealName())) {
-			return null;
+			return "잘못된 입력정보입니다.";
 		}
 		String tempPw = generateTempPassword();
 		findedEntity.setPassword(bCryptPasswordEncoder.encode(tempPw));
-		return tempPw;
+		return "임시 비밀번호는 " + tempPw + " 입니다.";
 	}
 	
 	// 임시 비밀번호 생성 메소드
