@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>모집 글 등록</title>
@@ -17,9 +17,8 @@
 
 <!-- CSS -->
 <link rel="stylesheet" th:href="@{/css/write.css}" />
-<script async
-	th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap|}">
-	
+<script async defer
+  th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}">
 </script>
 
 <!-- (2) 전역 변수 할당 (Thymeleaf -> JS) -->

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>글 상세 조회</title>
@@ -12,8 +12,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     
     <!-- 구글 맵 API 스크립트 -->
-    <script th:src="@{|https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}|}"
-        async defer></script>
+   <!-- Google Maps API 스크립트 로드 -->
+	<script async defer
+    	th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&callback=initMap|}">
+	</script>
+
 </head>
 <body>
 <!-- 상단 헤더 영역 -->
