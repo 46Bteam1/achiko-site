@@ -1,0 +1,273 @@
+@import "../reset.css";
+@import "../main.css";
+@import "../footer.css";
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    height: 200vh;
+    font-family: 'Airbnb Cereal App', sans-serif;
+}
+
+
+header {
+    position: static;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 150px;
+    z-index: 100;
+    border-bottom: 1px solid #dddddd;
+}
+
+/* header animation */
+header.sticky {
+    background: white;
+    color: black;
+}
+
+header.sticky .sticky-pink {
+    fill: rgb(255, 56, 92);
+}
+
+header.sticky .sticky-black {
+    color: black;
+    fill: black;
+}
+
+header.sticky .header-form {
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    animation-name: slideUp;
+}
+
+@keyframes slideDown {
+    from {
+        transform: scale(0.3, 0.75) translateY(-80px);
+    }
+
+    to {
+        transform: scale(1, 1) translateY(0px);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: scale(1, 1) translateY(0px);
+        opacity: 0.5;
+    }
+
+    to {
+        transform: scale(0.3, 0.75) translateY(-80px);
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes showEffect {
+    from {
+        visibility: hidden;
+    }
+
+    to {
+        visibility: visible;
+    }
+}
+
+/* -------------- */
+
+
+
+.header-col {
+    flex: 1 1 33%;
+}
+
+.header-col .airbnbIcon {
+    fill: white;
+}
+
+.header-col ul {
+    display: flex;
+    justify-content: center;
+}
+
+.header-col ul li {
+    list-style: none;
+    color: black;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 15px 20px;
+}
+
+.header-col ul li:hover {
+    opacity: 0.5;
+}
+
+.header-col ul li:first-child span {
+    padding: 10px 0;
+    border-bottom: 1px solid white;
+}
+
+.header-col ul li:hover {
+    cursor: pointer;
+}
+
+.header-col ul li:hover span,
+.header-col ul li:hover a {
+    padding: 10px 0;
+    border-bottom: 1px solid white;
+}
+
+.header-nav {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color: grey;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.header-nav-left {
+    flex-grow: 1;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.header-nav-left a {
+    margin: 0 15px;
+}
+
+.header-nav-left button {
+    display: flex;
+    background: none;
+    border: none;
+    fill: grey;
+}
+
+.header-nav-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 77px;
+    height: 42px;
+}
+
+.header-nav-right button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background: white;
+    border-radius: 20px;
+    padding: 5px 5px 5px 12px;
+
+    border: 1px solid rgb(221, 221, 221);
+}
+
+.icon-list {
+    margin-left: 3px;
+}
+
+.icon-user-circle {
+    fill: gray;
+    width: 28.69px;
+    height: 28.69px;
+}
+
+.mb-1 {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #dddddd;
+    padding-bottom: 20px;
+}
+
+.mb-2 {
+    padding: 10px;
+    font-size: large;
+    font-weight: 500;
+}
+
+.link-container {
+    text-align: center;
+    font-size: 15px;
+    color: #666;
+}
+
+.link-container a {
+    text-decoration: none;
+    color: #666;
+    margin: 0 8px;
+}
+
+.link-container a:hover {
+    color: #333;
+}
+
+.link-container span {
+    color: #bbb;
+}
+
+.loginBtn {
+    margin-bottom: 5px;
+}
+
+body {
+    background-color: #f7f7f7;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #DDDDDD;
+}
+
+.findId-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #DDDDDD;
+}
+
+.findPassword-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #DDDDDD;
+}
+
+.result-box {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.findResult-btn-group {
+    text-align: center;
+}
+
+.btn-success {
+    margin-bottom: 5px;
+}
