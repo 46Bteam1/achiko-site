@@ -182,6 +182,71 @@ function fetchEnglishAddress(lat, lng) {
 }
 
 // --------------------------------------------------------------------
+// 파일 미리보기 및 누적 추가 기능 (복수 파일 추가, 순서대로 왼쪽부터 추가)
+// --------------------------------------------------------------------
+function handlePhotoUpload(event) {
+  const previewContainer = document.getElementById("photoPreview");
+  
+  // 미리보기 영역 flex 컨테이너 설정 (가로 정렬, 가운데 정렬)
+  previewContainer.style.display = "flex";
+  previewContainer.style.flexWrap = "wrap";
+  previewContainer.style.justifyContent = "center";
+  previewContainer.style.gap = "10px";
+
+  // 새로 선택한 파일들을 배열로 변환 후 기존 배열에 누적
+  const newFiles = Array.from(event.target.files);
+  selectedFiles = selectedFiles.concat(newFiles);
+
+  // 전체 미리보기 영역 초기화
+  previewContainer.innerHTML = "";
+
+  // 파일들을 순서대로 읽어 미리보기 생성 (순서 보장)
+  const readPromises = selectedFiles.map((file, index) => {
+    return new Promise((resolve, reject) => {
+      if (!file.type.match("image.*")) {
+        resolve(null);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          resolve({ index, src: e.target.result, name: file.name });
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      }
+    });
+  });
+
+  Promise.all(readPromises)
+    .then(results => {
+      results.forEach((result, idx) => {
+        if (!result) return;
+        const img = document.createElement("img");
+        img.src = result.src;
+        img.style.width = "150px";
+        img.style.height = "auto";
+        img.style.display = "block";
+        img.style.marginBottom = "5px";
+
+        const fileNumberDiv = document.createElement("div");
+        fileNumberDiv.textContent = `${idx + 1}`;
+        fileNumberDiv.style.fontSize = "0.9em";
+        fileNumberDiv.style.color = "#555";
+
+        const container = document.createElement("div");
+        container.style.textAlign = "center";
+        container.appendChild(img);
+        container.appendChild(fileNumberDiv);
+
+        previewContainer.appendChild(container);
+      });
+    })
+    .catch(error => console.error("Error reading files:", error));
+
+  // 파일 입력 필드 초기화 (같은 파일 재선택 가능)
+  event.target.value = "";
+}
+
+// --------------------------------------------------------------------
 // 현재 인원 유효성 검사
 // --------------------------------------------------------------------
 function validateGuestCount() {
