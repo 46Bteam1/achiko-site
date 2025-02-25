@@ -1,19 +1,26 @@
 package com.achiko.backend.controller;
 
 import java.security.Principal;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.service.ShareService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -66,4 +73,26 @@ public class ShareController {
 		ShareDTO saved = shareService.saveShare(shareDTO);
 		return "redirect:/share/selectOne?shareId=" + saved.getShareId();
 	}
+	
+	@GetMapping("/api/geocode")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getGeocode(@RequestParam("lat") double lat,
+	                                                       @RequestParam("lng") double lng) {
+	    // ★ Google Geocoding API 호출 URL 구성 (영문 주소 반환)
+	    String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" 
+	                 + lat + "," + lng + "&language=en&key=" + googleApiKey;
+	    RestTemplate restTemplate = new RestTemplate();
+	    String jsonResponse = restTemplate.getForObject(url, String.class);
+	    
+	    // ★ JSON 문자열을 Map으로 변환 (Jackson 라이브러리 사용)
+	    ObjectMapper mapper = new ObjectMapper();
+	    Map<String, Object> responseMap;
+	    try {
+	        responseMap = mapper.readValue(jsonResponse, new TypeReference<Map<String, Object>>() {});
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	    return ResponseEntity.ok(responseMap);
+	}
+	
 }
