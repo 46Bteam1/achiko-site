@@ -94,9 +94,8 @@ public class UserEntity {
 	@CurrentTimestamp
 	private LocalDateTime createdAt;
 	
-	@Column(name = "is_subscribed")
-	@Builder.Default
-	private int isSubscribed = 0; // 0: 결제 안함, 1: 결제 완료
+	@Column(name = "receipt_id")
+	private String receiptId;
 	
 	public static UserEntity toEntity(UserDTO userDTO) {
 		return UserEntity.builder()
@@ -115,6 +114,7 @@ public class UserEntity {
 				.religion(userDTO.getReligion())
 				.gender(userDTO.getGender())
 				.bio(userDTO.getBio())
+				.receiptId(userDTO.getReceiptId())
 				.build();
 	}
 }
