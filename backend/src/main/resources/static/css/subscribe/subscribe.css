@@ -1,0 +1,181 @@
+@import "../reset.css";
+@import "../header.css";
+@import "../main.css";
+@import "../footer.css";
+
+* {
+  box-sizing: border-box;
+  /* margin: 0;
+    padding: 0; */
+  font-family: "Airbnb Cereal App", sans-serif;
+}
+
+body {
+  background-color: #f9f9f9;
+  color: #1e8b41;
+}
+
+header {
+  height: 100px;
+  position: relative;
+}
+
+/* 무한 스크롤 배너 */
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  /* padding: 15px 0; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.marquee {
+  display: flex;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+}
+
+.marquee-inner {
+  display: flex;
+  animation: marqueeScroll 70s linear infinite;
+  will-change: transform;
+}
+
+.marquee-inner img {
+  width: auto;
+  height: 100px;
+}
+
+@keyframes marqueeScroll {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* 메인 결제 컨테이너 (기본: 모바일 디자인) */
+.subscribe-container {
+  max-width: 450px;
+  margin: 10px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.subscribe-container h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #0faf3b;
+}
+
+.subscribe-container .description {
+  font-size: 16px;
+  color: #1e8b41;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #1e8b41;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  background: #fafafa;
+  color: #1e8b41;
+}
+
+button#subscribeButton {
+  width: 100%;
+  padding: 12px;
+  background: #0faf3b;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button#subscribeCancelButton {
+  width: 100%;
+  padding: 12px;
+  background: #f36907;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button#subscribeButton:hover {
+  background: #1e8b41;
+}
+
+button#subscribeCancelButton:hover {
+  background: #664809;
+}
+
+.secure-info {
+  font-size: 14px;
+  color: #1e8b41;
+  margin-top: 10px;
+}
+
+/* 데스크톱 웹 디자인 */
+@media (min-width: 1024px) {
+  .subscribe-container {
+    max-width: 600px;
+    padding: 20px;
+  }
+
+  .subscribe-container h2 {
+    font-size: 26px;
+  }
+
+  .form-group label {
+    font-size: 16px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 18px;
+    padding: 12px;
+  }
+
+  button#subscribeButton {
+    font-size: 20px;
+    padding: 14px;
+  }
+}
+
+/* 태블릿 디자인 (중간 크기 화면) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .subscribe-container {
+    max-width: 500px;
+    padding: 30px;
+  }
+}
