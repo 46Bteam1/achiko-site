@@ -4,6 +4,7 @@ $(function () {
   const chatRoomId = $("#chatroomId").val();
 
   const userId = $("#userId").val();
+  const nickname = $("#nickname").val();
 
   $("#toMyPageBtn").on("click", function () {
     // TODO: 마이페이지 돌아가는 버튼 만들기
@@ -21,7 +22,7 @@ $(function () {
     // 채팅방 입장
     const enterMessage = {
       chatroomId: chatRoomId,
-      senderId: userId,
+      nickname: nickname,
     };
     stompClient.send("/app/chatEnterRoom", {}, JSON.stringify(enterMessage));
 
@@ -41,16 +42,16 @@ $(function () {
 
     // 메시지 전송 버튼 이벤트
     $("#sendMessage").on("click", function () {
-      sendChat(chatRoomId, userId);
+      sendChat(chatRoomId, nickname);
     });
   });
 
   // 퇴장 처리 함수
-  function leaveChatRoom(chatRoomId, userId) {
+  function leaveChatRoom(chatRoomId, nickname) {
     if (stompClient && stompClient.connected) {
       const leaveMessage = {
         chatroomId: chatRoomId,
-        senderId: userId,
+        nickname: nickname,
       };
       stompClient.send("/app/chatLeaveRoom", {}, JSON.stringify(leaveMessage));
 
@@ -62,11 +63,11 @@ $(function () {
 
   // 페이지를 떠날 때 자동으로 퇴장 메시지 전송
   window.addEventListener("beforeunload", () => {
-    leaveChatRoom(chatRoomId, userId);
+    leaveChatRoom(chatRoomId, nickname);
   });
 
   // 메세지 보내기
-  function sendChat(roomId, userId) {
+  function sendChat(roomId, nickname) {
     const messageContent = $("#message").val().trim();
     if (messageContent !== "") {
       stompClient.send(
@@ -74,7 +75,7 @@ $(function () {
         {},
         JSON.stringify({
           chatroomId: roomId, // 채팅방 ID 전달
-          senderId: userId, // 보낸 사람 정보 (이 변수는 필요하면 설정해야 함)
+          nickname: nickname, // 보낸 사람 정보 (이 변수는 필요하면 설정해야 함)
           message: messageContent,
           sentAt: new Date(),
         })
@@ -85,15 +86,19 @@ $(function () {
 });
 
 function showChat(data) {
+  console.log("여기는 showChat:", data);
+
+  let sentAt = data["sentAt"] ? data["sentAt"].split(".")[0] : "시간 정보 없음";
+
   let tag = `
-      <tr>${data["nickname"]}</tr>
-      <tr>${data["message"]}</tr>
-      <tr>${data["sentAt"].split(".")[0]}</tr>
-    </div>`;
+    <tr>
+      <td>${data["nickname"]}</td>
+      <td>${data["message"]}</td>
+      <td>${sentAt}</td>
+    </tr>`;
 
   $("#chats table").append(tag);
 
-  // 스크롤을 맨 아래로 이동
   $("#chats").scrollTop($("#chats")[0].scrollHeight);
 }
 
@@ -123,7 +128,7 @@ function chats(resp) {
   $.each(resp, function (index, item) {
     tag += `
         <tr>
-            <td>${item["senderId"]}</td>
+            <td>${item["nickname"]}</td>
             <td>${item["message"]}</td>
             <td>${item["sentAt"]}</td>
         </tr>

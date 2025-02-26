@@ -20,9 +20,10 @@ public class ChatViewController {
 	public String chatList(@RequestParam(name="chatroomId") Long chatroomId, Model model,
 			@AuthenticationPrincipal LoginUserDetails loginUser) {
 		Long userId = userService.getUserId(loginUser.getLoginId());
-		
+		String nickname = loginUser.getNickname();
 		model.addAttribute("chatroomId", chatroomId);
 		model.addAttribute("userId", userId);
+		model.addAttribute("nickname", nickname);
 		return "chat/chatList";
 	}
 	

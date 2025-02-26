@@ -15,7 +15,9 @@ import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.ChatParticipantDTO;
 import com.achiko.backend.dto.ChatRoomDTO;
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.service.ChatService;
+import com.achiko.backend.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +40,13 @@ public class ChatController {
 	}
 	
 	// 채팅방들 조회 메서드
+	// 상대방들의 닉네임들 전해주기
 	@GetMapping("/selectRooms")
 	@Operation(summary = "채팅방들 조회 메서드", description = "내가 속한 채팅방들을 조회합니다.")
 	public List<ChatParticipantDTO> selectRooms(@AuthenticationPrincipal LoginUserDetails loginUser) {
+		// 내가 host인지 guest인지 판별
+		// 
+		
 		List<ChatParticipantDTO> list = chatService.selectRooms(loginUser.getUsername());
 		return list;
 	}
@@ -60,10 +66,5 @@ public class ChatController {
 		return "";
 	}
 	
-	// 채팅 메세지 저장 메서드
-	@PostMapping("/saveMessage")
-	@Operation(summary = "채팅 메세지 저장 메서드", description = "채팅 메세지 저장 메서드입니다.")
-	public String saveMessage() {
-		return "";
-	}
+	// 확정된 유저들 표시하는 메서드
 }

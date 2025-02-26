@@ -22,16 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatMessageDTO {
 	private Long messageId;
 	private Long chatroomId;
-	private Long senderId;
+	private String nickname;
 	private String message;
 	private String fileUrl;
 	private LocalDateTime sentAt;
 	
-	public static ChatMessageDTO toDTO(ChatMessageEntity entity, Long chatroomId, Long senderId) {
+	public static ChatMessageDTO toDTO(ChatMessageEntity entity, Long chatroomId, String nickname) {
 		return ChatMessageDTO.builder()
 				.messageId(entity.getMessageId())
 				.chatroomId(chatroomId)
-				.senderId(senderId)
+				.nickname(nickname)
 				.message(entity.getMessage())
 				.fileUrl(entity.getFileUrl())
 				.sentAt(entity.getSentAt())

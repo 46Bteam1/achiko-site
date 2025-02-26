@@ -1,11 +1,6 @@
 package com.achiko.backend.entity;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.hibernate.annotations.CreationTimestamp;
-
-import com.achiko.backend.dto.ChatRoomDTO;
+import com.achiko.backend.dto.RoommateDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,8 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,32 +18,33 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Builder
-@Entity(name="chat_room")
-public class ChatRoomEntity {
+@Table(name = "roommate")
+public class RoommateEntity {
 	@Id
-	@Column(name="chatroom_id")
-	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	private Long chatroomId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "roommate_id")
+	private Long roommateId;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="user_id", referencedColumnName="user_id")
+	private UserEntity user;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="share_id", referencedColumnName="share_id")
 	private ShareEntity share;
 	
-	@Column(name="created_at")
-	@CreationTimestamp
-	private LocalDateTime createdAt;
-
-	public static ChatRoomEntity toEntity(ChatRoomDTO roomDTO, ShareEntity shareEntity) {
-		return ChatRoomEntity.builder().
-				chatroomId(roomDTO.getChatroomId())
+	public static RoommateEntity toEntity(RoommateDTO roommateDTO, UserEntity userEntity, ShareEntity shareEntity) {
+		return RoommateEntity.builder()
+				.roommateId(roommateDTO.getRoommateId())
+				.user(userEntity)
 				.share(shareEntity)
 				.build();
 	}
 }
- 

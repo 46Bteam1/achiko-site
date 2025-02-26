@@ -77,7 +77,7 @@ public class ChatService {
 		List<ChatMessageDTO> list = new ArrayList<>();
 		
 		entityList.forEach((e)->{
-			list.add(ChatMessageDTO.toDTO(e, e.getChatroom().getChatroomId(), e.getSender().getUserId()));
+			list.add(ChatMessageDTO.toDTO(e, e.getChatroom().getChatroomId(), e.getSender().getNickname()));
 			
 		});
 		
@@ -89,10 +89,11 @@ public class ChatService {
 	public void sendMessage(ChatMessageDTO chatMessage) {
         // DB에 메세지 저장
         	// user와 chatroom
-     		Optional<UserEntity> temp1 = userRepository.findById(chatMessage.getSenderId());
+     		Optional<UserEntity> temp1 = userRepository.findByNickname(chatMessage.getNickname());
      		
      		if(temp1.isEmpty()) return;
      		UserEntity user = temp1.get();
+     		log.info("~~~!!:{}", user.toString());
      		
      		Optional<ChatRoomEntity> temp2 = roomRepository.findById(chatMessage.getChatroomId());
      		if(temp2.isEmpty()) return;
@@ -103,6 +104,8 @@ public class ChatService {
      		
      	// 특정 채팅방을 구독 중인 사용자들에게 메시지 전달
             String destination = "/topic/chatroom/" + chatMessage.getChatroomId();
+            log.info("왜왜왜:{}", chatMessage.toString());
+            
             messagingTemplate.convertAndSend(destination, chatMessage);
 	}
 	

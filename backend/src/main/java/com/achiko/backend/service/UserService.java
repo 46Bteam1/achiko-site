@@ -1,5 +1,6 @@
 package com.achiko.backend.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -42,4 +43,5 @@ public class UserService {
 		String nickname = user.get().getNickname();
 		return nickname;
 	}
+
 }

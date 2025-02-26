@@ -17,7 +17,6 @@ function output(resp) {
   $.each(resp, function (index, item) {
     tag += `
         <tr>
-            <td>${index + 1}</td>
             <td>${item["chatroomId"]}</td>
             <td class="btns">
                 <input type="button" value="입장" 
