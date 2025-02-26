@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>글 상세 조회</title>
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" th:href="@{/css/share.css}" />
+    
+    <!-- Noto Sans Korean & Japanese 폰트 추가 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script th:inline="javascript">
+        window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ '';
+        window.initMap = function () {
+            console.log("Google Maps API가 정상적으로 로드되었습니다.");
+            var address = /*[[${share.address}]]*/ "";
+            var detail = /*[[${share.detailAddress}]]*/ "";
+            var fullAddress = address + ", " + detail;  // ★ 쉼표로 구분하여 주소 형식 개선
+            console.log("Address 값: " + address); // 디버그용 출력
+            var geocoder = new google.maps.Geocoder();
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: {lat: 35.6895, lng: 139.6917}
+            });
+            geocoder.geocode({'address': fullAddress}, function(results, status) {
+                if (status === 'OK' && results.length > 0) {
+                    map.setCenter(results[0].geometry.location);
+                    new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    console.error('Geocode 실패: ' + status);
+                }
+            });
+        };
+    </script>
+    
+  <!-- selectOne.js 로드 (defer) -->
+    <script src="/js/selectOne.js" defer></script>
+    
+    <!-- Google Maps API 스크립트 로드 (async defer 적용) -->
+    <script defer th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
+    
+    <!-- 전역 변수: API Key (Thymeleaf에서 주입) -->
+    <script th:inline="javascript">
+        window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ '';
+    </script>
+	
+</head>
+<body>
+<!-- 상단 헤더 영역 -->
+<header class="top-header">
+    <div class="logo-area">
+        <!-- 로고 클릭 시 index.html로 이동 -->
+       <a th:href="@{/}">
+            <img th:src="@{/images/achiko-logo3.png}" alt="로고">
+        </a>
+    </div>
+    <div class="header-text">
+        あちこちの夢が集まって、ひとつの物語が生まれる
+    </div>
+    <div class="mypage-area">
+        <!-- 마이페이지 클릭 시 user/selectOne으로 이동 -->
+        <a th:href="@{/user/selectOne}">
+            <button>마이페이지</button>
+        </a>
+    </div>
+</header>
+
+<!-- 메인 컨테이너 -->
+<main>
+    <!-- 글 제목 영역 -->
+    <section class="share-title-section">
+        <h1 class="share-title" th:text="${share.title}">シェアハウス 글 제목</h1>
+    </section>
+    
+    <!-- 방 사진 영역 -->
+    <section class="room-photos">
+        <!-- 사진이 여러 장 있을 경우 반복 렌더링 가능 -->
+        <!-- 예시로 5장 placeholder -->
+        <div class="photo-box">방 사진</div>
+        <div class="photo-box">방 사진</div>
+        <div class="photo-box">방 사진</div>
+        <div class="photo-box">방 사진</div>
+        <div class="photo-box">방 사진</div>
+    </section>
+    
+    <!-- 공유하기, 찜하기 버튼 영역 -->
+    <section class="action-buttons">
+        <button id="shareButton">공유하기</button>
+        
+        <!-- 찜하기/찜취소하기 버튼 (토글) -->
+        <button id="favoriteButton" 
+                th:text="${isFavorite} ? '찜 취소하기' : '찜하기' "
+                data-share-id="[[${share.shareId}]]"
+                data-is-favorite="[[${isFavorite}]]">
+            찜하기
+        </button>
+    </section>
+    
+    <!-- 방의 수 / 기간 / 가격 / 호스트에게 메세지 보내기 -->
+    <!-- ★ 공유 글의 세부 정보 출력 -->
+    <section class="share-info">
+        <div class="share-info-left">
+            
+            <p>상세 설명: <span th:text="${share.description}">설명</span></p>
+            <p>최대 인원: <span th:text="${share.maxGuests}">0</span></p>
+            <p>현재 인원: <span th:text="${share.currentGuests}">0</span></p>
+            <p>지역: 
+                <span th:text="${share.regionName}">지역명</span>,
+                <span th:text="${share.cityName}">도시명</span>,
+                <span th:text="${share.townName}">하위시/군/구</span>
+            </p>
+            <p>주소: <span th:text="${share.address}"></span> <span th:text="${share.detailAddress}"></span></p>
+            <p>우편번호: <span th:text="${share.postalCode}">000-0000</span></p>
+            <p>요금: <span th:text="${share.price}"></span> JPY</p>
+        </div>
+        <div class="share-info-right">
+            <button id="messageHostBtn">호스트에게 메세지 보내기</button>
+        </div>
+    </section>
+    
+    <!-- ★ 지도 영역: share의 주소를 기반으로 지도를 표시 -->
+    <section class="map-area">
+        <h3>지도</h3>
+        <div id="map" style="width: 100%; height: 400px;"></div>
+    </section>
+    
+    <!-- 호스트 소개 -->
+    <section class="host-intro">
+        <h2>호스트 소개</h2>
+    </section>
+    
+    <!-- 지도, 편의시설/인원정보 영역 -->
+    <section class="map-facility-section">
+        <div class="map-area">
+            <h3>지도</h3>
+            <div id="map" style="width: 100%; height: 300px;"></div>
+        </div>
+        <div class="facility-info">
+            <h3>편의시설, 현재 확정된 인원 정보</h3>
+            <p>예) 와이파이, 세탁기, 건조기, 주차장 등</p>
+            <p>현재 확정된 인원: <span th:text="${share.currentGuests}">0</span>명</p>
+        </div>
+    </section>
+    
+    <!-- 리뷰 영역 -->
+    <section class="review-section">
+        <h2>리뷰</h2>
+        <!-- user/receivedReview [GET] 로 이동(혹은 Ajax)해서 리뷰 불러오기 -->
+        <a th:href="@{/user/receivedReview}">
+            <button>리뷰 보러가기</button>
+        </a>
+    </section>
+</main>
+
+
+</body>
+</html>

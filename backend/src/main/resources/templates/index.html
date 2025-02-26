@@ -8,7 +8,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Achiko</title>
-    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}">
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
     <link
@@ -22,14 +22,12 @@
   <body>
     <header>
       <div class="header-col">
-        <div class="header-col">
-          <img
-            th:src="@{/images/logo-achiko.png}"
-            alt="Achiko Logo"
-            width="204px"
-            height="64px"
-          />
-        </div>
+        <img
+          th:src="@{/images/logo-achiko.png}"
+          alt="Achiko Logo"
+          width="204px"
+          height="64px"
+        />
       </div>
       <div class="header-col header-form">
         <ul>
@@ -51,6 +49,12 @@
 
           <li><a th:href="@{/viewSubscribe/subscribePage}">구독page</a></li>
           <li><a th:href="@{/viewSpline}">SplinePage</a></li>
+          <li>
+            <a th:href="@{/share/write}">글 작성 페이지</a>
+          </li>
+          <li>
+            <a th:href="@{/share/selectOne?shareId=6}">글 상세 페이지(6)</a>
+          </li>
         </ul>
         <div class="query-form">
           <div class="query-col query-location">
@@ -63,46 +67,39 @@
               />
             </div>
           </div>
-          <div class="query-divide"></div>
-          <div class="query-col query-date">
-            <div class="query-date-start">
-              <div class="query-title">체크인</div>
-              <p class="query-input">날짜 입력</p>
-            </div>
-            <div class="query-divide"></div>
-            <div class="query-date-end">
-              <div class="query-title">체크아웃</div>
-              <p class="query-input">날짜 입력</p>
-            </div>
-          </div>
-          <div class="query-divide"></div>
-          <div class="query-col query-submit">
-            <div class="query-submit-count">
-              <div class="query-title">인원</div>
-              <p class="query-input">게스트 추가</p>
-            </div>
-            <div>
-              <button class="query-submit-btn">
-                <svg
-                  viewBox="0 0 32 32"
-                  style="
-                    display: block;
-                    height: 16px;
-                    width: 16px;
-                    stroke: white;
-                    stroke-width: 4;
-                    overflow: visible;
-                  "
-                >
-                  <g fill="none">
-                    <path
-                      d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
-                    ></path>
-                  </g>
-                </svg>
-              </button>
-            </div>
-          </div>
+        </div>
+        <div class="query-divide"></div>
+        <div class="query-date-end">
+          <div class="query-title">체크아웃</div>
+          <p class="query-input">날짜 입력</p>
+        </div>
+      </div>
+      <div class="query-divide"></div>
+      <div class="query-col query-submit">
+        <div class="query-submit-count">
+          <div class="query-title">인원</div>
+          <p class="query-input">게스트 추가</p>
+        </div>
+        <div>
+          <button class="query-submit-btn">
+            <svg
+              viewBox="0 0 32 32"
+              style="
+                display: block;
+                height: 16px;
+                width: 16px;
+                stroke: white;
+                stroke-width: 4;
+                overflow: visible;
+              "
+            >
+              <g fill="none">
+                <path
+                  d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
+                ></path>
+              </g>
+            </svg>
+          </button>
         </div>
       </div>
       <div class="simple-query-form">
