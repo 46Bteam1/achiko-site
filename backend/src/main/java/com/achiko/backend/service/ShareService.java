@@ -30,7 +30,7 @@ public class ShareService {
      */
     public ShareDTO getShareById(Long shareId) {
     	
-        Optional<ShareEntity> optionalShare = shareRepository.findById((long) 1);
+        Optional<ShareEntity> optionalShare = shareRepository.findById(shareId);
         log.info("+++{}", shareRepository.findById(shareId).toString());
         log.info("+++{}", optionalShare.isPresent());
         if (optionalShare.isPresent()) {
@@ -63,6 +63,9 @@ public class ShareService {
                 .detailAddress(entity.getDetailAddress())
                 .createdAt(entity.getCreatedAt())
                 .status(entity.getStatus())
+                .regionName(entity.getRegion() != null ? entity.getRegion().getNameKanji() : null)
+                .cityName(entity.getCity() != null ? entity.getCity().getNameKanji() : null)
+                .townName(entity.getTown() != null ? entity.getTown().getNameKanji() : null)
                 .build();
     }
 
@@ -79,6 +82,7 @@ public class ShareService {
     }
 
     private ShareEntity convertToEntity(ShareDTO dto) {
+    	
     	if (dto.getHostId() == null) {
             throw new IllegalArgumentException("Host ID cannot be null.");
         }

@@ -33,6 +33,10 @@ public class ShareDTO {
     private String detailAddress;
     private LocalDateTime createdAt;
     private String status;
+    
+    private String regionName;
+    private String cityName;
+    private String townName;
 
     public static ShareDTO fromEntity(ShareEntity entity) {
         //if (entity == null) return null;
@@ -52,6 +56,9 @@ public class ShareDTO {
                 .detailAddress(entity.getDetailAddress())
                 .createdAt(entity.getCreatedAt())
                 .status(entity.getStatus())
+                .regionName(entity.getRegion() != null ? entity.getRegion().getNameKanji() : null)
+                .cityName(entity.getCity() != null ? entity.getCity().getNameKanji() : null)
+                .townName(entity.getTown() != null ? entity.getTown().getNameKanji() : null)
                 .build();
     }
 }

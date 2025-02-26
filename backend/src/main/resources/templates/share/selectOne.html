@@ -11,12 +11,44 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- 구글 맵 API 스크립트 -->
-   <!-- Google Maps API 스크립트 로드 -->
-	<script async defer
-    	th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&callback=initMap|}">
-	</script>
-
+    <script th:inline="javascript">
+        window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ '';
+        window.initMap = function () {
+            console.log("Google Maps API가 정상적으로 로드되었습니다.");
+            var address = /*[[${share.address}]]*/ "";
+            var detail = /*[[${share.detailAddress}]]*/ "";
+            var fullAddress = address + ", " + detail;  // ★ 쉼표로 구분하여 주소 형식 개선
+            console.log("Address 값: " + address); // 디버그용 출력
+            var geocoder = new google.maps.Geocoder();
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: {lat: 35.6895, lng: 139.6917}
+            });
+            geocoder.geocode({'address': fullAddress}, function(results, status) {
+                if (status === 'OK' && results.length > 0) {
+                    map.setCenter(results[0].geometry.location);
+                    new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    console.error('Geocode 실패: ' + status);
+                }
+            });
+        };
+    </script>
+    
+  <!-- selectOne.js 로드 (defer) -->
+    <script src="/js/selectOne.js" defer></script>
+    
+    <!-- Google Maps API 스크립트 로드 (async defer 적용) -->
+    <script defer th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
+    
+    <!-- 전역 변수: API Key (Thymeleaf에서 주입) -->
+    <script th:inline="javascript">
+        window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ '';
+    </script>
+	
 </head>
 <body>
 <!-- 상단 헤더 영역 -->
@@ -70,16 +102,31 @@
     </section>
     
     <!-- 방의 수 / 기간 / 가격 / 호스트에게 메세지 보내기 -->
+    <!-- ★ 공유 글의 세부 정보 출력 -->
     <section class="share-info">
         <div class="share-info-left">
-            <p>방의 수: <span th:text="${share.maxGuests}">0</span></p>
-            <p>기간: 예) 1개월 ~ 6개월</p>
-            <p>가격: <span th:text="${share.price}">10000</span> 원</p>
+            
+            <p>상세 설명: <span th:text="${share.description}">설명</span></p>
+            <p>최대 인원: <span th:text="${share.maxGuests}">0</span></p>
+            <p>현재 인원: <span th:text="${share.currentGuests}">0</span></p>
+            <p>지역: 
+                <span th:text="${share.regionName}">지역명</span>,
+                <span th:text="${share.cityName}">도시명</span>,
+                <span th:text="${share.townName}">하위시/군/구</span>
+            </p>
+            <p>주소: <span th:text="${share.address}"></span> <span th:text="${share.detailAddress}"></span></p>
+            <p>우편번호: <span th:text="${share.postalCode}">000-0000</span></p>
+            <p>요금: <span th:text="${share.price}"></span> JPY</p>
         </div>
         <div class="share-info-right">
-            <!-- 호스트에게 메세지 보내기 -->
             <button id="messageHostBtn">호스트에게 메세지 보내기</button>
         </div>
+    </section>
+    
+    <!-- ★ 지도 영역: share의 주소를 기반으로 지도를 표시 -->
+    <section class="map-area">
+        <h3>지도</h3>
+        <div id="map" style="width: 100%; height: 400px;"></div>
     </section>
     
     <!-- 호스트 소개 -->
@@ -110,67 +157,6 @@
     </section>
 </main>
 
-<!-- 자바스크립트 -->
-<script>
-    // 구글 맵 초기화
-    function initMap() {
-        // 대략적인 위치(도쿄) 예시. 실제 데이터에 따라 좌표를 받아오면 동적으로 변경 가능
-        var mapCenter = { lat: 35.6895, lng: 139.6917 };
-        var map = new google.maps.Map(document.getElementById('map'), {
-            center: mapCenter,
-            zoom: 10
-        });
-    }
-    
-    // 지도 로드
-    window.onload = function() {
-        initMap();
-    };
-    
-    // 공유하기 버튼 예시 (단순 alert)
-    document.getElementById('shareButton').addEventListener('click', function(){
-        alert('현재 페이지 URL을 복사하거나, SNS로 공유하세요.');
-    });
-
-    // 찜하기/찜취소하기 버튼
-    document.getElementById('favoriteButton').addEventListener('click', function(){
-        const button = this;
-        const shareId = button.getAttribute('data-share-id');
-        const isFavorite = button.getAttribute('data-is-favorite') === 'true';
-        
-        if(!isFavorite){
-            // 찜하기(POST)
-            fetch('/favorite/set', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({shareId: shareId})
-            })
-            .then(response => {
-                if(response.ok){
-                    button.innerText = '찜 취소하기';
-                    button.setAttribute('data-is-favorite', 'true');
-                } else {
-                    alert('찜하기 실패!');
-                }
-            })
-            .catch(err => console.error(err));
-        } else {
-            // 찜 취소하기(DELETE)
-            fetch('/favorite/cancel?shareId=' + shareId, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if(response.ok){
-                    button.innerText = '찜하기';
-                    button.setAttribute('data-is-favorite', 'false');
-                } else {
-                    alert('찜 취소 실패!');
-                }
-            })
-            .catch(err => console.error(err));
-        }
-    });
-</script>
 
 </body>
 </html>
