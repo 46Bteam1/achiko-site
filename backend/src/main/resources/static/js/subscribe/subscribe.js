@@ -15,9 +15,10 @@ $(document).ready(function () {
 
   // PG와 결제 방법 매핑
   const pgMap = {
-    tosspay: { pg: "토스", method: "카드" },
-    naverpay: { pg: "네이버", method: "간편" },
-    kakaopay: { pg: "카카오페이", method: "간편" },
+    kakaopay: { pg: "카카오", method: "카카오페이" },
+    tosspay: { pg: "토스", method: "토스" },
+    samsungpay: { pg: "나이스페이", method: "삼성페이" },
+    naverpay: { pg: "나이스페이", method: "네이버페이" },
   };
 
   // 결제 요청 버튼 클릭 이벤트
@@ -28,7 +29,8 @@ $(document).ready(function () {
     }
 
     const selectedPG = $("#pgSelect").val(); // 사용자가 선택한 PG
-    const price = $("#price").val(); // 결제 금액
+    // const price = $("#price").val(); // 결제 금액
+    const price = 9900; // 결제 금액
     const userId = $("#userId").val(); // 사용자 ID(DB의 user_id)
     const loginId = $("#loginId").val();
     const email = $("#email").val();
@@ -57,27 +59,59 @@ $(document).ready(function () {
       extra: {
         sandbox: true, // 샌드박스 모드 활성화
         open_type: "popup", // 팝업 모드 설정
+        // popupMode: true,
       },
     })
       .then(function (res) {
-        console.log("결제 성공:", res);
-        alert("결제 성공!\n" + JSON.stringify(res));
+        let receiptId = res.data.receipt_id;
 
         // 결제 성공 후 구독 상태 업데이트 요청
         $.ajax({
           url: "/api/subscribe/updateSubscription",
           type: "POST",
+          data: { receiptId: receiptId },
           success: function (response) {
-            alert("구독 상태 업데이트 성공!");
+            alert("결제가 완료됐습니다!\n더 다양한 서비스를 누려보세요!");
+            if (response.redirectUrl) {
+              window.location.href = response.redirectUrl;
+            }
           },
           error: function (xhr) {
-            alert("구독 상태 업데이트 실패: " + xhr.responseText);
+            alert("결제 상태 업데이트 실패");
+            console.log("결제 상태 업데이트 실패" + xhr.responseText);
           },
         });
       })
       .catch(function (err) {
         console.log("결제 실패:", err);
-        alert("결제 실패: " + JSON.stringify(err));
+        alert("결제 실패");
       });
+  });
+
+  $("#subscribeCancelButton").click(function () {
+    const userId = $("#userId").val();
+
+    if (!userId) {
+      alert("유저 정보를 확인할 수 없습니다.");
+      return;
+    }
+
+    // 결제 취소 요청
+    $.ajax({
+      url: "/api/subscribe/cancelSubscription",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ userId: userId }),
+      success: function (response) {
+        alert("다음에 또 만나요!");
+        if (response.redirectUrl) {
+          window.location.href = response.redirectUrl;
+        }
+      },
+      error: function (xhr) {
+        console.log("구독 취소 실패: " + xhr.responseText);
+        alert("구독 취소 실패");
+      },
+    });
   });
 });
