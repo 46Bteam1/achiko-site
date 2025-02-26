@@ -28,7 +28,10 @@ public class ChatViewController {
 	}
 	
 	@GetMapping("/chatRooms")
-	public String chatRoom() {
+	public String chatRoom(Model model,
+			@AuthenticationPrincipal LoginUserDetails loginUser) {
+		String nickname = loginUser.getNickname();
+		model.addAttribute("nickname", nickname);
 		return "chat/chatRooms";
 	}
 }

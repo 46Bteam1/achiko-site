@@ -8,9 +8,20 @@
     <script defer th:src="@{/js/chat/chatRooms.js}"></script>
   </head>
   <body>
-    <div id="logos"></div>
+    <div id="logos">
+      <div id="logo"></div>
+      <div>
+        <h3>あちこちの夢が集まり、ひとつの物語が生まれる</h3>
+      </div>
+      <div>
+        <input type="button" id="toMyPageBtn" value="My Page" />
+      </div>
+    </div>
 
     <div id="chatroomContainer">
+      <div>
+        <input type="hidden" th:value="${nickname}" id="nickname" />
+      </div>
       <div class="count"></div>
       <div id="chatRooms"></div>
     </div>

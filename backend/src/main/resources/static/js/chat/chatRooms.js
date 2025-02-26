@@ -12,12 +12,18 @@ function initChatRooms() {
 }
 
 function output(resp) {
+  const nickname = $("#nickname").val();
+
   let tag = `<table>`;
 
   $.each(resp, function (index, item) {
+    let nicknameCheck = item["hostNickname"] === nickname;
+    let displayNickname = nicknameCheck
+      ? item["guestNickname"]
+      : item["hostNickname"];
     tag += `
         <tr>
-            <td>${item["chatroomId"]}</td>
+            <td>${displayNickname}</td>
             <td class="btns">
                 <input type="button" value="입장" 
                 class="enterBtn"

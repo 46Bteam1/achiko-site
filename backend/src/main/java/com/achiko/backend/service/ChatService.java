@@ -46,14 +46,16 @@ public class ChatService {
 		// 2. UserEntity로 본인이 속한 chatParticipantEntity list 가져오기
 		// 이 때 user가 host인지 guest인지 확인
 		if(user.getIsHost() == 0) {
+			// 게스트인 경우
 			List<ChatParticipantEntity> participantList = participantRepository.findByGuest_UserId(user.getUserId());
 			participantList.forEach((e)->{
-				list.add(ChatParticipantDTO.toDTO(e, e.getChatroom().getChatroomId(), e.getHost().getUserId(), e.getGuest().getUserId()));
+				list.add(ChatParticipantDTO.toDTO(e,e.getChatroom().getChatroomId(), e.getHost().getNickname(), e.getGuest().getNickname()));
 			});
 		}else if(user.getIsHost() == 1) {
+			// 호스트인 경우
 			List<ChatParticipantEntity> participantList = participantRepository.findByHost_UserId(user.getUserId());
 			participantList.forEach((e)->{
-				list.add(ChatParticipantDTO.toDTO(e, e.getChatroom().getChatroomId(), e.getHost().getUserId(), e.getGuest().getUserId()));
+				list.add(ChatParticipantDTO.toDTO(e,e.getChatroom().getChatroomId(), e.getHost().getNickname(), e.getGuest().getNickname()));
 			});
 		}
 		

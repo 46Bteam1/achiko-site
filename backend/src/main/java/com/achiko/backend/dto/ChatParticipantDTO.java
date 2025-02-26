@@ -22,16 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatParticipantDTO {
 	private Long participantId;
 	private Long chatroomId;
-	private Long hostId;
-	private Long guestId;
+	private String hostNickname;
+	private String guestNickname;
 	private LocalDateTime joinedAt;
 	
-	public static ChatParticipantDTO toDTO(ChatParticipantEntity pEntity, Long chatroomId, Long hostId, Long guestId) {
+	public static ChatParticipantDTO toDTO(ChatParticipantEntity pEntity, Long chatroomId, String hostNickname, String guestNickname) {
 		return ChatParticipantDTO.builder()
 				.participantId(pEntity.getParticipantId())
 				.chatroomId(chatroomId)
-				.hostId(hostId)
-				.guestId(guestId)
+				.hostNickname(hostNickname)
+				.guestNickname(guestNickname)
 				.joinedAt(pEntity.getJoinedAt())
 				.build();
 	}

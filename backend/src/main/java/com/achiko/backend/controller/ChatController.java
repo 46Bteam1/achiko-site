@@ -44,8 +44,6 @@ public class ChatController {
 	@GetMapping("/selectRooms")
 	@Operation(summary = "채팅방들 조회 메서드", description = "내가 속한 채팅방들을 조회합니다.")
 	public List<ChatParticipantDTO> selectRooms(@AuthenticationPrincipal LoginUserDetails loginUser) {
-		// 내가 host인지 guest인지 판별
-		// 
 		
 		List<ChatParticipantDTO> list = chatService.selectRooms(loginUser.getUsername());
 		return list;
