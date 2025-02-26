@@ -2,7 +2,6 @@ package com.achiko.backend.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.entity.UserEntity;
@@ -24,16 +23,4 @@ public class UserService {
         
 		userRepository.save(UserEntity.toEntity(userDTO));
 	}
-    
-    /**
-     *  사용자 구독 상태 업데이트 (is_subscribed 변경)
-     */
-    @Transactional
-    public void updateSubscriptionStatus(Long userId, int status) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId + "번의 사용자"));
-
-        userEntity.setIsSubscribed(status);
-        userRepository.save(userEntity);
-    }
 }
