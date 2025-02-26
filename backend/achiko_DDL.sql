@@ -1,4 +1,4 @@
--- 0224
+-- 0225
 drop database if exists achiko;
 create database achiko;
 use achiko;
@@ -18,8 +18,8 @@ drop table if exists reputation_detail;
 drop table if exists review_reply;
 drop table if exists user_preference;
 drop table if exists favorite;
-drop table if exists region;
 drop table if exists email_auth;
+drop table if exists roommate;
 
 -- 지방 이름 (관동, 관서 등)
 CREATE TABLE province (
@@ -73,7 +73,7 @@ create table users (
     gender tinyint default 0 check (gender in (0,1,2)),
     bio text,
     created_at timestamp default current_timestamp,
-    is_subscribed tinyint default 0 check (is_subscribed in (0,1)) -- 0:구독 안함, 1: 구독함
+    receipt_id varchar(100) default null
 );
 
 CREATE TABLE share (
@@ -218,6 +218,15 @@ create table email_auth(
     auth_code varchar(255) not null,
     expired_at timestamp not null,
     verified boolean default false
+);
+
+-- 룸메이트 테이블
+create table roommate(
+    roommate_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    share_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (share_id) REFERENCES share(share_id) ON DELETE CASCADE
 );
 
 ---------------------------------------------------
