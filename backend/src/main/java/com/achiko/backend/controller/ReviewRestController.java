@@ -21,10 +21,10 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/test")
 public class ReviewRestController {
 
-    @Operation(summary = "전체 데이터 조회", description = "모든 테스트 데이터를 반환합니다.")
-    @GetMapping("/all")
-    public ResponseEntity<List<TestDTO>> getAllTests() {
-        return ResponseEntity.ok(ReviewService.getAllTests());
-	}
+//    @Operation(summary = "전체 데이터 조회", description = "모든 테스트 데이터를 반환합니다.")
+//    @GetMapping("/all")
+//    public ResponseEntity<List<TestDTO>> getAllTests() {
+//        return ResponseEntity.ok(ReviewService.getAllTests());
+//	}
 	
 }
