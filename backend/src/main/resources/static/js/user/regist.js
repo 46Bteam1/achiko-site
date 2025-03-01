@@ -105,6 +105,8 @@ let passwordCheck = false;
 	function chkRegist(){
 		let password = $('#password').val();
 		let passwordChk = $('#passwordChk').val();
+		let languagesChk = $("input[name='languages']:checked").length;
+		
 		if(password != passwordChk){
 			passwordCheck = false;
 			alert("비밀번호가 일치하지 않습니다.");
@@ -128,5 +130,10 @@ let passwordCheck = false;
 			alert("이메일을 인증해주세요.");
 			return false;
 		}
+		if (languagesChk === 0) {
+		    alert("최소 한 개 이상의 언어를 선택해주세요.");
+			return false;
+		}
+		
 		return true;
 	}
