@@ -68,4 +68,24 @@ public class UserService {
         }
         return tempPw;
 	}
+
+	public boolean isIdAvailable(String loginId) {
+		UserEntity userEntity = userRepository.findByLoginId(loginId);
+		
+		if(userEntity == null) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	public boolean isEmailAvailable(String email) {
+		UserEntity userEntity = userRepository.findByEmail(email);
+		
+		if(userEntity == null) {
+			return true;
+		}
+		
+		return false;
+	}
 }

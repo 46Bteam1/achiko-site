@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.service.UserService;
@@ -58,5 +60,19 @@ public class UserController {
 		String tempPw = userService.findPassword(userDTO);
 		model.addAttribute("tempPw", tempPw);
 		return "/user/findPasswordResult";
+	}
+	
+	@PostMapping("/chkIdDuplication")
+	@ResponseBody
+	public boolean chkIdDuplication(@RequestParam(name="loginId") String loginId) {
+		boolean isDup = userService.isIdAvailable(loginId);
+		return isDup;
+	}
+	
+	@PostMapping("/chkEmailDuplication")
+	@ResponseBody
+	public boolean chkEmailDuplication(@RequestParam(name="email") String email) {
+		boolean isDup = userService.isEmailAvailable(email);
+		return isDup;
 	}
 }

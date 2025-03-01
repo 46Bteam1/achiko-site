@@ -7,7 +7,7 @@
   <!-- jQuery -->
   	<script src="../../static/js/jquery-3.7.1.min.js" th:src="@{/js/jquery-3.7.1.min.js}"></script>
   	
-  	<script th:src="@{/js/user/regist.js}"></script>
+  	<script defer th:src="@{/js/user/regist.js}"></script>
 	<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   	<link rel="stylesheet" th:href="@{/css/user/regist.css}" />
   	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -70,8 +70,12 @@
 	    </div>
         <form th:action="@{/user/regist}" method="POST">
             <div class="form-group">
-                <label for="loginId">아이디</label>
-                <input type="text" name="loginId" id="loginId" class="form-control" placeholder="ID 입력" required>
+            	<label for="loginId">아이디</label>
+            	<div class="input-group">
+                    <input type="text" name="loginId" id="loginId" class="form-control" placeholder="ID 입력" required>
+                    <button type="button" id="chkDuplicationBtn" class="btn btn-secondary">중복확인</button>
+                </div>
+                <div id="confirmId" style="font-size: 0.8em;"></div>
             </div>
             <div class="form-group">
                 <label for="password">비밀번호</label>
@@ -90,20 +94,20 @@
             </div>
             <div class="form-group">
                 <label for="realName">이름</label>
-                <input type="text" name="realName" id="realName" class="form-control" placeholder="이름 입력">
+                <input type="text" name="realName" id="realName" class="form-control" placeholder="이름 입력" required>
             </div>
             <div class="form-group">
                 <label for="nickname">닉네임</label>
-                <input type="text" name="nickname" id="nickname" class="form-control" placeholder="닉네임 입력">
+                <input type="text" name="nickname" id="nickname" class="form-control" placeholder="닉네임 입력" required>
             </div>
             <div class="form-group">
                 <label for="age">나이</label>
-                <input type="number" name="age" id="age" class="form-control">
+                <input type="number" name="age" id="age" class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="email">이메일</label>
                 <div class="input-group">
-                    <input type="email" name="email" id="email" class="form-control" placeholder="email 입력">
+                    <input type="email" name="email" id="email" class="form-control" placeholder="email 입력" required>
                     <button type="button" id="authBtn" class="btn btn-secondary">인증번호 전송</button>
                 </div>
             </div>
