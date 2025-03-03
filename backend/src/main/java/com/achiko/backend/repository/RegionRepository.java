@@ -9,5 +9,7 @@ import com.achiko.backend.entity.RegionEntity;
 
 @Repository
 public interface RegionRepository extends JpaRepository<RegionEntity, Integer> {
-    List<RegionEntity> findByProvinceId(Integer provinceId);
+//    List<RegionEntity> findByProvinceId(Integer provinceId);
+
+	List<RegionEntity> findByProvinceProvinceId(Integer provinceId);
 }
