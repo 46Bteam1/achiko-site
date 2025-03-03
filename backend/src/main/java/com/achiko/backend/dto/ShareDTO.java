@@ -20,6 +20,7 @@ public class ShareDTO {
     // DB와 1:1 매핑되는 필드
     private Long shareId;
     private Long hostId;
+    private Long provinceId;
     private Long regionId;
     private Long cityId;
     private Long townId;
@@ -34,6 +35,7 @@ public class ShareDTO {
     private LocalDateTime createdAt;
     private String status;
     
+    private String provinceName;
     private String regionName;
     private String cityName;
     private String townName;
@@ -43,6 +45,7 @@ public class ShareDTO {
         return ShareDTO.builder()
                 .shareId(entity.getShareId())
                 .hostId(entity.getHost() != null ? entity.getHost().getUserId() : null)
+                .provinceId(entity.getProvince() != null ? Long.valueOf(entity.getProvince().getProvinceId()) : null)
                 .regionId(entity.getRegion() != null ? Long.valueOf(entity.getRegion().getRegionId()) : null) // ★ Integer → Long 변환
                 .cityId(entity.getCity() != null ? Long.valueOf(entity.getCity().getCityId()) : null)             // ★ Integer → Long 변환
                 .townId(entity.getTown() != null ? Long.valueOf(entity.getTown().getTownId()) : null)             // ★ Integer → Long 변환
@@ -56,6 +59,7 @@ public class ShareDTO {
                 .detailAddress(entity.getDetailAddress())
                 .createdAt(entity.getCreatedAt())
                 .status(entity.getStatus())
+                .provinceName(entity.getProvince() != null ? entity.getProvince().getNameKanji() : null)
                 .regionName(entity.getRegion() != null ? entity.getRegion().getNameKanji() : null)
                 .cityName(entity.getCity() != null ? entity.getCity().getNameKanji() : null)
                 .townName(entity.getTown() != null ? entity.getTown().getNameKanji() : null)
