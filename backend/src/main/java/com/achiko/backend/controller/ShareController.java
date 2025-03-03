@@ -1,6 +1,7 @@
 package com.achiko.backend.controller;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,16 @@ public class ShareController {
 
 	private final ShareService shareService;
 	private final UserRepository userRepository;
+	
+	@ResponseBody
+	@GetMapping("/share/selectAll")
+	public List<ShareDTO> selectAll() {
+		List<ShareDTO> shareList = shareService.getShareListAll();
+		if(shareList.size() == 0) {
+			return null;
+		}
+		return shareList;
+	}
 
 	/**
 	 * 글 상세 조회 페이지 URL 예: /share/selectOne?shareId=1
