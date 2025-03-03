@@ -49,7 +49,7 @@ public class UserEntity {
 	@Column(name="email", nullable = false)
 	private String email;
 	
-	@Column(name="password", nullable = false)
+	@Column(name="password")
 	private String password;
 	
 	@Column(name="is_host")
@@ -72,13 +72,13 @@ public class UserEntity {
 	@Builder.Default
 	private boolean isMalicious = false;
 	
-	@Column(name="languages", nullable = false)
+	@Column(name="languages")
 	private String languages;
 	
-	@Column(name="age", nullable = false)
+	@Column(name="age")
 	private Integer age;
 	
-	@Column(name="nationality", nullable = false)
+	@Column(name="nationality")
 	private String nationality;
 	
 	@Column(name="religion")
