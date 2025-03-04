@@ -26,12 +26,14 @@ import lombok.ToString;
 public class LoginUserDetails implements UserDetails {
  	private static final long serialVersionUID = 1L;
 	
+ 	private Long userId;
 	private String loginId;
 	private String password;
 	private String nickname;
 	private String realName;
 	private String email;
 	private String role;
+	private String receiptId;
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -63,13 +65,19 @@ public class LoginUserDetails implements UserDetails {
 		return this.email;
 	}
 	
+	public String getReceiptId() {
+		return this.receiptId;
+	}
+	
 	public static LoginUserDetails toDTO(UserEntity userEntity) {
 		return LoginUserDetails.builder()
+				.userId(userEntity.getUserId())
 				.loginId(userEntity.getLoginId())
 				.password(userEntity.getPassword())
 				.nickname(userEntity.getNickname())
 				.realName(userEntity.getRealName())
 				.email(userEntity.getEmail())
+				.receiptId(userEntity.getReceiptId())
 				.role(userEntity.getRole())
 				.build();
 	}

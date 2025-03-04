@@ -1,31 +1,37 @@
 <!DOCTYPE html>
-
 <html lang="ko" xmlns:th="http://thymeleaf.org" xmlns:sec="http://thymeleaf.org/extras/spring-security">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Achiko</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
   <link rel="stylesheet" th:href="@{/css/style.css}" />
   <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
-  <link href="http://fonts.cdnfonts.com/css/airbnb-cereal-app" rel="stylesheet" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
     integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous" />
-  <script th:src="@{./js/index.js}" defer></script>
+  <script th:src="@{/js/index.js}" defer></script>
+
+
+  <!-- google map -->
+  <script async defer
+    th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
+  <script th:inline="javascript">
+    window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ "";
+  </script>
 </head>
 
 <body>
   <header>
     <div class="header-col">
-      <div class="header-col">
+      <a href="../index.html" th:href="@{/}">
         <img th:src="@{/images/logo-achiko.png}" alt="Achiko Logo" width="204px" height="64px" />
-      </div>
+      </a>
     </div>
+
+
     <div class="header-col header-form">
       <ul>
-        <li><span>숙소</span></li>
-        <li><span>체험</span></li>
-        <li><a href="#">온라인 체험</a></li>
         <li><a th:href="@{/testTemp/testPage}">testpage</a></li>
         <!-- 인증되지 않은 사용자 -->
         <th:block sec:authorize="isAnonymous()">
@@ -38,41 +44,59 @@
           <li><a th:href="@{/user/logout}">로그아웃</a></li>
           <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
         </th:block>
-
         <li><a th:href="@{/reviewView}">reviewpage</a></li>
-
+        <li><a th:href="@{/viewSubscribe/subscribePage}">구독page</a></li>
+        <li><a th:href="@{/viewSpline}">SplinePage</a></li>
         <li>
           <a th:href="@{/share/write}">글 작성 페이지</a>
         </li>
         <li>
           <a th:href="@{/share/selectOne?shareId=6}">글 상세 페이지(6)</a>
         </li>
-
+        <li>
+          <a th:href="@{/share/selectOne?shareId=1}">글 상세 페이지(1)</a>
+        </li>
+        <li>
+          <a th:href="@{/share/selectOne?shareId=2}">글 상세 페이지(2)</a>
+        </li>
       </ul>
       <div class="query-form">
-        <div class="query-col query-location">
-          <div class="query-title">위치</div>
-          <div class="query-location-input">
-            <input type="text" class="query-input" placeholder="어디로 여행가세요?" />
-          </div>
+        <div class="query-date-end">
+          <div class="query-title">지방</div>
+          <select id="provinceId" name="provinceId" class="form-control" required onchange="updateRegionSelect()">
+            <option value="all" selected>전체</option>
+            <option value="1">北海道</option>
+            <option value="2">東北</option>
+            <option value="3">甲信越・北陸</option>
+            <option value="4">関東</option>
+            <option value="5">中国</option>
+            <option value="6">東海</option>
+            <option value="7">九州・沖縄</option>
+            <option value="8">関西</option>
+            <option value="9">四国</option>
+          </select>
         </div>
         <div class="query-divide"></div>
-        <div class="query-col query-date">
-          <div class="query-date-start">
-            <div class="query-title">체크인</div>
-            <p class="query-input">날짜 입력</p>
-          </div>
-          <div class="query-divide"></div>
-          <div class="query-date-end">
-            <div class="query-title">체크아웃</div>
-            <p class="query-input">날짜 입력</p>
-          </div>
+        <div class="query-date-end">
+          <div class="query-title">지역</div>
+          <select id="regionId" name="regionId" class="form-control" required onchange="updateCitySelect()">
+            <option value="all">전체</option>
+          </select>
+        </div>
+        <div class="query-divide"></div>
+        <div class="query-date-end">
+          <div class="query-title">도시</div>
+          <select id="cityId" name="cityId" class="form-control" required onchange="updateTownSelect()">
+            <option value="all">전체</option>
+          </select>
         </div>
         <div class="query-divide"></div>
         <div class="query-col query-submit">
-          <div class="query-submit-count">
-            <div class="query-title">인원</div>
-            <p class="query-input">게스트 추가</p>
+          <div class="query-date-end">
+            <div class="query-title">시/군/구</div>
+            <select id="townId" name="townId" class="form-control" required>
+              <option value="all">전체</option>
+            </select>
           </div>
           <div>
             <button class="query-submit-btn">
@@ -120,7 +144,7 @@
     </div>
     <div class="header-col header-nav">
       <div class="header-nav-left">
-        <a class="sticky-black" href="#">호스트 되기</a>
+        <a class="sticky-black" href="#">あちこちの夢が集まり、<br />ひとつの物語が生まれる</a>
         <button>
           <svg class="sticky-black" width="16px" height="16px">
             <path
@@ -130,7 +154,7 @@
         </button>
       </div>
       <div class="header-nav-right">
-        <button>
+        <button id="menuButton">
           <div class="icon-list">
             <svg viewBox="0 0 32 32" style="
                   display: block;
@@ -158,153 +182,161 @@
         </button>
       </div>
     </div>
+    <!-- 모달 (회원가입/로그인 메뉴) -->
+    <div id="modalMenu" class="modal">
+      <div class="modal-content">
+        <!-- <span class="close">&times;</span> -->
+        <div class="menu-group">
+          <th:block sec:authorize="isAnonymous()">
+            <li><a th:href="@{/user/regist}">회원가입</a></li>
+            <li><a th:href="@{/user/login}">로그인</a></li>
+          </th:block>
+          <th:block sec:authorize="isAuthenticated()">
+            <li><a th:href="@{/user/logout}">로그아웃</a></li>
+            <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
+          </th:block>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-group">
+          <li><a th:href="@{/viewSubscribe/subscribePage}">구독 page</a></li>
+          <li><a th:href="@{/viewSpline}">SplinePage</a></li>
+          <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
+          <li>
+            <a th:href="@{/share/selectOne?shareId=6}">글 상세 페이지(6)</a>
+          </li>
+        </div>
+      </div>
+    </div>
   </header>
   <main>
-    <article class="background-img">
-      <div class="background-text-wrap">
-        <div class="text">
-          어디든 상관없이 떠나고 싶을 때 Achiko가 도와드립니다!
+    <!-- <article class="background-img">
+        <div class="background-text-wrap">
+          <div class="text">
+            어디든 상관없이 떠나고 싶을 때 Achiko가 도와드립니다!
+          </div>
+          <div class="button-wrap">
+            <button>
+              <span>유연한 검색</span>
+            </button>
+          </div>
         </div>
-        <div class="button-wrap">
-          <button>
-            <span>유연한 검색</span>
-          </button>
-        </div>
-      </div>
-    </article>
+      </article> -->
     <article class="near-trip">
       <h2>가까운 여행지 둘러보기</h2>
-      <ul class="near-trip-list">
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/71e23854-a3c7-491c-b715-6e86233a293f.jpg?im_q=medq&im_w=240" />
-          <div class="near-trip-item">
-            <div class="near-trip-title">서울</div>
-            <div class="near-trip-subtitle">차로 15분 거리</div>
-          </div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/be4d3ba5-08d7-4afe-95a7-f2da6453886a.jpg?im_q=medq&im_w=240" />
-          <div class="near-trip-item">
-            <div class="near-trip-title">부산</div>
-            <div class="near-trip-subtitle">차로 5.5시간 거리</div>
-          </div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/7253e011-7c22-48fd-b75d-d0da35372397.jpg?im_q=medq&im_w=240" />
-          <div class="near-trip-item">
-            <div class="near-trip-title">양양군</div>
-            <div class="near-trip-subtitle">차로 2.5시간 거리</div>
-          </div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/52e8083e-2de2-446d-a860-534eab250541.jpg?im_q=medq&im_w=240" />
-          <div class="near-trip-item">
-            <div class="near-trip-title">속초시</div>
-            <div class="near-trip-subtitle">차로 3시간 거리</div>
-          </div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/20e74de0-0eb8-4fca-afb8-b111875acdf5.jpg?im_q=medq&im_w=240" />
-          <div class="near-trip-item">
-            <div class="near-trip-title">제주도(Jeju)</div>
-            <div class="near-trip-subtitle">차로 7시간 거리</div>
-          </div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/20356d40-a45f-4680-a9d0-5bb0a3836e4d.jpg?im_q=medq&im_w=240" />
-          <div class="near-trip-item">
-            <div class="near-trip-title">대구</div>
-            <div class="near-trip-subtitle">차로 4시간 거리</div>
-          </div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/e639b7ab-aee3-48ee-9743-216684a51319.jpg?im_q=medq&im_w=240" />
-          <div class="near-trip-item">
-            <div class="near-trip-title">완주군</div>
-            <div class="near-trip-subtitle">차로 3시간 거리</div>
-          </div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/ca3737ef-0faf-46ba-b055-b4a2d99e2cea.jpg?im_q=medq&im_w=240" />
-          <div class="near-trip-item">
-            <div class="near-trip-title">전주시</div>
-            <div class="near-trip-subtitle">차로 3시간 거리</div>
-          </div>
-        </li>
-      </ul>
+      <section id="listings-container" class="listings-grid">
+        <div th:each="listing : ${shareList}" class="listing-card">
+          <a th:href="@{/share/selectOne(shareId=${listing.shareId})}" class="listing-link">
+            <button class="favorite-btn">
+              <i class="far fa-heart"></i>
+            </button>
+            <img th:src="@{/images/favicon.ico}" alt="숙소 이미지" />
+
+            <div class="listing-info">
+              <h3 th:text="${listing.title}"></h3>
+              <p th:text="${listing.regionName + ' ' + listing.cityName + ' ' + listing.townName}"></p>
+              <p>
+                ₩<span th:text="${#numbers.formatInteger(listing.price, 3, 'COMMA')}"></span>/박
+              </p>
+              <p th:text="'최대 인원: ' + ${listing.maxGuests} + '명'"></p>
+            </div>
+          </a>
+        </div>
+      </section>
     </article>
-    <article class="anywhere-trip">
-      <h2>어디에서나, 여행은 살아보는 거야!</h2>
-      <ul class="anywhere-trip-list">
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/2f13349d-879d-43c6-83e3-8e5679291d53.jpg?im_w=480" />
-          <div class="anywhere-trip-subtitle">
-            자연생활을 만낄할 수 있는 숙소
-          </div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/36f53e61-db8d-403c-9122-5b761c0e4264.jpg?im_w=480" />
-          <div class="anywhere-trip-subtitle">독특한 공간</div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/7d82ca14-56e5-4465-8218-dcfa7d69b6ac.jpg?im_w=480" />
-          <div class="anywhere-trip-subtitle">집 전체</div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/10a638e1-6aff-4313-8033-1275cec83987.jpg?im_w=480" />
-          <div class="anywhere-trip-subtitle">반려동물 동반가능</div>
-        </li>
-      </ul>
+    <!-- google map (구글 맵) -->
+    <article id="mapContainer" style="display: none">
+      <div id="googleMap"></div>
     </article>
-    <article class="hosting-start">
-      <div class="hosting-start-background">
-        <div class="hosting-start-text-wrap">
-          <h2>호스팅 시작하기</h2>
-          <div class="hosting-start-subtitle">
-            <span>숙소를 공유하여 부수입을 올리고<br />
-              새로운 가능성을 만나세요.</span>
-          </div>
-          <div class="hosting-start-btn-wrap">
-            <p>자세히 알아보기</p>
+    <button id="mapButton">지도 표시하기</button>
+
+    <!-- <article class="anywhere-trip">
+        <h2>어디에서나, 여행은 살아보는 거야!</h2>
+        <ul class="anywhere-trip-list">
+          <li>
+            <img
+              src="https://a0.muscache.com/im/pictures/2f13349d-879d-43c6-83e3-8e5679291d53.jpg?im_w=480"
+            />
+            <div class="anywhere-trip-subtitle">
+              자연생활을 만낄할 수 있는 숙소
+            </div>
+          </li>
+          <li>
+            <img
+              src="https://a0.muscache.com/im/pictures/36f53e61-db8d-403c-9122-5b761c0e4264.jpg?im_w=480"
+            />
+            <div class="anywhere-trip-subtitle">독특한 공간</div>
+          </li>
+          <li>
+            <img
+              src="https://a0.muscache.com/im/pictures/7d82ca14-56e5-4465-8218-dcfa7d69b6ac.jpg?im_w=480"
+            />
+            <div class="anywhere-trip-subtitle">집 전체</div>
+          </li>
+          <li>
+            <img
+              src="https://a0.muscache.com/im/pictures/10a638e1-6aff-4313-8033-1275cec83987.jpg?im_w=480"
+            />
+            <div class="anywhere-trip-subtitle">반려동물 동반가능</div>
+          </li>
+        </ul>
+      </article>
+      <article class="hosting-start">
+        <div class="hosting-start-background">
+          <div class="hosting-start-text-wrap">
+            <h2>호스팅 시작하기</h2>
+            <div class="hosting-start-subtitle">
+              <span
+                >숙소를 공유하여 부수입을 올리고<br />
+                새로운 가능성을 만나세요.</span
+              >
+            </div>
+            <div class="hosting-start-btn-wrap">
+              <p>자세히 알아보기</p>
+            </div>
           </div>
         </div>
-      </div>
-    </article>
-    <article class="special-trip">
-      <h2>특별한 즐길 거리를 찾아보세요</h2>
-      <ul class="special-trip-list">
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/ad109d56-2421-40cd-98e6-e114160dc85b.jpg?im_w=480" />
-          <div class="special-trip-item">
-            <div class="special-trip-title">체험</div>
-            <div class="special-trip-subtitle">
-              가까운 곳에서 즐길 수 있는 잊지 못할 체험을 찾아보세요.
+      </article>
+      <article class="special-trip">
+        <h2>특별한 즐길 거리를 찾아보세요</h2>
+        <ul class="special-trip-list">
+          <li>
+            <img
+              src="https://a0.muscache.com/im/pictures/ad109d56-2421-40cd-98e6-e114160dc85b.jpg?im_w=480"
+            />
+            <div class="special-trip-item">
+              <div class="special-trip-title">체험</div>
+              <div class="special-trip-subtitle">
+                가까운 곳에서 즐길 수 있는 잊지 못할 체험을 찾아보세요.
+              </div>
             </div>
-          </div>
-        </li>
-        <li>
-          <img src="https://a0.muscache.com/im/pictures/0ce799cb-7553-4369-be9e-d0011e0ef636.jpg?im_w=480" />
-          <div class="special-trip-item">
-            <div class="special-trip-title">온라인 체험</div>
-            <div class="special-trip-subtitle">
-              호스트와 실시간으로 소통하면서 액티비티를 즐겨보세요.
+          </li>
+          <li>
+            <img
+              src="https://a0.muscache.com/im/pictures/0ce799cb-7553-4369-be9e-d0011e0ef636.jpg?im_w=480"
+            />
+            <div class="special-trip-item">
+              <div class="special-trip-title">온라인 체험</div>
+              <div class="special-trip-subtitle">
+                호스트와 실시간으로 소통하면서 액티비티를 즐겨보세요.
+              </div>
             </div>
-          </div>
-        </li>
-        <li>
-          <div class="special-trip-img-wrap">
-            <p>👍</p>
-            <img src="https://a0.muscache.com/im/pictures/f51f70fb-93b7-4974-86e8-1195b64f1353.jpg?im_w=480" />
-          </div>
-          <div class="special-trip-item">
-            <div class="special-trip-title">올림픽.패럴림픽 출전 선수</div>
-            <div class="special-trip-subtitle">
-              운동선수가 호스팅하는 온라인 액티비티를 즐겨보세요.
+          </li>
+          <li>
+            <div class="special-trip-img-wrap">
+              <p>👍</p>
+              <img
+                src="https://a0.muscache.com/im/pictures/f51f70fb-93b7-4974-86e8-1195b64f1353.jpg?im_w=480"
+              />
             </div>
-          </div>
-        </li>
-      </ul>
-    </article>
+            <div class="special-trip-item">
+              <div class="special-trip-title">올림픽.패럴림픽 출전 선수</div>
+              <div class="special-trip-subtitle">
+                운동선수가 호스팅하는 온라인 액티비티를 즐겨보세요.
+              </div>
+            </div>
+          </li>
+        </ul>
+      </article> -->
   </main>
   <footer>
     <div class="footer-sections">
