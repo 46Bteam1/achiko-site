@@ -35,12 +35,21 @@ public class ViewingController {
 	}
 	
 	// 게스트의 뷰잉 조회하기
-	@GetMapping("/findViewings")
-	public List<ViewingDTO> findViewings(@AuthenticationPrincipal LoginUserDetails loginUser){
+	@GetMapping("/findGuests")
+	public List<ViewingDTO> findViewings1(@AuthenticationPrincipal LoginUserDetails loginUser){
 		List<ViewingDTO> dtoList = viewingService.findViewings(loginUser.getUsername());
 		
 		return dtoList;
 	}
+	
+	// 호스트의 뷰잉 조회하기
+	@GetMapping("/findHosts")
+	public List<ViewingDTO> findViewings2(@AuthenticationPrincipal LoginUserDetails loginUser){
+		List<ViewingDTO> dtoList = viewingService.findHost(loginUser.getUsername());
+		
+		return dtoList;
+	}
+	
 	
 	// 뷰잉 후 확정하기
 	

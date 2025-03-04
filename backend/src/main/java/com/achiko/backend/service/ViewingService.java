@@ -2,12 +2,15 @@ package com.achiko.backend.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.ViewingDTO;
+import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.entity.ViewingEntity;
+import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.repository.ViewingRepository;
 
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ViewingService {
 	private final ViewingRepository viewingRepository;
 	private final UserRepository userRepository;
+	private final ShareRepository shareRepository;
 	
 	public void setViewing(ViewingDTO viewingDTO, String loginId) {
 		UserEntity user = userRepository.findByLoginId(loginId);
@@ -43,9 +47,17 @@ public class ViewingService {
 	public List<ViewingDTO> findHost(String loginId) {
 		UserEntity user = userRepository.findByLoginId(loginId);
 		if(user == null) return null;
+		ShareEntity share = shareRepository.findByHost(user);
+		if(share == null) return null;
+		
 		
 		List<ViewingDTO> list = new ArrayList<>();
-		return null;
+		List<ViewingEntity> tempList = viewingRepository.findByShare(share);
+
+		tempList.forEach((e)->{
+			list.add(ViewingDTO.toDTO(e, e.getGuest().getNickname()));
+		});
+		return list;
 	}
 
 	
