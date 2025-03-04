@@ -223,7 +223,6 @@ $(document).ready(function () {
   // 메뉴 버튼
   const $menuButton = $("#menuButton");
   const $modalMenu = $("#modalMenu");
-  // const $closeModal = $(".close");
 
   // 메뉴 버튼 클릭 시 모달 열기
   $menuButton.on("click", function (event) {
@@ -234,11 +233,6 @@ $(document).ready(function () {
       $modalMenu.show();
     }
   });
-
-  // 닫기 버튼 클릭 시 모달 닫기
-  // $closeModal.on("click", function () {
-  //   $modalMenu.hide();
-  // });
 
   // 모달 바깥 클릭 시 모달 닫기
   $(document).on("click", function (event) {
