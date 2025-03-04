@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>글 수정</title>
+  <!-- CSS 연결 -->
+  <link rel="stylesheet" th:href="@{/css/update.css}" />
+
+  <!-- Noto Sans Korean & Japanese 폰트 추가 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- ★ 전역 변수 및 메인 지도 초기화 함수 정의 -->
+  <script th:inline="javascript">
+    // Thymeleaf로부터 API Key와 주소, 그리고 province/region/city/town 정보를 주입 (★ null 방지를 위해 기본값 제공)
+    window.googleApiKeyFromServer = /*[[${googleApiKey != null ? googleApiKey : 'default-key'}]]*/ 'default-key';
+    window.provinceId             = /*[[${provinceId != null ? provinceId : 0}]]*/ 0;
+    window.regionId               = /*[[${share?.regionId != null ? share.regionId : 0}]]*/ 0;
+    window.cityId                 = /*[[${share?.cityId != null ? share.cityId : 0}]]*/ 0;
+    window.townId                 = /*[[${share?.townId != null ? share.townId : 0}]]*/ 0;
+    window.shareAddress           = /*[[${share?.address != null ? share.address : 'Default Address'}]]*/ 'Default Address';
+    window.shareDetail            = /*[[${share?.detailAddress != null ? share.detailAddress : 'Default Detail'}]]*/ 'Default Detail';
+
+    // fullAddress 생성 (주소와 상세주소를 쉼표로 구분하여 결합)
+    window.fullAddress = window.shareAddress + ", " + window.shareDetail;
+    console.log("공유글 전체 주소: " + window.fullAddress);
+    console.log("provinceId =", window.provinceId);
+    console.log("regionId   =", window.regionId);
+    console.log("cityId     =", window.cityId);
+    console.log("townId     =", window.townId);
+    console.log("fullAddress =", window.fullAddress);
+
+    // 메인 지도 초기화 함수 (Google Maps API의 콜백 함수)
+    window.initMap = function () {
+        console.log("Google Maps API가 정상적으로 로드되었습니다.");
+        var geocoder = new google.maps.Geocoder();
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: {lat: 35.6895, lng: 139.6917} // 기본값: 도쿄
+        });
+        geocoder.geocode({'address': window.fullAddress}, function(results, status) {
+            if (status === 'OK' && results.length > 0) {
+                map.setCenter(results[0].geometry.location);
+                new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });
+            } else {
+                console.error('Geocode 실패: ' + status);
+            }
+        });
+    };
+  </script>
+
+  <!-- update.js 로드 (업데이트 관련 기능, 드롭다운, 유효성 검사 등) -->
+  <!-- ★ defer 속성을 통해 HTML 파싱 완료 후 update.js 실행 -->
+  <script src="/js/update.js" defer></script>
+
+  <!-- Google Maps API 스크립트 로드 (async defer 적용, 콜백은 initMap) -->
+  <script async defer th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
+
+</head>
+<body>
+  <!-- 상단 헤더 영역 -->
+  <header class="top-header">
+    <div class="logo-area">
+      <a th:href="@{/}">
+        <img th:src="@{/images/achiko-logo3.png}" alt="로고">
+      </a>
+    </div>
+    <div class="header-text">
+      あちこちの夢が集まって、ひとつの物語が生まれる
+    </div>
+    <div class="mypage-area">
+      <a th:href="@{/user/selectOne}">
+        <button>마이페이지</button>
+      </a>
+    </div>
+  </header>
+
+  <!-- 메인 컨테이너 -->
+  <main class="main-container">
+    <!-- 왼쪽 사이드바 -->
+    <aside class="sidebar">
+      <nav>
+        <a href="#title">TITLE</a><br>
+				<a href="#description">DESCRIPTION</a><br>
+				<a href="#currentGuests">GUEST</a><br>
+				<a href="#provinceId">LOCATION</a><br>
+				<a href="#map">MAP</a><br>
+				<a href="#price">PRICE</a><br>
+				<a href="#photos">PHOTO</a><br>
+      </nav>
+    </aside>
+
+    <!-- 중앙 컨텐츠 영역: 수정 폼 -->
+    <section class="content-area">
+      <form id="updateForm" th:action="@{/share/update}" method="post" enctype="multipart/form-data" class="write-form" onsubmit="return validateForm();">
+        <!-- ★ ★ 수정: shareId를 hidden 필드로 추가하여, 수정 시 ID가 전달되도록 함 -->
+        <input type="hidden" name="shareId" th:value="${share.shareId}" />
+
+        <!-- 제목 -->
+        <div class="form-group">
+          <label for="title">제목</label>
+          <input type="text" id="title" name="title" class="form-control" th:value="${share.title}" required />
+        </div>
+
+        <!-- 개요/소개 -->
+        <div class="form-group">
+          <label for="description">모집 글 작성</label>
+          <textarea id="description" name="description" class="form-control" rows="4" required th:text="${share.description}"></textarea>
+        </div>
+
+        <!-- 최대 인원 -->
+        <div class="form-group">
+          <label for="maxGuests">최대 인원</label>
+          <input type="number" id="maxGuests" name="maxGuests" class="form-control" min="2" th:value="${share.maxGuests}" required />
+        </div>
+
+        <!-- 현재 인원 -->
+        <div class="form-group">
+          <label for="currentGuests">현재 인원</label>
+          <input type="number" id="currentGuests" name="currentGuests" class="form-control" min="1" th:value="${share.currentGuests}" required onchange="validateGuestCount()" />
+        </div>
+
+        <!-- [A] 지방 선택 -->
+        <div class="form-group">
+          <label for="provinceId">지방 선택</label>
+          <!-- onchange="updateRegionSelect()" => 전역 함수 호출 -->
+          <select id="provinceId" name="provinceId" class="form-control" required onchange="updateRegionSelect()">
+            <option value="">-- 선택하세요 --</option>
+            <option value="1" th:selected="${#strings.equalsIgnoreCase('1', param.provinceId)}">北海道</option>
+            <option value="2" th:selected="${#strings.equalsIgnoreCase('2', param.provinceId)}">東北</option>
+            <option value="3" th:selected="${#strings.equalsIgnoreCase('3', param.provinceId)}">甲信越・北陸</option>
+            <option value="4" th:selected="${#strings.equalsIgnoreCase('4', param.provinceId)}">関東</option>
+            <option value="5" th:selected="${#strings.equalsIgnoreCase('5', param.provinceId)}">中国</option>
+            <option value="6" th:selected="${#strings.equalsIgnoreCase('6', param.provinceId)}">東海</option>
+            <option value="7" th:selected="${#strings.equalsIgnoreCase('7', param.provinceId)}">九州・沖縄</option>
+            <option value="8" th:selected="${#strings.equalsIgnoreCase('8', param.provinceId)}">関西</option>
+            <option value="9" th:selected="${#strings.equalsIgnoreCase('9', param.provinceId)}">四国</option>
+          </select>
+        </div>
+
+        <!-- [B] 지역 선택 -->
+        <div class="form-group">
+          <label for="regionId">지역 선택</label>
+          <!-- onchange="updateCitySelect()" => 전역 함수 호출 -->
+          <select id="regionId" name="regionId" class="form-control" required onchange="updateCitySelect()">
+            <option value="">-- 선택하세요 --</option>
+          </select>
+        </div>
+
+        <!-- [C] 도시 선택 -->
+        <div class="form-group">
+          <label for="cityId">도시 선택</label>
+          <!-- onchange="updateTownSelect()" => 전역 함수 호출 -->
+          <select id="cityId" name="cityId" class="form-control" required onchange="updateTownSelect()">
+            <option value="">-- 선택하세요 --</option>
+          </select>
+        </div>
+
+        <!-- [D] 하위 시/군/구 선택 -->
+        <div class="form-group">
+          <label for="townId">하위 시/군/구 선택</label>
+          <select id="townId" name="townId" class="form-control" required>
+            <option value="">-- 선택하세요 --</option>
+          </select>
+        </div>
+
+        <!-- 주소 입력 (Autocomplete 적용) -->
+        <div class="form-group">
+          <label for="address">주소</label>
+          <!-- ★ 수정: autocomplete="off" 추가하여 브라우저 기본 자동완성을 비활성화, 그리고 readonly로 고정 -->
+          <input type="text" id="address" name="address" class="form-control" th:value="${share.address}" autocomplete="off" readonly placeholder="ex. 東京都港区芝浦三丁目４－１" required />
+          <!-- ★ "주소 수정" 버튼 추가: 누르면 주소 입력 필드가 초기화되고 readonly 속성이 제거되어 수정 가능해짐 -->
+          <button type="button" onclick="resetAddress()" class="reset-address-btn">주소 수정</button>
+          <button type="button" id="updateMapBtn" onclick="updateMapAndPostalCode()">지도 업데이트</button>
+        </div>
+
+        <!-- 영문 주소 표시 영역 -->
+        <div id="englishAddress" style="margin-top: 8px; color: #555; font-size: 0.9em;"></div>
+        <br>
+
+        <!-- 상세 주소 -->
+        <div class="form-group">
+          <label for="detailAddress">상세 주소</label>
+          <input type="text" id="detailAddress" name="detailAddress" class="form-control" th:value="${share.detailAddress}" autocomplete="off" placeholder="ex. アチコプラザ 4F" />
+        </div>
+
+        <!-- 지도 영역 (Google Maps API를 통해 위치 확인) -->
+        <div class="form-group">
+          <label for="map">지도에서 위치 확인</label>
+          <div id="map" style="width: 100%; height: 400px;"></div>
+        </div>
+
+        <!-- 우편번호 (자동 입력, readonly) -->
+        <div class="form-group">
+          <label for="postalCode">우편번호</label>
+          <input type="text" id="postalCode" name="postalCode" class="form-control" th:value="${share.postalCode}" readonly placeholder="자동 입력" />
+        </div>
+
+        <!-- 요금 -->
+        <div class="form-group">
+          <label for="price">요금</label>
+          <input type="text" step="0.01" id="price" name="price" class="form-control" th:value="${share.price}" placeholder="요금 (JPY)" required />
+        </div>
+
+        <!-- 사진 등록 (필요시) -->
+        <div class="photo-upload-box">
+          <h3>사진 등록</h3>
+          <input type="file" id="photos" name="photos" multiple form="updateForm" onchange="handlePhotoUpload(event)" />
+          <div id="photoPreview" style="margin-top: 10px;"></div>
+        </div>
+
+        <button class="register-btn" form="updateForm" type="submit">수정 완료</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
