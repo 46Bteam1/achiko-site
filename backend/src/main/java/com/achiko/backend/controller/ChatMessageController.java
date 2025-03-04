@@ -36,9 +36,7 @@ public class ChatMessageController {
     // 클라이언트가 "/app/chatEnterRoom"으로 메시지를 보내면 실행됨
     // 유저 입장
     @MessageMapping("/chatEnterRoom")
-    public void enterRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        log.info("사용자 입장: {}", chatMessage);
-        
+    public void enterRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal LoginUserDetails loginUser) {      
         // 로그인한 유저 닉네임 받아오기
         String nickname = loginUser.getNickname();   
         
@@ -47,9 +45,7 @@ public class ChatMessageController {
     
     // 유저 퇴장
     @MessageMapping("/chatLeaveRoom")
-    public void leaveRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        log.info("사용자 퇴장: {}", chatMessage);
-        
+    public void leaveRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal LoginUserDetails loginUser) {   
         // 로그인한 유저 닉네임 받아오기
         String nickname = loginUser.getNickname();  
         

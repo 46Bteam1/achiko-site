@@ -15,6 +15,8 @@ $(function () {
     window.location.href = "/chatRooms";
   });
 
+  getRoommates(chatRoomId);
+
   stompClient.connect({}, function () {
     // 채팅 내역 불러오기
     loadChats(chatRoomId);
@@ -99,7 +101,7 @@ function showChat(data) {
 
   $("#chats table").append(tag);
 
-  $("#chats").scrollTop($("#chats")[0].scrollHeight);
+  scrollToBottom(); // 메시지가 추가될 때마다 스크롤 이동
 }
 
 function showAlert(data) {
@@ -137,4 +139,30 @@ function chats(resp) {
   tag += `</table>`;
 
   $("#chats").html(tag);
+
+  scrollToBottom(); // 채팅을 불러온 후 스크롤 이동
+}
+// 채팅 스크롤 제일 마지막에 위치하도록
+function scrollToBottom() {
+  $("#chats").scrollTop($("#chats")[0].scrollHeight);
+}
+
+// 현재 share에 확정된 유저들 불러오는 함수
+function getRoommates(chatRoomId) {
+  $.ajax({
+    url: "/roommate/findRoommates",
+    method: "GET",
+    data: { chatRoomId: chatRoomId },
+    success: function (resp) {
+      let tag = ``;
+
+      $.each(resp, function (index, item) {
+        tag += `
+          <p class="guestNickname">${item["nickname"]}</p>
+        `;
+      });
+
+      $("#guestBox").html(tag);
+    },
+  });
 }

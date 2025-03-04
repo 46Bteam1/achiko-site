@@ -33,8 +33,8 @@ public class ChatController {
 	// 채팅방 생성 메서드
 	@PostMapping("/create")
 	@Operation(summary = "채팅방 생성 메서드", description = "채팅방을 생성합니다.")
-	public String createRoom(@RequestBody ChatRoomDTO ChatRoomDTO) {
-		log.info("채팅방 생성: {}", ChatRoomDTO.toString());
+	public String createRoom(@RequestBody ChatRoomDTO chatRoomDTO, @RequestBody Long shareId) {
+		chatService.createRoom(chatRoomDTO, shareId);
 		
 		return "채팅방 생성 성공";
 	}
@@ -64,5 +64,4 @@ public class ChatController {
 		return "";
 	}
 	
-	// 확정된 유저들 표시하는 메서드
 }

@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.ChatParticipantDTO;
+import com.achiko.backend.dto.ChatRoomDTO;
 import com.achiko.backend.entity.ChatMessageEntity;
 import com.achiko.backend.entity.ChatParticipantEntity;
 import com.achiko.backend.entity.ChatRoomEntity;
+import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.ChatMessageRepository;
 import com.achiko.backend.repository.ChatParticipantRepository;
@@ -51,6 +53,8 @@ public class ChatService {
 			participantList.forEach((e)->{
 				list.add(ChatParticipantDTO.toDTO(e,e.getChatroom().getChatroomId(), e.getHost().getNickname(), e.getGuest().getNickname()));
 			});
+			
+			
 		}else if(user.getIsHost() == 1) {
 			// 호스트인 경우
 			List<ChatParticipantEntity> participantList = participantRepository.findByHost_UserId(user.getUserId());
@@ -60,6 +64,7 @@ public class ChatService {
 		}
 		
 		// 3. list로 내보내기
+		
 		return list;
 		
 	}
@@ -95,7 +100,6 @@ public class ChatService {
      		
      		if(temp1.isEmpty()) return;
      		UserEntity user = temp1.get();
-     		log.info("~~~!!:{}", user.toString());
      		
      		Optional<ChatRoomEntity> temp2 = roomRepository.findById(chatMessage.getChatroomId());
      		if(temp2.isEmpty()) return;
@@ -125,5 +129,17 @@ public class ChatService {
         
         String destination = "/topic/chatroomAlert/" + chatMessage.getChatroomId();
         messagingTemplate.convertAndSend(destination, chatMessage);
+	}
+
+	public void createRoom(ChatRoomDTO chatRoomDTO, Long shareId) {
+		// shareId로 share 찾기
+		Optional<ShareEntity> temp = shareRepository.findById(shareId);
+		
+		if(temp.isEmpty()) return;
+		
+		// charRoom 생성
+		ChatRoomEntity chatRoomEntity = ChatRoomEntity.toEntity(chatRoomDTO, temp.get());
+		
+		roomRepository.save(chatRoomEntity);
 	}
 }

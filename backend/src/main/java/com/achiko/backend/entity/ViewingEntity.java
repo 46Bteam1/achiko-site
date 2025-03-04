@@ -28,19 +28,7 @@ import lombok.ToString;
 @ToString
 @Builder
 @Entity(name="viewing")
-public class ViewingEntity {/**
-	 * create table viewing (
-    viewing_id int auto_increment not null primary key,
-    share_id int not null,
-    guest_id int not null,
-    is_completed boolean default false,
-    scheduled_date timestamp not null,
-    created_at timestamp default current_timestamp,
-    foreign key (share_id) references share(share_id) on delete cascade,
-    foreign key (guest_id) references users(user_id) on delete cascade
-);
-
-	 */
+public class ViewingEntity {
 	@Id
 	@Column(name="viewing_id")
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -55,7 +43,8 @@ public class ViewingEntity {/**
 	private UserEntity guest;
 	
 	@Column(name="is_completed")
-	private Boolean isCompleted;
+	@Builder.Default
+	private Boolean isCompleted = false;
 	
 	@Column(name="scheduled_date")
 	private LocalDateTime scheduledDate;

@@ -21,9 +21,12 @@ public class ChatViewController {
 			@AuthenticationPrincipal LoginUserDetails loginUser) {
 		Long userId = userService.getUserId(loginUser.getLoginId());
 		String nickname = loginUser.getNickname();
+		String role = userService.getIsGuest(userId);
+		
 		model.addAttribute("chatroomId", chatroomId);
 		model.addAttribute("userId", userId);
 		model.addAttribute("nickname", nickname);
+		model.addAttribute("role", role);
 		return "chat/chatList";
 	}
 	

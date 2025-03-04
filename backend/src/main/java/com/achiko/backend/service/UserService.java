@@ -44,4 +44,19 @@ public class UserService {
 		return nickname;
 	}
 
+	public String getIsGuest(Long userId) {
+		Optional<UserEntity> user = userRepository.findById(userId);
+		if(user.isEmpty()) return null;
+		
+		Integer isHost = user.get().getIsHost();
+		if(isHost == 2) {
+			return "Admin";
+		}else if(isHost == 1) {
+			return "Host";
+		}else {
+			return "Guest";
+		}
+		
+	}
+
 }
