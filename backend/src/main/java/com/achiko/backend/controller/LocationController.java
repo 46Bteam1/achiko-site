@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.achiko.backend.dto.CityDTO;
+import com.achiko.backend.dto.RegionDTO;
 import com.achiko.backend.dto.TownDTO;
 import com.achiko.backend.service.LocationService;
 
@@ -16,10 +17,23 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api")
+//@RequestMapping("/api/location")
 @RequiredArgsConstructor
 public class LocationController {
 
     private final LocationService locationService;
+    
+    /**
+     * GET /api/regions?provinceId=...
+     * provinceId에 해당하는 지역(Region) 목록을 JSON으로 반환
+     */
+    @GetMapping("/regions")
+    public ResponseEntity<List<RegionDTO>> getRegions(@RequestParam("provinceId") Integer provinceId) {
+    	System.out.println(provinceId);
+        List<RegionDTO> regions = locationService.getRegionsByProvince(provinceId);
+        System.out.println(regions.toString());
+        return ResponseEntity.ok(regions);
+    }
 
     /**
      * GET /api/cities?regionId=...

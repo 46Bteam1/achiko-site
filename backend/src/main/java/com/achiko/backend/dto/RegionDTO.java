@@ -17,7 +17,7 @@ public class RegionDTO {
         return RegionDTO.builder()
                 .id(entity.getRegionId())
                 .name(entity.getNameKanji())
-                .provinceId(entity.getProvinceId())
+                .provinceId(entity.getProvince() != null ? entity.getProvince().getProvinceId() : null)
                 .build();
     }
 }

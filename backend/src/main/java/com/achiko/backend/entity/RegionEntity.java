@@ -8,9 +8,12 @@ import com.achiko.backend.dto.RegionDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -39,8 +42,9 @@ public class RegionEntity {
     @Column(name = "name_en", nullable = false)
     private String nameEn;
 
-    @Column(name = "province_id", nullable = false)
-    private Integer provinceId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "province_id", nullable = false)
+    private ProvinceEntity province;
     
     // ★ 수정: RegionEntity는 여러 CityEntity를 가질 수 있음 (OneToMany)
     @OneToMany(mappedBy = "region", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -49,18 +53,20 @@ public class RegionEntity {
 
     // ★ 변환 메서드: DTO ⇔ Entity (단순 필드만 변환)
     public static RegionEntity toEntity(RegionDTO dto) {
-        return RegionEntity.builder()
-                .regionId(dto.getId())
-                .nameKanji(dto.getName())
-                .provinceId(dto.getProvinceId())
-                .build();
+    	RegionEntity region = RegionEntity.builder()
+    			.regionId(dto.getId())
+    			.nameKanji(dto.getName())
+    			.build();
+    	
+    	region.setProvince(new ProvinceEntity(dto.getProvinceId(), null, null, null));
+    	return region;
     }
 
     public static com.achiko.backend.dto.RegionDTO toDTO(RegionEntity entity) {
         return com.achiko.backend.dto.RegionDTO.builder()
                 .id(entity.getRegionId())
                 .name(entity.getNameKanji())
-                .provinceId(entity.getProvinceId())
+                .provinceId(entity.getProvince() != null ? entity.getProvince().getProvinceId() : null)
                 .build();
     }
 }

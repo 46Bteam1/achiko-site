@@ -18,7 +18,7 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
@@ -31,7 +31,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security 사용
 
     // 환경 변수 관리 (.env 사용)
-    implementation 'io.github.cdimascio:dotenv-java:2.2.0' // dotenv 환경 변수 관리 (최신 버전 2.2.0 유지)
+    implementation 'io.github.cdimascio:dotenv-java:2.2.0' // dotenv 환경 변수 관리 (최신 버전 유지)
 
     // MySQL Database
     runtimeOnly 'com.mysql:mysql-connector-j'
