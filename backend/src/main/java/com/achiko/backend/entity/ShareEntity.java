@@ -40,6 +40,10 @@ public class ShareEntity {
 
     // region, city, town을 ManyToOne 관계로 각각 연결
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "province_id", nullable = false)
+    private ProvinceEntity province;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", nullable = false)
     private RegionEntity region;
     
@@ -87,6 +91,7 @@ public class ShareEntity {
         return ShareEntity.builder()
                 .shareId(dto.getShareId())
                 .host(UserEntity.builder().userId(dto.getHostId()).build())
+                .province(new ProvinceEntity(dto.getProvinceId().intValue(), null, null, null))
                 .region(new RegionEntity(dto.getRegionId().intValue(), null, null, null, null))
                 .city(new CityEntity(dto.getCityId().intValue(), null, null, null))
                 .town(new TownEntity(dto.getTownId().intValue(), null, null))

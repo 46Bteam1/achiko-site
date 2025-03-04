@@ -42,11 +42,21 @@ public class ShareController {
     @Value("${kakao.javascript.key}")
     private String kakaoJavaScriptKey;
 
-    private final ShareService shareService;
-    private final UserRepository userRepository;
-    private final RegionRepository regionRepository;
+	private final ShareService shareService;
+	private final UserRepository userRepository;
+	private final RegionRepository regionRepository;
+	private final ShareFilesService shareFilesService;
+	
+	@ResponseBody
+	@GetMapping("/share/selectAll")
+	public List<ShareDTO> selectAll() {
+		List<ShareDTO> shareList = shareService.getShareListAll();
+		if(shareList.size() == 0) {
+			return null;
+		}
+		return shareList;
+	}
     
-    private final ShareFilesService shareFilesService;
 
     /**
      * 글 상세 조회 페이지 URL 예: /share/selectOne?shareId=1
@@ -121,7 +131,7 @@ public class ShareController {
         // RegionEntity에서 provinceId 조회 (DB에 저장되어 있는 값)
         RegionEntity region = regionRepository.findById(shareDTO.getRegionId().intValue())
                     .orElseThrow(() -> new IllegalArgumentException("해당 region을 찾을 수 없습니다."));
-        int provinceId = region.getProvinceId();
+        int provinceId = region.getProvince().getProvinceId();
 
         model.addAttribute("share", shareDTO);
         model.addAttribute("provinceId", provinceId);  // ★ 추가

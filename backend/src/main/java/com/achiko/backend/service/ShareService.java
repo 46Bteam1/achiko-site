@@ -2,13 +2,15 @@ package com.achiko.backend.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.entity.CityEntity;
+import com.achiko.backend.entity.ProvinceEntity;
 import com.achiko.backend.entity.RegionEntity;
 import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.TownEntity;
@@ -34,61 +36,62 @@ public class ShareService {
     private final CityRepository cityRepository;
     private final TownRepository townRepository;
     
-    /**
-     * 특정 shareId로 Share 조회
-     */
-    public ShareDTO getShareById(Long shareId) {
-    	
-        Optional<ShareEntity> optionalShare = shareRepository.findById(shareId);
-        log.info("+++{}", shareRepository.findById(shareId).toString());
-        log.info("+++{}", optionalShare.isPresent());
-        if (optionalShare.isPresent()) {
-            ShareEntity entity = optionalShare.get();
-            return convertToDTO(entity);
-        }
-        return null;
-    }
+	/**
+	 * Main페이지에 넣을 등록된 모든 셰어하우스 글 정보 조회 
+	 */
+	public List<ShareDTO> getShareListAll() {
+		List<ShareEntity> shareEntityList = shareRepository.findAll();
+		List<ShareDTO> shareDTOList = new ArrayList<>();
+		shareEntityList.forEach((entity) -> shareDTOList.add(ShareDTO.fromEntity(entity)));
+		
+		return shareDTOList;
+		
+	}
+	
+	/**
+	 * 특정 shareId로 Share 조회
+	 */
+	public ShareDTO getShareById(Long shareId) {
 
-    
-    
-    
-    /**
-     * 엔티티를 DTO로 변환
-     */
-    private ShareDTO convertToDTO(ShareEntity entity) {
-        return ShareDTO.builder()
-                .shareId(entity.getShareId())
-                .hostId(entity.getHost() != null ? entity.getHost().getUserId() : null)  // 수정됨
-                .regionId(entity.getRegion() != null ? Long.valueOf(entity.getRegion().getRegionId()) : null) // 수정됨
-                .cityId(entity.getCity() != null ? Long.valueOf(entity.getCity().getCityId()) : null)         // 수정됨
-                .townId(entity.getTown() != null ? Long.valueOf(entity.getTown().getTownId()) : null)         // 수정됨
-                .postalCode(entity.getPostalCode())
-                .title(entity.getTitle())
-                .description(entity.getDescription())
-                .maxGuests(entity.getMaxGuests())
-                .currentGuests(entity.getCurrentGuests())
-                .price(entity.getPrice())
-                .address(entity.getAddress())
-                .detailAddress(entity.getDetailAddress())
-                .createdAt(entity.getCreatedAt())
-                .status(entity.getStatus())
-                .regionName(entity.getRegion() != null ? entity.getRegion().getNameKanji() : null)
-                .cityName(entity.getCity() != null ? entity.getCity().getNameKanji() : null)
-                .townName(entity.getTown() != null ? entity.getTown().getNameKanji() : null)
-                .build();
-    }
+		Optional<ShareEntity> optionalShare = shareRepository.findById(shareId);
+		log.info("+++{}", shareRepository.findById(shareId).toString());
+		log.info("+++{}", optionalShare.isPresent());
+		if (optionalShare.isPresent()) {
+			ShareEntity entity = optionalShare.get();
+			return convertToDTO(entity);
+		}
+		return null;
+	}
 
-    /**
-     * 등록/수정용
-     */
-    public ShareDTO saveShare(ShareDTO shareDTO) {
-        ShareEntity entity = convertToEntity(shareDTO);
-        if (entity.getCreatedAt() == null) {
-            entity.setCreatedAt(LocalDateTime.now());
-        }
-        ShareEntity saved = shareRepository.save(entity);
-        return convertToDTO(saved);
-    }
+	/**
+	 * 엔티티를 DTO로 변환
+	 */
+	private ShareDTO convertToDTO(ShareEntity entity) {
+		return ShareDTO.builder().shareId(entity.getShareId())
+				.hostId(entity.getHost() != null ? entity.getHost().getUserId() : null) // 수정됨
+				.regionId(entity.getRegion() != null ? Long.valueOf(entity.getRegion().getRegionId()) : null) // 수정됨
+				.cityId(entity.getCity() != null ? Long.valueOf(entity.getCity().getCityId()) : null) // 수정됨
+				.townId(entity.getTown() != null ? Long.valueOf(entity.getTown().getTownId()) : null) // 수정됨
+				.postalCode(entity.getPostalCode()).title(entity.getTitle()).description(entity.getDescription())
+				.maxGuests(entity.getMaxGuests()).currentGuests(entity.getCurrentGuests()).price(entity.getPrice())
+				.address(entity.getAddress()).detailAddress(entity.getDetailAddress()).createdAt(entity.getCreatedAt())
+				.status(entity.getStatus())
+				.regionName(entity.getRegion() != null ? entity.getRegion().getNameKanji() : null)
+				.cityName(entity.getCity() != null ? entity.getCity().getNameKanji() : null)
+				.townName(entity.getTown() != null ? entity.getTown().getNameKanji() : null).build();
+	}
+
+	/**
+	 * 등록/수정용
+	 */
+	public ShareDTO saveShare(ShareDTO shareDTO) {
+		ShareEntity entity = convertToEntity(shareDTO);
+		if (entity.getCreatedAt() == null) {
+			entity.setCreatedAt(LocalDateTime.now());
+		}
+		ShareEntity saved = shareRepository.save(entity);
+		return convertToDTO(saved);
+	}
 
     /**
      * [★ 추가] 글 수정 처리 메서드
@@ -130,6 +133,7 @@ public class ShareService {
         UserEntity host = userRepository.getReferenceById(dto.getHostId());
         
         // ★ 기존 DB의 RegionEntity를 조회하여 사용 (provinceId 포함)
+        ProvinceEntity province = new ProvinceEntity(dto.getProvinceId().intValue(), null, null, null);
         RegionEntity region = regionRepository.getReferenceById(dto.getRegionId().intValue());
         
         // CityEntity와 TownEntity는 필요에 따라 Service에서 조회하도록 개선 가능
@@ -139,6 +143,7 @@ public class ShareService {
         return ShareEntity.builder()
                 .shareId(dto.getShareId())
                 .host(host)
+                .province(province)
                 .region(region)  // ★ 수정된 부분: 조회한 RegionEntity 사용
                 .city(city)
                 .town(town)
@@ -175,6 +180,5 @@ public class ShareService {
         
         shareRepository.deleteById(shareId);
     }
-
 
 }

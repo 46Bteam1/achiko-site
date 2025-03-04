@@ -14,11 +14,11 @@ public class RegionService {
 
     private final RegionRepository regionRepository;
 
-    public List<RegionDTO> getRegionsByProvince(Integer provinceId) {
-        List<RegionEntity> entities = regionRepository.findByProvinceId(provinceId);
-        return entities.stream()
-                .map(RegionDTO::toDTO)
-                .collect(Collectors.toList());
-    }
+//    public List<RegionDTO> getRegionsByProvince(Integer provinceId) {
+//        List<RegionEntity> entities = regionRepository.findByProvinceId(provinceId);
+//        return entities.stream()
+//                .map(RegionDTO::toDTO)
+//                .collect(Collectors.toList());
+//    }
 }
 
