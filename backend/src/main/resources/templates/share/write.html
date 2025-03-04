@@ -49,13 +49,15 @@
 	<main class="main-container">
 		<!-- 왼쪽 사이드바 -->
 		<aside class="sidebar">
-			<ul>
-				<li>달력 / 요금 설정</li>
-				<li>개요</li>
-				<li>사진</li>
-				<li>편의시설</li>
-				<li>숙소 / 위치</li>
-			</ul>
+			<nav>
+				<a href="#title">TITLE</a><br>
+				<a href="#description">DESCRIPTION</a><br>
+				<a href="#currentGuests">GUEST</a><br>
+				<a href="#provinceId">LOCATION</a><br>
+				<a href="#map">MAP</a><br>
+				<a href="#price">PRICE</a><br>
+				<a href="#photos">PHOTO</a><br>
+			</nav>
 		</aside>
 
 		<!-- 중앙 컨텐츠 영역 -->
@@ -64,6 +66,9 @@
 			<form id="shareForm" th:action="@{/share/write}" method="post"
 				enctype="multipart/form-data" class="write-form"
 				onsubmit="return validateForm();">
+
+                <!-- (추가) sessionId를 전달하기 위한 hidden input -->
+                <input type="hidden" id="sessionId" name="sessionId" th:value="${sessionId}" />
 
 				<!-- 제목 -->
 				<div class="form-group">

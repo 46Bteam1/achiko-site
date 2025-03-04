@@ -1,15 +1,55 @@
-// Google Maps API가 로드된 후 initMap() 실행
 document.addEventListener("DOMContentLoaded", function () {
+  // (1) 구글 맵 초기화 검사
   if (typeof google === "object" && typeof google.maps === "object") {
     console.log("Google Maps API가 정상적으로 로드되었습니다.");
     initMap();
   } else {
     console.error("Google Maps API가 로드되지 않았습니다. API Key 확인 필요.");
   }
+
+  // (2) 방 사진 영역을 드래그로 스크롤할 수 있게 만드는 코드
+  //     .room-photos 요소에 마우스 다운/업/무브 이벤트를 걸어준다.
+  const roomPhotos = document.querySelector(".room-photos");
+  if (roomPhotos) {
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    // 마우스 눌렀을 때
+    roomPhotos.addEventListener("mousedown", (e) => {
+      isDown = true;
+      roomPhotos.classList.add("active");
+      startX = e.pageX - roomPhotos.offsetLeft;
+      scrollLeft = roomPhotos.scrollLeft;
+      // 누른 상태에서 손모양
+      roomPhotos.style.cursor = "grabbing";
+    });
+
+    // 마우스가 영역 밖으로 나가거나 뗐을 때
+    roomPhotos.addEventListener("mouseleave", () => {
+      isDown = false;
+      roomPhotos.classList.remove("active");
+      roomPhotos.style.cursor = "grab";
+    });
+    roomPhotos.addEventListener("mouseup", () => {
+      isDown = false;
+      roomPhotos.classList.remove("active");
+      roomPhotos.style.cursor = "grab";
+    });
+
+    // 드래그 중에 이동
+    roomPhotos.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - roomPhotos.offsetLeft;
+      const walk = (x - startX) * 1; // 드래그 감도
+      roomPhotos.scrollLeft = scrollLeft - walk;
+    });
+  }
 });
 
 // 전역 변수 선언
-let selectedFiles = [];
+let selectedFiles = []; // { file: File, fileId: number|null }
 let map, marker, autocomplete;
 
 // --------------------------------------------------------------------
@@ -114,9 +154,9 @@ window.initMap = function () {
   // 주소 입력 필드에 Autocomplete 적용 (일본어 주소 반환)
   const addressInput = document.getElementById("address");
   autocomplete = new google.maps.places.Autocomplete(addressInput, {
-    componentRestrictions: { country: "JP" }, // 일본 지역에 한정
+    componentRestrictions: { country: "JP" },
     fields: ["formatted_address", "geometry", "address_components", "name"],
-    language: "ja", // 일본어 강제 설정
+    language: "ja",
   });
 
   // 주소 자동완성 선택 시 이벤트 처리
@@ -156,13 +196,13 @@ function onPlaceChanged() {
 }
 
 function fetchEnglishAddress(lat, lng) {
-  // ★ 수정: response.json() 대신 response.text()를 사용하고, 이후 JSON.parse()로 파싱
+  // response.json() 대신 response.text() 후 JSON.parse()
   fetch(`/api/geocode?lat=${lat}&lng=${lng}`)
-    .then((response) => response.text()) // ★ 변경
+    .then((response) => response.text())
     .then((text) => {
       let data;
       try {
-        data = JSON.parse(text); // ★ JSON 문자열을 파싱
+        data = JSON.parse(text);
       } catch (e) {
         console.error("JSON 파싱 오류:", e);
         document.getElementById("englishAddress").innerHTML =
@@ -185,68 +225,209 @@ function fetchEnglishAddress(lat, lng) {
 }
 
 // --------------------------------------------------------------------
-// 파일 미리보기 및 누적 추가 기능 (복수 파일 추가, 순서대로 왼쪽부터 추가)
+// 파일 미리보기 및 누적 추가 기능 (수정 및 삭제 기능 추가)
 // --------------------------------------------------------------------
-function handlePhotoUpload(event) {
-  const previewContainer = document.getElementById("photoPreview");
 
-  // 미리보기 영역 flex 컨테이너 설정 (가로 정렬, 가운데 정렬)
+// 미리보기 영역을 업데이트하는 함수
+function renderPhotoPreview() {
+  const previewContainer = document.getElementById("photoPreview");
+  previewContainer.innerHTML = "";
   previewContainer.style.display = "flex";
   previewContainer.style.flexWrap = "wrap";
   previewContainer.style.justifyContent = "center";
   previewContainer.style.gap = "10px";
 
-  // 새로 선택한 파일들을 배열로 변환 후 기존 배열에 누적
-  const newFiles = Array.from(event.target.files);
-  selectedFiles = selectedFiles.concat(newFiles);
+  selectedFiles.forEach((item, idx) => {
+    const container = document.createElement("div");
+    container.style.textAlign = "center";
 
-  // 전체 미리보기 영역 초기화
-  previewContainer.innerHTML = "";
+    // 이미지 미리보기
+    const img = document.createElement("img");
+    const reader = new FileReader();
 
-  // 파일들을 순서대로 읽어 미리보기 생성 (순서 보장)
-  const readPromises = selectedFiles.map((file, index) => {
-    return new Promise((resolve, reject) => {
-      if (!file.type.match("image.*")) {
-        resolve(null);
-      } else {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          resolve({ index, src: e.target.result, name: file.name });
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      }
-    });
+    reader.onload = function (e) {
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(item.file);
+    img.style.width = "150px";
+    img.style.display = "block";
+    img.style.marginBottom = "5px";
+    container.appendChild(img);
+
+    // 순번 표시
+    const fileNumberDiv = document.createElement("div");
+    fileNumberDiv.textContent = `${idx + 1}`;
+    fileNumberDiv.style.fontSize = "0.9em";
+    fileNumberDiv.style.color = "#555";
+    container.appendChild(fileNumberDiv);
+
+    // "수정" 버튼
+    const modifyBtn = document.createElement("button");
+    modifyBtn.type = "button";
+    modifyBtn.textContent = "수정";
+    modifyBtn.style.marginRight = "5px";
+    modifyBtn.onclick = () => modifyFile(idx);
+    container.appendChild(modifyBtn);
+
+    // "삭제" 버튼
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.textContent = "삭제";
+    deleteBtn.onclick = () => deleteFile(idx);
+    container.appendChild(deleteBtn);
+
+    previewContainer.appendChild(container);
   });
+}
 
-  Promise.all(readPromises)
-    .then((results) => {
-      results.forEach((result, idx) => {
-        if (!result) return;
-        const img = document.createElement("img");
-        img.src = result.src;
-        img.style.width = "150px";
-        img.style.height = "auto";
-        img.style.display = "block";
-        img.style.marginBottom = "5px";
+// 기존 파일 업로드 핸들러 (여러 파일 추가)
+function handlePhotoUpload(event) {
+  const newFiles = Array.from(event.target.files);
+  const currentCount = selectedFiles.length;
 
-        const fileNumberDiv = document.createElement("div");
-        fileNumberDiv.textContent = `${idx + 1}`;
-        fileNumberDiv.style.fontSize = "0.9em";
-        fileNumberDiv.style.color = "#555";
+  newFiles.forEach((file, index) => {
+    if (!file.type.match("image.*")) {
+      return;
+    }
+    selectedFiles.push({ file: file, fileId: null });
 
-        const container = document.createElement("div");
-        container.style.textAlign = "center";
-        container.appendChild(img);
-        container.appendChild(fileNumberDiv);
+    const formData = new FormData();
+    formData.append("file", file);
+    const sessionIdValue = document.getElementById("sessionId").value;
+    formData.append("sessionId", sessionIdValue);
+    formData.append("displayOrder", (currentCount + index).toString());
 
-        previewContainer.appendChild(container);
-      });
+    fetch("/share-files/upload", {
+      method: "POST",
+      body: formData,
     })
-    .catch((error) => console.error("Error reading files:", error));
-
-  // 파일 입력 필드 초기화 (같은 파일 재선택 가능)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("파일 업로드 실패. 상태코드: " + response.status);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("파일 업로드 성공:", data);
+        selectedFiles[currentCount + index].fileId = data.fileId;
+        renderPhotoPreview();
+      })
+      .catch((err) => {
+        console.error("파일 업로드 에러:", err);
+      });
+  });
   event.target.value = "";
+  renderPhotoPreview();
+}
+
+// 수정 기능: 숨겨진 파일 입력을 통해 대체 파일 선택 후 업로드
+function modifyFile(index) {
+  const tempInput = document.createElement("input");
+  tempInput.type = "file";
+  tempInput.accept = "image/*";
+  tempInput.style.display = "none";
+
+  tempInput.onchange = (event) => {
+    const files = event.target.files;
+    if (files.length === 0) return;
+    const newFile = files[0];
+
+    // 기존 파일이 있다면 삭제 후 새 파일 업로드
+    if (selectedFiles[index].fileId) {
+      const oldFileId = selectedFiles[index].fileId;
+      const params = new URLSearchParams();
+      params.append("fileId", oldFileId);
+      fetch("/share-files/delete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params.toString(),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(
+              "기존 파일 삭제 실패. 상태코드: " + response.status
+            );
+          }
+          console.log("기존 파일 삭제 성공");
+          selectedFiles[index].file = newFile;
+          selectedFiles[index].fileId = null;
+          uploadModifiedFile(index, newFile);
+        })
+        .catch((err) => {
+          console.error("기존 파일 삭제 에러:", err);
+        });
+    } else {
+      selectedFiles[index].file = newFile;
+      selectedFiles[index].fileId = null;
+      uploadModifiedFile(index, newFile);
+    }
+  };
+
+  document.body.appendChild(tempInput);
+  tempInput.click();
+  tempInput.remove();
+}
+
+function uploadModifiedFile(index, file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  const sessionIdValue = document.getElementById("sessionId").value;
+  formData.append("sessionId", sessionIdValue);
+  formData.append("displayOrder", index.toString());
+
+  fetch("/share-files/upload", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("수정 파일 업로드 실패. 상태코드: " + response.status);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("수정 파일 업로드 성공:", data);
+      selectedFiles[index].fileId = data.fileId;
+      renderPhotoPreview();
+    })
+    .catch((err) => {
+      console.error("수정 파일 업로드 에러:", err);
+    });
+}
+
+// 삭제 기능: 해당 파일을 배열에서 제거하고 서버에 삭제 요청
+function deleteFile(index) {
+  const item = selectedFiles[index];
+  if (item.fileId) {
+    const params = new URLSearchParams();
+    params.append("fileId", item.fileId);
+    fetch("/share-files/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("파일 삭제 실패. 상태코드: " + response.status);
+        }
+        return response.text();
+      })
+      .then((result) => {
+        console.log("파일 삭제 성공:", result);
+        selectedFiles.splice(index, 1);
+        renderPhotoPreview();
+      })
+      .catch((err) => {
+        console.error("파일 삭제 에러:", err);
+      });
+  } else {
+    selectedFiles.splice(index, 1);
+    renderPhotoPreview();
+  }
 }
 
 // --------------------------------------------------------------------
@@ -272,19 +453,17 @@ function validateGuestCount() {
 function validateAddress() {
   const addressInput = document.getElementById("address");
   const regionSelect = document.getElementById("regionId");
-  const townSelect = document.getElementById("townId"); // ★ townId 요소 가져오기
+  const townSelect = document.getElementById("townId");
 
-  // regionSelect의 선택된 옵션 텍스트 (예: "東京都")
+  // regionSelect의 선택된 옵션 텍스트
   const selectedRegionText =
     regionSelect.options[regionSelect.selectedIndex]?.text || "";
-
-  // ★ townSelect의 선택된 옵션 텍스트 (예: "港区")
+  // townSelect의 선택된 옵션 텍스트
   const selectedTownText =
     townSelect.options[townSelect.selectedIndex]?.text || "";
 
   const addressValue = addressInput.value;
 
-  // ★ 지역(region) 검사: 주소에 선택된 지역 텍스트가 포함되어 있는지 확인
   if (selectedRegionText && !addressValue.includes(selectedRegionText)) {
     alert("지역을 다시 한번 확인해주세요.");
     addressInput.value = "";
@@ -293,7 +472,6 @@ function validateAddress() {
     return false;
   }
 
-  // ★ 하위 시/군/구(town) 검사: 주소에 선택된 하위 시/군/구 텍스트가 포함되어 있는지 확인
   if (selectedTownText && !addressValue.includes(selectedTownText)) {
     alert("하위 시/군/구를 다시 한번 확인해주세요.");
     addressInput.value = "";
@@ -329,24 +507,25 @@ function validateForm() {
   const titleInput = document.getElementById("title");
   const descriptionInput = document.getElementById("description");
 
-  // 제목은 5글자 이상 (공백 제거 후 검사)
+  // 제목은 5글자 이상
   if (titleInput.value.trim().length < 5) {
     alert("제목은 5글자 이상 입력해주세요.");
     titleInput.focus();
     return false;
   }
 
-  // 본문은 10글자 이상 (공백 제거 후 검사)
+  // 본문은 10글자 이상
   if (descriptionInput.value.trim().length < 10) {
     alert("본문은 10글자 이상 입력해주세요.");
     descriptionInput.focus();
     return false;
   }
-  // 요금 입력 유효성 검사 (정수만 허용)
+
+  // 요금 정수 체크
   if (!validatePrice()) {
     return false;
   }
 
-  // 주소 유효성 검사
+  // 주소 검사
   return validateAddress();
 }
