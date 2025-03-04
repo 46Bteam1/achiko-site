@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.CustomOAuth2User;
 import com.achiko.backend.dto.GoogleResponse;
+import com.achiko.backend.dto.KakaoResponse;
 import com.achiko.backend.dto.NaverResponse;
 import com.achiko.backend.dto.OAuth2Response;
 import com.achiko.backend.entity.UserEntity;
@@ -39,12 +40,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
         }
+        else if (registrationId.equals("kakao")) {
+
+            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
+        }
         else {
 
             return null;
         }
         String username = oAuth2Response.getProvider()+"_"+oAuth2Response.getProviderId();
-        String userNickname = oAuth2Response.getEmail().split("@")[0];	// 이메일 주소의 @앞부분을 닉네임으로 설정
+        String userNickname = oAuth2Response.getProvider()+"_"+oAuth2Response.getEmail().split("@")[0];	// provider + 이메일 주소의 @앞부분을 닉네임으로 설정
         UserEntity existData = userRepository.findByLoginId(username);
 
         String role = "user";
