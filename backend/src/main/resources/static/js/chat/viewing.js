@@ -95,6 +95,8 @@ function viewingTable(resp) {
             <tr>
               <td style="border: 1px solid black; padding: 5px;">${displayNickname}</td>
               <td style="border: 1px solid black; padding: 5px;">${scheduledDate}</td>
+              <td><input type="button" value="날짜 수정" class="updateViewingBtn" data-seq="${item["shareId"]}"></td>
+              <td><input type="button" value="뷰잉 삭제" class="deleteViewingBtn" data-seq="${item["shareId"]}"></td>
             </tr>`;
     });
 
@@ -102,4 +104,18 @@ function viewingTable(resp) {
   }
 
   $("#existingReviews").html(tag);
+
+  $(".updateViewingBtn").on("click", updateViewing);
+  $(".deleteViewingBtn").on("click", deleteViewing);
+}
+
+// TODO: 3월 5일에 추가할 것
+function updateViewing() {
+  let shareId = $(this).attr("data-seq");
+  console.log(shareId);
+}
+
+function deleteViewing() {
+  let shareId = $(this).attr("data-seq");
+  console.log(shareId);
 }
