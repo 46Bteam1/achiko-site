@@ -1,7 +1,9 @@
 plugins {
-    id 'java'
     id 'org.springframework.boot' version '3.4.2'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    
+    
 }
 
 group = 'com.achiko'
@@ -13,13 +15,14 @@ java {
     }
 }
 
+
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    // ✅ Spring Boot 핵심 의존성
+    // Spring Boot 핵심 의존성
     implementation 'org.springframework.boot:spring-boot-starter-web'  // Spring MVC (REST API)
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA 사용
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf 사용
@@ -55,6 +58,11 @@ dependencies {
     // 테스트 관련 의존성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    
+    // webp 파일 지원
+    
+    implementation "com.sksamuel.scrimage:scrimage-core:4.0.37"
+    implementation "com.sksamuel.scrimage:scrimage-webp:4.0.37"
 }
 
 configurations {
@@ -66,3 +74,5 @@ configurations {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+
