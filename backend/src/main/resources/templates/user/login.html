@@ -90,24 +90,36 @@
         <a th:href="@{/user/regist}">회원가입</a>
       </div>
     </form>
-    <hr>
-	<div class="login-buttons">
-    	<!-- Google 로그인 버튼 -->
-	    <a href="/oauth2/authorization/google" class="login-button google">
-	        Google로 시작하기
-	    </a>
-		<br>
-	    <!-- Kakao 로그인 버튼 -->
-	    <a href="/oauth2/authorization/kakao" class="login-button kakao">
-	        Kakao로 시작하기
-	    </a>
-		<br>
-	    <!-- Naver 로그인 버튼 -->
-	    <a href="/oauth2/authorization/naver" class="login-button">
-	    	Naver로 시작하기
-	    </a>
+    <div class="divider">
+    	<span>또는</span>
 	</div>
-
+	<div class="login-buttons">
+		<!-- Google 로그인 버튼 -->
+		<div class="content">
+			<a href="/oauth2/authorization/google" class="login-button google">
+		        <img th:src="@{/images/googleLogo.png}" src="../../static/images/googleLogo.png" 
+		             alt="google 로고">
+		        <span>구글 로그인</span>
+		    </a>
+	    </div>
+	    <!-- Kakao 로그인 버튼 -->
+	    <div class="content">
+		    <a href="/oauth2/authorization/kakao" class="login-button kakao">
+		        <img th:src="@{/images/kakaoLogo.png}" src="../../static/images/kakaoLogo.png" 
+		             alt="Kakao 로고">
+		        <span>카카오 로그인</span>
+		    </a>
+	    </div>
+    	<!-- Naver 로그인 버튼 -->
+    	<div class="content">
+		    <a href="/oauth2/authorization/naver" class="login-button naver">
+		        <img th:src="@{/images/naverLogo.png}" src="../../static/images/naverLogo.png" 
+		             alt="Naver 로고">
+		        <span>네이버 로그인</span>
+		    </a>
+	    </div>
+	
+	</div>
 
 </div>
   <footer>

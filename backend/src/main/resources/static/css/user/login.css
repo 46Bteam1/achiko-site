@@ -271,3 +271,114 @@ body {
 .btn-success {
     margin-bottom: 5px;
 }
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #ccc; /* hr 스타일 */
+    margin: 0 10px;
+}
+
+.divider span {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+}
+
+/* 공통 로그인 버튼 스타일 */
+.login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 전체 컨텐츠는 가운데 정렬 */
+    width: 100%;
+    height: 52px; /* 버튼 높이 통일 */
+    border-radius: 8px; /* 둥근 모서리 */
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 0 16px; /* 내부 여백 추가 */
+    margin-bottom: 10px;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+    position: relative;
+}
+
+/* 컨텐츠 정렬을 위한 래퍼 */
+.login-button .content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+/* 로고 스타일 (왼쪽 정렬) */
+.login-button img {
+    width: 24px; /* 로고 크기 통일 */
+    height: 24px;
+    position: absolute;
+    left: 16px; /* 버튼 내부 왼쪽 여백 */
+}
+
+/* 텍스트 스타일 (가운데 정렬) */
+.login-button span {
+    flex-grow: 1; /* 텍스트가 가운데 오도록 설정 */
+    text-align: center;
+}
+
+/* Google 로그인 버튼 */
+.google {
+    background-color: white;
+    border: 1px solid #d9d9d9;
+    color: #757575;
+    font-family: "Roboto", sans-serif;
+}
+.google img {
+	margin-left: 5px;
+}
+
+.google:hover {
+    background-color: #f0f0f0;
+}
+
+/* Kakao 로그인 버튼 */
+.kakao {
+    background-color: #fee500;
+    border: none;
+    color: #3c1e1e;
+    font-family: "Malgun Gothic", sans-serif;
+}
+.kakao img {
+	width: 35px;
+	height: 35px;
+}
+.kakao:hover {
+    background-color: #f7d900;
+}
+
+/* Naver 로그인 버튼 */
+.naver {
+    background-color: #03c75a;
+    border: none;
+    color: white;
+    font-family: "Malgun Gothic", sans-serif;
+}
+
+.naver img {
+	width: 35px;
+	height: 35px;
+}
+.naver:hover {
+    background-color: #029e4f;
+}
+
+/* 클릭 시 살짝 눌리는 효과 */
+.login-button:active {
+    transform: scale(0.98);
+}
