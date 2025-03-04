@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>글 상세 조회</title>
+  <!-- CSS 연결 -->
+  <link rel="stylesheet" th:href="@{/css/share.css}" />
+  
+  <!-- Noto Sans Korean & Japanese 폰트 추가 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Swiper CSS (Head 내로 이동) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+  
+  <!-- ★ 모달 스타일 (전체 화면 회색 배경, 가운데 정렬) -->
+  <style>
+    .modal {
+      display: none;             /* 기본적으로 숨김 */
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;               /* 전체 너비 */
+      height: 100%;              /* 전체 높이 */
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);  /* 회색 반투명 배경 */
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;          /* 상단에서 10% 띄우고 중앙 정렬 */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 50%;                /* 원하는 너비 (필요시 조정) */
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 90%;
+      }
+    }
+  </style>
+  
+  <!-- ★ 전역 변수 및 메인 지도 초기화 함수 정의 -->
+  <script th:inline="javascript">
+    // Thymeleaf로부터 API Key와 주소 정보를 주입
+    window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ '';
+    window.shareAddress = /*[[${share.address}]]*/ "";
+    window.shareDetail = /*[[${share.detailAddress}]]*/ "";
+    // ★ fullAddress: 주소와 상세주소를 쉼표로 구분하여 결합 (예: "주소, 상세주소")
+    window.fullAddress = window.shareAddress + ", " + window.shareDetail;
+    console.log("공유글 전체 주소: " + window.fullAddress);
+    
+    // 메인 지도 초기화 함수 (Google Maps API의 콜백 함수)
+    window.initMap = function () {
+      console.log("Google Maps API가 정상적으로 로드되었습니다.");
+      var geocoder = new google.maps.Geocoder();
+      var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 15,
+          center: {lat: 35.6895, lng: 139.6917} // 기본값: 도쿄
+      });
+      geocoder.geocode({'address': window.fullAddress}, function(results, status) {
+          if (status === 'OK' && results.length > 0) {
+              map.setCenter(results[0].geometry.location);
+              new google.maps.Marker({
+                  map: map,
+                  position: results[0].geometry.location
+              });
+          } else {
+              console.error('Geocode 실패: ' + status);
+          }
+      });
+    };
+  </script>
+  
+  <!-- Kakao JavaScript SDK 추가 및 초기화 (환경변수로 숨긴 키를 Thymeleaf로 주입) -->
+  <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+  <script th:inline="javascript">
+    var kakaoJavaScriptKey = /*[[${kakaoJavaScriptKey}]]*/ '';
+    Kakao.init(kakaoJavaScriptKey);
+    console.log("Kakao SDK 초기화 상태: " + Kakao.isInitialized());
+  </script>
+  
+  <!-- selectOne.js 로드 (모달 및 편의시설 검색 기능 포함) -->
+  <script src="/js/selectOne.js" defer></script>
+  
+  <!-- Swiper JS 및 carousel.js 로드 (defer 속성을 사용) -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js" defer></script>
+  <script src="/js/carousel.js" defer></script>
+  
+  <!-- Google Maps API 스크립트 로드 (async defer 적용, 콜백은 initMap) -->
+  <script async defer th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
+</head>
+<body>
+  <!-- 상단 헤더 영역 -->
+  <header class="top-header">
+    <div class="logo-area">
+      <a th:href="@{/}">
+        <img th:src="@{/images/achiko-logo3.png}" alt="로고">
+      </a>
+    </div>
+    <div class="header-text">
+      あちこちの夢が集まって、ひとつの物語が生まれる
+    </div>
+    <div class="mypage-area">
+      <a th:href="@{/user/selectOne}">
+        <button>마이페이지</button>
+      </a>
+    </div>
+  </header>
+  
+  <!-- 메인 컨테이너 -->
+  <main>
+    <!-- 글 제목 영역 -->
+    <section class="share-title-section">
+      <h1 class="share-title" th:text="${share.title}">シェアハウス 글 제목</h1>
+    </section>
+    
+    <!-- 방 사진 영역 -->
+    <section class="room-photos">
+      <div th:each="img : ${fileList}">
+        <div class="photo-box">
+          <img th:src="${img.fileUrl}" alt="방 사진" />
+        </div>
+      </div>
+    </section>
+    
+    <!-- 공유하기, 찜하기, 편의시설 검색 버튼 영역 (버튼은 인라인 배치) -->
+    <section class="action-buttons">
+      <button id="shareButton">공유하기</button>
+      <button id="favoriteButton" 
+              th:text="${isFavorite} ? '찜 취소하기' : '찜하기'"
+              data-share-id="[[${share.shareId}]]"
+              data-is-favorite="[[${isFavorite}]]">
+        찜하기
+      </button>
+      <!-- ★ 편의시설 검색 버튼: 클릭 시 모달 창이 열림 -->
+      <button id="openFacilityModalBtn">편의시설 검색</button>
+      <!-- 신고 버튼 추가 -->
+      <button id="reportButton">신고</button>
+    </section>
+    
+    <!-- 공유 글의 세부 정보 출력 -->
+    <section class="share-info">
+      <div class="share-info-left">
+        <p>작성일: <span th:text="${#temporals.format(share.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span></p>
+        <p>상세 설명: <span th:text="${share.description}">설명</span></p>
+        <p>최대 인원: <span th:text="${share.maxGuests}">0</span></p>
+        <p>현재 인원: <span th:text="${share.currentGuests}">0</span></p>
+        <p>지역: 
+          <span th:text="${share.regionName}">지역명</span>,
+          <span th:text="${share.cityName}">도시명</span>,
+          <span th:text="${share.townName}">하위시/군/구</span>
+        </p>
+        <p>주소: <span th:text="${share.address}"></span> <span th:text="${share.detailAddress}"></span></p>
+        <p>우편번호: <span th:text="${share.postalCode}">000-0000</span></p>
+        <p>요금: <span th:text="${share.price}"></span> JPY</p>
+      </div>
+    </section>
+    
+    <!-- 메인 지도 영역 (공유글 주소 기반) -->
+    <section class="map-area">
+      <h3>지도</h3>
+      <div id="map" style="width: 100%; height: 400px;"></div>
+    </section>
+    
+    <div id="shareModal" class="modal">
+      <div class="modal-content">
+        <span id="closeShareModalBtn" class="close">&times;</span>
+        <h3>공유하기</h3>
+        <!-- 공유 관련 내용 및 SNS 링크 등 추가 -->
+        <p>이 페이지의 URL을 복사하거나 SNS로 공유하세요.</p>
+        <!-- 카카오 공유 버튼 추가 -->
+        <button id="kakaoShareButton">카카오로 공유하기</button>
+      </div>
+    </div>
+    
+    <!-- 모달 창: 편의시설 지도 및 검색 기능 -->
+    <div id="facilityModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="facilityModalClose">&times;</span>
+        <h3>편의시설 지도</h3>
+        <div id="facilitymap" style="width: 100%; height: 300px;"></div>
+        <br>
+        <!-- ★ 검색 버튼들: 각 버튼에 고유 ID 부여 -->
+        <button id="searchConvenienceBtn">コンビニ</button>
+        <button id="searchSupermarketBtn">スーパー</button>
+        <button id="searchRestaurantBtn">レストラン</button>
+        <button id="searchDrugstoreBtn">ドラックストア</button>
+        <button id="searchLaundromatBtn">コインランドリー</button>
+        
+        <!-- 편의시설 목록 출력 영역 -->
+        <ul id="place-list"></ul>
+      </div>
+    </div>
+    
+    <!-- 신고 모달 창 -->
+    <div id="reportModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="reportModalClose">&times;</span>
+        <h3>게시물 신고</h3>
+        <p>신고 사유를 선택하세요:</p>
+        <select id="reportReason">
+          <option value="spam">스팸 / 광고</option>
+          <option value="offensive">부적절한 내용</option>
+          <option value="fraud">사기 또는 허위 정보</option>
+          <option value="other">기타</option>
+        </select>
+        <br><br>
+        <textarea id="reportDescription" placeholder="상세 신고 내용을 입력하세요..." rows="4" cols="50"></textarea>
+        <br><br>
+        <button id="submitReport">신고 제출</button>
+      </div>
+    </div>
+    
+    <!-- 호스트 소개 영역 -->
+    <section class="host-intro">
+      <h2>호스트 소개</h2>
+      <div class="share-info-right">
+        <button id="messageHostBtn">호스트에게 메세지 보내기</button>
+      </div>
+    </section>
+    
+    <!-- 리뷰 영역 -->
+    <section class="review-section">
+      <h2>게시물 관리</h2>
+      <a th:href="@{/share/update(shareId=${share.shareId})}">
+        <button>수정</button>
+      </a>
+      <a th:href="@{/share/delete(shareId=${share.shareId})}">
+        <button>삭제</button>
+      </a>
+    </section>
+  </main>
+
+  <!-- ********** 이미지 캐러셀 모달 추가 ********** -->
+  <div id="carouselModal" class="modal carousel-modal">
+    <div class="carousel-content">
+      <span class="close" id="carouselModalClose">&times;</span>
+      <div class="swiper-container myCarousel">
+        <div class="swiper-wrapper">
+          <!-- 초기 슬라이드는 빈 상태로 두고, carousel.js에서 동적으로 selectOne.html의 사진을 로드 -->
+        </div>
+        <!-- 좌우 버튼 -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        <!-- 페이지네이션 -->
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achiko</title>
+
+    <!-- Spline Viewer 라이브러리 -->
+    <script
+      type="module"
+      src="https://unpkg.com/@splinetool/viewer@1.9.69/build/spline-viewer.js"
+      async
+      defer
+    ></script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #dde9c8; 
+      }
+
+      /* Spline 컨테이너 */
+      .container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Spline Viewer 설정 */
+      spline-viewer {
+        height: 110%;
+      }
+
+      .btn-container {
+        position: absolute;
+        bottom: 35%;
+        left: 50.3%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        font-size: 18px;
+        font-weight: bold;
+        border: none;
+        background-color: #2f7312; 
+        color: white;
+        cursor: pointer;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+        transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+      }
+
+      .btn:hover {
+        background-color: #478e14; 
+        transform: scale(1.05);
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Spline 컨테이너 -->
+    <div class="container">
+      <spline-viewer
+        url="https://prod.spline.design/qm5ElCS0he73TSOk/scene.splinecode"
+        loading-anim-type="spinner-big-dark"
+      >
+      </spline-viewer>
+    </div>
+    <div class="btn-container">
+      <button class="btn" onclick="location.href='/'">Go to Achiko</button>
+    </div>
+  </body>
+</html>

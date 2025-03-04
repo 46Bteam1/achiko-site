@@ -1,0 +1,64 @@
+package com.achiko.backend.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+	// Handler 사용
+
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http
+				.authorizeHttpRequests((auth) -> auth
+						.requestMatchers(
+								"/"
+								,"/api/location/**"
+								, "/user/**"
+								, "/user/verifyAuthCode"
+								, "/user/findLoginIdResult"
+								, "/images/**"
+								, "/css/**"
+								, "/js/**")
+						.permitAll()
+						.requestMatchers("/admin").hasRole("ADMIN")
+						.requestMatchers("/user/mypage").hasAnyRole("ADMIN", "USER")
+						.anyRequest().authenticated());
+		// Custom Login 설정
+		http
+			.formLogin((auth) -> auth
+					.loginPage("/user/login")
+					.loginProcessingUrl("/user/loginProc")
+					.usernameParameter("loginId")
+					.passwordParameter("password")
+					.failureUrl("/user/login?error=true")		// FailureHandler가 있으면 이 코드는 없어야함
+					.permitAll());
+
+		// logout 설정
+		http
+			.logout((auth) -> auth
+					.logoutUrl("/user/logout")
+					.logoutSuccessUrl("/")
+					.invalidateHttpSession(true)
+					.clearAuthentication(true));
+
+		// POST 요청시 CSRF 토큰을 요청하므로 (Cross-Site Request Forgery) 비활성화(개발환경)
+		http
+			.csrf((auth) -> auth.disable());
+
+		return http.build();
+	}
+
+	// 단방향 비밀번호 암호화
+	@Bean
+	BCryptPasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+}
+

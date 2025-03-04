@@ -1,46 +1,79 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.2'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    
+    
 }
 
-group = 'com.example'
+group = 'com.achiko'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17) // Java 17 사용
+    }
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
+    // Spring Boot 핵심 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation 'io.github.cdimascio:dotenv-java:2.2.0'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-  	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.springframework.boot:spring-boot-starter-web'  // Spring MVC (REST API)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA 사용
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf 사용
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // Spring Boot Validation
+    implementation 'org.springframework.boot:spring-boot-starter-mail' // 이메일 발송
+    implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security 사용
+
+    // 환경 변수 관리 (.env 사용)
+    implementation 'io.github.cdimascio:dotenv-java:2.2.0' // dotenv 환경 변수 관리 (최신 버전 유지)
+
+    // MySQL Database
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // Lombok (자동 코드 생성)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Swagger (API 문서화)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+    // REST API 호출을 위한 WebClient
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // Bootpay 관련
+    implementation 'io.github.bootpay:backend:2.3.3'
+
+    // Thymeleaf Security (Spring Security와 연동)
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    // 개발용 도구
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // 테스트 관련 의존성
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    
+    // webp 파일 지원
+    
+    implementation "com.sksamuel.scrimage:scrimage-core:4.0.37"
+    implementation "com.sksamuel.scrimage:scrimage-webp:4.0.37"
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
+
+

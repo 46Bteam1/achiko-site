@@ -37,6 +37,7 @@ public class UserDTO {
 	private String religion;
 	private String bio;
 	private LocalDateTime createdAt;
+	private String receiptId;
 	
 	public static UserDTO toDTO(UserEntity userEntity) {
 		return UserDTO.builder()
@@ -59,6 +60,7 @@ public class UserDTO {
 				.gender(userEntity.getGender())
 				.bio(userEntity.getBio())
 				.createdAt(userEntity.getCreatedAt())
+				.receiptId(userEntity.getReceiptId())
 				.build();
 	}
 }
