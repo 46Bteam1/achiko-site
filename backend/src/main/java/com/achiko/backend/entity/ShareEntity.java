@@ -1,13 +1,19 @@
-/*package com.achiko.backend.entity;
+
+package com.achiko.backend.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,17 +35,27 @@ public class ShareEntity {
     @Column(name = "share_id")
     private Long shareId;
 
-    @Column(name = "host_id", nullable = false)
-    private Long hostId;
+    // host를 ManyToOne 관계로 UserEntity와 연결
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "host_id", nullable = false)
+    private UserEntity host;
 
-    @Column(name = "region_id", nullable = false)
-    private Long regionId;
+    // region, city, town을 ManyToOne 관계로 각각 연결
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "province_id", nullable = false)
+    private ProvinceEntity province;
 
-    @Column(name = "city_id", nullable = false)
-    private Long cityId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", nullable = false)
+    private RegionEntity region;
 
-    @Column(name = "town_id", nullable = false)
-    private Long townId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id", nullable = false)
+    private CityEntity city;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "town_id", nullable = false)
+    private TownEntity town;
 
     @Column(name = "postal_code", nullable = false)
     private String postalCode;
@@ -69,17 +85,17 @@ public class ShareEntity {
     private LocalDateTime createdAt;
 
     @Column(name = "status")
-    private String status;  // "open"/"closed" 등
+    private String status; // "open"/"closed" 등
 
-
-    public static ShareEntity fromDTO(ShareDTO dto) {
-        //if (dto == null) return null;
+    public static ShareEntity fromDTO(com.achiko.backend.dto.ShareDTO dto) {
+        // if (dto == null) return null;
         return ShareEntity.builder()
                 .shareId(dto.getShareId())
-                .hostId(dto.getHostId())
-                .regionId(dto.getRegionId())
-                .cityId(dto.getCityId())
-                .townId(dto.getTownId())
+                .host(UserEntity.builder().userId(dto.getHostId()).build())
+                .province(new ProvinceEntity(dto.getProvinceId().intValue(), null, null, null))
+                .region(new RegionEntity(dto.getRegionId().intValue(), null, null, null, null))
+                .city(new CityEntity(dto.getCityId().intValue(), null, null, null))
+                .town(new TownEntity(dto.getTownId().intValue(), null, null))
                 .postalCode(dto.getPostalCode())
                 .title(dto.getTitle())
                 .description(dto.getDescription())
@@ -94,15 +110,20 @@ public class ShareEntity {
     }
 }
 
-*/
 /*
- @NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
-@ToString
-@Builder
-
-@Entity
-@Table(name = "share")
+ * @NoArgsConstructor
+ * 
+ * @AllArgsConstructor
+ * 
+ * @Setter
+ * 
+ * @Getter
+ * 
+ * @ToString
+ * 
+ * @Builder
+ * 
+ * @Entity
+ * 
+ * @Table(name = "share")
  */
