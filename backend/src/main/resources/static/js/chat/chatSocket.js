@@ -21,12 +21,14 @@ $(function () {
     // 채팅 내역 불러오기
     loadChats(chatRoomId);
 
-    // 채팅방 입장
-    const enterMessage = {
-      chatroomId: chatRoomId,
-      nickname: nickname,
-    };
-    stompClient.send("/app/chatEnterRoom", {}, JSON.stringify(enterMessage));
+    // 연결 확인 후에 메시지 전송
+    setTimeout(() => {
+      const enterMessage = {
+        chatroomId: chatRoomId,
+        nickname: nickname,
+      };
+      stompClient.send("/app/chatEnterRoom", {}, JSON.stringify(enterMessage));
+    }, 100); // 0.1초 정도 딜레이
 
     // 채팅방 입장, 퇴장 메세지 받는 곳
     stompClient.subscribe(`/topic/chatroomAlert/${chatRoomId}`, function (res) {

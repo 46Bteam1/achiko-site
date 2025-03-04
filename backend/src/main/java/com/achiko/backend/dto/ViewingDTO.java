@@ -3,31 +3,38 @@ package com.achiko.backend.dto;
 import java.time.LocalDateTime;
 
 import com.achiko.backend.entity.ViewingEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
+@ToString
 public class ViewingDTO {
 	
 	private Long viewingId;
 	private Long shareId;
+	private String hostNickname;
 	private String guestNickname;
 	private Boolean isCompleted;
+	
 	private LocalDateTime scheduledDate;
+	
 	private LocalDateTime createdAt;
 	
-	public static ViewingDTO toDTO(ViewingEntity viewEntity, String guestNickname) {
+	public static ViewingDTO toDTO(ViewingEntity viewEntity, String hostNickname,String guestNickname) {
 		return ViewingDTO.builder()
 				.viewingId(viewEntity.getViewingId())
 				.shareId(viewEntity.getShare().getShareId())
+				.hostNickname(hostNickname)
 				.guestNickname(guestNickname)
 				.isCompleted(viewEntity.getIsCompleted())
 				.scheduledDate(viewEntity.getScheduledDate())

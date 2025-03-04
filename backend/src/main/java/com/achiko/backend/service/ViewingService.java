@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.ViewingDTO;
@@ -27,7 +28,13 @@ public class ViewingService {
 	
 	public void setViewing(ViewingDTO viewingDTO, String loginId) {
 		UserEntity user = userRepository.findByLoginId(loginId);
+		Long shareId = viewingDTO.getShareId();
+		Optional<ShareEntity> temp1 = shareRepository.findById(shareId);
+		if(temp1.isEmpty()) return;
+		ShareEntity share = temp1.get();
 		
+		ViewingEntity viewingEntity = ViewingEntity.toEntity(viewingDTO, share, user);
+		viewingRepository.save(viewingEntity);
 	}
 
 	public List<ViewingDTO> findViewings(String loginId) {
@@ -36,9 +43,10 @@ public class ViewingService {
 		
 		List<ViewingDTO> list = new ArrayList<>();
 		
-		List<ViewingEntity> tempList = viewingRepository.findByGuest_UserId(user.getUserId());
+		List<ViewingEntity> tempList = viewingRepository.findByGuest_UserId(user.getUserId(), Sort.by(Sort.Direction.ASC, "createdAt"));
 		tempList.forEach((e)->{
-			list.add(ViewingDTO.toDTO(e, user.getNickname()));
+			Long eId = e.getViewingId();
+			list.add(ViewingDTO.toDTO(e,viewingRepository.findHostNicknameByViewingId(eId),user.getNickname()));
 		});
 		
 		return list;
@@ -52,10 +60,11 @@ public class ViewingService {
 		
 		
 		List<ViewingDTO> list = new ArrayList<>();
-		List<ViewingEntity> tempList = viewingRepository.findByShare(share);
+		List<ViewingEntity> tempList = viewingRepository.findByShare(share, Sort.by(Sort.Direction.ASC, "createdAt"));
 
 		tempList.forEach((e)->{
-			list.add(ViewingDTO.toDTO(e, e.getGuest().getNickname()));
+			Long eId = e.getViewingId();
+			list.add(ViewingDTO.toDTO(e, user.getNickname(),viewingRepository.findGuestNicknameByViewingId(eId)));
 		});
 		return list;
 	}

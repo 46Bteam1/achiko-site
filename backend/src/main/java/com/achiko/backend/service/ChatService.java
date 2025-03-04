@@ -142,4 +142,11 @@ public class ChatService {
 		
 		roomRepository.save(chatRoomEntity);
 	}
+
+	public Long getShareId(Long chatroomId) {
+		Optional<ChatRoomEntity> temp1 = roomRepository.findById(chatroomId);
+		if(temp1.isEmpty()) return null;
+		
+		return temp1.get().getShare().getShareId();
+	}
 }

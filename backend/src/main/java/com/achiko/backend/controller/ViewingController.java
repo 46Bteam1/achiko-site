@@ -26,8 +26,6 @@ public class ViewingController {
 	// 뷰잉 생성하기
 	@PostMapping("/setViewing")
 	public String setViewing(@RequestBody ViewingDTO viewingDTO, @AuthenticationPrincipal LoginUserDetails loginUser) {
-		log.info("viewing 생성:{}", viewingDTO.toString());
-		
 		// 생성하기 위한 DTO와 로그인 유저의 loginId를 넘겨줌
 		viewingService.setViewing(viewingDTO, loginUser.getUsername());
 		
