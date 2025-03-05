@@ -246,7 +246,7 @@
     </section>
     
     
-    <section class="review-section">
+    <section class="review-section" th:if="${isOwner}">
       <h2>게시물 관리</h2>
       <a th:href="@{/share/update(shareId=${share.shareId})}">
         <button>수정</button>

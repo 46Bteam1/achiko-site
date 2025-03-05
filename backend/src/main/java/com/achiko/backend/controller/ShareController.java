@@ -61,22 +61,32 @@ public class ShareController {
     /**
      * 글 상세 조회 페이지 URL 예: /share/selectOne?shareId=1
      */
-    @GetMapping("/share/selectOne")
-    public String selectOne(@RequestParam("shareId") Long shareId, Model model) {
-        ShareDTO shareDTO = shareService.getShareById(shareId);
-        if (shareDTO == null) {
-            return "redirect:/";
-        }
+	@GetMapping("/share/selectOne")
+	public String selectOne(@RequestParam("shareId") Long shareId, Model model, Principal principal) {
+	    ShareDTO shareDTO = shareService.getShareById(shareId);
+	    if (shareDTO == null) {
+	        return "redirect:/";
+	    }
 
-        // 1) 이미지 목록 조회
-        List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
+	    // 이미지 목록 조회
+	    List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
+	    model.addAttribute("share", shareDTO);
+	    model.addAttribute("fileList", fileList); 
+	    model.addAttribute("googleApiKey", googleApiKey);
 
-        model.addAttribute("share", shareDTO);
-        model.addAttribute("fileList", fileList); 
-        model.addAttribute("googleApiKey", googleApiKey);
+	    // 현재 사용자가 게시물의 소유자인지 확인
+	    boolean isOwner = false;
+	    if (principal != null) {
+	        UserEntity user = userRepository.findByLoginId(principal.getName());
+	        if (user != null && user.getUserId().equals(shareDTO.getHostId())) {
+	            isOwner = true;
+	        }
+	    }
+	    model.addAttribute("isOwner", isOwner);
 
-        return "share/selectOne";
-    }
+	    return "share/selectOne";
+	}
+
 
     /**
      * [GET] 글 작성 페이지 URL: /share/write
@@ -123,25 +133,31 @@ public class ShareController {
      * [GET] 수정 폼 페이지 URL: /share/update?shareId=1
      */
     @GetMapping("/share/update")
-    public String updateForm(@RequestParam("shareId") Long shareId, Model model) {
+    public String updateForm(@RequestParam("shareId") Long shareId, Model model, Principal principal) {
         ShareDTO shareDTO = shareService.getShareById(shareId);
         if (shareDTO == null) {
-            return "redirect:/"; // 또는 에러 페이지
+            return "redirect:/";
         }
-        // RegionEntity에서 provinceId 조회 (ProvinceEntity 내부의 provinceId 사용)
+        // 소유자 여부 확인
+        UserEntity user = userRepository.findByLoginId(principal.getName());
+        if (user == null || !user.getUserId().equals(shareDTO.getHostId())) {
+            // 소유자가 아니라면 상세 페이지로 리다이렉트하거나 에러 처리
+            return "redirect:/share/selectOne?shareId=" + shareId;
+        }
+
+        // 기타 수정 폼에 필요한 데이터 전달
         RegionEntity region = regionRepository.findById(shareDTO.getRegionId().intValue())
                 .orElseThrow(() -> new IllegalArgumentException("해당 region을 찾을 수 없습니다."));
         int provinceId = region.getProvince().getProvinceId();
 
-        // ★ 기존 파일 목록 조회: share_id에 해당하는 이미지들을 가져옴
         List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
-
         model.addAttribute("share", shareDTO);
         model.addAttribute("provinceId", provinceId);
-        model.addAttribute("fileList", fileList); // update.html에 기존 사진 목록 전달
+        model.addAttribute("fileList", fileList);
         model.addAttribute("googleApiKey", googleApiKey);
         return "share/update";
     }
+
 
     /**
      * ★ [파일 바인딩 API] 파일을 ShareEntity와 연결
@@ -185,14 +201,22 @@ public class ShareController {
      * [GET] 게시물 삭제 처리 URL: /share/delete?shareId=...
      */
     @GetMapping("/share/delete")
-    public String deleteShare(@RequestParam("shareId") Long shareId,
-                              RedirectAttributes rttr) {
-        // 삭제 처리 (삭제할 게시물이 존재하지 않으면 예외 발생)
+    public String deleteShare(@RequestParam("shareId") Long shareId, Principal principal, RedirectAttributes rttr) {
+        ShareDTO shareDTO = shareService.getShareById(shareId);
+        if (shareDTO == null) {
+            rttr.addFlashAttribute("error", "게시글이 존재하지 않습니다.");
+            return "redirect:/";
+        }
+        UserEntity user = userRepository.findByLoginId(principal.getName());
+        if (user == null || !user.getUserId().equals(shareDTO.getHostId())) {
+            rttr.addFlashAttribute("error", "게시물을 삭제할 권한이 없습니다.");
+            return "redirect:/share/selectOne?shareId=" + shareId;
+        }
         shareService.deleteShare(shareId);
         rttr.addFlashAttribute("message", "게시물이 삭제되었습니다.");
-        // 삭제 후 이동할 페이지 - 필요에 따라 변경 (예: 공유글 목록 페이지)
         return "redirect:/";
     }
+
 
     /**
      * [GET] /api/geocode - Google Geocoding API 호출
