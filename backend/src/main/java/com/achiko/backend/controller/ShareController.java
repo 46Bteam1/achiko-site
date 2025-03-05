@@ -128,16 +128,37 @@ public class ShareController {
         if (shareDTO == null) {
             return "redirect:/"; // 또는 에러 페이지
         }
-        // RegionEntity에서 provinceId 조회 (DB에 저장되어 있는 값)
+        // RegionEntity에서 provinceId 조회 (ProvinceEntity 내부의 provinceId 사용)
         RegionEntity region = regionRepository.findById(shareDTO.getRegionId().intValue())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 region을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 region을 찾을 수 없습니다."));
         int provinceId = region.getProvince().getProvinceId();
 
+        // ★ 기존 파일 목록 조회: share_id에 해당하는 이미지들을 가져옴
+        List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
+
         model.addAttribute("share", shareDTO);
-        model.addAttribute("provinceId", provinceId);  // ★ 추가
+        model.addAttribute("provinceId", provinceId);
+        model.addAttribute("fileList", fileList); // update.html에 기존 사진 목록 전달
         model.addAttribute("googleApiKey", googleApiKey);
-        return "share/update";  // 수정 폼 템플릿 update.html
+        return "share/update";
     }
+
+    /**
+     * ★ [파일 바인딩 API] 파일을 ShareEntity와 연결
+     */
+    @PostMapping("/share-files/bind")
+    @ResponseBody
+    public ResponseEntity<String> bindUploadedFiles(@RequestParam("shareId") Long shareId,
+                                                    @RequestParam("sessionId") String sessionId) {
+        try {
+            shareFilesService.bindFilesToShare(sessionId, shareId);
+            return ResponseEntity.ok("파일이 정상적으로 연결되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("파일 연결 실패: " + e.getMessage());
+        }
+    }
+
+
 
     /**
      * [POST] 수정 처리 URL: /share/update
