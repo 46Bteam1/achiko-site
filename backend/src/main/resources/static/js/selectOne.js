@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     shareModal.style.display = "none";
   });
 
-  // 모달 외부 클릭 시 모달 닫기
+  // 모달 외부 클릭 시 모달 닫기 (공유 모달)
   window.addEventListener("click", function (event) {
     if (event.target === shareModal) {
       shareModal.style.display = "none";
@@ -94,6 +94,9 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("searchSupermarketBtn").addEventListener("click", function(){
     searchNearbyPlaces("supermarket");
   });
+  document.getElementById("searchCafeBtn").addEventListener("click", function(){
+    searchNearbyPlaces("cafe");
+  });
   document.getElementById("searchRestaurantBtn").addEventListener("click", function(){
     searchNearbyPlaces("restaurant");
   });
@@ -103,6 +106,20 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("searchLaundromatBtn").addEventListener("click", function(){
       searchNearbyPlaces("laundromat");
   });
+  // 카페 체인 검색 버튼 이벤트 등록
+  document.getElementById("searchStarbucksBtn").addEventListener("click", function(){
+    searchNearbyPlaces("スターバックス");
+  });
+  document.getElementById("searchDoutorBtn").addEventListener("click", function(){
+    searchNearbyPlaces("ドトールコーヒー");
+  });
+  document.getElementById("searchTullysBtn").addEventListener("click", function(){
+    searchNearbyPlaces("タリーズコーヒー");
+  });
+  document.getElementById("searchKomedaBtn").addEventListener("click", function(){
+    searchNearbyPlaces("コメダ珈琲店");
+  });
+
 
   // 신고 모달 창 기능
   const reportModal = document.getElementById("reportModal");
@@ -120,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
     reportModal.style.display = "none";
   });
 
-  // 모달 외부 클릭 시 닫기
+  // 모달 외부 클릭 시 닫기 (신고 모달)
   window.addEventListener("click", function (event) {
     if (event.target === reportModal) {
       reportModal.style.display = "none";
@@ -193,6 +210,26 @@ document.addEventListener("DOMContentLoaded", function () {
       roomPhotos.scrollLeft = scrollLeft - walk;
     });
   }
+
+  // ★ 게스트 조회 모달 관련 (추가)
+  const guestModal = document.getElementById("guestModal");
+  const confirmedGuestButton = document.getElementById("confirmedGuest");
+  const guestModalClose = document.getElementById("guestModalClose");
+
+  confirmedGuestButton.addEventListener("click", function () {
+    guestModal.style.display = "block";
+  });
+
+  guestModalClose.addEventListener("click", function () {
+    guestModal.style.display = "none";
+  });
+
+  // 모달 외부 클릭 시 닫기 (게스트 조회 모달)
+  window.addEventListener("click", function (event) {
+    if (event.target === guestModal) {
+      guestModal.style.display = "none";
+    }
+  });
 });
 
 // 카카오 공유 버튼 이벤트는 SDK가 완전히 로드된 후에 등록 (window.onload 사용)
