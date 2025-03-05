@@ -134,7 +134,7 @@
       </div>
     </section>
     
-    <!-- 공유하기, 찜하기, 편의시설 검색 버튼 영역 (버튼은 인라인 배치) -->
+    <!-- 공유하기, 찜하기, 편의시설 검색, 게스트 조회, 신고 버튼 영역 (버튼은 인라인 배치) -->
     <section class="action-buttons">
       <button id="shareButton">공유하기</button>
       <button id="favoriteButton" 
@@ -143,9 +143,9 @@
               data-is-favorite="[[${isFavorite}]]">
         찜하기
       </button>
-      <!-- ★ 편의시설 검색 버튼: 클릭 시 모달 창이 열림 -->
       <button id="openFacilityModalBtn">편의시설 검색</button>
-      <!-- 신고 버튼 추가 -->
+      <!-- ★ 새로 추가된 게스트 조회 버튼 -->
+      <button id="confirmedGuest">게스트 조회</button>
       <button id="reportButton">신고</button>
     </section>
     
@@ -194,9 +194,15 @@
         <!-- ★ 검색 버튼들: 각 버튼에 고유 ID 부여 -->
         <button id="searchConvenienceBtn">コンビニ</button>
         <button id="searchSupermarketBtn">スーパー</button>
+        <button id="searchCafeBtn">カフェ</button>
         <button id="searchRestaurantBtn">レストラン</button>
         <button id="searchDrugstoreBtn">ドラックストア</button>
-        <button id="searchLaundromatBtn">コインランドリー</button>
+        <button id="searchLaundromatBtn">コインランドリー</button><br>
+        
+        <button id="searchStarbucksBtn">スターバックス</button>
+  		<button id="searchDoutorBtn">ドトールコーヒー</button>
+  		<button id="searchTullysBtn">タリーズコーヒー</button>
+  		<button id="searchKomedaBtn">コメダ珈琲店</button>
         
         <!-- 편의시설 목록 출력 영역 -->
         <ul id="place-list"></ul>
@@ -222,6 +228,15 @@
       </div>
     </div>
     
+    <!-- ★ 새로 추가된 게스트 조회 모달 -->
+    <div id="guestModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="guestModalClose">&times;</span>
+        <h3><b> 확정 게스트 정보 </b></h3>
+        <img th:src="@{/images/fubao.webp}" alt="푸바오" width=500px length=300px>
+      </div>
+    </div>
+    
     <!-- 호스트 소개 영역 -->
     <section class="host-intro">
       <h2>호스트 소개</h2>
@@ -230,7 +245,7 @@
       </div>
     </section>
     
-    <!-- 리뷰 영역 -->
+    
     <section class="review-section">
       <h2>게시물 관리</h2>
       <a th:href="@{/share/update(shareId=${share.shareId})}">
