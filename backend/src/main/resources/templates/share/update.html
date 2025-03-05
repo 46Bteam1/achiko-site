@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>글 수정</title>
-  <!-- CSS 연결 -->
   <link rel="stylesheet" th:href="@{/css/update.css}" />
 
   <!-- Noto Sans Korean & Japanese 폰트 추가 -->
@@ -11,57 +10,38 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- ★ 전역 변수 및 메인 지도 초기화 함수 정의 -->
+  <!-- ★ 전역 변수 및 기존 이미지 목록 전달 ★ -->
   <script th:inline="javascript">
-    // Thymeleaf로부터 API Key와 주소, 그리고 province/region/city/town 정보를 주입 (★ null 방지를 위해 기본값 제공)
     window.googleApiKeyFromServer = /*[[${googleApiKey != null ? googleApiKey : 'default-key'}]]*/ 'default-key';
-    window.provinceId             = /*[[${provinceId != null ? provinceId : 0}]]*/ 0;
-    window.regionId               = /*[[${share?.regionId != null ? share.regionId : 0}]]*/ 0;
-    window.cityId                 = /*[[${share?.cityId != null ? share.cityId : 0}]]*/ 0;
-    window.townId                 = /*[[${share?.townId != null ? share.townId : 0}]]*/ 0;
-    window.shareAddress           = /*[[${share?.address != null ? share.address : 'Default Address'}]]*/ 'Default Address';
-    window.shareDetail            = /*[[${share?.detailAddress != null ? share.detailAddress : 'Default Detail'}]]*/ 'Default Detail';
-
-    // fullAddress 생성 (주소와 상세주소를 쉼표로 구분하여 결합)
+    window.provinceId = /*[[${provinceId != null ? provinceId : 0}]]*/ 0;
+    window.regionId = /*[[${share?.regionId != null ? share.regionId : 0}]]*/ 0;
+    window.cityId = /*[[${share?.cityId != null ? share.cityId : 0}]]*/ 0;
+    window.townId = /*[[${share?.townId != null ? share.townId : 0}]]*/ 0;
+    window.shareAddress = /*[[${share?.address != null ? share.address : 'Default Address'}]]*/ 'Default Address';
+    window.shareDetail = /*[[${share?.detailAddress != null ? share.detailAddress : 'Default Detail'}]]*/ 'Default Detail';
     window.fullAddress = window.shareAddress + ", " + window.shareDetail;
-    console.log("공유글 전체 주소: " + window.fullAddress);
-    console.log("provinceId =", window.provinceId);
-    console.log("regionId   =", window.regionId);
-    console.log("cityId     =", window.cityId);
-    console.log("townId     =", window.townId);
-    console.log("fullAddress =", window.fullAddress);
+    // ★ 기존 업로드된 이미지 목록를 fileList라는 모델 변수로 전달받아 window.existingFiles에 저장
+    window.existingFiles = /*[[${fileList != null ? fileList : '[]'}]]*/ [];
+  </script>
 
-    // 메인 지도 초기화 함수 (Google Maps API의 콜백 함수)
-    window.initMap = function () {
-        console.log("Google Maps API가 정상적으로 로드되었습니다.");
-        var geocoder = new google.maps.Geocoder();
-        var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 15,
-            center: {lat: 35.6895, lng: 139.6917} // 기본값: 도쿄
-        });
-        geocoder.geocode({'address': window.fullAddress}, function(results, status) {
-            if (status === 'OK' && results.length > 0) {
-                map.setCenter(results[0].geometry.location);
-                new google.maps.Marker({
-                    map: map,
-                    position: results[0].geometry.location
-                });
-            } else {
-                console.error('Geocode 실패: ' + status);
-            }
-        });
+  <!-- update.js 로드 -->
+  <script src="/js/update.js" defer></script>
+  <script async defer th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
+ <script>
+    window.onload = function () {
+      if (typeof google === "object" && typeof google.maps === "object") {
+          console.log("Google Maps API 로드 완료. initMap 실행");
+          initMap();
+      } else {
+          setTimeout(initMap, 1000);
+      }
     };
   </script>
 
-  <!-- update.js 로드 (업데이트 관련 기능, 드롭다운, 유효성 검사 등) -->
-  <!-- ★ defer 속성을 통해 HTML 파싱 완료 후 update.js 실행 -->
-  <script src="/js/update.js" defer></script>
-
-  <!-- Google Maps API 스크립트 로드 (async defer 적용, 콜백은 initMap) -->
-  <script async defer th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
-
 </head>
 <body>
+
+
   <!-- 상단 헤더 영역 -->
   <header class="top-header">
     <div class="logo-area">
@@ -69,9 +49,7 @@
         <img th:src="@{/images/achiko-logo3.png}" alt="로고">
       </a>
     </div>
-    <div class="header-text">
-      あちこちの夢が集まって、ひとつの物語が生まれる
-    </div>
+    <div class="header-text">あちこちの夢が集まって、ひとつの物語が生まれる</div>
     <div class="mypage-area">
       <a th:href="@{/user/selectOne}">
         <button>마이페이지</button>
@@ -85,20 +63,22 @@
     <aside class="sidebar">
       <nav>
         <a href="#title">TITLE</a><br>
-				<a href="#description">DESCRIPTION</a><br>
-				<a href="#currentGuests">GUEST</a><br>
-				<a href="#provinceId">LOCATION</a><br>
-				<a href="#map">MAP</a><br>
-				<a href="#price">PRICE</a><br>
-				<a href="#photos">PHOTO</a><br>
+        <a href="#description">DESCRIPTION</a><br>
+        <a href="#currentGuests">GUEST</a><br>
+        <a href="#provinceId">LOCATION</a><br>
+        <a href="#map">MAP</a><br>
+        <a href="#price">PRICE</a><br>
+        <a href="#photos">PHOTO</a><br>
       </nav>
     </aside>
 
     <!-- 중앙 컨텐츠 영역: 수정 폼 -->
     <section class="content-area">
       <form id="updateForm" th:action="@{/share/update}" method="post" enctype="multipart/form-data" class="write-form" onsubmit="return validateForm();">
-        <!-- ★ ★ 수정: shareId를 hidden 필드로 추가하여, 수정 시 ID가 전달되도록 함 -->
-        <input type="hidden" name="shareId" th:value="${share.shareId}" />
+        <!-- ★ 수정: shareId 및 sessionId를 hidden 필드로 전달 -->
+        <input type="hidden" id="sessionId" name="sessionId" value="${share.shareId}" />
+		<input type="hidden" name="shareId" th:value="${share.shareId}" />
+
 
         <!-- 제목 -->
         <div class="form-group">
@@ -127,7 +107,6 @@
         <!-- [A] 지방 선택 -->
         <div class="form-group">
           <label for="provinceId">지방 선택</label>
-          <!-- onchange="updateRegionSelect()" => 전역 함수 호출 -->
           <select id="provinceId" name="provinceId" class="form-control" required onchange="updateRegionSelect()">
             <option value="">-- 선택하세요 --</option>
             <option value="1" th:selected="${#strings.equalsIgnoreCase('1', param.provinceId)}">北海道</option>
@@ -145,7 +124,6 @@
         <!-- [B] 지역 선택 -->
         <div class="form-group">
           <label for="regionId">지역 선택</label>
-          <!-- onchange="updateCitySelect()" => 전역 함수 호출 -->
           <select id="regionId" name="regionId" class="form-control" required onchange="updateCitySelect()">
             <option value="">-- 선택하세요 --</option>
           </select>
@@ -154,7 +132,6 @@
         <!-- [C] 도시 선택 -->
         <div class="form-group">
           <label for="cityId">도시 선택</label>
-          <!-- onchange="updateTownSelect()" => 전역 함수 호출 -->
           <select id="cityId" name="cityId" class="form-control" required onchange="updateTownSelect()">
             <option value="">-- 선택하세요 --</option>
           </select>
@@ -171,16 +148,13 @@
         <!-- 주소 입력 (Autocomplete 적용) -->
         <div class="form-group">
           <label for="address">주소</label>
-          <!-- ★ 수정: autocomplete="off" 추가하여 브라우저 기본 자동완성을 비활성화, 그리고 readonly로 고정 -->
           <input type="text" id="address" name="address" class="form-control" th:value="${share.address}" autocomplete="off" readonly placeholder="ex. 東京都港区芝浦三丁目４－１" required />
-          <!-- ★ "주소 수정" 버튼 추가: 누르면 주소 입력 필드가 초기화되고 readonly 속성이 제거되어 수정 가능해짐 -->
           <button type="button" onclick="resetAddress()" class="reset-address-btn">주소 수정</button>
           <button type="button" id="updateMapBtn" onclick="updateMapAndPostalCode()">지도 업데이트</button>
         </div>
 
         <!-- 영문 주소 표시 영역 -->
         <div id="englishAddress" style="margin-top: 8px; color: #555; font-size: 0.9em;"></div>
-        <br>
 
         <!-- 상세 주소 -->
         <div class="form-group">
@@ -188,13 +162,13 @@
           <input type="text" id="detailAddress" name="detailAddress" class="form-control" th:value="${share.detailAddress}" autocomplete="off" placeholder="ex. アチコプラザ 4F" />
         </div>
 
-        <!-- 지도 영역 (Google Maps API를 통해 위치 확인) -->
+        <!-- 지도 영역 -->
         <div class="form-group">
           <label for="map">지도에서 위치 확인</label>
           <div id="map" style="width: 100%; height: 400px;"></div>
         </div>
 
-        <!-- 우편번호 (자동 입력, readonly) -->
+        <!-- 우편번호 -->
         <div class="form-group">
           <label for="postalCode">우편번호</label>
           <input type="text" id="postalCode" name="postalCode" class="form-control" th:value="${share.postalCode}" readonly placeholder="자동 입력" />
@@ -206,16 +180,33 @@
           <input type="text" step="0.01" id="price" name="price" class="form-control" th:value="${share.price}" placeholder="요금 (JPY)" required />
         </div>
 
-        <!-- 사진 등록 (필요시) -->
+        <!-- ★ 사진 등록 영역 (업데이트 시에도 기존 이미지와 새 이미지 모두 수정/삭제 가능) ★ -->
         <div class="photo-upload-box">
           <h3>사진 등록</h3>
           <input type="file" id="photos" name="photos" multiple form="updateForm" onchange="handlePhotoUpload(event)" />
           <div id="photoPreview" style="margin-top: 10px;"></div>
         </div>
 
-        <button class="register-btn" form="updateForm" type="submit">수정 완료</button>
+        <button class="register-btn" type="submit">수정 완료</button>
       </form>
     </section>
   </main>
+  <script>
+    async function saveUpdatedFiles() {
+        const sessionId = document.getElementById("sessionId").value;
+        const shareId = document.querySelector("[name='shareId']").value;
+        await fetch("/share-files/bind", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ sessionId, shareId }),
+        });
+    }
+
+    document.getElementById("updateForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        await saveUpdatedFiles();
+        this.submit();
+    });
+  </script>
 </body>
 </html>
