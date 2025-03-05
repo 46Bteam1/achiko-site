@@ -120,7 +120,6 @@ document.addEventListener("DOMContentLoaded", function () {
     searchNearbyPlaces("コメダ珈琲店");
   });
 
-
   // 신고 모달 창 기능
   const reportModal = document.getElementById("reportModal");
   const reportButton = document.getElementById("reportButton");
@@ -228,6 +227,30 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("click", function (event) {
     if (event.target === guestModal) {
       guestModal.style.display = "none";
+    }
+  });
+
+  // ★ 메시지 보내기 모달 관련 (새로 추가)
+  const messageModal = document.getElementById("messageModal");
+  const messageHostBtn = document.getElementById("messageHostBtn");
+  const messageModalClose = document.getElementById("messageModalClose");
+  const noMessageBtn = document.getElementById("noMessageBtn");
+
+  messageHostBtn.addEventListener("click", function () {
+    messageModal.style.display = "block";
+  });
+
+  messageModalClose.addEventListener("click", function () {
+    messageModal.style.display = "none";
+  });
+
+  noMessageBtn.addEventListener("click", function () {
+    messageModal.style.display = "none";
+  });
+
+  window.addEventListener("click", function (event) {
+    if (event.target === messageModal) {
+      messageModal.style.display = "none";
     }
   });
 });

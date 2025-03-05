@@ -247,12 +247,35 @@
       </div>
     </div>
     
-    <!-- 호스트 소개 영역 -->
+    <!-- 새로 추가된 메시지 보내기 모달 창 (독립적이며 Google Maps API에 영향을 주지 않음) -->
+    <div id="messageModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="messageModalClose">&times;</span>
+        <h2>SEND A MESSAGE TO HOST</h2><br>
+        <!-- 게시글 제목을 표시 -->
+        <h3 th:text="${share.title}">게시글 제목</h3>
+
+        <!-- fileList의 첫번째 사진을 표시 -->
+        <div class="host-first-image">
+          <img th:src="${fileList[0].fileUrl}" alt="첫번째 방 사진" width=500px length=300px/>
+        </div>
+        <span th:text="'HOST: ' + ${loggedUser.nickname} + '(' + ${loggedUser.loginId} + ')'">[nickname(login_id)]</span>
+        <br>호스트에게 메시지를 보내겠습니까?
+        <br><br>
+        <button id="yesMessageBtn">YES</button>
+        <button id="noMessageBtn">NO</button>
+      </div>
+    </div>
+    
+    <!-- 호스트 소개 영역 (수정됨) -->
     <section class="host-intro">
       <h2>호스트 소개</h2>
-      <div class="share-info-right">
-        <button id="messageHostBtn">호스트에게 메세지 보내기</button>
+      <div class="host-details">
+        
       </div>
+      <div class="share-info-right" th:if="${!isOwner}">
+  		<button id="messageHostBtn">호스트에게 메세지 보내기</button>
+	  </div>
     </section>
     
     <!-- 게시물 관리 영역: 소유자인 경우에만 노출 -->
