@@ -111,9 +111,19 @@
     <div class="header-text">
       あちこちの夢が集まって、ひとつの物語が生まれる
     </div>
-    <div class="mypage-area">
+    <!-- 로그인한 경우, 사용자 정보를 [nickname(login_id)] 형식으로 표시 -->
+    <div class="mypage-area" th:if="${loggedUser != null}">
+      <div class="user-info">
+        <span th:text="${loggedUser.nickname} + '(' + ${loggedUser.loginId} + ')'">[nickname(login_id)]</span>
+      </div>
       <a th:href="@{/user/selectOne}">
         <button>마이페이지</button>
+      </a>
+    </div>
+    <!-- 로그인하지 않은 경우 로그인 페이지로 유도 -->
+    <div class="mypage-area" th:unless="${loggedUser != null}">
+      <a th:href="@{/user/login}">
+        <button>로그인</button>
       </a>
     </div>
   </header>
@@ -164,7 +174,6 @@
         <p>주소: <span th:text="${share.address}"></span> <span th:text="${share.detailAddress}"></span></p>
         <p>우편번호: <span th:text="${share.postalCode}">000-0000</span></p>
         <p>요금: <span th:text="${#numbers.formatDecimal(share.price, 0, 0)}"></span> JPY</p>
-
       </div>
     </section>
     
@@ -201,9 +210,9 @@
         <button id="searchLaundromatBtn">コインランドリー</button><br>
         
         <button id="searchStarbucksBtn">スターバックス</button>
-  		<button id="searchDoutorBtn">ドトールコーヒー</button>
-  		<button id="searchTullysBtn">タリーズコーヒー</button>
-  		<button id="searchKomedaBtn">コメダ珈琲店</button>
+        <button id="searchDoutorBtn">ドトールコーヒー</button>
+        <button id="searchTullysBtn">タリーズコーヒー</button>
+        <button id="searchKomedaBtn">コメダ珈琲店</button>
         
         <!-- 편의시설 목록 출력 영역 -->
         <ul id="place-list"></ul>
@@ -234,7 +243,7 @@
       <div class="modal-content">
         <span class="close" id="guestModalClose">&times;</span>
         <h3><b> 확정 게스트 정보 </b></h3>
-        <img th:src="@{/images/fubao.webp}" alt="푸바오" width=500px length=300px>
+        <img th:src="@{/images/fubao.webp}" alt="푸바오" width="500px" length="300px">
       </div>
     </div>
     
@@ -246,7 +255,7 @@
       </div>
     </section>
     
-    
+    <!-- 게시물 관리 영역: 소유자인 경우에만 노출 -->
     <section class="review-section" th:if="${isOwner}">
       <h2>게시물 관리</h2>
       <a th:href="@{/share/update(shareId=${share.shareId})}">

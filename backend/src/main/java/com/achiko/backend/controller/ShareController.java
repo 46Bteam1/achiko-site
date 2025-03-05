@@ -78,14 +78,20 @@ public class ShareController {
 	    boolean isOwner = false;
 	    if (principal != null) {
 	        UserEntity user = userRepository.findByLoginId(principal.getName());
-	        if (user != null && user.getUserId().equals(shareDTO.getHostId())) {
-	            isOwner = true;
+	        if (user != null) {
+	            // 게시물 소유자 여부 확인
+	            if (user.getUserId().equals(shareDTO.getHostId())) {
+	                isOwner = true;
+	            }
+	            // 로그인한 사용자 정보를 모델에 추가 (닉네임과 로그인 아이디 사용)
+	            model.addAttribute("loggedUser", user);
 	        }
 	    }
 	    model.addAttribute("isOwner", isOwner);
 
 	    return "share/selectOne";
 	}
+
 
 
     /**
