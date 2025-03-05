@@ -15,32 +15,32 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class ReviewDTO {
-	private Long reviewId;
-	private Long reviewedUserId;
-	private Long reviewerId;
-	private Long shareId;
-	private Long cleanlinessRating;
-	private Long trustRating;
-	private Long communicationRating;
-	private Long mannerRating;
-	private String comment;
-	private LocalDateTime createdAt;
-	
-	public static ReviewDTO toDTO(ReviewEntity entity) {
-		return ReviewDTO.builder()
-				.reviewId(entity.getReviewId())
-				.reviewedUserId(entity.getReviewedUserId())
-				.reviewerId(entity.getReviewerId())
-				.shareId(entity.getShareId())
-				.cleanlinessRating(entity.getCleanlinessRating())
-				.trustRating(entity.getTrustRating())
-				.communicationRating(entity.getCommunicationRating())
-				.mannerRating(entity.getMannerRating())
-				.comment(entity.getComment())
-				.createdAt(entity.getCreatedAt())
-				.build();
-	}
+    private Long reviewId;
+    private Long reviewedUserId; 
+    private Long reviewerId; 
+    private Long shareId; 
+
+    private Integer cleanlinessRating;
+    private Integer trustRating;
+    private Integer communicationRating;
+    private Integer mannerRating;
+    private String comment;
+    private LocalDateTime createdAt;
+    
+    public static ReviewDTO toDTO(ReviewEntity entity) {
+        return ReviewDTO.builder()
+                .reviewId(entity.getReviewId())
+                .reviewedUserId(entity.getReviewedUserId())
+                .reviewerId(entity.getReviewerId())
+                .shareId(entity.getShareId())
+                .cleanlinessRating(entity.getCleanlinessRating())
+                .trustRating(entity.getTrustRating())
+                .communicationRating(entity.getCommunicationRating())
+                .mannerRating(entity.getMannerRating())
+                .comment(entity.getComment())
+                .createdAt(entity.getCreatedAt())
+                .build();
+    }
 }
 
