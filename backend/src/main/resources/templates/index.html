@@ -44,21 +44,24 @@
           <li><a th:href="@{/user/logout}">로그아웃</a></li>
           <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
         </th:block>
-        <li><a th:href="@{/reviewView}">reviewpage</a></li>
+
         <li><a th:href="@{/viewSubscribe/subscribePage}">구독page</a></li>
         <li><a th:href="@{/viewSpline}">SplinePage</a></li>
+
         <li>
           <a th:href="@{/share/write}">글 작성 페이지</a>
         </li>
         <li>
           <a th:href="@{/share/selectOne?shareId=6}">글 상세 페이지(6)</a>
         </li>
+
         <li>
           <a th:href="@{/share/selectOne?shareId=1}">글 상세 페이지(1)</a>
         </li>
         <li>
           <a th:href="@{/share/selectOne?shareId=2}">글 상세 페이지(2)</a>
         </li>
+        <li><a th:href="@{/review/reviewPage(reviewedUserId=15)}">정호's reviewpage</a></li>
       </ul>
       <div class="query-form">
         <div class="query-date-end">

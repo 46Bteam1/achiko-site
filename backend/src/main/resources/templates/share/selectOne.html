@@ -91,7 +91,7 @@
   </script>
   
   <!-- selectOne.js 로드 (모달 및 편의시설 검색 기능 포함) -->
-  <script src="/js/selectOne.js" defer></script>
+  <script src="/js/selectOne.js" th:src="@{/js/selectOne.js}" defer></script>
   
   <!-- Swiper JS 및 carousel.js 로드 (defer 속성을 사용) -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js" defer></script>
@@ -227,6 +227,7 @@
       <h2>호스트 소개</h2>
       <div class="share-info-right">
         <button id="messageHostBtn">호스트에게 메세지 보내기</button>
+       <a th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}"><button>호스트 리뷰 보기</button></a>
       </div>
     </section>
     
