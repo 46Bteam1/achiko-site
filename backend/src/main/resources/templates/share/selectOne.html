@@ -163,7 +163,8 @@
         </p>
         <p>주소: <span th:text="${share.address}"></span> <span th:text="${share.detailAddress}"></span></p>
         <p>우편번호: <span th:text="${share.postalCode}">000-0000</span></p>
-        <p>요금: <span th:text="${share.price}"></span> JPY</p>
+        <p>요금: <span th:text="${#numbers.formatDecimal(share.price, 0, 0)}"></span> JPY</p>
+
       </div>
     </section>
     
