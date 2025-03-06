@@ -100,6 +100,12 @@ function renderPhotoPreview() {
 window.handlePhotoUpload = function (event) {
     const newFiles = Array.from(event.target.files);
     const currentCount = selectedFiles.length;
+    // 사진이 5장을 초과하면 파일 선택을 막음
+    if (currentCount + newFiles.length > 5) {
+        alert("사진은 5개까지 첨부 가능합니다.");
+        event.target.value = "";
+        return;
+    }
     newFiles.forEach((file, index) => {
         if (!file.type.match("image.*")) return;
         // 신규 파일 객체 추가
@@ -377,6 +383,10 @@ window.validateForm = function () {
     if (descriptionInput.value.trim().length < 10) {
         console.warn("본문은 10자 이상이어야 합니다.");
         descriptionInput.focus();
+        return false;
+    }
+    if (selectedFiles.length < 1) {
+        alert("사진을 최소 1장 이상 첨부해주세요.");
         return false;
     }
     if (!validatePrice()) {

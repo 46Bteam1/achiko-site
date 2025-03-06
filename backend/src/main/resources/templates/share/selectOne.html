@@ -60,6 +60,8 @@
     window.fullAddress = window.shareAddress + ", " + window.shareDetail;
     console.log("공유글 전체 주소: " + window.fullAddress);
     
+    window.firstImageUrl = /*[[${firstImageUrl}]]*/ '';
+    
     // 메인 지도 초기화 함수 (Google Maps API의 콜백 함수)
     window.initMap = function () {
       console.log("Google Maps API가 정상적으로 로드되었습니다.");
@@ -113,11 +115,15 @@
     </div>
     <!-- 로그인한 경우, 사용자 정보를 [nickname(login_id)] 형식으로 표시 -->
     <div class="mypage-area" th:if="${loggedUser != null}">
+      <div>
+    	<img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px" 
+         style="border-radius: 50%; object-fit: cover;">
+		</div>
       <div class="user-info">
         <span th:text="${loggedUser.nickname} + '(' + ${loggedUser.loginId} + ')'">[nickname(login_id)]</span>
       </div>
       <a th:href="@{/user/selectOne}">
-        <button>마이페이지</button>
+        <button> MY PAGE </button>
       </a>
     </div>
     <!-- 로그인하지 않은 경우 로그인 페이지로 유도 -->
@@ -187,6 +193,9 @@
       <div class="modal-content">
         <span id="closeShareModalBtn" class="close">&times;</span>
         <h3>공유하기</h3>
+        <div>
+        <h5 th:text="${share.title}" style="color:slategrey;">게시글 제목</h5>
+        </div>
         <!-- 공유 관련 내용 및 SNS 링크 등 추가 -->
         <p>이 페이지의 URL을 복사하거나 SNS로 공유하세요.</p>
         <!-- 카카오 공유 버튼 추가 -->
@@ -224,6 +233,9 @@
       <div class="modal-content">
         <span class="close" id="reportModalClose">&times;</span>
         <h3>게시물 신고</h3>
+        <div>
+        <h3 th:text="${share.title}" style="color:slategrey;">게시글 제목</h3>
+        </div>
         <p>신고 사유를 선택하세요:</p>
         <select id="reportReason">
           <option value="spam">스팸 / 광고</option>
@@ -242,8 +254,17 @@
     <div id="guestModal" class="modal">
       <div class="modal-content">
         <span class="close" id="guestModalClose">&times;</span>
-        <h3><b> 확정 게스트 정보 </b></h3>
-        <img th:src="@{/images/fubao.webp}" alt="푸바오" width="500px" length="300px">
+        <h2><b> 확정 게스트 정보 </b></h2>
+        <div>
+        <div>
+        <h5 th:text="${share.title}" style="color:slategrey;">게시글 제목</h5>
+    	</div>
+    	<img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px" 
+         style="border-radius: 50%; object-fit: cover;">
+		</div>
+      <div class="user-info">
+        <span th:text="${loggedUser.nickname} + '(' + ${loggedUser.loginId} + ')'">[nickname(login_id)]</span>
+      </div>
       </div>
     </div>
     
@@ -253,13 +274,22 @@
         <span class="close" id="messageModalClose">&times;</span>
         <h2>SEND A MESSAGE TO HOST</h2><br>
         <!-- 게시글 제목을 표시 -->
-        <h3 th:text="${share.title}">게시글 제목</h3>
+        <h3 th:text="${share.title}" style="color:slategrey;">게시글 제목</h3>
 
         <!-- fileList의 첫번째 사진을 표시 -->
         <div class="host-first-image">
           <img th:src="${fileList[0].fileUrl}" alt="첫번째 방 사진" width=500px length=300px/>
         </div>
-        <span th:text="'HOST: ' + ${loggedUser.nickname} + '(' + ${loggedUser.loginId} + ')'">[nickname(login_id)]</span>
+        <div>
+    <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px" 
+         style="border-radius: 50%; object-fit: cover;">
+		</div>
+		<div>
+   		 <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">
+        [nickname(login_id)]
+   		 </span>
+		</div>
+
         <br>호스트에게 메시지를 보내겠습니까?
         <br><br>
         <button id="yesMessageBtn">YES</button>
@@ -271,6 +301,18 @@
     <section class="host-intro">
       <h2>호스트 소개</h2>
       <div class="host-details">
+        <div class="host-info">
+         <div>
+    <img th:src="@{/images/fubao.webp}" alt="푸바오" width="150px" height="150px" 
+         style="border-radius: 50%; object-fit: cover;">
+		</div>
+		<div>
+   		 <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">
+        [nickname(login_id)]
+   		 </span>
+		</div>
+    	
+	</div>
         
       </div>
       <div class="share-info-right" th:if="${!isOwner}">

@@ -106,20 +106,20 @@
 
         <!-- [A] 지방 선택 -->
         <div class="form-group">
-          <label for="provinceId">지방 선택</label>
-          <select id="provinceId" name="provinceId" class="form-control" required onchange="updateRegionSelect()">
-            <option value="">-- 선택하세요 --</option>
-            <option value="1" th:selected="${#strings.equalsIgnoreCase('1', param.provinceId)}">北海道</option>
-            <option value="2" th:selected="${#strings.equalsIgnoreCase('2', param.provinceId)}">東北</option>
-            <option value="3" th:selected="${#strings.equalsIgnoreCase('3', param.provinceId)}">甲信越・北陸</option>
-            <option value="4" th:selected="${#strings.equalsIgnoreCase('4', param.provinceId)}">関東</option>
-            <option value="5" th:selected="${#strings.equalsIgnoreCase('5', param.provinceId)}">中国</option>
-            <option value="6" th:selected="${#strings.equalsIgnoreCase('6', param.provinceId)}">東海</option>
-            <option value="7" th:selected="${#strings.equalsIgnoreCase('7', param.provinceId)}">九州・沖縄</option>
-            <option value="8" th:selected="${#strings.equalsIgnoreCase('8', param.provinceId)}">関西</option>
-            <option value="9" th:selected="${#strings.equalsIgnoreCase('9', param.provinceId)}">四国</option>
-          </select>
-        </div>
+  <label for="provinceId">지방 선택</label>
+  <select id="provinceId" name="provinceId" class="form-control" required onchange="updateRegionSelect()">
+    <option value="">-- 선택하세요 --</option>
+    <option value="1" th:selected="${provinceId == 1}">北海道</option>
+    <option value="2" th:selected="${provinceId == 2}">東北</option>
+    <option value="3" th:selected="${provinceId == 3}">甲信越・北陸</option>
+    <option value="4" th:selected="${provinceId == 4}">関東</option>
+    <option value="5" th:selected="${provinceId == 5}">中国</option>
+    <option value="6" th:selected="${provinceId == 6}">東海</option>
+    <option value="7" th:selected="${provinceId == 7}">九州・沖縄</option>
+    <option value="8" th:selected="${provinceId == 8}">関西</option>
+    <option value="9" th:selected="${provinceId == 9}">四国</option>
+  </select>
+</div>
 
         <!-- [B] 지역 선택 -->
         <div class="form-group">

@@ -360,7 +360,6 @@ footer {
     background: #F7F7F7;
     border-top: 1px solid #DDDDDD;
     padding: 40px 100px 0 100px;
-
 }
 
 .footer-sections {
@@ -385,9 +384,7 @@ footer {
     padding: 10px 0;
 }
 
-
 /* company description */
-
 .company-description {
     border-top: 1px solid #DDDDDD;
     display: flex;
@@ -439,4 +436,9 @@ footer {
 
 .icons-right i:last-child {
     padding-right: 0;
+}
+
+/* 추가: 모달이 열렸을 때 배경 스크롤 막기 */
+body.modal-open {
+    overflow: hidden;
 }
