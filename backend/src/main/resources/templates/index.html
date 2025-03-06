@@ -273,7 +273,8 @@
               <button class="favorite-btn">
                 <i class="far fa-heart"></i>
               </button>
-              <img th:src="@{/images/favicon.ico}" alt="숙소 이미지" />
+              <img th:src="${listing.fileList[0].fileUrl}" alt="숙소 이미지" />
+
 
               <div class="listing-info">
                 <h3 th:text="${listing.title}"></h3>
