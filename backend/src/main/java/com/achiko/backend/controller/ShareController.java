@@ -2,6 +2,7 @@ package com.achiko.backend.controller;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,8 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -62,35 +65,44 @@ public class ShareController {
      * 글 상세 조회 페이지 URL 예: /share/selectOne?shareId=1
      */
 	@GetMapping("/share/selectOne")
-	public String selectOne(@RequestParam("shareId") Long shareId, Model model, Principal principal) {
-	    ShareDTO shareDTO = shareService.getShareById(shareId);
-	    if (shareDTO == null) {
-	        return "redirect:/";
-	    }
+    public String selectOne(@RequestParam("shareId") Long shareId, Model model, Principal principal) {
+        ShareDTO shareDTO = shareService.getShareById(shareId);
+        if (shareDTO == null) {
+            return "redirect:/";
+        }
 
-	    // 이미지 목록 조회
-	    List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
-	    model.addAttribute("share", shareDTO);
-	    model.addAttribute("fileList", fileList); 
-	    model.addAttribute("googleApiKey", googleApiKey);
+        // 이미지 목록 조회
+        List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
 
-	    // 현재 사용자가 게시물의 소유자인지 확인
-	    boolean isOwner = false;
-	    if (principal != null) {
-	        UserEntity user = userRepository.findByLoginId(principal.getName());
-	        if (user != null) {
-	            // 게시물 소유자 여부 확인
-	            if (user.getUserId().equals(shareDTO.getHostId())) {
-	                isOwner = true;
-	            }
-	            // 로그인한 사용자 정보를 모델에 추가 (닉네임과 로그인 아이디 사용)
-	            model.addAttribute("loggedUser", user);
-	        }
-	    }
-	    model.addAttribute("isOwner", isOwner);
+        // 첫 번째 이미지의 절대 URL 설정 (없으면 기본 이미지)
+        String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
+            ? "http://localhost:8080" + fileList.get(0).getFileUrl()
+            : "http://localhost:8080/images/default.webp";
 
-	    return "share/selectOne";
-	}
+        model.addAttribute("share", shareDTO);
+        model.addAttribute("fileList", fileList);
+        model.addAttribute("firstImageUrl", firstImageUrl);  // ✅ 카카오 공유용 이미지 URL 추가
+        model.addAttribute("googleApiKey", googleApiKey);
+        model.addAttribute("kakaoJavaScriptKey", kakaoJavaScriptKey);
+
+        // 작성자(Host) 정보를 별도로 조회
+        UserEntity hostUser = userRepository.findById(shareDTO.getHostId()).orElse(null);
+        model.addAttribute("hostUser", hostUser);
+
+        // 현재 로그인한 사용자 정보 확인 및 소유자 여부 체크
+        boolean isOwner = false;
+        if (principal != null) {
+            UserEntity loggedUser = userRepository.findByLoginId(principal.getName());
+            if (loggedUser != null && loggedUser.getUserId().equals(shareDTO.getHostId())) {
+                isOwner = true;
+            }
+            model.addAttribute("loggedUser", loggedUser);
+        }
+        model.addAttribute("isOwner", isOwner);
+
+        return "share/selectOne";
+    }
+
 
 
 
@@ -247,6 +259,21 @@ public class ShareController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return ResponseEntity.ok(responseMap);
+    }
+    
+    @RestController
+    @RequestMapping("/api/config")
+    public class ConfigController {
+
+        @Value("${kakao.javascript.key}") 
+        private String kakaoJavaScriptKey;
+
+        @GetMapping("/kakao-key")
+        public ResponseEntity<Map<String, String>> getKakaoKey() {
+            Map<String, String> response = new HashMap<>();
+            response.put("kakaoKey", kakaoJavaScriptKey);
+            return ResponseEntity.ok(response);
+        }
     }
 
 }
