@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,26 +33,26 @@ public class ShareEntity {
     @Column(name = "share_id")
     private Long shareId;
     
-    // host를 ManyToOne 관계로 UserEntity와 연결
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "host_id", nullable = false)
+    // host를 OneToOne 관계로 UserEntity와 연결
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "host_id", referencedColumnName = "user_id", nullable = false)
     private UserEntity host;
 
     // region, city, town을 ManyToOne 관계로 각각 연결
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "province_id", nullable = false)
+    @JoinColumn(name = "province_id",referencedColumnName = "province_id", nullable = false)
     private ProvinceEntity province;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", nullable = false)
+    @JoinColumn(name = "region_id", referencedColumnName = "region_id", nullable = false)
     private RegionEntity region;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id", nullable = false)
+    @JoinColumn(name = "city_id", referencedColumnName = "city_id", nullable = false)
     private CityEntity city;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "town_id", nullable = false)
+    @JoinColumn(name = "town_id", referencedColumnName = "town_id", nullable = false)
     private TownEntity town;
 
     @Column(name = "postal_code", nullable = false)
