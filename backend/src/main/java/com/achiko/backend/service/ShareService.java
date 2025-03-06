@@ -97,34 +97,40 @@ public class ShareService {
      * [★ 추가] 글 수정 처리 메서드
      * 기존의 ShareEntity를 찾아서 필드를 업데이트 후 저장
      */
-    public ShareDTO updateShare(ShareDTO shareDTO) {
-        // 기존 글을 조회
-        ShareEntity existing = shareRepository.findById(shareDTO.getShareId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 글을 찾을 수 없습니다."));
-        
-        RegionEntity region = regionRepository.getReferenceById(shareDTO.getRegionId().intValue());
-        CityEntity city = cityRepository.getReferenceById(shareDTO.getCityId().intValue());
-        TownEntity town = townRepository.getReferenceById(shareDTO.getTownId().intValue());
-        
-        existing.setRegion(region);
-        existing.setCity(city);
-        existing.setTown(town);
-        
-        // 수정할 필드 업데이트 (필요한 필드 모두 업데이트)
-        existing.setTitle(shareDTO.getTitle());
-        existing.setDescription(shareDTO.getDescription());
-        existing.setMaxGuests(shareDTO.getMaxGuests());
-        existing.setCurrentGuests(shareDTO.getCurrentGuests());
-        existing.setPostalCode(shareDTO.getPostalCode());
-        existing.setAddress(shareDTO.getAddress());
-        existing.setDetailAddress(shareDTO.getDetailAddress());
-        existing.setPrice(shareDTO.getPrice());
-        // 수정 시 작성일(임시) 업데이트 – 나중에 별도의 updated_at 필드를 추가할 수 있음
-        existing.setCreatedAt(LocalDateTime.now());
-        // 저장
-        ShareEntity updatedEntity = shareRepository.save(existing);
-        return convertToDTO(updatedEntity);
-    }
+	public ShareDTO updateShare(ShareDTO shareDTO) {
+	    // 기존 글을 조회
+	    ShareEntity existing = shareRepository.findById(shareDTO.getShareId())
+	            .orElseThrow(() -> new IllegalArgumentException("해당 글을 찾을 수 없습니다."));
+
+	    // province, region, city, town을 업데이트하기 위해 각각 조회(혹은 새 인스턴스 생성)
+	    ProvinceEntity province = new ProvinceEntity(shareDTO.getProvinceId().intValue(), null, null, null);
+	    RegionEntity region = regionRepository.getReferenceById(shareDTO.getRegionId().intValue());
+	    CityEntity city = cityRepository.getReferenceById(shareDTO.getCityId().intValue());
+	    TownEntity town = townRepository.getReferenceById(shareDTO.getTownId().intValue());
+
+	    // 업데이트: province 포함
+	    existing.setProvince(province);
+	    existing.setRegion(region);
+	    existing.setCity(city);
+	    existing.setTown(town);
+
+	    // 그 외 수정할 필드 업데이트
+	    existing.setTitle(shareDTO.getTitle());
+	    existing.setDescription(shareDTO.getDescription());
+	    existing.setMaxGuests(shareDTO.getMaxGuests());
+	    existing.setCurrentGuests(shareDTO.getCurrentGuests());
+	    existing.setPostalCode(shareDTO.getPostalCode());
+	    existing.setAddress(shareDTO.getAddress());
+	    existing.setDetailAddress(shareDTO.getDetailAddress());
+	    existing.setPrice(shareDTO.getPrice());
+	    // 수정 시 작성일(임시) 업데이트 – 추후 별도의 updated_at 필드 추가 가능
+	    existing.setCreatedAt(LocalDateTime.now());
+
+	    // 업데이트된 엔티티 저장 후 DTO 변환하여 반환
+	    ShareEntity updatedEntity = shareRepository.save(existing);
+	    return convertToDTO(updatedEntity);
+	}
+
     
     private ShareEntity convertToEntity(ShareDTO dto) {
         if (dto.getHostId() == null) {

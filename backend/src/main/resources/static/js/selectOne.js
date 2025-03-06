@@ -13,17 +13,20 @@ document.addEventListener("DOMContentLoaded", function () {
   // 공유하기 버튼 클릭 시 공유 모달 열기
   shareButton.addEventListener("click", function () {
     shareModal.style.display = "block";
+    document.body.classList.add("modal-open");
   });
 
   // 공유 모달 닫기 버튼 클릭 시 모달 닫기
   closeShareModalBtn.addEventListener("click", function () {
     shareModal.style.display = "none";
+    document.body.classList.remove("modal-open");
   });
 
-  // 모달 외부 클릭 시 모달 닫기
+  // 모달 외부 클릭 시 모달 닫기 (공유 모달)
   window.addEventListener("click", function (event) {
     if (event.target === shareModal) {
       shareModal.style.display = "none";
+      document.body.classList.remove("modal-open");
     }
   });
 
@@ -74,16 +77,19 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("place-list").innerHTML = "";
     clearFacilityMarkers();
     facilityModal.style.display = "block";
+    document.body.classList.add("modal-open");
     initFacilityMap();
   });
   
   closeFacilityModal.addEventListener("click", function () {
     facilityModal.style.display = "none";
+    document.body.classList.remove("modal-open");
   });
   
   window.addEventListener("click", function (event) {
     if (event.target === facilityModal) {
       facilityModal.style.display = "none";
+      document.body.classList.remove("modal-open");
     }
   });
 
@@ -94,6 +100,9 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("searchSupermarketBtn").addEventListener("click", function(){
     searchNearbyPlaces("supermarket");
   });
+  document.getElementById("searchCafeBtn").addEventListener("click", function(){
+    searchNearbyPlaces("cafe");
+  });
   document.getElementById("searchRestaurantBtn").addEventListener("click", function(){
     searchNearbyPlaces("restaurant");
   });
@@ -102,6 +111,19 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   document.getElementById("searchLaundromatBtn").addEventListener("click", function(){
       searchNearbyPlaces("laundromat");
+  });
+  // 카페 체인 검색 버튼 이벤트 등록
+  document.getElementById("searchStarbucksBtn").addEventListener("click", function(){
+    searchNearbyPlaces("スターバックス");
+  });
+  document.getElementById("searchDoutorBtn").addEventListener("click", function(){
+    searchNearbyPlaces("ドトールコーヒー");
+  });
+  document.getElementById("searchTullysBtn").addEventListener("click", function(){
+    searchNearbyPlaces("タリーズコーヒー");
+  });
+  document.getElementById("searchKomedaBtn").addEventListener("click", function(){
+    searchNearbyPlaces("コメダ珈琲店");
   });
 
   // 신고 모달 창 기능
@@ -113,17 +135,20 @@ document.addEventListener("DOMContentLoaded", function () {
   // 신고 버튼 클릭 시 신고 모달 열기
   reportButton.addEventListener("click", function () {
     reportModal.style.display = "block";
+    document.body.classList.add("modal-open");
   });
 
   // 신고 모달의 × 버튼 클릭 시 닫기
   reportModalClose.addEventListener("click", function () {
     reportModal.style.display = "none";
+    document.body.classList.remove("modal-open");
   });
 
-  // 모달 외부 클릭 시 닫기
+  // 모달 외부 클릭 시 닫기 (신고 모달)
   window.addEventListener("click", function (event) {
     if (event.target === reportModal) {
       reportModal.style.display = "none";
+      document.body.classList.remove("modal-open");
     }
   });
 
@@ -154,6 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (response.ok) {
         alert("신고가 접수되었습니다.");
         reportModal.style.display = "none";
+        document.body.classList.remove("modal-open");
       } else {
         alert("신고 접수 중 오류가 발생했습니다.");
       }
@@ -193,6 +219,57 @@ document.addEventListener("DOMContentLoaded", function () {
       roomPhotos.scrollLeft = scrollLeft - walk;
     });
   }
+
+  // ★ 게스트 조회 모달 관련 (추가)
+  const guestModal = document.getElementById("guestModal");
+  const confirmedGuestButton = document.getElementById("confirmedGuest");
+  const guestModalClose = document.getElementById("guestModalClose");
+
+  confirmedGuestButton.addEventListener("click", function () {
+    guestModal.style.display = "block";
+    document.body.classList.add("modal-open");
+  });
+
+  guestModalClose.addEventListener("click", function () {
+    guestModal.style.display = "none";
+    document.body.classList.remove("modal-open");
+  });
+
+  // 모달 외부 클릭 시 닫기 (게스트 조회 모달)
+  window.addEventListener("click", function (event) {
+    if (event.target === guestModal) {
+      guestModal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }
+  });
+
+  // ★ 메시지 보내기 모달 관련 (새로 추가)
+  const messageModal = document.getElementById("messageModal");
+  const messageHostBtn = document.getElementById("messageHostBtn");
+  const messageModalClose = document.getElementById("messageModalClose");
+  const noMessageBtn = document.getElementById("noMessageBtn");
+
+  messageHostBtn.addEventListener("click", function () {
+    messageModal.style.display = "block";
+    document.body.classList.add("modal-open");
+  });
+
+  messageModalClose.addEventListener("click", function () {
+    messageModal.style.display = "none";
+    document.body.classList.remove("modal-open");
+  });
+
+  noMessageBtn.addEventListener("click", function () {
+    messageModal.style.display = "none";
+    document.body.classList.remove("modal-open");
+  });
+
+  window.addEventListener("click", function (event) {
+    if (event.target === messageModal) {
+      messageModal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }
+  });
 });
 
 // 카카오 공유 버튼 이벤트는 SDK가 완전히 로드된 후에 등록 (window.onload 사용)
@@ -200,17 +277,19 @@ window.addEventListener("load", function () {
   const kakaoShareButton = document.getElementById("kakaoShareButton");
   if (kakaoShareButton) {
     kakaoShareButton.addEventListener("click", function () {
-      // 공유할 페이지의 URL (현재 페이지 URL 사용)
-      var shareUrl = window.location.href;
-      
-      // Kakao.Link.sendDefault API 호출
+      // URL에서 shareId 추출
+      const shareId = new URL(window.location.href).searchParams.get("shareId");
+      // window.location.origin을 사용하여 현재 도메인 (예: http://localhost:8080) 기준 공유 URL 생성
+      const shareUrl = window.location.origin + `/share/selectOne?shareId=${shareId}`;
+	
       if (Kakao && Kakao.Link && typeof Kakao.Link.sendDefault === "function") {
-        Kakao.Link.sendDefault({
+		console.log("카카오 공유 이미지 URL:", window.firstImageUrl);
+		Kakao.Link.sendDefault({
           objectType: 'feed',
           content: {
             title: document.querySelector(".share-title").innerText,
-            description: "공유글을 확인해보세요!",
-            imageUrl: "https://yourdomain.com/path/to/default-image.jpg",
+            description: "숙소 공유 게시글입니다.",
+            imageUrl: window.firstImageUrl, // 서버에서 전달받은 firstImageUrl 사용
             link: {
               mobileWebUrl: shareUrl,
               webUrl: shareUrl
@@ -232,6 +311,7 @@ window.addEventListener("load", function () {
     });
   }
 });
+
 
 // 편의시설 지도 전용 변수 및 함수
 let facilityMap;
