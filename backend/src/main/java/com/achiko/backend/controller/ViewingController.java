@@ -3,10 +3,13 @@ package com.achiko.backend.controller;
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.achiko.backend.dto.LoginUserDetails;
@@ -50,7 +53,17 @@ public class ViewingController {
 	
 	
 	// 뷰잉 후 확정하기
+	@PatchMapping("/confirm")
+	public String confirmViewing(@RequestParam(name="viewingId") Long viewingId) {
+		String message = viewingService.confirmViewing(viewingId);
+		return message;
+	}
 	
 	// 뷰잉 삭제(취소)하기
+	@DeleteMapping("/cancel")
+	public String cancelViewing(@RequestParam(name="viewingId") Long viewingId) {
+		String message = viewingService.cancelViewing(viewingId);
+		return message;
+	}
 
 }

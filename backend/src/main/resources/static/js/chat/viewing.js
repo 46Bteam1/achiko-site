@@ -72,15 +72,16 @@ function viewingTable(resp) {
   let tag = "";
 
   if (resp.length === 0) {
-    // ✅ 데이터가 없을 경우 메시지 출력
+    //  데이터가 없을 경우 메시지 출력
     tag = `<div>viewing 약속이 없습니다.</div>`;
   } else {
-    // ✅ 데이터가 있을 경우 테이블 출력
+    //  데이터가 있을 경우 테이블 출력
     tag += `
       <table border="1">
         <tr>
           <th style="border: 1px solid black; padding: 5px;">상대방</th>
           <th style="border: 1px solid black; padding: 5px;">예약 날짜</th>
+          <th style="border: 1px solid black; padding: 5px;"></th>
         </tr>`;
 
     const nickname = $("#nickname").val();
@@ -90,13 +91,26 @@ function viewingTable(resp) {
         ? item["guestNickname"]
         : item["hostNickname"];
 
-      let scheduledDate = item["scheduledDate"] || "날짜 없음"; // ✅ 기본값 설정
+      let scheduledDate = item["scheduledDate"] || "날짜 없음"; //  기본값 설정
+      let isCompleted = item["isCompleted"]; //  완료 여부 확인
+      let disabledAttr = isCompleted ? "disabled" : ""; //  비활성화 속성 설정
+
       tag += `
             <tr>
               <td style="border: 1px solid black; padding: 5px;">${displayNickname}</td>
               <td style="border: 1px solid black; padding: 5px;">${scheduledDate}</td>
-              <td><input type="button" value="날짜 수정" class="updateViewingBtn" data-seq="${item["shareId"]}"></td>
-              <td><input type="button" value="뷰잉 삭제" class="deleteViewingBtn" data-seq="${item["shareId"]}"></td>
+              <td>
+                <input type="button" value="날짜 수정" class="updateViewingBtn" 
+                data-seq="${item["viewingId"]}" ${disabledAttr}>
+                ${
+                  nicknameCheck
+                    ? `<input type="button" value="확정" class="confirmViewingBtn" 
+                    data-seq="${item["viewingId"]}" ${disabledAttr}>`
+                    : ""
+                }
+                <input type="button" value="뷰잉 삭제" class="deleteViewingBtn" 
+                data-seq="${item["viewingId"]}" ${disabledAttr}>
+              </td>
             </tr>`;
     });
 
@@ -106,16 +120,45 @@ function viewingTable(resp) {
   $("#existingReviews").html(tag);
 
   $(".updateViewingBtn").on("click", updateViewing);
+  $(".confirmViewingBtn").on("click", confirmViewing);
   $(".deleteViewingBtn").on("click", deleteViewing);
 }
 
-// TODO: 3월 5일에 추가할 것
+// TODO: 3월 6일에 추가할 것
+// viewing 날짜 수정
 function updateViewing() {
-  let shareId = $(this).attr("data-seq");
-  console.log(shareId);
+  let viewingId = $(this).attr("data-seq");
 }
 
+// viewing 취소
 function deleteViewing() {
-  let shareId = $(this).attr("data-seq");
-  console.log(shareId);
+  let viewingId = $(this).attr("data-seq");
+  console.log(viewingId);
+}
+
+// viewing 완료(host)
+function confirmViewing() {
+  const $btn = $(this);
+  let viewingId = $btn.attr("data-seq");
+
+  if (
+    confirm(
+      "viewing을 완료하시겠습니까? viewing은 확정된 이후 되돌릴 수 없습니다."
+    )
+  ) {
+    $.ajax({
+      url: "/viewing/confirm",
+      method: "PATCH",
+      data: { viewingId: viewingId },
+      success: function (resp) {
+        alert(resp);
+        // data-seq 값이 같은 모든 input 버튼 비활성화 처리
+        $('input[data-seq="' + viewingId + '"]')
+          .prop("disabled", true)
+          .addClass("disabled");
+      },
+    });
+  } else {
+    alert("viewing 완료 취소");
+  }
 }

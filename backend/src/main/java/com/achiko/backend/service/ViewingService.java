@@ -15,6 +15,7 @@ import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.repository.ViewingRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,6 +68,34 @@ public class ViewingService {
 			list.add(ViewingDTO.toDTO(e, user.getNickname(),viewingRepository.findGuestNicknameByViewingId(eId)));
 		});
 		return list;
+	}
+
+	@Transactional
+	public String confirmViewing(Long viewingId) {
+		Optional<ViewingEntity> entity = viewingRepository.findById(viewingId);
+		if(entity.isEmpty()) return "존재하지 않는 viewing입니다.";
+		
+		// 이미 확정된 viewing인지 확인
+		ViewingEntity vEntity = entity.get();
+		if(vEntity.getIsCompleted()) {
+			return "이미 확정된 viewing입니다.";
+		}else {
+
+			vEntity.setIsCompleted(true);
+			
+			viewingRepository.save(vEntity);
+			
+			return "viewing을 완료했습니다.";
+		}
+		
+	}
+
+	public String cancelViewing(Long viewingId) {
+		Optional<ViewingEntity> entity = viewingRepository.findById(viewingId);
+		if(entity.isEmpty()) return "존재하지 않는 viewing입니다.";
+		
+		viewingRepository.deleteById(viewingId);
+		return "viewing 취소 완료";
 	}
 
 	
