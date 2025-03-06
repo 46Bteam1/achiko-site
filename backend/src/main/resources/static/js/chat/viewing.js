@@ -35,6 +35,7 @@ $(function () {
       data: JSON.stringify(data),
       success: function (resp) {
         alert(resp);
+        initModal(role);
       },
     });
   });
@@ -69,6 +70,7 @@ function initModal(role) {
 }
 
 function viewingTable(resp) {
+  const role = $("#role").val();
   let tag = "";
 
   if (resp.length === 0) {
@@ -108,7 +110,7 @@ function viewingTable(resp) {
                     data-seq="${item["viewingId"]}" ${disabledAttr}>`
                     : ""
                 }
-                <input type="button" value="뷰잉 삭제" class="deleteViewingBtn" 
+                <input type="button" value="뷰잉 삭제" class="deleteViewingBtn" data-role="${role}"
                 data-seq="${item["viewingId"]}" ${disabledAttr}>
               </td>
             </tr>`;
@@ -133,10 +135,22 @@ function updateViewing() {
 // viewing 취소
 function deleteViewing() {
   let viewingId = $(this).attr("data-seq");
-  console.log(viewingId);
+  let role = $(this).attr("data-role");
+
+  if (confirm("viewing을 취소하시겠습니까? 취소 이후 번복할 수 없습니다.")) {
+    $.ajax({
+      url: "/viewing/cancel",
+      method: "DELETE",
+      data: { viewingId: viewingId },
+      success: function (resp) {
+        alert(resp);
+        initModal(role);
+      },
+    });
+  }
 }
 
-// viewing 완료(host)
+// viewing 확정(host)
 function confirmViewing() {
   const $btn = $(this);
   let viewingId = $btn.attr("data-seq");
