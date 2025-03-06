@@ -3,11 +3,11 @@ package com.achiko.backend.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.achiko.backend.entity.ChatParticipantEntity;
-import com.achiko.backend.entity.UserEntity;
 
 public interface ChatParticipantRepository extends JpaRepository<ChatParticipantEntity, Long> {
 
@@ -15,5 +15,8 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
 
 	List<ChatParticipantEntity> findByGuest_UserId(Long userId);
 
-
+	Optional<ChatParticipantEntity> findByHost_UserIdAndGuest_UserId(Long hostId, Long guestId);
+	
+	@Query("SELECT cr.chatroomId FROM chat_participant cp JOIN cp.chatroom cr WHERE cp.participantId = :participantId")
+    Optional<Long> findChatroomIdByParticipantId(@Param("participantId") Long participantId);
 }

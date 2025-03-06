@@ -33,10 +33,11 @@ public class ChatController {
 	// 채팅방 생성 메서드
 	@PostMapping("/create")
 	@Operation(summary = "채팅방 생성 메서드", description = "채팅방을 생성합니다.")
-	public String createRoom(@RequestBody ChatRoomDTO chatRoomDTO, @RequestBody Long shareId) {
-		chatService.createRoom(chatRoomDTO, shareId);
+	public Long createRoom(@RequestBody ChatRoomDTO chatRoomDTO,@RequestParam("shareId") Long shareId, @AuthenticationPrincipal LoginUserDetails loginUser) {
 		
-		return "채팅방 생성 성공";
+		Long chatroomId = chatService.createRoom(chatRoomDTO, shareId, loginUser.getUserId());
+		
+		return chatroomId;
 	}
 	
 	// 채팅방들 조회 메서드
