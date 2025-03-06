@@ -5,6 +5,7 @@ $(function () {
   const nickname = $("#nickname").val();
   const role = $("#role").val();
   const shareId = $("#shareId").val();
+  const now = new Date();
 
   // 모달이 열릴 때 initModal(role) 실행
   $("#exampleModal").on("shown.bs.modal", function () {
@@ -22,6 +23,13 @@ $(function () {
 
     // LocalDateTime 형식에 맞게 변환
     const scheduledDate = `${viewingDate}T${viewingTime}:00`;
+    const scheduledDate2 = new Date(scheduledDate);
+
+    if (scheduledDate2 < now) {
+      alert("입력하신 날짜는 현재보다 이전입니다.");
+      return;
+    }
+
     const data = {
       shareId: shareId,
       guestNickname: nickname,
