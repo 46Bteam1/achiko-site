@@ -30,9 +30,9 @@ public class ViewingController {
 	@PostMapping("/setViewing")
 	public String setViewing(@RequestBody ViewingDTO viewingDTO, @AuthenticationPrincipal LoginUserDetails loginUser) {
 		// 생성하기 위한 DTO와 로그인 유저의 loginId를 넘겨줌
-		viewingService.setViewing(viewingDTO, loginUser.getUsername());
+		String message = viewingService.setViewing(viewingDTO, loginUser.getUsername());
 		
-		return "뷰잉 생성 성공";
+		return message;
 	}
 	
 	// 게스트의 뷰잉 조회하기

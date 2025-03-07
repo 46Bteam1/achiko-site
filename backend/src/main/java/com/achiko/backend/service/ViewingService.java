@@ -27,15 +27,23 @@ public class ViewingService {
 	private final UserRepository userRepository;
 	private final ShareRepository shareRepository;
 	
-	public void setViewing(ViewingDTO viewingDTO, String loginId) {
+	public String setViewing(ViewingDTO viewingDTO, String loginId) {
 		UserEntity user = userRepository.findByLoginId(loginId);
 		Long shareId = viewingDTO.getShareId();
 		Optional<ShareEntity> temp1 = shareRepository.findById(shareId);
-		if(temp1.isEmpty()) return;
+		if(temp1.isEmpty()) return "존재하지 않는 share입니다.";
 		ShareEntity share = temp1.get();
+		
+		// 동일한 share와 guest의 조합으로 이미 등록된 viewing이 있는지 확인
+	    Optional<ViewingEntity> existingViewing = viewingRepository.findByShareAndGuest(share, user);
+	    if (existingViewing.isPresent()) {
+	        // 이미 존재하면 예외를 던지거나, 다른 방식으로 처리 (예: 로깅 후 메서드 종료)
+	        return "이미 viewing 약속이 존재합니다.";
+	    }
 		
 		ViewingEntity viewingEntity = ViewingEntity.toEntity(viewingDTO, share, user);
 		viewingRepository.save(viewingEntity);
+		return "viewing 생성 성공";
 	}
 
 	public List<ViewingDTO> findViewings(String loginId) {

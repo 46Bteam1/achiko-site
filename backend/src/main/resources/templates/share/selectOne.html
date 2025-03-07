@@ -168,6 +168,7 @@
     <!-- 공유 글의 세부 정보 출력 -->
     <section class="share-info">
       <div class="share-info-left">
+        <input type="hidden" th:value="${share.shareId}" id="shareId">
         <p>작성일: <span th:text="${#temporals.format(share.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span></p>
         <p>상세 설명: <span th:text="${share.description}">설명</span></p>
         <p>최대 인원: <span th:text="${share.maxGuests}">0</span></p>

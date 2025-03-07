@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -131,16 +132,38 @@ public class ChatService {
         messagingTemplate.convertAndSend(destination, chatMessage);
 	}
 
-	public void createRoom(ChatRoomDTO chatRoomDTO, Long shareId) {
+	// 채팅방 만들기
+	public Long createRoom(ChatRoomDTO chatRoomDTO, Long shareId, Long userId) {
 		// shareId로 share 찾기
 		Optional<ShareEntity> temp = shareRepository.findById(shareId);
 		
-		if(temp.isEmpty()) return;
+		if(temp.isEmpty()) return null;
 		
-		// charRoom 생성
+		// 기존 채팅방이 있으면 기존 아이디, 없으면 새로운 아이디
+		Long hostId = shareRepository.findHostIdByShareId(shareId);
+		UserEntity host = userRepository.findById(hostId).get();
+		UserEntity guest = userRepository.findById(userId).get();
+		Optional<ChatParticipantEntity> temp2 = participantRepository.findByHost_UserIdAndGuest_UserId(hostId, userId);
+		
+		if(temp2.isPresent()) {
+			Long participantId = temp2.get().getParticipantId();
+			
+			Long chatroomId = participantRepository.findChatroomIdByParticipantId(participantId).get();
+			return chatroomId;
+		}
+		
+		// chatRoom 생성, ChatParticipant 생성
 		ChatRoomEntity chatRoomEntity = ChatRoomEntity.toEntity(chatRoomDTO, temp.get());
 		
-		roomRepository.save(chatRoomEntity);
+		ChatRoomEntity newRoom = roomRepository.save(chatRoomEntity);
+		
+		ChatParticipantEntity participantEntity = ChatParticipantEntity.builder()
+													.chatroom(newRoom)
+													.host(host)
+													.guest(guest)
+													.build();
+		participantRepository.save(participantEntity);
+		return newRoom.getChatroomId();
 	}
 
 	public Long getShareId(Long chatroomId) {

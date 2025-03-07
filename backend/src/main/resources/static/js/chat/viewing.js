@@ -5,6 +5,7 @@ $(function () {
   const nickname = $("#nickname").val();
   const role = $("#role").val();
   const shareId = $("#shareId").val();
+  const now = new Date();
 
   // 모달이 열릴 때 initModal(role) 실행
   $("#exampleModal").on("shown.bs.modal", function () {
@@ -22,6 +23,13 @@ $(function () {
 
     // LocalDateTime 형식에 맞게 변환
     const scheduledDate = `${viewingDate}T${viewingTime}:00`;
+    const scheduledDate2 = new Date(scheduledDate);
+
+    if (scheduledDate2 < now) {
+      alert("입력하신 날짜는 현재보다 이전입니다.");
+      return;
+    }
+
     const data = {
       shareId: shareId,
       guestNickname: nickname,
@@ -35,6 +43,7 @@ $(function () {
       data: JSON.stringify(data),
       success: function (resp) {
         alert(resp);
+        initModal(role);
       },
     });
   });
@@ -69,6 +78,7 @@ function initModal(role) {
 }
 
 function viewingTable(resp) {
+  const role = $("#role").val();
   let tag = "";
 
   if (resp.length === 0) {
@@ -108,7 +118,7 @@ function viewingTable(resp) {
                     data-seq="${item["viewingId"]}" ${disabledAttr}>`
                     : ""
                 }
-                <input type="button" value="뷰잉 삭제" class="deleteViewingBtn" 
+                <input type="button" value="뷰잉 삭제" class="deleteViewingBtn" data-role="${role}"
                 data-seq="${item["viewingId"]}" ${disabledAttr}>
               </td>
             </tr>`;
@@ -133,10 +143,22 @@ function updateViewing() {
 // viewing 취소
 function deleteViewing() {
   let viewingId = $(this).attr("data-seq");
-  console.log(viewingId);
+  let role = $(this).attr("data-role");
+
+  if (confirm("viewing을 취소하시겠습니까? 취소 이후 번복할 수 없습니다.")) {
+    $.ajax({
+      url: "/viewing/cancel",
+      method: "DELETE",
+      data: { viewingId: viewingId },
+      success: function (resp) {
+        alert(resp);
+        initModal(role);
+      },
+    });
+  }
 }
 
-// viewing 완료(host)
+// viewing 확정(host)
 function confirmViewing() {
   const $btn = $(this);
   let viewingId = $btn.attr("data-seq");

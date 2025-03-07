@@ -26,4 +26,7 @@ public interface ShareRepository extends JpaRepository<ShareEntity, Long> {
 		    @Param("cityId") Integer cityId,
 		    @Param("townId") Integer townId
 		);
+	
+	@Query("SELECT s.host.userId FROM ShareEntity s WHERE s.shareId = :shareId")
+    Long findHostIdByShareId(@Param("shareId") Long shareId);
 }

@@ -1,6 +1,7 @@
 package com.achiko.backend.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.achiko.backend.entity.ShareEntity;
+import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.entity.ViewingEntity;
 
 public interface ViewingRepository extends JpaRepository<ViewingEntity, Long> {
@@ -30,5 +32,7 @@ String findHostNicknameByViewingId(@Param("viewingId") Long viewingId);
             "WHERE v.viewing_id = :viewingId", 
     nativeQuery = true)
 String findGuestNicknameByViewingId(@Param("viewingId") Long viewingId);
+
+	Optional<ViewingEntity> findByShareAndGuest(ShareEntity share, UserEntity user);
 	
 }
