@@ -1,8 +1,9 @@
--- 0225
+-- 0304
 drop database if exists achiko;
 create database achiko;
 use achiko;
 
+drop table if exists share_files; 
 drop table if exists region;
 drop table if exists tokyo_region;
 drop table if exists users;
@@ -60,15 +61,15 @@ create table users (
     profile_image char(255) default null,
     real_name varchar(100) not null,
     email varchar(255) not null unique,
-    password varchar(255) not null,
+    password varchar(255),
     is_host tinyint default 0 check (is_host in (0,1,2)),  -- 0:게스트, 1:호스트, 2:관리자 
     role varchar(30) default 'user' check (role in ('user','admin')),
     is_email_verified boolean default false,
     reported_count int default 0,
     is_malicious boolean default false,
-    languages varchar(255) not null,
-    age int check (age > 0) not null,
-    nationality varchar(50) not null,
+    languages varchar(255),
+    age int check (age > 0),
+    nationality varchar(50),
     religion varchar(100) default null,
     gender tinyint default 0 check (gender in (0,1,2)),
     bio text,
@@ -79,6 +80,7 @@ create table users (
 CREATE TABLE share (
     share_id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     host_id INT NOT NULL,
+    province_id INT NOT NULL,
     region_id INT NOT NULL,
     city_id INT NOT NULL,
     town_id INT NOT NULL,
@@ -93,6 +95,7 @@ CREATE TABLE share (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(50) DEFAULT 'open' CHECK (status IN ('open','closed')),
     FOREIGN KEY (host_id) REFERENCES users(user_id),
+    FOREIGN KEY (province_id) REFERENCES province(province_id),
     FOREIGN KEY (region_id) REFERENCES region(region_id),
     FOREIGN KEY (city_id) REFERENCES city(city_id),
     FOREIGN KEY (town_id) REFERENCES town(town_id)
@@ -103,7 +106,7 @@ create table user_report (
     reported_user_id int not null,
     reporter_user_id int not null,
     reason text not null,
-	status varchar(50) default 'pending' check (status in ('pending', 'resolved', 'rejected')),
+	  status varchar(50) default 'pending' check (status in ('pending', 'resolved', 'rejected')),
     created_at timestamp default current_timestamp,
     foreign key (reported_user_id) references users(user_id) on delete cascade,
     foreign key (reporter_user_id) references users(user_id) on delete cascade
@@ -137,6 +140,7 @@ create table chat_participant (
     chatroom_id int not null,
     host_id int not null,  
     guest_id int not null,  
+    role varchar(30) check (role in ('host', 'guest')),  
     joined_at timestamp default current_timestamp,
     foreign key (chatroom_id) references chat_room(chatroom_id) on delete cascade,
     foreign key (host_id) references users(user_id) on delete cascade,
@@ -211,21 +215,31 @@ create table favorite (
     unique (user_id, share_id)
 );
 
--- 이메일 인증 테이블
 create table email_auth(
-   email_auth_id int auto_increment PRIMARY KEY,
+    email_auth_id int auto_increment PRIMARY KEY,
     email varchar(255) not null,
     auth_code varchar(255) not null,
     expired_at timestamp not null,
     verified boolean default false
 );
 
--- 룸메이트 테이블
 create table roommate(
     roommate_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     share_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (share_id) REFERENCES share(share_id) ON DELETE CASCADE
+);
+
+CREATE TABLE share_files (
+    file_id INT AUTO_INCREMENT PRIMARY KEY,   -- 파일의 고유 ID
+    share_id INT NULL,                         -- 모집글 ID (게시 전 NULL 가능)
+    session_id VARCHAR(50),                    -- 임시 업로드를 위한 session ID
+    original_file_name VARCHAR(255) NOT NULL,  -- 사용자가 업로드한 원본 파일명
+    saved_file_name VARCHAR(255) NOT NULL,     -- 서버에 저장된 파일명 (UUID 등으로 변경)
+    file_url VARCHAR(500) NOT NULL,            -- 웹에서 접근할 수 있는 파일 URL
+    display_order INT,                         -- 사용자가 첨부한 순서
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (share_id) REFERENCES share(share_id) ON DELETE CASCADE
 );
 

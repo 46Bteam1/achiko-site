@@ -59,7 +59,7 @@ public class RoommateService {
 		List<RoommateDTO> dtoList = new ArrayList<>();
 		
 		list.forEach((e)->{
-			dtoList.add(RoommateDTO.toDTO(e, e.getUser().getNickname(), share.getShareId()));
+			dtoList.add(RoommateDTO.toDTO(e));
 		});
 		
 		// 3. DTO list 내보내기

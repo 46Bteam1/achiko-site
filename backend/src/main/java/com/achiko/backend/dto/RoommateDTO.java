@@ -1,7 +1,5 @@
 package com.achiko.backend.dto;
 
-import java.time.LocalDateTime;
-
 import com.achiko.backend.entity.RoommateEntity;
 
 import lombok.AllArgsConstructor;
@@ -10,22 +8,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class RoommateDTO {
+    private Long roommateId;
+    private Long userId;
+    private Long shareId;
 
-	private Long roommateId;
-	private String nickname;
-	private Long shareId;
-	
-	public static RoommateDTO toDTO(RoommateEntity roommateEntity, String nickname, Long shareId) {
-		return RoommateDTO.builder()
-				.roommateId(roommateEntity.getRoommateId())
-				.nickname(nickname)
-				.shareId(shareId)
-				.build();
-	}
+    private String nickname;
+
+    public static RoommateDTO toDTO(RoommateEntity entity) {
+        return RoommateDTO.builder()
+                .roommateId(entity.getRoommateId())
+                .userId(entity.getUser().getUserId())
+                .shareId(entity.getShare().getShareId())
+                .nickname(entity.getUser().getNickname())
+                .build();
+    }
 }
