@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatRooms</title>
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script defer th:src="@{/js/chat/chatRooms.js}"></script>
+  </head>
+  <body>
+    <div id="logos">
+      <div id="logo"></div>
+      <div>
+        <h3>あちこちの夢が集まり、ひとつの物語が生まれる</h3>
+      </div>
+      <div>
+        <input type="button" id="toMyPageBtn" value="My Page" />
+      </div>
+    </div>
+
+    <div id="chatroomContainer">
+      <div>
+        <input type="hidden" th:value="${nickname}" id="nickname" />
+      </div>
+      <div class="count"></div>
+      <div id="chatRooms"></div>
+    </div>
+  </body>
+</html>

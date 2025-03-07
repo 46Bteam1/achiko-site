@@ -47,4 +47,39 @@ public class UserService {
 				.orElseThrow(() -> new RuntimeException("해당 ID의 사용자를 찾을 수 없습니다: " + reviewedUserId));
 	}
 
+	public Long getUserId(String loginId) {
+		UserEntity user = userRepository.findByLoginId(loginId);
+		if (user == null)
+			return null;
+
+		Long userId = user.getUserId();
+
+		return userId;
+	}
+
+	public String getUserName(Long senderId) {
+		Optional<UserEntity> user = userRepository.findById(senderId);
+		if (user.isEmpty())
+			return null;
+
+		String nickname = user.get().getNickname();
+		return nickname;
+	}
+
+	public String getIsGuest(Long userId) {
+		Optional<UserEntity> user = userRepository.findById(userId);
+		if (user.isEmpty())
+			return null;
+
+		Integer isHost = user.get().getIsHost();
+		if (isHost == 2) {
+			return "Admin";
+		} else if (isHost == 1) {
+			return "Host";
+		} else {
+			return "Guest";
+		}
+
+	}
+
 }

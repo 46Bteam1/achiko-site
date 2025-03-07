@@ -182,27 +182,33 @@ $(document).ready(function () {
 
   // 검색 결과 업데이트 함수
   function updateListings(shares) {
-    const listingsContainer = document.getElementById("listings-container");
-    listingsContainer.innerHTML = "";
+      const listingsContainer = document.getElementById("listings-container");
+      listingsContainer.innerHTML = ""; // 기존 목록 초기화
 
-    shares.forEach((listing) => {
-      const card = document.createElement("div");
-      card.className = "listing-card";
-      card.innerHTML = `
-    <a href="/share/selectOne?shareId=${listing.shareId}" class="listing-link">
-      <button class="favorite-btn"><i class="far fa-heart"></i></button>
-      <img src="/images/favicon.ico" alt="숙소 이미지">
-      <div class="listing-info">
-        <h3>${listing.title}</h3>
-        <p>${listing.regionName} ${listing.cityName} ${listing.townName}</p>
-        <p>₩${new Intl.NumberFormat().format(listing.price)}/박</p>
-        <p>최대 인원: ${listing.maxGuests}명</p>
-      </div>
-    </a>
-    `;
-      listingsContainer.appendChild(card);
-    });
+      shares.forEach((listing) => {
+          const card = document.createElement("div");
+          card.className = "listing-card";
+
+          // 검색 결과에서도 첫 번째 이미지 반영
+          const imageUrl = listing.firstImage ? listing.firstImage : "/images/no-image.png";
+
+          card.innerHTML = `
+              <a href="/share/selectOne?shareId=${listing.id}" class="listing-link">
+                  <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                  <img src="${imageUrl}" alt="숙소 이미지">
+                  <div class="listing-info">
+                      <h3>${listing.title}</h3>
+                      <p>${listing.regionName} ${listing.cityName} ${listing.townName}</p>
+                      <p>₩${new Intl.NumberFormat().format(listing.price)}/박</p>
+                      <p>최대 인원: ${listing.maxGuests}명</p>
+                  </div>
+              </a>
+          `;
+
+          listingsContainer.appendChild(card);
+      });
   }
+
 
   //  마커 클릭 시 표시될 정보 창 생성
   function generateInfoWindowContent(share, fullAddress) {

@@ -18,11 +18,14 @@ public class RoommateDTO {
     private Long userId;
     private Long shareId;
 
+    private String nickname;
+
     public static RoommateDTO toDTO(RoommateEntity entity) {
         return RoommateDTO.builder()
                 .roommateId(entity.getRoommateId())
                 .userId(entity.getUser().getUserId())
                 .shareId(entity.getShare().getShareId())
+                .nickname(entity.getUser().getNickname())
                 .build();
     }
 }
