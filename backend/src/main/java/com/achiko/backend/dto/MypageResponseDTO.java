@@ -1,39 +1,32 @@
 package com.achiko.backend.dto;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Builder.Default;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@Builder
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class MypageResponseDTO {
 
-    private int userId;
-    private String loginId;
-    private String nickname;
-    private String profileImage;
-    private String email;
-    @Builder.Default
-    private Integer isHost = 0;
-    @Builder.Default
-    private boolean isEmailVerified = false;
-    private LocalDateTime createdAt;
-    private String bio;
-    
-    public MypageResponseDTO(UserDTO user){
-    	this.nickname = user.getNickname();
-    	this.email = user.getEmail();
-    	this.profileImage = user.getProfileImage();
-        this.bio = user.getBio();
+	private List<ViewingDTO> viewingList = new ArrayList<>();
+    private List<FavoriteDTO> favoriteList = new ArrayList<>();
+    private List<ReviewDTO> reviewList = new ArrayList<>();
+//    private List<ReviewReplyDTO> reviewReplyList = new ArrayList<>();
+    private List<ReviewDTO> writtenReviewList;
+    private List<ReviewDTO> receivedReviewList;
+
+    public void setWrittenReviewList(List<ReviewDTO> writtenReviewList) {
+        this.writtenReviewList = writtenReviewList;
     }
-//    private List<Viewing> viewings;
-//    private List<Favorite> favorites;
-//    private List<Share> shares;
+
+    public void setReceivedReviewList(List<ReviewDTO> receivedReviewList) {
+        this.receivedReviewList = receivedReviewList;
+    }
 	
 }

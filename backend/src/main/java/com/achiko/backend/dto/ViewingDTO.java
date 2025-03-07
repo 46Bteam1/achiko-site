@@ -3,7 +3,6 @@ package com.achiko.backend.dto;
 import java.time.LocalDateTime;
 
 import com.achiko.backend.entity.ViewingEntity;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

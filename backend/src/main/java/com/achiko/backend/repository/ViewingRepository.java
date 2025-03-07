@@ -35,4 +35,5 @@ String findGuestNicknameByViewingId(@Param("viewingId") Long viewingId);
 
 	Optional<ViewingEntity> findByShareAndGuest(ShareEntity share, UserEntity user);
 	
+//	List<ViewingEntity> findByGuest_userId(Long userId);
 }

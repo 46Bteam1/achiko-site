@@ -1,203 +1,248 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://thymeleaf.org" xmlns:sec="http://thymeleaf.org/extras/spring-security">
+<html
+  lang="ko"
+  xmlns:th="http://thymeleaf.org"
+  xmlns:sec="http://thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achiko</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+      integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
+      crossorigin="anonymous"
+    />
+    <script th:src="@{/js/index.js}" defer></script>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Achiko</title>
-  <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
-    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous" />
-  <script th:src="@{/js/index.js}" defer></script>
+    <!-- google map -->
+    <script
+      async
+      defer
+      th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"
+    ></script>
+    <script th:inline="javascript">
+      window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ "";
+    </script>
+  </head>
 
+  <body>
+    <header>
+      <div class="header-col">
+        <a href="../index.html" th:href="@{/}">
+          <img
+            th:src="@{/images/logo-achiko.png}"
+            alt="Achiko Logo"
+            width="204px"
+            height="64px"
+          />
+        </a>
+      </div>
 
-  <!-- google map -->
-  <script async defer
-    th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
-  <script th:inline="javascript">
-    window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ "";
-  </script>
-</head>
+      <div class="header-col header-form">
+        <ul>
+          <li><a th:href="@{/testTemp/testPage}">testpage</a></li>
 
-<body>
-  <header>
-    <div class="header-col">
-      <a href="../index.html" th:href="@{/}">
-        <img th:src="@{/images/logo-achiko.png}" alt="Achiko Logo" width="204px" height="64px" />
-      </a>
-    </div>
+          <!-- 인증되지 않은 사용자 -->
+          <th:block sec:authorize="isAnonymous()">
+            <li><a th:href="@{/user/regist}">회원가입</a></li>
+            <li><a th:href="@{/user/login}">로그인</a></li>
+          </th:block>
 
+          <!-- 인증된 사용자 -->
+          <th:block sec:authorize="isAuthenticated()">
+            <li><a th:href="@{/user/logout}">로그아웃</a></li>
+            <li><a th:href="@{/mypage/mypageView}">개인정보 수정</a></li>
+            <li><a th:href="@{/admin/adminPage}">(임시)관리자페이지</a></li>
+          </th:block>
 
-    <div class="header-col header-form">
-      <ul>
-        <li><a th:href="@{/testTemp/testPage}">testpage</a></li>
-        <!-- 인증되지 않은 사용자 -->
-        <th:block sec:authorize="isAnonymous()">
-          <li><a th:href="@{/user/regist}">회원가입</a></li>
-          <li><a th:href="@{/user/login}">로그인</a></li>
-        </th:block>
+          <li><a th:href="@{/viewSubscribe/subscribePage}">구독page</a></li>
+          <li><a th:href="@{/viewSpline}">SplinePage</a></li>
 
-        <!-- 인증된 사용자 -->
-        <th:block sec:authorize="isAuthenticated()">
-          <li><a th:href="@{/user/logout}">로그아웃</a></li>
-          <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
-        </th:block>
-
-        <li><a th:href="@{/viewSubscribe/subscribePage}">구독page</a></li>
-        <li><a th:href="@{/viewSpline}">SplinePage</a></li>
-
-        <li>
-          <a th:href="@{/share/write}">글 작성 페이지</a>
-        </li>
-        <li><a th:href="@{/review/reviewPage(reviewedUserId=15)}">정호's reviewpage</a></li>
-      </ul>
-      <div class="query-form">
-        <div class="query-date-end">
-          <div class="query-title">지방</div>
-          <select id="provinceId" name="provinceId" class="form-control" required onchange="updateRegionSelect()">
-            <option value="all" selected>전체</option>
-            <option value="1">北海道</option>
-            <option value="2">東北</option>
-            <option value="3">甲信越・北陸</option>
-            <option value="4">関東</option>
-            <option value="5">中国</option>
-            <option value="6">東海</option>
-            <option value="7">九州・沖縄</option>
-            <option value="8">関西</option>
-            <option value="9">四国</option>
-          </select>
-        </div>
-        <div class="query-divide"></div>
-        <div class="query-date-end">
-          <div class="query-title">지역</div>
-          <select id="regionId" name="regionId" class="form-control" required onchange="updateCitySelect()">
-            <option value="all">전체</option>
-          </select>
-        </div>
-        <div class="query-divide"></div>
-        <div class="query-date-end">
-          <div class="query-title">도시</div>
-          <select id="cityId" name="cityId" class="form-control" required onchange="updateTownSelect()">
-            <option value="all">전체</option>
-          </select>
-        </div>
-        <div class="query-divide"></div>
-        <div class="query-col query-submit">
+          <li>
+            <a th:href="@{/share/write}">글 작성 페이지</a>
+          </li>
+        </ul>
+        <div class="query-form">
           <div class="query-date-end">
-            <div class="query-title">시/군/구</div>
-            <select id="townId" name="townId" class="form-control" required>
+            <div class="query-title">지방</div>
+            <select
+              id="provinceId"
+              name="provinceId"
+              class="form-control"
+              required
+              onchange="updateRegionSelect()"
+            >
+              <option value="all" selected>전체</option>
+              <option value="1">北海道</option>
+              <option value="2">東北</option>
+              <option value="3">甲信越・北陸</option>
+              <option value="4">関東</option>
+              <option value="5">中国</option>
+              <option value="6">東海</option>
+              <option value="7">九州・沖縄</option>
+              <option value="8">関西</option>
+              <option value="9">四国</option>
+            </select>
+          </div>
+          <div class="query-divide"></div>
+          <div class="query-date-end">
+            <div class="query-title">지역</div>
+            <select
+              id="regionId"
+              name="regionId"
+              class="form-control"
+              required
+              onchange="updateCitySelect()"
+            >
               <option value="all">전체</option>
             </select>
           </div>
-          <div>
-            <button class="query-submit-btn">
-              <svg viewBox="0 0 32 32" style="
+          <div class="query-divide"></div>
+          <div class="query-date-end">
+            <div class="query-title">도시</div>
+            <select
+              id="cityId"
+              name="cityId"
+              class="form-control"
+              required
+              onchange="updateTownSelect()"
+            >
+              <option value="all">전체</option>
+            </select>
+          </div>
+          <div class="query-divide"></div>
+          <div class="query-col query-submit">
+            <div class="query-date-end">
+              <div class="query-title">시/군/구</div>
+              <select id="townId" name="townId" class="form-control" required>
+                <option value="all">전체</option>
+              </select>
+            </div>
+            <div>
+              <button class="query-submit-btn">
+                <svg
+                  viewBox="0 0 32 32"
+                  style="
                     display: block;
                     height: 16px;
                     width: 16px;
                     stroke: white;
                     stroke-width: 4;
                     overflow: visible;
-                  ">
-                <g fill="none">
-                  <path
-                    d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9">
-                  </path>
-                </g>
-              </svg>
+                  "
+                >
+                  <g fill="none">
+                    <path
+                      d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
+                    ></path>
+                  </g>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="simple-query-form">
+          <div class="simple-query-btn-wrap">
+            <button class="simple-query-form-btn">
+              <div class="text">검색 시작하기</div>
+              <div class="query-submit-btn">
+                <svg
+                  viewBox="0 0 32 32"
+                  style="
+                    display: block;
+                    height: 12px;
+                    width: 12px;
+                    stroke: white;
+                    stroke-width: 4;
+                    overflow: visible;
+                  "
+                >
+                  <g fill="none">
+                    <path
+                      d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
+                    ></path>
+                  </g>
+                </svg>
+              </div>
             </button>
           </div>
         </div>
-      </div>
-      <div class="simple-query-form">
-        <div class="simple-query-btn-wrap">
-          <button class="simple-query-form-btn">
-            <div class="text">검색 시작하기</div>
-            <div class="query-submit-btn">
-              <svg
-                viewBox="0 0 32 32"
-                style="
-                  display: block;
-                  height: 12px;
-                  width: 12px;
-                  stroke: white;
-                  stroke-width: 4;
-                  overflow: visible;
-                ">
-              <g fill="none">
+        <div class="header-col header-nav">
+          <div class="header-nav-left">
+            <a class="sticky-black" href="#"
+              >あちこちの夢が集まり、<br />ひとつの物語が生まれる</a
+            >
+            <button>
+              <svg class="sticky-black" width="16px" height="16px">
                 <path
-                  d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9">
-                </path>
-              </g>
-            </svg>
+                  d="m8.002.25a7.77 7.77 0 0 1 7.748 7.776 7.75 7.75 0 0 1 -7.521 7.72l-.246.004a7.75 7.75 0 0 1 -7.73-7.513l-.003-.245a7.75 7.75 0 0 1 7.752-7.742zm1.949 8.5h-3.903c.155 2.897 1.176 5.343 1.886 5.493l.068.007c.68-.002 1.72-2.365 1.932-5.23zm4.255 0h-2.752c-.091 1.96-.53 3.783-1.188 5.076a6.257 6.257 0 0 0 3.905-4.829zm-9.661 0h-2.75a6.257 6.257 0 0 0 3.934 5.075c-.615-1.208-1.036-2.875-1.162-4.686l-.022-.39zm1.188-6.576-.115.046a6.257 6.257 0 0 0 -3.823 5.03h2.75c.085-1.83.471-3.54 1.059-4.81zm2.262-.424c-.702.002-1.784 2.512-1.947 5.5h3.904c-.156-2.903-1.178-5.343-1.892-5.494l-.065-.007zm2.28.432.023.05c.643 1.288 1.069 3.084 1.157 5.018h2.748a6.275 6.275 0 0 0 -3.929-5.068z"
+                ></path>
+              </svg>
+            </button>
           </div>
-        </button>
-      </div>
-    </div>
-    <div class="header-col header-nav">
-      <div class="header-nav-left">
-        <a class="sticky-black" href="#">あちこちの夢が集まり、<br />ひとつの物語が生まれる</a>
-        <button>
-          <svg class="sticky-black" width="16px" height="16px">
-            <path
-              d="m8.002.25a7.77 7.77 0 0 1 7.748 7.776 7.75 7.75 0 0 1 -7.521 7.72l-.246.004a7.75 7.75 0 0 1 -7.73-7.513l-.003-.245a7.75 7.75 0 0 1 7.752-7.742zm1.949 8.5h-3.903c.155 2.897 1.176 5.343 1.886 5.493l.068.007c.68-.002 1.72-2.365 1.932-5.23zm4.255 0h-2.752c-.091 1.96-.53 3.783-1.188 5.076a6.257 6.257 0 0 0 3.905-4.829zm-9.661 0h-2.75a6.257 6.257 0 0 0 3.934 5.075c-.615-1.208-1.036-2.875-1.162-4.686l-.022-.39zm1.188-6.576-.115.046a6.257 6.257 0 0 0 -3.823 5.03h2.75c.085-1.83.471-3.54 1.059-4.81zm2.262-.424c-.702.002-1.784 2.512-1.947 5.5h3.904c-.156-2.903-1.178-5.343-1.892-5.494l-.065-.007zm2.28.432.023.05c.643 1.288 1.069 3.084 1.157 5.018h2.748a6.275 6.275 0 0 0 -3.929-5.068z">
-            </path>
-          </svg>
-        </button>
-      </div>
-      <div class="header-nav-right">
-        <button id="menuButton">
-          <div class="icon-list">
-            <svg viewBox="0 0 32 32" style="
-                  display: block;
-                  fill: none;
-                  height: 16px;
-                  width: 16px;
-                  stroke: currentcolor;
-                  stroke-width: 3;
-                  overflow: visible;
-                ">
-              <g fill="none" fill-rule="nonzero">
-                <path d="m2 16h28"></path>
-                <path d="m2 24h28"></path>
-                <path d="m2 8h28"></path>
-              </g>
-            </svg>
+          <div class="header-nav-right">
+            <button id="menuButton">
+              <div class="icon-list">
+                <svg
+                  viewBox="0 0 32 32"
+                  style="
+                    display: block;
+                    fill: none;
+                    height: 16px;
+                    width: 16px;
+                    stroke: currentcolor;
+                    stroke-width: 3;
+                    overflow: visible;
+                  "
+                >
+                  <g fill="none" fill-rule="nonzero">
+                    <path d="m2 16h28"></path>
+                    <path d="m2 24h28"></path>
+                    <path d="m2 8h28"></path>
+                  </g>
+                </svg>
+              </div>
+              <div class="icon-user-circle">
+                <svg viewBox="0 0 32 32">
+                  <path
+                    d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z"
+                  ></path>
+                </svg>
+              </div>
+            </button>
           </div>
-          <div class="icon-user-circle">
-            <svg viewBox="0 0 32 32">
-              <path
-                d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z">
-              </path>
-            </svg>
-          </div>
-        </button>
-      </div>
-    </div>
-    <!-- 모달 (회원가입/로그인 메뉴) -->
-    <div id="modalMenu" class="modal">
-      <div class="modal-content">
-        <!-- <span class="close">&times;</span> -->
-        <div class="menu-group">
-          <th:block sec:authorize="isAnonymous()">
-            <li><a th:href="@{/user/regist}">회원가입</a></li>
-            <li><a th:href="@{/user/login}">로그인</a></li>
-          </th:block>
-          <th:block sec:authorize="isAuthenticated()">
-            <li><a th:href="@{/user/logout}">로그아웃</a></li>
-            <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
-          </th:block>
         </div>
-        <div class="menu-divider"></div>
-        <div class="menu-group">
-          <li><a th:href="@{/viewSubscribe/subscribePage}">구독 page</a></li>
-          <li><a th:href="@{/viewSpline}">SplinePage</a></li>
-          <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
-          <li>
-            <a th:href="@{/share/selectOne?shareId=6}">글 상세 페이지(6)</a>
-          </li>
+        <!-- 모달 (회원가입/로그인 메뉴) -->
+        <div id="modalMenu" class="modal">
+          <div class="modal-content">
+            <!-- <span class="close">&times;</span> -->
+            <div class="menu-group">
+              <th:block sec:authorize="isAnonymous()">
+                <li><a th:href="@{/user/regist}">회원가입</a></li>
+                <li><a th:href="@{/user/login}">로그인</a></li>
+              </th:block>
+              <th:block sec:authorize="isAuthenticated()">
+                <li><a th:href="@{/user/logout}">로그아웃</a></li>
+                <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
+              </th:block>
+            </div>
+            <div class="menu-divider"></div>
+            <div class="menu-group">
+              <li>
+                <a th:href="@{/viewSubscribe/subscribePage}">구독 page</a>
+              </li>
+              <li><a th:href="@{/viewSpline}">SplinePage</a></li>
+              <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
+              <li>
+                <a th:href="@{/share/selectOne?shareId=6}">글 상세 페이지(6)</a>
+              </li>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -299,40 +344,52 @@
         </div>
       </article> -->
 
-    <article class="near-trip">
-      <h2>가까운 여행지 둘러보기</h2>
-      <section id="listings-container" class="listings-grid">
-        <div th:each="listing : ${shareList}" class="listing-card">
-          <a th:href="@{/share/selectOne(shareId=${listing.shareId})}" class="listing-link">
-            <button class="favorite-btn">
-              <i class="far fa-heart"></i>
-            </button>
-            <th:block th:if="${listing.fileList != null and listing.fileList.size() > 0}">
-              <img th:src="${listing.fileList[0].fileUrl}" alt="이미지">
-            </th:block>
-            <th:block th:unless="${listing.fileList != null and listing.fileList.size() > 0}">
-              <p>이미지가 없습니다.</p>
-            </th:block>
+      <article class="near-trip">
+        <h2>가까운 여행지 둘러보기</h2>
+        <section id="listings-container" class="listings-grid">
+          <div th:each="listing : ${shareList}" class="listing-card">
+            <a
+              th:href="@{/share/selectOne(shareId=${listing.shareId})}"
+              class="listing-link"
+            >
+              <button class="favorite-btn">
+                <i class="far fa-heart"></i>
+              </button>
+              <th:block
+                th:if="${listing.fileList != null and listing.fileList.size() > 0}"
+              >
+                <img th:src="${listing.fileList[0].fileUrl}" alt="이미지" />
+              </th:block>
+              <th:block
+                th:unless="${listing.fileList != null and listing.fileList.size() > 0}"
+              >
+                <p>이미지가 없습니다.</p>
+              </th:block>
 
-            <div class="listing-info">
-              <h3 th:text="${listing.title}"></h3>
-              <p th:text="${listing.regionName + ' ' + listing.cityName + ' ' + listing.townName}"></p>
-              <p>
-                ₩<span th:text="${#numbers.formatInteger(listing.price, 3, 'COMMA')}"></span>/박
-              </p>
-              <p th:text="'최대 인원: ' + ${listing.maxGuests} + '명'"></p>
-            </div>
-          </a>
-        </div>
-      </section>
-    </article>
-    <!-- google map (구글 맵) -->
-    <article id="mapContainer" style="display: none">
-      <div id="googleMap"></div>
-    </article>
-    <button id="mapButton">지도 표시하기</button>
+              <div class="listing-info">
+                <h3 th:text="${listing.title}"></h3>
+                <p
+                  th:text="${listing.regionName + ' ' + listing.cityName + ' ' + listing.townName}"
+                ></p>
+                <p>
+                  ₩<span
+                    th:text="${#numbers.formatInteger(listing.price, 3, 'COMMA')}"
+                  ></span
+                  >/박
+                </p>
+                <p th:text="'최대 인원: ' + ${listing.maxGuests} + '명'"></p>
+              </div>
+            </a>
+          </div>
+        </section>
+      </article>
+      <!-- google map (구글 맵) -->
+      <article id="mapContainer" style="display: none">
+        <div id="googleMap"></div>
+      </article>
+      <button id="mapButton">지도 표시하기</button>
 
-    <!-- <article class="anywhere-trip">
+      <!-- <article class="anywhere-trip">
         <h2>어디에서나, 여행은 살아보는 거야!</h2>
         <ul class="anywhere-trip-list">
           <li>
@@ -420,80 +477,82 @@
           </li>
         </ul>
       </article> -->
-  </main>
-  <footer>
-    <div class="footer-sections">
-      <section>
-        <h3>소개</h3>
-        <ul>
-          <li>あちこちうち 이용 방법</li>
-          <li>뉴스룸</li>
-          <li>あちこちうち 2025</li>
-          <li>투자자 정보</li>
-          <li>あちこちうち 플러스</li>
-          <li>あちこちうち 비즈니스 프로그램</li>
-          <li>호스트 분들이 있기에 가능합니다</li>
-          <li>채용정보</li>
-          <li>창립자 편지</li>
-        </ul>
-      </section>
-      <section>
-        <h3>커뮤니티</h3>
-        <ul>
-          <li>다양성 및 소속감</li>
-          <li>접근성</li>
-          <li>게스트 추천</li>
-          <li>Achiko.site</li>
-        </ul>
-      </section>
-      <section>
-        <h3>호스팅하기</h3>
-        <ul>
-          <li>숙소 호스팅</li>
-          <li>온라인 체험 호스팅하기</li>
-          <li>체험 호스팅하기</li>
-          <li>책임감 있는 호스팅</li>
-          <li>자료 센터</li>
-          <li>커뮤니티 센터</li>
-        </ul>
-      </section>
-      <section>
-        <h3>あちこちうち 지원</h3>
-        <ul>
-          <li>도움말 센터</li>
-          <li>예약 취소 옵션</li>
-          <li>신뢰와 안전</li>
-        </ul>
-      </section>
-    </div>
-    <div class="company-description">
-      <div class="Inc">
-        © 2025 Achiko, Inc.<span>·</span><a href="#">개인정보 처리방침</a><span>·</span><a href="#">이용약관</a><span>·</span><a
-          href="#">사이트맵</a><span>·</span><a href="#">한국의 변경된 환불 정책</a><span>·</span><a href="#">회사 세부정보</a>
+    </main>
+    <footer>
+      <div class="footer-sections">
+        <section>
+          <h3>소개</h3>
+          <ul>
+            <li>あちこちうち 이용 방법</li>
+            <li>뉴스룸</li>
+            <li>あちこちうち 2025</li>
+            <li>투자자 정보</li>
+            <li>あちこちうち 플러스</li>
+            <li>あちこちうち 비즈니스 프로그램</li>
+            <li>호스트 분들이 있기에 가능합니다</li>
+            <li>채용정보</li>
+            <li>창립자 편지</li>
+          </ul>
+        </section>
+        <section>
+          <h3>커뮤니티</h3>
+          <ul>
+            <li>다양성 및 소속감</li>
+            <li>접근성</li>
+            <li>게스트 추천</li>
+            <li>Achiko.site</li>
+          </ul>
+        </section>
+        <section>
+          <h3>호스팅하기</h3>
+          <ul>
+            <li>숙소 호스팅</li>
+            <li>온라인 체험 호스팅하기</li>
+            <li>체험 호스팅하기</li>
+            <li>책임감 있는 호스팅</li>
+            <li>자료 센터</li>
+            <li>커뮤니티 센터</li>
+          </ul>
+        </section>
+        <section>
+          <h3>あちこちうち 지원</h3>
+          <ul>
+            <li>도움말 센터</li>
+            <li>예약 취소 옵션</li>
+            <li>신뢰와 안전</li>
+          </ul>
+        </section>
       </div>
-      <div class="icons">
-        <div class="icons-left">
-          <div>
-            <button class="btn-wrap">
-              <i class="fas fa-globe"></i>
-              <div>한국어 (KR)</div>
-            </button>
+      <div class="company-description">
+        <div class="Inc">
+          © 2025 Achiko, Inc.<span>·</span><a href="#">개인정보 처리방침</a
+          ><span>·</span><a href="#">이용약관</a><span>·</span
+          ><a href="#">사이트맵</a><span>·</span
+          ><a href="#">한국의 변경된 환불 정책</a><span>·</span
+          ><a href="#">회사 세부정보</a>
+        </div>
+        <div class="icons">
+          <div class="icons-left">
+            <div>
+              <button class="btn-wrap">
+                <i class="fas fa-globe"></i>
+                <div>한국어 (KR)</div>
+              </button>
+            </div>
+            <div>
+              <button class="btn-wrap">
+                <i class="fas fa-won-sign"></i>
+                <div>KRW</div>
+              </button>
+            </div>
           </div>
-          <div>
-            <button class="btn-wrap">
-              <i class="fas fa-won-sign"></i>
-              <div>KRW</div>
-            </button>
+          <div class="icons-right">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-facebook"></i>
+            <i class="fab fa-twitter"></i>
           </div>
         </div>
-        <div class="icons-right">
-          <i class="fab fa-instagram"></i>
-          <i class="fab fa-facebook"></i>
-          <i class="fab fa-twitter"></i>
-        </div>
       </div>
-    </div>
-  </footer>
-</body>
-
+    </footer>
+  </body>
 </html>
