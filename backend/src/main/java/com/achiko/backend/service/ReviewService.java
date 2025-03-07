@@ -3,7 +3,9 @@ package com.achiko.backend.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.ReviewDTO;
@@ -41,7 +43,7 @@ public class ReviewService {
 
 	public List<ReviewDTO> getUserReviews(Long userId) {
 
-		List<ReviewEntity> entityList = reviewRepository.findByReviewedUserId(userId);
+		List<ReviewEntity> entityList = reviewRepository.findByReviewedUserId(userId, Sort.by(Sort.Direction.DESC, "createdAt"));
 		List<ReviewDTO> dtoList = new ArrayList<>();
 
 		for (ReviewEntity entity : entityList) {
@@ -109,9 +111,50 @@ public class ReviewService {
 	}
 
 	@Transactional
-    public void deleteReview(Long reviewId) {
-        System.out.println("🔍 실제 삭제 실행: 리뷰 ID = " + reviewId); // 디버깅 로그 추가
-        reviewRepository.deleteById(reviewId);
+	public void deleteReview(Long reviewId) {
+		System.out.println("🔍 실제 삭제 실행: 리뷰 ID = " + reviewId); // 디버깅 로그 추가
+		reviewRepository.deleteById(reviewId);
+	}
+
+	public List<ReviewDTO> getSortedReviews(Long userId, String sortType) {
+		Sort sort;
+
+		switch (sortType) {
+		case "oldest": // 오래된순
+			sort = Sort.by("createdAt").ascending();
+			break;
+		case "rating": // 별점순 (평균 높은 순)
+			sort = Sort.by(Sort.Order.desc("cleanlinessRating"), Sort.Order.desc("trustRating"),
+					Sort.Order.desc("communicationRating"), Sort.Order.desc("mannerRating"));
+			break;
+		default: // 최신순 (default)
+			sort = Sort.by("createdAt").descending();
+		}
+
+		List<ReviewEntity> reviews = reviewRepository.findByReviewedUserId(userId, sort);
+		return reviews.stream().map(ReviewDTO::toDTO).collect(Collectors.toList());
+	}
+
+	public List<ReviewDTO> getSortedReviews(String order) {
+        List<ReviewEntity> sortedEntities;
+
+        switch (order) {
+            case "latest":
+                sortedEntities = reviewRepository.findAllByOrderByCreatedAtDesc();
+                break;
+            case "oldest":
+                sortedEntities = reviewRepository.findAllByOrderByCreatedAtAsc();
+                break;
+            case "rating":
+                sortedEntities = reviewRepository.findAllByOrderByCleanlinessRatingDesc();
+                break;
+            default:
+                sortedEntities = reviewRepository.findAll(); // 기본값
+        }
+
+        return sortedEntities.stream()
+                .map(ReviewDTO::toDTO)
+                .collect(Collectors.toList());
     }
 
 }

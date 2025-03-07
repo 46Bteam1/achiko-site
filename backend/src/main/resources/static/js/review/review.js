@@ -1,86 +1,125 @@
-// 리뷰 삭제 메서드
-function deleteReview() {
-	let reviewId = $(this).attr("data-review-id"); // `data-review-id` 속성에서 ID 가져오기
-	console.log("삭제 버튼 클릭됨, 리뷰 ID:", reviewId); // 디버깅용 로그
-
-	if (!reviewId) {
-		alert("삭제할 리뷰 ID를 찾을 수 없습니다.");
-		return;
-	}
-
-	let confirmDelete = confirm("정말 삭제하시겠습니까?");
-
-	if (!confirmDelete) return;
-
-	$.ajax({
-		url: `/review/delete/${reviewId}`, // ✅ 백엔드의 `DELETE` API 경로와 일치해야 함
-		method: "DELETE", // ❗ `GET`이 아닌 `DELETE`로 변경
-		success: function() {
-			console.log(`리뷰 ${reviewId} 삭제 완료`); // 삭제 완료 로그
-			$(`#review-${reviewId}`).remove(); // 삭제된 리뷰 UI에서도 제거
-			let newCount = parseInt($('#reviewCount').text().replace('총 ', '').replace('개', '')) - 1;
-			$('#reviewCount').text(`총 ${newCount}개`);
-		},
-		error: function(xhr, status, error) {
-			console.error("삭제 오류:", xhr.responseText);
-			alert('삭제 실패');
-		}
-	});
-}
-
 $(document).ready(function() {
-	// loadReviews();
+    // 삭제 버튼 클릭 이벤트
+    $(document).on("click", ".delete-review", deleteReview);
 
-	// 검색 버튼 클릭 이벤트
-	//$('#searchBtn').click(function () {
-	//let query = $('#searchInput').val();
-	//loadReviews(query);
-	//});
+    // 리뷰 정렬 이벤트
+    $("#reviewFilter").on("change", sortReviews);   
 
-	// 삭제 버튼 클릭 이벤트 (첨부 코드 방식 적용)
-	$(document).on("click", ".delete-review", deleteReview);
+    // KakaoTalk 공유
+    Kakao.init("YOUR_KAKAO_API_KEY"); // 🔹 카카오 API 키 등록 필수
+
+
+    $(document).on("click", ".share-kakao", function() {
+        let reviewUrl = $(this).attr("data-review-url");
+
+        Kakao.Link.sendDefault({
+            objectType: "feed",
+            content: {
+                title: "리뷰 공유",
+                description: "이 리뷰를 확인해보세요!",
+                imageUrl: "https://your-site.com/image.jpg", // 리뷰에 맞는 이미지 URL 설정
+                link: {
+                    mobileWebUrl: reviewUrl,
+                    webUrl: reviewUrl
+                }
+            }
+        });
+    });
+
 });
 
-// 리뷰 목록 불러오기 (AJAX)
-/*function loadReviews(searchQuery = '') {
-	$.ajax({
-		url: '/api/reviews', // 리뷰 목록을 가져오는 API 엔드포인트
-		type: 'GET',
-		data: { search: searchQuery },
-		success: function (reviews) {
-			console.log("불러온 리뷰 데이터:", reviews); // 디버깅용 로그
-			$('#reviewList').empty();
-			$('#reviewCount').text(`총 ${reviews.length}개`);
 
-			if (reviews.length === 0) {
-				$('#reviewList').append('<p class="text-muted">리뷰가 없습니다.</p>');
-				return;
-			}
+// 리뷰 삭제 메서드
+function deleteReview() {
+    let reviewId = $(this).attr("data-review-id");
+    console.log("삭제 버튼 클릭됨, 리뷰 ID:", reviewId);
 
-			reviews.forEach(review => {
-				let reviewCard = `
-					<div class="review-card" id="review-${review.reviewId}">
-						<div class="review-left">
-							<img class="reviewer-img" src="/images/default-profile.png" alt="프로필">
-							<div class="review-content">
-								<p class="review-name">리뷰 작성자: ${review.reviewerId}</p>
-								<p class="review-meta">${review.createdAt}</p>
-								<p class="stars">★★★★★</p>
-								<p class="review-text">${review.comment}</p>
-								<div class="d-flex mt-2">
-									<a href="/review/reviewUpdate?reviewId=${review.reviewId}"
-										class="btn btn-sm btn-outline-primary me-2">수정</a>
-									<button class="btn btn-sm btn-outline-danger delete-review"
-										data-review-id="${review.reviewId}">삭제</button>
-								</div>
-							</div>
-						</div>
-					</div>`;
-				$('#reviewList').append(reviewCard);
-			});
+    if (!reviewId) {
+        alert("삭제할 리뷰 ID를 찾을 수 없습니다.");
+        return;
+    }
 
-			console.log("삭제 버튼 개수:", $('.delete-review').length); // 삭제 버튼 개수 확인
-		}
-	});
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+
+    $.ajax({
+        url: `/review/delete/${reviewId}`,
+        method: "DELETE",
+        success: function() {
+            console.log(`리뷰 ${reviewId} 삭제 완료`);
+            $(`#review-${reviewId}`).remove();
+            updateReviewCount(-1);
+        },
+        error: function(xhr) {
+            console.error("삭제 오류:", xhr.responseText);
+            alert('삭제 실패');
+        }
+    });
 }
-*/
+
+// 리뷰 개수 업데이트 함수
+function updateReviewCount(change) {
+    let reviewCountElem = $('#reviewCount');
+    let currentCount = parseInt(reviewCountElem.text().replace(/\D/g, '')) || 0;
+    let newCount = Math.max(0, currentCount + change);
+    reviewCountElem.text(`총 ${newCount}개`);
+}
+
+// 리뷰 정렬 기능
+function sortReviews() {
+    let sortBy = $("#reviewFilter").val();
+    console.log("📢 정렬 방식 변경됨:", sortBy);
+
+    $.ajax({
+        url: `/review/sort?order=${sortBy}`,
+        method: "GET",
+        dataType: "json",
+        success: function(sortedReviews) {
+            console.log("✅ 정렬된 리뷰 데이터 수신 완료", sortedReviews);
+
+            if (!Array.isArray(sortedReviews)) {
+                console.error("❌ 잘못된 데이터 형식 수신:", sortedReviews);
+                alert("서버 응답 오류: 리뷰 데이터를 불러올 수 없습니다.");
+                return;
+            }
+
+            let reviewsContainer = $("#reviewList");
+            reviewsContainer.empty();  // 기존 리뷰 목록 초기화
+
+            sortedReviews.forEach(review => {
+                let formattedDate = new Date(review.createdAt).toLocaleDateString();
+                let reviewHtml = `
+                    <div class="review-card d-flex justify-content-between align-items-center" id="review-${review.reviewId}">
+                        
+                        <!-- 왼쪽 (리뷰 정보) -->
+                        <div class="review-left d-flex align-items-start">
+                            <img class="reviewer-img" src="/images/default-profile.png" alt="프로필">
+                            <div class="review-content">
+                                <p class="review-name">리뷰 작성자: <strong>${review.reviewerId}</strong></p>
+                                <p class="review-meta">${formattedDate}</p>
+                                <p class="review-text">${review.comment}</p>
+                                <div class="d-flex mt-2">
+                                    <a href="/review/reviewUpdate?reviewId=${review.reviewId}" class="btn btn-sm btn-outline-primary me-2">수정</a>
+                                    <button class="btn btn-sm btn-outline-danger delete-review" data-review-id="${review.reviewId}">삭제</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 🔹 오른쪽 (점수) -->
+                        <div class="review-scores text-end">
+                            <p><strong>청결도</strong> ${review.cleanlinessRating}</p>
+                            <p><strong>신뢰도</strong> ${review.trustRating}</p>
+                            <p><strong>소통</strong> ${review.communicationRating}</p>
+                            <p><strong>매너</strong> ${review.mannerRating}</p>
+                        </div>
+
+                    </div>
+                `;
+                reviewsContainer.append(reviewHtml);
+            });
+        },
+        error: function(xhr) {
+            console.error("❌ 리뷰 정렬 오류:", xhr.status, xhr.responseText);
+            alert("리뷰 정렬 중 문제가 발생했습니다.");
+        }
+    });
+}

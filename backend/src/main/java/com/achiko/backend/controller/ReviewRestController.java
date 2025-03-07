@@ -1,13 +1,16 @@
 package com.achiko.backend.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.achiko.backend.dto.ReviewDTO;
@@ -41,6 +44,59 @@ public class ReviewRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 실패: " + e.getMessage());
         }
     }
-	
+    
+    @GetMapping("/sorted")
+    public String getSortedReviews(
+    		@RequestParam(name="reviewedUserId") Long reviewedUserId, 
+    		@RequestParam(name="sortBy") String sortBy, 
+    		Model model) {
+    	List<ReviewDTO> reviews = reviewService.getSortedReviews(reviewedUserId, sortBy);
+
+        // 정렬 로직
+        switch (sortBy) {
+            case "latest":
+                reviews = reviews.stream()
+                        .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+                        .collect(Collectors.toList());
+                break;
+            case "oldest":
+                reviews = reviews.stream()
+                        .sorted((r1, r2) -> r1.getCreatedAt().compareTo(r2.getCreatedAt()))
+                        .collect(Collectors.toList());
+                break;
+            case "rating":
+                reviews = reviews.stream()
+                        .sorted((r1, r2) -> Long.compare(
+                                (r2.getCleanlinessRating() + r2.getTrustRating() +
+                                 r2.getCommunicationRating() + r2.getMannerRating()),
+                                (r1.getCleanlinessRating() + r1.getTrustRating() +
+                                 r1.getCommunicationRating() + r1.getMannerRating())
+                        ))
+                        .collect(Collectors.toList());
+                break;
+        }
+
+        model.addAttribute("reviews", reviews);
+        return "fragments/reviewList :: reviewListFragment"; // Thymeleaf Fragment 반환
+    }
+    
+    @GetMapping("/{userId}")
+    public List<ReviewDTO> getReviews(
+            @PathVariable Long userId,
+            @RequestParam(name = "sort", defaultValue = "latest") String sortType) {
+        return reviewService.getSortedReviews(userId, sortType);
+    }
+    
+    @GetMapping("/sort")
+    public ResponseEntity<?> sortReviews(@RequestParam(name = "order", required = true) String order) {
+        System.out.println("🔄 정렬 요청 수신: " + order);
+        List<ReviewDTO> sortedReviews = reviewService.getSortedReviews(order);
+        System.out.println("✅ 정렬된 리뷰 개수: " + sortedReviews.size());
+        return ResponseEntity.ok(sortedReviews);
+    }
 
 }
+    
+	
+
+

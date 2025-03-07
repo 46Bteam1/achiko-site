@@ -4,12 +4,10 @@ import java.util.Collections;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +24,7 @@ import com.achiko.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
 @Tag(name = "Review", description = "Review API")
 @Controller
@@ -39,10 +38,6 @@ public class ReviewViewController {
 	@Operation(summary = "리뷰페이지 조회", description = "reviewPage를 반환합니다.")
 	@GetMapping("/reviewPage")
 	public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId, Model model) {
-//        List<ReviewDTO> reviews = reviewService.getAllReviews();
-
-		// List<ReviewDTO> reviews = reviewService.getUserReviews(reviewedUserId);
-		// String reviewedUserName = userService.getUserNameById(reviewedUserId);
 
 		List<ReviewDTO> reviews = reviewService.getUserReviews(reviewedUserId);
 		UserDTO reviewedUser = userService.getUserById(reviewedUserId);
@@ -162,39 +157,5 @@ public class ReviewViewController {
 		}
 	}
 
-//	@DeleteMapping("/delete/{id}")
-//    public ResponseEntity<String> deleteReview(@PathVariable("id") Long reviewId) {
-//        try {
-//            reviewService.deleteReview(reviewId);
-//            return ResponseEntity.ok("삭제 완료");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 실패: " + e.getMessage());
-//        }
-//    }
 
 }
-/**
- * ✅ 문자열 username을 숫자로 변환하는 메서드
- */
-//	private Long convertUsernameToUserId(String username) {
-//	    // 숫자인 경우 변환
-//	    if (username.matches("\\d+")) {
-//	        return Long.parseLong(username);
-//	    }
-//
-//	    // ✅ 문자열 ID를 DB에서 조회하여 숫자로 변환 (예제)
-//	    Long userId = ReviewRepository.findUserIdByUsername(username);
-//
-//	    // 찾지 못하면 기본 ID 설정
-//	    return (userId != null) ? userId : 0L;
-//	}
-
-//1. 먼저 registHtml을 name항목을 dto와 맞춰야한다
-// 현재 항목도 맞춰야함.하나 더 추가해야함
-// toString 잘 뜨는거 보고 (콘솔)
-// 음 잘 ~ -> 로그인 한 아이디는 접속한 사람의 아이디 service 몇번째 유저 아이디인지 확인해야한다
-// zzz 7번이라는걸 찾았다면 1번과 같이 서버에 보내서 db 룸메이트 테이블에 share_id 가 같은지 체크!
-// 제출 버튼을 누를경우 이지선다
-// 리뷰어를 setReviewUserId를 이용해서 7번을 넣어
-// setReviewedUserId를 통해서 ReviedUserId가 requestparam에서 받아온 것이면 된다
-// 서비스에서 repository 세이브하면 끝?!
