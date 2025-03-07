@@ -16,8 +16,7 @@ import com.achiko.backend.service.LocationService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
-//@RequestMapping("/api/location")
+@RequestMapping("/api/location")
 @RequiredArgsConstructor
 public class LocationController {
 
@@ -29,9 +28,7 @@ public class LocationController {
      */
     @GetMapping("/regions")
     public ResponseEntity<List<RegionDTO>> getRegions(@RequestParam("provinceId") Integer provinceId) {
-    	System.out.println(provinceId);
         List<RegionDTO> regions = locationService.getRegionsByProvince(provinceId);
-        System.out.println(regions.toString());
         return ResponseEntity.ok(regions);
     }
 
