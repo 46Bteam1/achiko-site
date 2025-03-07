@@ -76,6 +76,10 @@ let passwordCheck = false;
 	
 	function emailDupTestAndSend() {
 		let email = $('#email').val();
+		let $authBtn = $('#authBtn'); // 버튼 요소 캐싱
+		
+		// 클릭 이벤트 제거 (한 번만 실행되도록 설정)
+		$authBtn.off('click');
 		
 		$.ajax({
 			url: '/user/chkEmailDuplication',
@@ -84,21 +88,36 @@ let passwordCheck = false;
 			success: function(resp) { // resp=true : 중복X / resp=false : 중복O
 				if(resp){
 					emailDuplicateChk = true;
+					
 					$.ajax({
 						url: '/user/sendEmail',
 						method: 'POST',
 						data: { "email" : email },
 						success: function (resp) {
 							alert("인증메일이 전송되었습니다.");	
-						}
+						},
+						complete: function() {
+	                        // 3초 후 다시 이벤트 핸들러 추가 (사용자가 재시도 가능하도록)
+	                        setTimeout(() => {
+	                            $authBtn.on('click', emailDupTestAndSend);
+	                        }, 3000); // 3초 후 다시 버튼 활성화
+	                    }
 					});
 				}
 				else {
 					emailDuplicateChk = false;
 					alert("해당 이메일로 가입된 계정이 존재합니다.");
+					
+					// 중복된 이메일이면 바로 이벤트 다시 등록
+					$authBtn.on('click', emailDupTestAndSend);
+					
 					return false;
 				}
-			}
+			},
+			error: function() {
+	            alert("이메일 중복 확인 중 오류가 발생했습니다.");
+	            $authBtn.on('click', emailDupTestAndSend); // 오류 발생 시 이벤트 다시 등록
+	        }
 		});
 	}
 	
