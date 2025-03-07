@@ -86,6 +86,9 @@ public class UserService {
 			return true;
 		}
 		
+		if(userEntity.getProvider() != null) {
+			return true;
+		}
 		return false;
 	}
 }

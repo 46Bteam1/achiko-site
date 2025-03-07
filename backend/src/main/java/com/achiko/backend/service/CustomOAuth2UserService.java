@@ -62,6 +62,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userEntity.setNickname(userNickname);
             userEntity.setRealName(oAuth2Response.getName());
             userEntity.setLanguages(role);
+            userEntity.setProvider(oAuth2Response.getProvider());
             userRepository.save(userEntity);
         }
         else {

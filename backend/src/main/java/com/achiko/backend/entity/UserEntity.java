@@ -34,6 +34,9 @@ public class UserEntity {
 	@Column(name="user_id")
 	private Long userId;
 	
+	@Column(name="provider")
+	private String provider;
+	
 	@Column(name="login_id", nullable = false)
 	private String loginId;
 	
