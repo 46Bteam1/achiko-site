@@ -7,12 +7,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.achiko.backend.service.CustomOAuth2UserService;
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	// Handler 사용
 
+	
+	private CustomOAuth2UserService customOAuth2UserService;
+
+	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+		this.customOAuth2UserService = customOAuth2UserService;
+	}
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -20,6 +27,7 @@ public class SecurityConfig {
 						.requestMatchers(
 								"/"
 								,"/api/location/**"
+								, "/oauth2/**"
 								, "/user/**"
 								, "/user/verifyAuthCode"
 								, "/user/findLoginIdResult"
@@ -51,8 +59,13 @@ public class SecurityConfig {
 		// POST 요청시 CSRF 토큰을 요청하므로 (Cross-Site Request Forgery) 비활성화(개발환경)
 		http
 			.csrf((auth) -> auth.disable());
+		http
+		.oauth2Login((oauth2) -> oauth2
+				.userInfoEndpoint((userInfoEndpointConfig) ->
+				userInfoEndpointConfig.userService(customOAuth2UserService)));
 
 		return http.build();
+		
 	}
 
 	// 단방향 비밀번호 암호화
