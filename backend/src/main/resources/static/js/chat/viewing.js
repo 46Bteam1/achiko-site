@@ -134,11 +134,10 @@ function viewingTable(resp) {
   $(".deleteViewingBtn").on("click", deleteViewing);
 }
 
-// TODO: 3월 6일에 추가할 것
 // viewing 날짜 수정
 function updateViewing() {
   // 현재 버튼이 속한 행(row)을 선택
-  let row = $(this).closest('tr');
+  let row = $(this).closest("tr");
   // 두 번째 셀(예약 날짜 셀)을 선택 (0부터 시작하므로 eq(1))
   let scheduledCell = row.find("td:eq(1)");
   let currentDate = scheduledCell.text().trim();
@@ -159,17 +158,21 @@ function updateViewing() {
 
   // 예약 날짜 셀을 날짜와 시간 입력창으로 교체
   scheduledCell.html(
-    '<input type="date" class="updateViewingDate" value="' + dateValue + '" />' +
-    '<input type="time" class="updateViewingTime" value="' + timeValue + '" />'
+    '<input type="date" class="updateViewingDate" value="' +
+      dateValue +
+      '" />' +
+      '<input type="time" class="updateViewingTime" value="' +
+      timeValue +
+      '" />'
   );
 
   // 버튼의 텍스트를 "저장"으로 변경하고, 기존 이벤트 핸들러 제거
-  var btn = $(this);
+  let btn = $(this);
   btn.val("저장");
   btn.off("click").on("click", function () {
     // 입력된 날짜와 시간 값을 가져옴
-    var newDate = row.find(".updateViewingDate").val();
-    var newTime = row.find(".updateViewingTime").val();
+    let newDate = row.find(".updateViewingDate").val();
+    let newTime = row.find(".updateViewingTime").val();
 
     if (!newDate || !newTime) {
       alert("날짜와 시간을 모두 입력해주세요.");
@@ -177,14 +180,22 @@ function updateViewing() {
     }
 
     // 새로운 예약 날짜를 ISO 형식(예: "2025-03-07T15:30:00")으로 생성
-    var newScheduledDate = newDate + "T" + newTime + ":00";
-    var viewingId = btn.attr("data-seq");
+    let newScheduledDate = newDate + "T" + newTime + ":00";
+    // 새로운 날짜를 Date 객체로 변환하여 현재 날짜와 비교
+    let newScheduledDateObj = new Date(newScheduledDate);
+    let now = new Date();
+    if (newScheduledDateObj < now) {
+      alert("입력하신 날짜는 현재보다 이전입니다.");
+      return;
+    }
+
+    let viewingId = btn.attr("data-seq");
 
     // 서버로 보낼 데이터 구성 (필요한 값에 맞게 수정)
-    var data = {
+    let data = {
       viewingId: viewingId,
       scheduledDate: newScheduledDate,
-      shareId: $("#shareId").val()
+      shareId: $("#shareId").val(),
     };
 
     // PATCH 요청으로 서버의 changeDate API 호출
@@ -203,7 +214,7 @@ function updateViewing() {
       },
       error: function (err) {
         alert("수정에 실패했습니다.");
-      }
+      },
     });
   });
 }
