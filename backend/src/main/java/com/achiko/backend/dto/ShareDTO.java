@@ -2,6 +2,7 @@ package com.achiko.backend.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.achiko.backend.entity.ShareEntity;
 
@@ -39,6 +40,9 @@ public class ShareDTO {
     private String regionName;
     private String cityName;
     private String townName;
+    
+    private List<ShareFilesDTO> fileList;
+
 
     public static ShareDTO fromEntity(ShareEntity entity) {
         //if (entity == null) return null;

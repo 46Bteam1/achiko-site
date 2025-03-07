@@ -30,6 +30,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail' // 이메일 발송
     implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security 사용
 
+    // 채팅 관련
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework:spring-messaging'
+	implementation 'org.webjars:sockjs-client:1.5.1'
+	implementation 'org.webjars:stomp-websocket:2.3.3-1'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
     // 환경 변수 관리 (.env 사용)
     implementation 'io.github.cdimascio:dotenv-java:2.2.0' // dotenv 환경 변수 관리 (최신 버전 유지)
 

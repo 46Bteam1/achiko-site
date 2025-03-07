@@ -47,51 +47,45 @@ public class ShareFilesService {
             throw new IllegalArgumentException("업로드할 파일이 없습니다.");
         }
 
-        // 원본 파일명
         String originalFileName = file.getOriginalFilename();
         if (originalFileName == null) {
             originalFileName = "unknown_filename";
         }
 
-        // WebP 최종 저장 파일명 (UUID + .webp)
         String uuidFileName = UUID.randomUUID().toString() + ".webp";
         Path targetPath = Paths.get(uploadDir, uuidFileName);
         File outputFile = targetPath.toFile();
 
-        // 임시 파일로 저장 후 WebP 변환
-        File tempFile = File.createTempFile("upload", ".tmp"); 
+        File tempFile = File.createTempFile("upload", ".tmp");
         file.transferTo(tempFile);
         WebPConverter.convertToWebP(tempFile, outputFile);
 
-        // 접근 가능한 URL 구성
         String fileUrl = "/images/" + uuidFileName;
 
-        // DB 저장: displayOrder 값을 함께 설정
         ShareFilesEntity entity = ShareFilesEntity.builder()
                 .sessionId(sessionId)
                 .originalFileName(originalFileName)
                 .savedFileName(uuidFileName)
                 .fileUrl(fileUrl)
                 .uploadedAt(LocalDateTime.now())
+                .displayOrder(displayOrder)
                 .build();
-        entity.setDisplayOrder(displayOrder);
 
         ShareFilesEntity saved = shareFilesRepository.save(entity);
 
         return ShareFilesDTO.builder()
                 .fileId(saved.getFileId())
-                .shareId(saved.getShare() != null ? saved.getShare().getShareId() : null)
                 .sessionId(saved.getSessionId())
                 .originalFileName(saved.getOriginalFileName())
                 .savedFileName(saved.getSavedFileName())
                 .fileUrl(saved.getFileUrl())
                 .uploadedAt(saved.getUploadedAt())
-                .displayOrder(saved.getDisplayOrder())  // ← displayOrder 값 전달
+                .displayOrder(saved.getDisplayOrder())
                 .build();
     }
 
     /**
-     * 2) share_id가 생기면 임시 파일들을 실제 Share와 연결
+     * 2) ★ 파일을 ShareEntity와 연결
      */
     @Transactional
     public void bindFilesToShare(String sessionId, Long shareId) {
@@ -101,9 +95,8 @@ public class ShareFilesService {
 
         for (ShareFilesEntity f : tempFiles) {
             f.setShare(share);
-            f.setSessionId(null); 
+            f.setSessionId(null);
         }
-        // JPA 영속성 컨텍스트의 Dirty Checking에 의해 DB 업데이트
     }
 
     /**
@@ -111,8 +104,7 @@ public class ShareFilesService {
      */
     @Transactional(readOnly = true)
     public List<ShareFilesDTO> getFilesByShareId(Long shareId) {
-        List<ShareFilesEntity> files = shareFilesRepository.findByShareShareIdOrderByDisplayOrderAsc(shareId);
-        return files.stream()
+        return shareFilesRepository.findByShareShareIdOrderByDisplayOrderAsc(shareId).stream()
             .map(ShareFilesEntity::toDTO)
             .toList();
     }
@@ -125,7 +117,6 @@ public class ShareFilesService {
         ShareFilesEntity fileEntity = shareFilesRepository.findById(fileId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 파일 ID입니다. fileId=" + fileId));
 
-        // 실제 파일 삭제
         String savedFileName = fileEntity.getSavedFileName();
         if (savedFileName != null) {
             File delFile = Paths.get(uploadDir, savedFileName).toFile();
@@ -134,7 +125,6 @@ public class ShareFilesService {
             }
         }
 
-        // DB에서 삭제
         shareFilesRepository.delete(fileEntity);
     }
 }

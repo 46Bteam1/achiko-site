@@ -6,14 +6,12 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,19 +40,19 @@ public class ShareEntity {
 
     // region, city, town을 ManyToOne 관계로 각각 연결
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "province_id", nullable = false)
+    @JoinColumn(name = "province_id",referencedColumnName = "province_id", nullable = false)
     private ProvinceEntity province;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", nullable = false)
+    @JoinColumn(name = "region_id", referencedColumnName = "region_id", nullable = false)
     private RegionEntity region;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id", nullable = false)
+    @JoinColumn(name = "city_id", referencedColumnName = "city_id", nullable = false)
     private CityEntity city;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "town_id", nullable = false)
+    @JoinColumn(name = "town_id", referencedColumnName = "town_id", nullable = false)
     private TownEntity town;
 
     @Column(name = "postal_code", nullable = false)

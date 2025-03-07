@@ -1,0 +1,76 @@
+$(function () {
+  // 유저가 속한 전체 채팅방들 출력
+  initChatRooms();
+});
+
+function initChatRooms() {
+  $.ajax({
+    url: "/chat/selectRooms",
+    method: "GET",
+    success: output,
+  });
+}
+
+function output(resp) {
+  const nickname = $("#nickname").val();
+
+  let tag = `<table>`;
+
+  $.each(resp, function (index, item) {
+    let nicknameCheck = item["hostNickname"] === nickname;
+    let displayNickname = nicknameCheck
+      ? item["guestNickname"]
+      : item["hostNickname"];
+    tag += `
+        <tr>
+            <td>${displayNickname}</td>
+            <td class="btns">
+                <input type="button" value="입장" 
+                class="enterBtn"
+                data-seq="${item["chatroomId"]}">
+                <input type="button" value="삭제"
+                class="deleteBtn"
+                data-seq="${item["chatroomId"]}">
+            </td>
+        </tr>
+    `;
+  });
+  tag += `</table>`;
+
+  $("#chatRooms").html(tag);
+
+  $(".deleteBtn").on("click", deleteRoom);
+  $(".enterBtn").on("click", enterRoom);
+}
+
+/* 채팅방 삭제 함수 */
+function deleteRoom() {
+  let chatroomId = $(this).attr("data-seq");
+
+  let answer = confirm("삭제하시겠습니까?");
+
+  if (!answer) return;
+
+  // TODO: 채팅방 삭제 구현하기
+
+  // $.ajax({
+  //   url: "/chat/deleteRoom",
+  //   method: "DELETE",
+  //   data: { chatroomId: chatroomId },
+  //   success: initChatRooms,
+  // });
+}
+
+/* 채팅방 입장 함수 */
+function enterRoom() {
+  let chatroomId = $(this).attr("data-seq");
+  console.log(chatroomId);
+
+  $.ajax({
+    url: "/chatList",
+    data: { chatroomId: chatroomId },
+    success: function (response) {
+      window.location.href = "/chatList?chatroomId=" + chatroomId;
+    },
+  });
+}
