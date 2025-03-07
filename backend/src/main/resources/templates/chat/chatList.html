@@ -104,13 +104,19 @@
   </head>
   <body>
     <div id="logos">
-      <div id="logo"></div>
+      <div id="logo">
+        
+          <a th:href="@{/}">
+            <img th:src="@{/images/achiko-logo3.png}" alt="로고">
+          </a>
+        
+      </div>
       <div>
         <h3>あちこちの夢が集まり、ひとつの物語が生まれる</h3>
       </div>
       <div>
-        <input type="button" id="toMyPageBtn" value="My Page" />
-        <input type="button" id="chatRoomsBtn" value="Chat Rooms" />
+        <input type="button" id="toMyPageBtn" class="btn btn-outline-success" value="My Page" />
+        <input type="button" id="chatRoomsBtn" class="btn btn-outline-success" value="Chat Rooms" />
       </div>
     </div>
 
@@ -185,6 +191,8 @@
           <div class="modal-body">
             <div id="existingReviews"></div>
             <th:block th:if="${role =='Guest'}">
+              <br>
+              <hr>
               <div id="schedule">
                 <input type="date" id="viewingDate" />
                 <input type="time" id="viewingTime" />

@@ -51,6 +51,13 @@ public class ViewingController {
 		return dtoList;
 	}
 	
+	// 뷰잉 날짜 수정하기
+	@PatchMapping("/changeDate")
+	public String changeDate(@RequestBody ViewingDTO viewingDTO, @AuthenticationPrincipal LoginUserDetails loginUser) {
+		Long userId = loginUser.getUserId();
+		String message = viewingService.changeDate(viewingDTO, userId);
+		return message;
+	}
 	
 	// 뷰잉 후 확정하기
 	@PatchMapping("/confirm")

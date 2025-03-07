@@ -106,6 +106,32 @@ public class ViewingService {
 		return "viewing 취소 완료";
 	}
 
+	// 뷰잉 날짜 바꾸기
+	@Transactional
+	public String changeDate(ViewingDTO viewingDTO, Long userId) {
+		// viewingId로 존재하는 viewing이 맞는지 확인
+		Long viewingId = viewingDTO.getViewingId();
+		Optional<ViewingEntity> temp1 = viewingRepository.findById(viewingId);
+		if(temp1.isEmpty()) return "존재하지 않는 viewing입니다.";
+		
+		// 로그인한 유저가 호스트나 게스트가 맞는지 확인
+		ViewingEntity viewingEntity = temp1.get();
+		Long guestId = viewingRepository.findGuestIdByViewingId(viewingEntity.getViewingId());
+		Long hostId = viewingRepository.findHostIdByViewingId(viewingId);
+		Long shareId = viewingDTO.getShareId();
+		Optional<ShareEntity> temp2 = shareRepository.findById(shareId);
+		if(temp2.isEmpty()) return "존재하지 않는 share입니다.";
+		ShareEntity share = temp2.get();
+		UserEntity user = userRepository.findById(userId).get();
+		if(userId == guestId || userId == hostId) {
+			ViewingEntity entity = ViewingEntity.toEntity(viewingDTO, share, user);
+			viewingRepository.save(entity);
+			return "날짜 수정 완료";
+		}
+		
+		return "해당 viewing에 관계없는 유저입니다.";
+	}
+
 	
 
 }
