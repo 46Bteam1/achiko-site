@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.ChatParticipantDTO;
 import com.achiko.backend.dto.ChatRoomDTO;
+import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.entity.ChatMessageEntity;
 import com.achiko.backend.entity.ChatParticipantEntity;
 import com.achiko.backend.entity.ChatRoomEntity;
@@ -111,7 +112,6 @@ public class ChatService {
      		
      	// 특정 채팅방을 구독 중인 사용자들에게 메시지 전달
             String destination = "/topic/chatroom/" + chatMessage.getChatroomId();
-            log.info("왜왜왜:{}", chatMessage.toString());
             
             messagingTemplate.convertAndSend(destination, chatMessage);
 	}
@@ -171,5 +171,22 @@ public class ChatService {
 		if(temp1.isEmpty()) return null;
 		
 		return temp1.get().getShare().getShareId();
+	}
+
+	public String deleteRoom(Long chatRoomId, LoginUserDetails loginUser) {
+		// 로그인한 유저가 관계자인지 판별하고 삭제
+		
+		Long userId = loginUser.getUserId();
+		
+		Long hostId = participantRepository.findHostIdByChatRoomId(chatRoomId);
+		Long guestId = participantRepository.findGuestIdByChatRoomId(chatRoomId);
+		
+		if(userId.equals(hostId) || userId.equals(guestId)) {
+			roomRepository.deleteById(chatRoomId);
+			
+			return "채팅방을 삭제했습니다.";
+		}
+		
+		return "해당 채팅방의 참여자만 삭제 가능합니다.";
 	}
 }

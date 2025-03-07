@@ -123,7 +123,7 @@ public class ViewingService {
 		if(temp2.isEmpty()) return "존재하지 않는 share입니다.";
 		ShareEntity share = temp2.get();
 		UserEntity user = userRepository.findById(userId).get();
-		if(userId == guestId || userId == hostId) {
+		if(userId.equals(guestId) || userId.equals(hostId)) {
 			ViewingEntity entity = ViewingEntity.toEntity(viewingDTO, share, user);
 			viewingRepository.save(entity);
 			return "날짜 수정 완료";

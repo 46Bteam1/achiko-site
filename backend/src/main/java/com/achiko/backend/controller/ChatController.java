@@ -61,8 +61,9 @@ public class ChatController {
 	// 채팅방 삭제 메서드
 	@DeleteMapping("/deleteRoom")
 	@Operation(summary = "채팅방 삭제 메서드", description = "특정 채팅방을 삭제합니다.")
-	public String deleteRoom() {
-		return "";
+	public String deleteRoom(@RequestParam("chatRoomId") Long chatRoomId, @AuthenticationPrincipal LoginUserDetails loginUser) {
+		String message = chatService.deleteRoom(chatRoomId, loginUser);
+		return message;
 	}
 	
 }
