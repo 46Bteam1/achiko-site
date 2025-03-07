@@ -22,7 +22,9 @@ public class LocationService {
     private final LocationRepository locationRepository;
     
     public List<RegionDTO> getRegionsByProvince(Integer provinceId){
+    	System.out.println("하이"+provinceId);
     	List<RegionEntity> regions = locationRepository.findRegionsByProvinceId(provinceId);
+    	System.out.println("하이"+regions.toString());
     	return regions.stream()
     			.map(RegionDTO::toDTO)
     			.collect(Collectors.toList());
