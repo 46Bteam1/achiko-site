@@ -43,6 +43,11 @@
     <span>[[${writtenReviewList}]]</span>
     <hr />
     <span>[[${reviewReplyList}]]</span>
+    <hr />
     <br />
+
+    <a th:href="@{/mypage/mypageSample(userId=${loginUser.userId})}">
+      <button>미리보기</button>
+    </a>
   </body>
 </html>

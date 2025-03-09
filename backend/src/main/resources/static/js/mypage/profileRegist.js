@@ -1,320 +1,207 @@
-// // 예약된 뷰잉 목록 가져오기
-// function loadViewingList() {
-//   $.ajax({
-//     url: "/mypage/viewingList",
-//     method: "GET",
-//     success: function (data) {
-//       let tableBody = $("#viewingTable tbody");
-//       tableBody.empty();
+// 프로필 업데이트
+$(document).ready(function () {
+  // $("#updateBtn").on("click", updateBtn);
+  $("#confirmDeleteBtn").on("click", deleteUser);
 
-//       if (data.length === 0) {
-//         tableBody.append(
-//           '<tr><td colspan="3" class="no-data">예정된 뷰잉이 없습니다.</td></tr>'
-//         );
-//       } else {
-//         $.each(data, function (index, viewing) {
-//           tableBody.append(`
-//                         <tr>
-//                             <td>${index + 1}</td>
-//                             <td><a href="/share/shareDetail?shareId=${
-//                               viewing.shareId
-//                             }&userId=${viewing.userId}">${viewing.shareTitle}</a></td>
-//                             <td>${viewing.scheduledDate}</td>
-//                         </tr>
-//                     `);
-//         });
-//       }
-//     },
-//     error: function () {
-//       alert("뷰잉 목록을 불러오는 중 오류가 발생했습니다.");
-//     },
-//   });
-// }
+  // 회원 탈퇴 기능 - 모달 닫을 때 입력된 비밀번호 초기화
+  $("#deleteUserModal").on("hidden.bs.modal", function () {
+    $("#passwordInput").val("");
+  });
 
-// // 찜한 목록 가져오기
-// function loadFavoriteList() {
-//   $.ajax({
-//     url: "/mypage/favoriteList",
-//     method: "GET",
-//     success: function (data) {
-//       let tableBody = $("#favoriteTable tbody");
-//       tableBody.empty();
+  // 프로필 등록/수정 관련
+  $("#openModal").on("click", function () {
+    $("#profileModal").modal("show");
+  });
 
-//       if (data.length === 0) {
-//         tableBody.append(
-//           '<tr><td colspan="2" class="no-data">찜한 목록이 없습니다.</td></tr>'
-//         );
-//       } else {
-//         $.each(data, function (index, favorite) {
-//           tableBody.append(`
-//                         <tr>
-//                             <td>${index + 1}</td>
-//                             <td><a href="/share/shareDetail?shareId=${
-//                               favorite.shareId
-//                             }&userId=${favorite.userId}">${favorite.shareTitle}</a></td>
-//                         </tr>
-//                     `);
-//         });
-//       }
-//     },
-//     error: function () {
-//       alert("찜한 목록을 불러오는 중 오류가 발생했습니다.");
-//     },
-//   });
-// }
+  $("#closeModal").on("click", function () {
+    $("#profileModal").modal("hide");
+  });
 
-// // 내 리뷰 가져오기
-// function loadReviewList() {
-//   $.ajax({
-//     url: "/mypage/reviewList",
-//     method: "GET",
-//     success: function (data) {
-//       // 내 리뷰 테이블
-//       let writtenTableBody = $("#myReviewTable tbody");
-//       writtenTableBody.empty();
+  // 프로필 사진 미리보기
+  $("#profileImageInput").change(previewProfileImage);
 
-//       if (data.writtenReviewList.length === 0) {
-//         writtenTableBody.append(
-//           '<tr><td colspan="2" class="no-data">등록한 리뷰가 없습니다.</td></tr>'
-//         );
-//       } else {
-//         $.each(data.writtenReviewList, function (index, review) {
-//           writtenTableBody.append(`
-//                         <tr>
-//                             <td>${index + 1}</td>
-//                             <td><a href="/review/reviewDetail?reviewId=${
-//                               review.reviewId
-//                             }&userId=${review.userId}">${review.reviewContent}</a></td>
-//                         </tr>
-//                     `);
-//         });
-//       }
+  // 사진 등록 버튼 클릭 시 updateBtn 활성화
+  $("#registImage").on("click", function () {
+    $("#updateBtn").prop("disabled", false); // 이미지 등록 후 수정 버튼 활성화
+  });
+});
 
-//       // 받은 리뷰 테이블
-//       let receivedTableBody = $("#receivedReviewTable tbody");
-//       receivedTableBody.empty();
+// let newProfileImage = $("#profileImageInput")[0].files[0]; // 수정
+// formData.append("profileImage", newProfileImage);
+// let profileImage = profileImageInput.files.length > 0 ? profileImageInput.files[0] : null;
 
-//       if (data.receivedReviewList.length === 0) {
-//         receivedTableBody.append(
-//           '<tr><td colspan="2" class="no-data">받은 리뷰가 없습니다.</td></tr>'
-//         );
-//       } else {
-//         $.each(data.receivedReviewList, function (index, review) {
-//           receivedTableBody.append(`
-//                         <tr>
-//                             <td>${index + 1}</td>
-//                             <td><a href="/review/reviewDetail?reviewId=${
-//                               review.reviewId
-//                             }&userId=${review.userId}">${review.reviewContent}</a></td>
-//                         </tr>
-//                     `);
-//         });
-//       }
-//     },
-//     error: function () {
-//       alert("내 리뷰를 불러오는 중 오류가 발생했습니다.");
-//     },
-//   });
-// }
+// 프로필 수정 버튼
+function updateBtn() {
+  let userId = $("#userId").val();
+  let newNickname = $("#nickname").val();
+  let isHost = $("#isHost").is(":checked");
+  let newLanguages = [];
+  $("#languages:checked").each(function () {
+    newLanguages.push($(this).val());
+  });
+  let newAge = $("#age").val();
+  let newNationality = $("#nationality").val();
+  let newReligion = $("#religion").is(":checked");
+  let newGender = $("#gender").is(":checked");
 
-// // 내 댓글 가져오기
-// function loadReviewReplyList() {
-//   $.ajax({
-//     url: "/mypage/reviewReplyList",
-//     type: "GET",
-//     dataType: "json",
-//     success: function (data) {
-//       let tableBody = $("#reviewReplyTable tbody"); // 특정 테이블만 선택
+  $.ajax({
+    url: "/mypage/profileUpdate",
+    method: "POST",
+    data: {
+      userId: userId,
+      nickname: newNickname,
+      isHost: isHost,
+      languages: newLanguages,
+      age: newAge,
+      nationality: newNationality,
+      religion: newReligion,
+      gender: newGender,
+    },
+    success: function (response) {
+      alert("프로필 등록/수정이 완료되었습니다.");
+      window.location.href = "/mypage/mypageSample";
+    },
+    error: function () {
+      alert("서버와의 통신 오류가 발생했습니다.");
+    },
+  });
+}
 
-//       if (data.length === 0) {
-//         tableBody.html(
-//           "<tr><td colspan='3' class='no-data'>등록된 댓글이 없습니다.</td></tr>"
-//         );
-//       } else {
-//         tableBody.empty(); // 기존 데이터 삭제
+// 프로필 이미지 미리보기
+function previewProfileImage() {
+  var reader = new FileReader();
+  var fileInput = $("#profileImageInput")[0].files[0];
 
-//         $.each(data, function (index, reviewReply) {
-//           let row = `<tr>
-//                             <td>${index + 1}</td>
-//                             <td><a href="/review/reviewDetail?reviewId=${
-//                               reviewReply.reviewId
-//                             }&userId=${reviewReply.userId}">${
-//             reviewReply.reviewTitle
-//           }</a></td>
-//                             <td>${reviewReply.content}</td>
-//                           </tr>`;
-//           tableBody.append(row);
-//         });
-//       }
-//     },
-//     error: function () {
-//       alert("내 댓글을 불러오는 중 오류가 발생했습니다.");
-//     },
-//   });
-// }
+  reader.onload = function (e) {
+    $("#profilePreview").attr("src", e.target.result);
+  };
 
-// // 회원 탈퇴 처리 함수
-// function deleteUser() {
-//   $.ajax({
-//     type: "DELETE",
-//     url: `/mypage/deleteUser/${$("#userId").val()}`,
-//     success: function () {
-//       alert("회원 탈퇴 신청이 완료되었습니다.");
-//       window.location.href = "/logout"; // 로그아웃 후 메인 페이지 이동
-//     },
-//     error: function () {
-//       alert("탈퇴 처리 중 오류가 발생했습니다.");
-//     },
-//   });
-// }
+  if (fileInput) {
+    reader.readAsDataURL(fileInput);
+  }
+}
 
-// function init() {
-//   loadViewingList();
-//   loadFavoriteList();
-//   loadReviewList();
-//   loadReviewReplyList();
-// }
+// 파일 선택 시, 조건부 블록을 표시
+function showBlock() {
+  const fileInput = document.getElementById("profileImageInput");
+  const profileImageBlock = document.getElementById("profileImageBlock");
 
-// $(document).ready(function () {
-//   // init(); // 초기화 함수
+  // 파일이 선택되었을 경우
+  if (fileInput.files.length > 0) {
+    profileImageBlock.style.display = "block"; // 블록을 표시
+  } else {
+    profileImageBlock.style.display = "none"; // 파일이 없으면 숨김
+  }
+}
 
-//   // 회원 탈퇴 버튼 클릭 시 모달 열기
-//   const duModal = $("#deleteUserModal");
+// 사진 등록 버튼 클릭 시 실행될 함수
+function handleImageUpload() {
+  const fileInput = document.getElementById("profileImageInput");
+  const file = fileInput.files[0]; // 선택한 파일
 
-//   $("#openDUModal").click(() => duModal.show());
+  if (!file) {
+    alert("파일을 선택해주세요.");
+    return;
+  }
 
-//   // 탈퇴 확인 버튼 클릭 시
-//   $("#confirmdelete").click(function () {
-//     var password = $("#passwordInput").val();
-//     if (!password) {
-//       alert("비밀번호를 입력하세요.");
-//       return;
-//     }
+  // 이미지 파일을 임시 저장 (파일 객체로 가져오기)
+  const reader = new FileReader();
 
-//     // 비밀번호 확인 요청
-//     $.ajax({
-//       type: "POST",
-//       url: `/mypage/pwdCheck/${$("#userId").val()}`,
-//       contentType: "application/json",
-//       data: JSON.stringify({ password: password }),
-//       success: function (response) {
-//         if (confirm("정말 탈퇴하시겠습니까?")) {
-//           deleteUser();
-//         }
-//       },
-//       error: function () {
-//         alert("비밀번호 확인 중 오류가 발생했습니다.");
-//       },
-//     });
-//   });
+  reader.onloadend = function () {
+    // 파일을 base64로 변환하여 처리
+    const img = new Image();
+    img.src = reader.result;
 
-//   $("#openModal").click(() => pModal.show());
-//   $("#closeModal").click(() => pModal.hide());
+    img.onload = function () {
+      // 이미지를 webp 형식으로 변환
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
 
-//   // 프로필 이미지 미리보기
-//   $("#profileImageInput").change(function (event) {
-//     let file = event.target.files[0];
-//     if (file) {
-//       let reader = new FileReader();
-//       reader.onload = function (e) {
-//         $("#profileImagePreview").attr("src", e.target.result);
-//       };
-//       reader.readAsDataURL(file);
-//     }
-//   });
+      // 이미지 크기 설정
+      canvas.width = img.width;
+      canvas.height = img.height;
 
-//   // 프로필 수정 제출
-//   $("#submitBtn").click(function (event) {
-//     event.preventDefault(); // 기본 제출 동작 방지
+      // 이미지 그리기
+      ctx.drawImage(img, 0, 0);
 
-//     let userId = $("#userId").val();
-//     let nickname = $("#nickname").val();
-//     let bio = $("#bio").val();
-//     let isHost = $("input[name='isHost']:checked").val();
-//     let languages = $("input[name='languages']:checked")
-//       .map(function () {
-//         return $(this).val();
-//       })
-//       .get()
-//       .join(",");
-//     let age = $("#age").val();
-//     let nationality = $("#nationality").val();
-//     let religion = $("input[name='religion']:checked").val();
-//     let gender = $("input[name='gender']:checked").val();
+      // webp 형식으로 변환 (압축 비율 0-1 사이)
+      const webpImage = canvas.toDataURL("image/webp", 0.8);
 
-//     let formData = new FormData();
-//     formData.append("nickname", nickname);
-//     formData.append("bio", bio);
-//     formData.append("isHost", isHost);
-//     formData.append("languages", languages);
-//     formData.append("age", age);
-//     formData.append("nationality", nationality);
-//     formData.append("religion", religion);
-//     formData.append("gender", gender);
+      // 변환된 webp 이미지를 서버에 전송하여 DB에 저장
+      saveImageToServer(webpImage);
+    };
+  };
 
-//     let fileInput = $("#profileImageInput")[0];
+  // 파일을 읽고 base64로 변환
+  reader.readAsDataURL(file);
+}
 
-//     if (fileInput.files.length > 0) {
-//       convertToWebP(fileInput.files[0])
-//         .then((webpBlob) => {
-//           let webpFile = new File([webpBlob], "profile.webp", {
-//             type: "image/webp",
-//           });
-//           formData.append("profileImage", webpFile);
-//           sendProfileData(userId, formData);
-//         })
-//         .catch((error) => {
-//           console.error("WebP 변환 실패:", error);
-//           alert("이미지 변환 중 오류가 발생했습니다.");
-//         });
-//     } else {
-//       sendProfileData(userId, formData);
-//     }
+// 서버에 이미지를 저장하는 함수
+function saveImageToServer(webpImage) {
+  // FormData 객체 생성
+  const formData = new FormData();
 
-//     // 프로필 데이터 서버로 전송
-//     function sendProfileData(userId, formData) {
-//       $.ajax({
-//         type: "PATCH",
-//         url: `/mypage/profileRegist/${userId}`,
-//         contentType: false,
-//         processData: false,
-//         data: formData,
-//         success: function () {
-//           alert("프로필이 성공적으로 업데이트되었습니다");
-//           window.location.href = "/mypage/mypageView";
-//         },
-//         error: function (xhr) {
-//           alert("업데이트 실패: " + xhr.responseText);
-//         },
-//       });
-//     }
+  // base64 이미지를 Blob으로 변환해서 전송
+  const byteCharacters = atob(webpImage.split(",")[1]); // base64 데이터에서 "data:image/webp;base64,"를 제외한 부분을 디코딩
+  const byteArray = new Uint8Array(byteCharacters.length);
 
-//     // 이미지 WebP 변환
-//     function convertToWebP(file) {
-//       return new Promise((resolve, reject) => {
-//         let reader = new FileReader();
-//         reader.readAsDataURL(file);
-//         reader.onload = function (event) {
-//           let img = new Image();
-//           img.src = event.target.result;
-//           img.onload = function () {
-//             let canvas = document.createElement("canvas");
-//             let ctx = canvas.getContext("2d");
-//             canvas.width = img.width;
-//             canvas.height = img.height;
-//             ctx.drawImage(img, 0, 0);
-//             canvas.toBlob(
-//               (blob) => {
-//                 blob ? resolve(blob) : reject(new Error("WebP 변환 실패"));
-//               },
-//               "image/webp",
-//               0.8
-//             );
-//           };
-//           img.onerror = reject;
-//         };
-//         reader.onerror = reject;
-//       });
-//     }
-//   });
-// });
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteArray[i] = byteCharacters.charCodeAt(i);
+  }
+
+  // Blob 객체 생성 (WebP 형식)
+  const blob = new Blob([byteArray], { type: "image/webp" });
+
+  // FormData에 Blob 추가 (파일명은 "profileImage.webp"로 설정)
+  formData.append("image", blob, "profileImage.webp");
+
+  // AJAX 요청을 통해 서버로 이미지를 전송
+  $.ajax({
+    url: "/mypage/uploadProfileImage", // 이미지 업로드 엔드포인트
+    method: "POST",
+    data: formData,
+    processData: false, // FormData는 자동으로 처리되므로 이 옵션을 false로 설정
+    contentType: false, // 서버에 파일을 전송할 때 자동으로 콘텐츠 타입을 설정하지 않음
+    success: function (response) {
+      console.log(response);
+      // 사진 등록이 완료되면 updateBtn 활성화
+      $("#updateBtn").prop("disabled", false);
+      // 조건부 렌더링을 위한 th:block 종료
+      document.getElementById("profileImageBlock").style.display = "none";
+    },
+    error: function (error) {
+      alert("이미지 업로드 실패!");
+      console.log(error);
+    },
+  });
+}
+
+// 회원 탈퇴
+function deleteUser() {
+  const password = $("#passwordInput").val();
+
+  if (!password) {
+    alert("비밀번호를 입력해주세요.");
+    return;
+  }
+
+  $.ajax({
+    type: "POST",
+    url: "/mypage/deleteUser",
+    data: {
+      password: password,
+    },
+    success: function (response) {
+      if (response.success) {
+        $("#deleteUserModal").modal("hide");
+        alert("회원 탈퇴 접수가 완료되었습니다.");
+        window.location.href = "/logout";
+      } else {
+        alert("비밀번호가 올바르지 않습니다.");
+      }
+    },
+    error: function () {
+      alert("서버 오류가 발생했습니다. 다시 시도해 주세요.");
+    },
+  });
+}
