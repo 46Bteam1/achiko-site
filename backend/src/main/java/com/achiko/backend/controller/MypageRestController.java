@@ -1,17 +1,18 @@
 package com.achiko.backend.controller;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.achiko.backend.dto.FavoriteDTO;
+import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.dto.ReviewReplyDTO;
 import com.achiko.backend.dto.UserDTO;
@@ -27,6 +29,7 @@ import com.achiko.backend.dto.ViewingDTO;
 import com.achiko.backend.service.MypageService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,28 +40,48 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MypageRestController {
 
+	@Value("${app.upload.dir}")
+	private String uploadDir;
+
+	@PostConstruct
+	public void checkPath() {
+		System.out.println("=== uploadDir: [" + uploadDir + "]");
+	}
+
 	private final MypageService mypageService;
 
 	// 프로필 수정 처리 요청
 	@PostMapping("/profileUpdate")
-	public ResponseEntity<Map<String, String>> updateProfile(@RequestParam(name = "userId") Long userId,
-			@RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+	public ResponseEntity<?> updateProfile(@RequestParam(name = "userId") Long userId,
+//			@RequestParam(name = "profileImage", required = false) MultipartFile profileImage,
 			@ModelAttribute UserDTO userDTO) {
-		System.out.println(userDTO.toString());
-		System.out.println(userId + "hihi");
-		
-
+//		System.out.println("===== profileImage ======" + profileImage);
+		System.out.println("===== controller에서 받은 데이터 ======" + userDTO.toString());
 		try {
-			mypageService.updateUserProfile(userId, profileImage, userDTO);
-			Map<String, String> response = new HashMap<>();
-			response.put("message", "프로필이 성공적으로 업데이트 되었습니다.");
-			return ResponseEntity.ok(response);
+			mypageService.updateUserProfile(userId, userDTO);
+			return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/mypage/mypageSample")).build();
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Map<String, String> errorResponse = new HashMap<>();
-			errorResponse.put("message", "프로필 업데이트 중 오류가 발생했습니다.");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+
+	}
+
+	// webp 형식으로 변환 - base64 변환 거친 이미지 저장하기
+	@PostMapping("/uploadProfileImage")
+	public ResponseEntity<String> uploadProfileImage(
+			@AuthenticationPrincipal LoginUserDetails loginUser,
+			@RequestParam("image") MultipartFile image) {
+	
+		Long userId = loginUser.getUserId();
+		
+		try {
+			// 업로드된 이미지 파일
+			mypageService.uploadProfileImage(userId, image);
+
+			return ResponseEntity.ok("이미지가 성공적으로 업로드되었습니다.");
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 실패");
 		}
 
 	}

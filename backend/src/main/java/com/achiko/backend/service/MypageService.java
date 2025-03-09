@@ -2,15 +2,15 @@ package com.achiko.backend.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,6 +35,7 @@ import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.repository.ViewingRepository;
 import com.achiko.backend.util.WebPConverter;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +52,13 @@ public class MypageService {
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	private static final String UPLOAD_DIR = "C:/myuploads/";
+	@Value("${app.upload.dir}")
+	private String UPLOAD_DIR;
+
+	@PostConstruct
+    public void checkPath() {
+        System.out.println("=== uploadDir: [" + UPLOAD_DIR + "]");
+    }
 
 	// 특정 사용자의 데이터 조회
 	public UserDTO getMypage(Long userId) {
@@ -122,112 +129,62 @@ public class MypageService {
 
 	// 프로필 추가정보 입력, 수정 with 프로필 이미지
 	@Transactional
-	public void updateUserProfile(Long userId, @Nullable MultipartFile profileImage, UserDTO userDTO)
+	public void updateUserProfile(Long userId, UserDTO userDTO)
 			throws IOException {
 
 		UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-		
+
 		if (userDTO != null) {
-	        copyNonNullProperties(userDTO, user);
-	    }
-		
-		if (profileImage != null && !profileImage.isEmpty()) {
-			try {
-	            String newFilePath = saveProfileImage(profileImage, userId);
-	            user.setProfileImage(newFilePath);
-	        } catch (IOException e) {
-	            System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
-	            e.printStackTrace();
-	            throw new IOException("프로필 이미지 저장 실패", e);
-	        }
-	    }
-		
-		
-//		user.setNickname(userDTO.getNickname());
-//		user.setBio(userDTO.getBio());
-//		user.setIsHost(userDTO.getIsHost());
-//		user.setLanguages(userDTO.getLanguages());
-//		user.setAge(userDTO.getAge());
-//		user.setNationality(userDTO.getNationality());
-//		user.setReligion(userDTO.getReligion());
-//		user.setGender(userDTO.getGender());
+			user.updateFromDTO(userDTO);
+		}
 
+//		if (profileImage != null && !profileImage.isEmpty()) {
+//			String savedFilePath = saveProfileImage(profileImage, userId);
+//			user.setProfileImage(savedFilePath);
+//		}
 		userRepository.save(user);
-	}
-
-	// 사용자 정보 일부 업데이트 (PATCH) - DB에 수정 처리하기
-	@Transactional
-	public void updateMypage(Long userId, UserDTO userDTO) {
-		Optional<UserEntity> optionalEntity = userRepository.findById(userId);
-		if (optionalEntity.isPresent()) {
-			UserEntity entity = optionalEntity.get();
-			copyNonNullProperties(userDTO, entity);
-			userRepository.save(entity);
-		} else {
-			log.warn("patchMypage: 로그인된 사용자가 존재하지 않음. userId={}", userId);
-		}
-	}
-
-	// null이 아닌 값만 복사하는 유틸 메서드 (리플렉션 활용) ID 변경을 방지하기 위해 "userId" 필드는 제외
-	private void copyNonNullProperties(UserDTO userDTO, UserEntity userEntity) {
-		try {
-			for (Field field : UserDTO.class.getDeclaredFields()) {
-				field.setAccessible(true);
-				Object value = field.get(userDTO);
-				if (Objects.nonNull(value) && !field.getName().equals("userId")) {
-					Field targetField = UserEntity.class.getDeclaredField(field.getName());
-					targetField.setAccessible(true);
-					targetField.set(userEntity, value);
-				}
-			}
-		} catch (Exception e) {
-			throw new RuntimeException("객체 복사 중 오류 발생", e);
-		}
 	}
 
 	// MultipartFile을 받아 WebP 변환 후 저장하고, 경로만 반환
 	public String saveProfileImage(MultipartFile file, Long userId) throws IOException {
-		// 파일이 없거나 비어있는 경우 예외 처리
-		if (file == null || file.isEmpty()) {
-			throw new IllegalArgumentException("파일이 존재하지 않습니다.");
-		}
-		// 업로드 디렉토리가 없으면 생성
-		File directory = new File(UPLOAD_DIR);
-		if (!directory.exists()) {
-			directory.mkdirs();
-		}
-		try {
-			// 원본 파일명 가져오기
-			String originalFileName = file.getOriginalFilename();
-			if (originalFileName == null) {
-				originalFileName = "unknown_filename";
-			}
+		// 1. 파일 검증
+		validateFile(file);
 
-			// 저장할 WebP 파일명 (UUID)
-			String uuidFileName = UUID.randomUUID().toString() + ".webp";
+		// 2. 원본 파일 저장 (.png, .jpg, .jpeg)
+		String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+		String originalFileName = userId + "_" + UUID.randomUUID() + extension;
+		File originalFile = new File(UPLOAD_DIR, originalFileName);
+		file.transferTo(originalFile);
 
-			// 업로드 디렉토리 생성 (존재하지 않을 경우)
-			Path uploadPath = Paths.get(UPLOAD_DIR);
+		// 3. WebP 변환
+		String webpFileName = originalFileName.replace(extension, ".webp");
+		File webpFile = new File(UPLOAD_DIR, webpFileName);
+		WebPConverter.convertToWebP(originalFile, webpFile);
 
-			// 저장할 파일 경로
-			Path outputPath = uploadPath.resolve(uuidFileName);
-			File outputFile = outputPath.toFile();
+		// 4. 원본 파일 삭제
+		Files.deleteIfExists(originalFile.toPath());
 
-			// WebP 변환 및 저장
-			File tempFile = File.createTempFile("upload", ".tmp");
-			file.transferTo(tempFile);
-			WebPConverter.convertToWebP(tempFile, outputFile);
+		Optional<UserEntity> temp = userRepository.findByUserId(userId);
+		UserEntity userEntity = temp.get();
+		
+		userEntity.setProfileImage(webpFile.getAbsolutePath());
+		
+		// 5. 변환된 WebP 파일의 경로 반환
+		return webpFile.getAbsolutePath();
+	}
 
-			// 임시 파일 삭제
-			tempFile.delete();
-
-			// 저장된 이미지 경로 반환
-			return "/images/" + uuidFileName;
-
-		} catch (IOException e) {
-			throw new RuntimeException("프로필 이미지 저장 중 오류 발생", e);
+	private void validateFile(MultipartFile file) {
+		// 파일 확장자 확인
+		String contentType = file.getContentType();
+		if (contentType == null || !(contentType.equals("image/png") || contentType.equals("image/jpeg")
+				|| contentType.equals("image/jpg"))) {
+			throw new IllegalArgumentException("허용되지 않은 파일 형식입니다. (png, jpg, jpeg 만 가능)");
 		}
 
+		// 파일 크기 확인 (2MB 이하)
+        if (file.getSize() > 2 * 1024 * 1024) {
+            throw new IllegalArgumentException("파일 크기는 2MB 이하만 가능합니다.");
+        }
 	}
 
 	// 회원 탈퇴 위해 아이디와 비밀번호 체크
@@ -253,6 +210,29 @@ public class MypageService {
 		} else {
 			throw new IllegalArgumentException("해당 ID의 데이터가 없습니다: " + userId);
 		}
+	}
+
+	public void uploadProfileImage(Long userId, MultipartFile file) throws IOException {
+		Optional<UserEntity> temp = userRepository.findById(userId);
+		if (temp.isEmpty()) {
+			return;
+		}
+		UserEntity userEntity = temp.get();
+		
+		String uuidFileName = UUID.randomUUID().toString() + ".webp";
+		Path targetPath = Paths.get(UPLOAD_DIR, uuidFileName);
+		File outputFile = targetPath.toFile();
+		
+		File tempFile = File.createTempFile("upload", ".tmp");
+		file.transferTo(tempFile);
+		WebPConverter.convertToWebP(tempFile, outputFile);
+		
+		String fileUrl = "/images/" + uuidFileName;
+		
+		userEntity.setProfileImage(fileUrl);
+		userRepository.save(userEntity);
+		
+		
 	}
 
 }
