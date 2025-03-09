@@ -2,7 +2,7 @@ plugins {
     id 'org.springframework.boot' version '3.4.2'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
-    
+    id 'application'
     
 }
 
@@ -15,6 +15,17 @@ java {
     }
 }
 
+application {
+    mainClass = 'com.achiko.backend.AchikoSiteApplication'  //  실제 메인 클래스 경로로 변경
+}
+
+bootJar {
+    archiveFileName = 'achiko-site.jar'
+}
+
+tasks.named("bootRun") {
+    sourceResources(sourceSets.main)
+}
 
 repositories {
     mavenCentral()
@@ -82,4 +93,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-parameters'
+}
 

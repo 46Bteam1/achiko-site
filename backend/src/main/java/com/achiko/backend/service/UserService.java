@@ -16,15 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-	private final UserRepository userRepository;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public void regist(UserDTO userDTO) {
+    public void regist(UserDTO userDTO) {
 
-		userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+        userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
 
-		userRepository.save(UserEntity.toEntity(userDTO));
-	}
+        userRepository.save(UserEntity.toEntity(userDTO));
+    }
 
 	public UserDTO selectOneUser(Long reviewedUserId) {
 		Optional<UserEntity> temp = userRepository.findById(reviewedUserId);

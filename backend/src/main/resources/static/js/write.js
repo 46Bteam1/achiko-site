@@ -68,7 +68,8 @@ function updateRegionSelect() {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
 
   if (selectedProvince) {
-    fetch(`/api/regions?provinceId=${selectedProvince}`)
+//    fetch(`/api/regions?provinceId=${selectedProvince}`)
+    fetch(`/api/location/regions?provinceId=${selectedProvince}`)
       .then((response) => response.json())
       .then((regions) => {
         regions.forEach((region) => {
@@ -93,7 +94,7 @@ function updateCitySelect() {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
 
   if (selectedRegion) {
-    fetch(`/api/cities?regionId=${selectedRegion}`)
+    fetch(`/api/location/cities?regionId=${selectedRegion}`)
       .then((response) => response.json())
       .then((cities) => {
         cities.forEach((city) => {
@@ -115,7 +116,7 @@ function updateTownSelect() {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
 
   if (selectedCity) {
-    fetch(`/api/towns?cityId=${selectedCity}`)
+    fetch(`/api/location/towns?cityId=${selectedCity}`)
       .then((response) => response.json())
       .then((towns) => {
         towns.forEach((town) => {

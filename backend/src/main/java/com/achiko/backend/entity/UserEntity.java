@@ -121,4 +121,16 @@ public class UserEntity {
 				.receiptId(userDTO.getReceiptId())
 				.build();
 	}
+	
+    public void updateFromDTO(UserDTO userDTO) {
+        if (userDTO.getNickname() != null) this.nickname = userDTO.getNickname();
+        if (userDTO.getIsHost() != null) this.isHost = userDTO.getIsHost();
+        if (userDTO.getLanguages() != null) this.languages = userDTO.getLanguages();
+        if (userDTO.getAge() != null) this.age = userDTO.getAge();
+        if (userDTO.getNationality() != null) this.nationality = userDTO.getNationality();
+        if (userDTO.getReligion() != null) this.religion = userDTO.getReligion();
+        if (userDTO.getGender() != null) this.gender = userDTO.getGender();
+        if (userDTO.getBio() != null) this.bio = userDTO.getBio();
+    }
+	
 }

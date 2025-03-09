@@ -294,7 +294,7 @@ function updateRegionSelect() {
   townSelect.innerHTML = '<option value="all">전체</option>';
 
   if (selectedProvince !== "all" && selectedProvince !== "") {
-    fetch(`/api/regions?provinceId=${selectedProvince}`)
+    fetch(`/api/location/regions?provinceId=${selectedProvince}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -325,7 +325,7 @@ function updateCitySelect() {
   townSelect.innerHTML = '<option value="all">전체</option>';
 
   if (selectedRegion) {
-    fetch(`/api/cities?regionId=${selectedRegion}`)
+    fetch(`/api/location/cities?regionId=${selectedRegion}`)
       .then((response) => response.json())
       .then((cities) => {
         cities.forEach((city) => {
@@ -347,7 +347,7 @@ function updateTownSelect() {
   townSelect.innerHTML = '<option value="all" >전체</option>';
 
   if (selectedCity !== "all") {
-    fetch(`/api/towns?cityId=${selectedCity}`)
+    fetch(`/api/location/towns?cityId=${selectedCity}`)
       .then((response) => response.json())
       .then((towns) => {
         towns.forEach((town) => {
