@@ -4,7 +4,7 @@ import java.io.File;
 
 /**
  * WebP 변환 테스트용 클래스
- * - Scrimage 기반 변환 로직 검증
+ * Scrimage 기반 변환 로직 검증
  */
 public class WebPTest {
     public static void main(String[] args) {

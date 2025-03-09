@@ -63,3 +63,46 @@ public class ViewingEntity {
 				.build();
 	}
 }
+	
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@Column(name="viewing_id")
+//    private Long viewingId;
+//	
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="share_id", nullable = false)
+//    private ShareEntity share;
+//	
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "guest_id", nullable = false)
+//    private UserEntity guest;
+//    
+//    @Column(name="is_completed")
+//    private Boolean isCompleted;
+//    
+//    @Column(name="scheduled_date")
+//    private LocalDateTime scheduledDate;
+//    
+//    @Column(name="created_at")
+//    private LocalDateTime createdAt;
+//    
+//    public static ViewingEntity toEntity(ViewingDTO dto, ShareEntity shareEntity, UserEntity userEntity) {
+//    	return ViewingEntity.builder()
+//    			.viewingId(dto.getViewingId())
+//    			.share(shareEntity)
+//    			.guest(userEntity)
+//    			.isCompleted(dto.getIsCompleted())
+//    			.scheduledDate(dto.getScheduledDate())
+//    			.createdAt(dto.getCreatedAt())
+//    			.build();
+//    }
+    
+
+/**
+ *     viewing_id int auto_increment not null primary key,
+    share_id int not null,
+    guest_id int not null,
+    is_completed boolean default false,
+    scheduled_date timestamp not null,
+    created_at timestamp default current_timestamp,
+*/
