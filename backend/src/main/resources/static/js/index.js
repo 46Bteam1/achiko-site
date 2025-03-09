@@ -1,6 +1,7 @@
 $(document).ready(function () {
   let lastScrollTop = 0; // 마지막 스크롤 위치 저장
   let isStickyDisabled = false; // sticky가 해제되었는지 상태 확인
+  let mapVisible = false; // 지도 표시 여부 상태
   let map, geocoder;
   let markers = [];
 
@@ -8,11 +9,13 @@ $(document).ready(function () {
   $(window).on("scroll", function () {
     let scrollTop = $(window).scrollTop();
 
-    if (scrollTop > 100 && !isStickyDisabled) {
-      $("header").addClass("sticky");
-    } else if (scrollTop <= 100) {
+    if (scrollTop > 150) {
+      $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
+      $("header").removeClass("sticky-reappear");
+    } else if (scrollTop <= 150 && lastScrollTop >= 150 && !mapVisible) {
       $("header").removeClass("sticky");
-      isStickyDisabled = false; // 스크롤이 최상단이면 다시 sticky 허용
+      $("header").addClass("sticky-reappear");
+      isStickyDisabled = false; // 스크롤이 최상단이면 다시 sticky 허용 = 큰 검색창 나옴
     }
 
     lastScrollTop = scrollTop; // 마지막 스크롤 위치 저장
@@ -22,6 +25,8 @@ $(document).ready(function () {
   $(".simple-query-form-btn").on("click", function () {
     if ($("header").hasClass("sticky")) {
       $("header").removeClass("sticky");
+      $("header").addClass("sticky-reappear");
+      $("header").addClass("")
       isStickyDisabled = true; // 사용자가 의도적으로 sticky를 해제했음을 저장
     }
   });
@@ -33,6 +38,7 @@ $(document).ready(function () {
         $(event.target).closest(".simple-query-form, .query-form").length > 0;
       if (!isClickInsideQueryForm) {
         $("header").addClass("sticky");
+        $("header").removeClass("sticky-reappear");
         isStickyDisabled = false; // 다시 sticky 허용
       }
     }
@@ -44,17 +50,23 @@ $(document).ready(function () {
     searchShares();
   });
 
-  let mapVisible = false; // 지도 표시 여부 상태
+
 
   $("#mapButton").click(function () {
     if (!mapVisible) {
       $(".near-trip").hide(); // 기존 여행지 숨기기
       $("#mapContainer").show(); // 지도 컨테이너 표시
       $(this).text("목록 보기"); // 버튼 텍스트 변경
+      $("body").addClass("mapScrollHidden");
+      $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
+      $("header").removeClass("sticky-reappear");
       loadGoogleMap(); // 구글 맵 로드
     } else {
       $(".near-trip").show(); // 기존 여행지 다시 표시
       $("#mapContainer").hide(); // 지도 숨기기
+      $("body").removeClass("mapScrollHidden");
+      $("header").removeClass("sticky");
+      $("header").addClass("sticky-reappear");
       $(this).text("지도 표시하기"); // 버튼 텍스트 변경
     }
     mapVisible = !mapVisible; // 상태 변경
@@ -182,33 +194,40 @@ $(document).ready(function () {
 
   // 검색 결과 업데이트 함수
   function updateListings(shares) {
-      const listingsContainer = document.getElementById("listings-container");
-      listingsContainer.innerHTML = ""; // 기존 목록 초기화
+    const listingsContainer = document.getElementById("listings-container");
+    listingsContainer.innerHTML = ""; // 기존 목록 초기화
 
-      shares.forEach((listing) => {
-          const card = document.createElement("div");
-          card.className = "listing-card";
+    shares.forEach((listing) => {
+      const card = document.createElement("div");
+      card.className = "listing-card";
 
-          // 검색 결과에서도 첫 번째 이미지 반영
-          const imageUrl = listing.firstImage ? listing.firstImage : "/images/no-image.png";
+      // 검색 결과에서도 첫 번째 이미지 반영
+      const imageUrl = listing.firstImage
+        ? listing.firstImage
+        : "/images/no-image.png";
 
-          card.innerHTML = `
-              <a href="/share/selectOne?shareId=${listing.id}" class="listing-link">
+      card.innerHTML = `
+              <a href="/share/selectOne?shareId=${
+                listing.id
+              }" class="listing-link">
                   <button class="favorite-btn"><i class="far fa-heart"></i></button>
                   <img src="${imageUrl}" alt="숙소 이미지">
                   <div class="listing-info">
                       <h3>${listing.title}</h3>
-                      <p>${listing.regionName} ${listing.cityName} ${listing.townName}</p>
-                      <p>₩${new Intl.NumberFormat().format(listing.price)}/박</p>
+                      <p>${listing.regionName} ${listing.cityName} ${
+        listing.townName
+      }</p>
+                      <p>₩${new Intl.NumberFormat().format(
+                        listing.price
+                      )}/박</p>
                       <p>최대 인원: ${listing.maxGuests}명</p>
                   </div>
               </a>
           `;
 
-          listingsContainer.appendChild(card);
-      });
+      listingsContainer.appendChild(card);
+    });
   }
-
 
   //  마커 클릭 시 표시될 정보 창 생성
   function generateInfoWindowContent(share, fullAddress) {
