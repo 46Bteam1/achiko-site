@@ -6,7 +6,7 @@
      padding: 20px;
  }
 
- .container {
+ .profile-container {
      max-width: 800px;
      margin: 0 auto;
      background: white;
@@ -21,7 +21,7 @@
      text-align: center;
  }
 
- .profile-container {
+ .myProfileBody {
      display: flex;
      align-items: center;
      gap: 20px;
@@ -51,7 +51,7 @@
  }
 
  .profile th {
-     text-align: left;
+     text-align: center;
      width: 30%;
      padding: 10px;
      color: #555;
@@ -118,6 +118,7 @@
  }
 
  th {
+    text-align: center;
      background: #f4f4f4;
  }
 
@@ -131,25 +132,80 @@
  }
 
  /* 모달 스타일 */
- #modal-header {
-     display: none;
-     position: fixed;
-     z-index: 1000;
-     left: 0;
-     top: 0;
-     width: 100%;
-     height: 100%;
-     background-color: rgba(0, 0, 0, 0.5);
- }
+/* 모달 창 배경 */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
 
- #modal-body {
-     background-color: white;
-     margin: 10% auto;
-     padding: 20px;
-     width: 40%;
-     border-radius: 8px;
-     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
- }
+/* 모달 창의 전체 컨테이너 */
+.modal {
+    display: block;
+    /* 기본적으로 숨겨져 있음, .fade 클래스가 적용되면 자동으로 fade 효과 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1050;
+    padding-top: 100px;
+    /* 모달 창을 화면 중간에 위치하도록 여백 추가 */
+}
+
+/* 모달 내용 */
+.modal-dialog {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    /* 최대 너비 설정 */
+    margin: 0 auto;
+    /* 화면 가운데 정렬 */
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    padding: 1rem;
+    text-align: center;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #aaa;
+}
+
+.modal-body {
+    padding: 2rem;
+    font-size: 1rem;
+    color: #333;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+.modal-footer .btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+}
 
  #closeModal {
      float: right;
