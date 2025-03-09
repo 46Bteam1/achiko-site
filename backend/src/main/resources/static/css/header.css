@@ -2,11 +2,11 @@ header {
   position: sticky;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 150px;
+  padding: 20px 130px;
   z-index: 9999;
   background-color: white;
 }
@@ -68,7 +68,7 @@ header.sticky .simple-query-form {
   animation-fill-mode: forwards;
 }
 
-.simple-query-form.hide {
+header.sticky-reappear .simple-query-form {
   animation-name: hideEffect;
   animation-timing-function: ease-in;
   animation-fill-mode: forwards;
@@ -203,7 +203,7 @@ header.sticky .simple-query-form {
 
 .query-form {
   position: absolute;
-  top: 90px;
+  top: 60px;
   left: calc(50% - 400px);
   width: 800px;
   height: 70px;
@@ -313,10 +313,8 @@ header.sticky .simple-query-form {
   display: none;
   position: absolute;
   z-index: 1000;
-  /* right: 10px;
-  bottom: 10px; */
-  top: 10%;
-  right: 10%;
+  top: 10vh;
+  right: 15vh;
 }
 
 /* 모달 내부 컨텐츠 */
