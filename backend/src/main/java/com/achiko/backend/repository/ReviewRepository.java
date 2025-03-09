@@ -10,7 +10,7 @@ import com.achiko.backend.entity.ReviewEntity;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
-
+	
 	List<ReviewEntity> findByReviewedUserId(Long userId, Sort sort);
 
 	List<ReviewEntity> findAllByOrderByCreatedAtDesc();
@@ -19,8 +19,9 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 
 	List<ReviewEntity> findAllByOrderByCleanlinessRatingDesc();
 
-//	List<ReviewEntity> findByReviewer_UserId(Long userId);
-//
+	List<ReviewEntity> findByReviewedUserId(Long userId); 
+	List<ReviewEntity> findByReviewerId(Long userId);
+
 //	List<ReviewEntity> findByReviewedUser_UserId(Long userId);
 
 }

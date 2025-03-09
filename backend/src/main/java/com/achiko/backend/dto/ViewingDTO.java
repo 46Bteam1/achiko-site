@@ -24,20 +24,32 @@ public class ViewingDTO {
 	private String hostNickname;
 	private String guestNickname;
 	private Boolean isCompleted;
-	
 	private LocalDateTime scheduledDate;
-	
 	private LocalDateTime createdAt;
+	private String shareTitle;
 	
-	public static ViewingDTO toDTO(ViewingEntity viewEntity, String hostNickname,String guestNickname) {
+	public static ViewingDTO toDTO(ViewingEntity viewEntity) {
 		return ViewingDTO.builder()
 				.viewingId(viewEntity.getViewingId())
 				.shareId(viewEntity.getShare().getShareId())
-				.hostNickname(hostNickname)
-				.guestNickname(guestNickname)
+				.hostNickname(viewEntity.getShare().getHost().getNickname())
+				.guestNickname(viewEntity.getGuest().getNickname())
 				.isCompleted(viewEntity.getIsCompleted())
 				.scheduledDate(viewEntity.getScheduledDate())
 				.createdAt(viewEntity.getCreatedAt())
+				.shareTitle(viewEntity.getShare().getTitle())
 				.build();
 	}
+	
+    public static ViewingDTO toDTO(ViewingEntity viewEntity, String hostNickname, String guestNickname) {
+        return ViewingDTO.builder()
+                .viewingId(viewEntity.getViewingId())
+                .shareId(viewEntity.getShare().getShareId())
+                .hostNickname(hostNickname)
+                .guestNickname(guestNickname)
+                .isCompleted(viewEntity.getIsCompleted())
+                .scheduledDate(viewEntity.getScheduledDate())
+                .createdAt(viewEntity.getCreatedAt())
+                .build();
+    }
 }
