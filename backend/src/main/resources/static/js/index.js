@@ -8,6 +8,18 @@ $(document).ready(function () {
   // 스크롤 이벤트: 일정 부분 이상 스크롤되면 sticky 추가
   $(window).on("scroll", function () {
     let scrollTop = $(window).scrollTop();
+    let windowHeight = $(window).height();
+    let documentHeight = $(document).height();
+    let footerHeight = $("footer").outerHeight();
+
+    // footer가 화면에 일정 부분 보이면 버튼 숨기기
+    let footerVisibleThreshold =
+      documentHeight - footerHeight + footerHeight / 2;
+    if (scrollTop + windowHeight > footerVisibleThreshold) {
+      $("#mapButton").fadeOut(); // 부드럽게 숨기기
+    } else {
+      $("#mapButton").fadeIn(); // 다시 보이기
+    }
 
     if (scrollTop > 150) {
       $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
@@ -26,7 +38,7 @@ $(document).ready(function () {
     if ($("header").hasClass("sticky")) {
       $("header").removeClass("sticky");
       $("header").addClass("sticky-reappear");
-      $("header").addClass("")
+      $("header").addClass("");
       isStickyDisabled = true; // 사용자가 의도적으로 sticky를 해제했음을 저장
     }
   });
@@ -49,8 +61,6 @@ $(document).ready(function () {
     event.preventDefault(); // 폼 제출 방지
     searchShares();
   });
-
-
 
   $("#mapButton").click(function () {
     if (!mapVisible) {
