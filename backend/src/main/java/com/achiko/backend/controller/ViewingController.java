@@ -61,8 +61,8 @@ public class ViewingController {
 	
 	// 뷰잉 후 확정하기
 	@PatchMapping("/confirm")
-	public String confirmViewing(@RequestParam(name="viewingId") Long viewingId, @AuthenticationPrincipal LoginUserDetails loginUser) {
-		String message = viewingService.confirmViewing(viewingId, loginUser);
+	public String confirmViewing(@RequestParam(name="viewingId") Long viewingId) {
+		String message = viewingService.confirmViewing(viewingId);
 		return message;
 	}
 	

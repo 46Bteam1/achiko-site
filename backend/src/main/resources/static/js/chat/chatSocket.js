@@ -15,6 +15,7 @@ $(function () {
     window.location.href = "/chatRooms";
   });
 
+  getHost(chatRoomId);
   getRoommates(chatRoomId);
 
   stompClient.connect({}, function () {
@@ -160,11 +161,30 @@ function getRoommates(chatRoomId) {
 
       $.each(resp, function (index, item) {
         tag += `
+        <div>
+          <img src="/images/fubao.webp" alt="푸바오" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
           <p class="guestNickname">${item["nickname"]}</p>
+        </div>
         `;
       });
 
       $("#guestBox").html(tag);
+    },
+  });
+}
+
+function getHost(chatRoomId) {
+  $.ajax({
+    url: "/roommate/findHost",
+    method: "GET",
+    data: { chatRoomId: chatRoomId },
+    success: function (resp) {
+      let tag = `
+        <img src="/images/fubao.webp" alt="푸바오" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
+        <p class="hostNickname">${resp.nickname}</p>
+      `;
+
+      $("#hostBox").html(tag);
     },
   });
 }

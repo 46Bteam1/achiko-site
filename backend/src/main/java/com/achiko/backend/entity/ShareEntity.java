@@ -35,7 +35,6 @@ public class ShareEntity {
     
     // host를 OneToOne 관계로 UserEntity와 연결
     @OneToOne(fetch = FetchType.LAZY)
-
     @JoinColumn(name = "host_id", referencedColumnName = "user_id", nullable = false)
     private UserEntity host;
 

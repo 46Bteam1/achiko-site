@@ -84,7 +84,7 @@ public class ViewingService {
 	}
 
 	@Transactional
-	public String confirmViewing(Long viewingId, LoginUserDetails loginUser) {
+	public String confirmViewing(Long viewingId) {
 		Optional<ViewingEntity> entity = viewingRepository.findById(viewingId);
 		if(entity.isEmpty()) return "존재하지 않는 viewing입니다.";
 		
@@ -96,11 +96,13 @@ public class ViewingService {
 			// viewing 확정으로 수정
 			vEntity.setIsCompleted(true);
 			
-			viewingRepository.save(vEntity);
+			ViewingEntity newViewing = viewingRepository.save(vEntity);
+			
+			Long guestId = viewingRepository.findGuestIdByViewingId(newViewing.getViewingId());
 			
 			// guest의 Id 가져오기
 			// roomate의 user에 guest, share에 viewing의 share 등록하기
-			UserEntity user = userRepository.findByLoginId(loginUser.getLoginId());
+			UserEntity user = userRepository.findById(guestId).get();
 			ShareEntity share = vEntity.getShare();
 			
 			// roommate 생성 및 저장
