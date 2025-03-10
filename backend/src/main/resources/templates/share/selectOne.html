@@ -352,7 +352,12 @@
           <div class="host-first-image">
             <!-- <img th:src="${fileList[0].fileUrl}" alt="첫번째 방 사진" width=500px length=300px /> -->
             <th:block th:if="${fileList != null and #lists.size(fileList) > 0}">
-              <img th:src="${fileList[0].fileUrl}" alt="첫번째 방 사진" width=500px length=300px />
+              <img
+                th:src="${fileList[0].fileUrl}"
+                alt="첫번째 방 사진"
+                width="500px"
+                length="300px"
+              />
             </th:block>
             <th:block th:if="${fileList == null or #lists.size(fileList) == 0}">
               <p>No file available.</p>
@@ -385,9 +390,11 @@
       <section class="host-intro">
         <h2>호스트 소개</h2>
         <div class="share-info-right">
-          <a th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}"
-            ><button>호스트 리뷰 보기</button></a
-          >
+          <div>
+            <a th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}"
+              ><button>호스트 리뷰 보기</button></a
+            >
+          </div>
           <div class="host-details">
             <div class="host-info">
               <div>
