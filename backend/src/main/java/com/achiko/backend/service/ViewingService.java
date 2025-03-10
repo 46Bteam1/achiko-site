@@ -7,10 +7,14 @@ import java.util.Optional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.RoommateDTO;
 import com.achiko.backend.dto.ViewingDTO;
+import com.achiko.backend.entity.RoommateEntity;
 import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.entity.ViewingEntity;
+import com.achiko.backend.repository.RoommateRepository;
 import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.repository.ViewingRepository;
@@ -26,6 +30,7 @@ public class ViewingService {
 	private final ViewingRepository viewingRepository;
 	private final UserRepository userRepository;
 	private final ShareRepository shareRepository;
+	private final RoommateRepository roommateRepository;
 	
 	public String setViewing(ViewingDTO viewingDTO, String loginId) {
 		UserEntity user = userRepository.findByLoginId(loginId);
@@ -79,7 +84,7 @@ public class ViewingService {
 	}
 
 	@Transactional
-	public String confirmViewing(Long viewingId) {
+	public String confirmViewing(Long viewingId, LoginUserDetails loginUser) {
 		Optional<ViewingEntity> entity = viewingRepository.findById(viewingId);
 		if(entity.isEmpty()) return "존재하지 않는 viewing입니다.";
 		
@@ -88,12 +93,21 @@ public class ViewingService {
 		if(vEntity.getIsCompleted()) {
 			return "이미 확정된 viewing입니다.";
 		}else {
-
+			// viewing 확정으로 수정
 			vEntity.setIsCompleted(true);
 			
 			viewingRepository.save(vEntity);
 			
-			return "viewing을 완료했습니다.";
+			// guest의 Id 가져오기
+			// roomate의 user에 guest, share에 viewing의 share 등록하기
+			UserEntity user = userRepository.findByLoginId(loginUser.getLoginId());
+			ShareEntity share = vEntity.getShare();
+			
+			// roommate 생성 및 저장
+	        RoommateEntity roommate = RoommateEntity.toEntity(new RoommateDTO(), user, share);
+	        roommateRepository.save(roommate);
+
+	        return "viewing을 완료하고 roommate를 등록했습니다.";
 		}
 		
 	}
