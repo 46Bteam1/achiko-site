@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +11,7 @@ import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.ChatParticipantDTO;
 import com.achiko.backend.dto.ChatRoomDTO;
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.entity.ChatMessageEntity;
 import com.achiko.backend.entity.ChatParticipantEntity;
 import com.achiko.backend.entity.ChatRoomEntity;
@@ -188,5 +188,18 @@ public class ChatService {
 		}
 		
 		return "해당 채팅방의 참여자만 삭제 가능합니다.";
+	}
+
+	public ShareDTO shareInfoByRoomId(Long chatroomId) {
+		Optional<ChatRoomEntity> temp1 = roomRepository.findById(chatroomId);
+		if(temp1.isEmpty()) return null;
+		
+		Long shareId = roomRepository.findShareIdByChatroomId(chatroomId);
+		Optional<ShareEntity> sEntity = shareRepository.findById(shareId);
+		if(sEntity.isEmpty()) return null;
+		
+		ShareDTO share = ShareDTO.fromEntity(sEntity.get());
+		
+		return share;
 	}
 }

@@ -17,6 +17,7 @@ $(function () {
 
   getHost(chatRoomId);
   getRoommates(chatRoomId);
+  shareInfo(chatRoomId);
 
   stompClient.connect({}, function () {
     // 채팅 내역 불러오기
@@ -173,6 +174,7 @@ function getRoommates(chatRoomId) {
   });
 }
 
+// 호스트 정보 불러오는 함수
 function getHost(chatRoomId) {
   $.ajax({
     url: "/roommate/findHost",
@@ -181,10 +183,32 @@ function getHost(chatRoomId) {
     success: function (resp) {
       let tag = `
         <img src="/images/fubao.webp" alt="푸바오" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
-        <p class="hostNickname">${resp.nickname}</p>
+        <h4 class="hostNickname">HOST: ${resp.nickname}</h4>
       `;
 
       $("#hostBox").html(tag);
+    },
+  });
+}
+
+// share 정보 불러오는 함수
+function shareInfo(chatRoomId) {
+  $.ajax({
+    url: "/chat/shareInfo",
+    method: "GET",
+    data: { chatRoomId: chatRoomId },
+    success: function (resp) {
+      let description =
+        resp.description.length > 20
+          ? resp.description.substring(0, 20) + "..."
+          : resp.description;
+
+      let tag = `
+      <h5>쉐어하우스 타이틀: ${resp.title}</h5>
+      <p>${description}</p>
+      `;
+
+      $("#shareBox").html(tag);
     },
   });
 }
