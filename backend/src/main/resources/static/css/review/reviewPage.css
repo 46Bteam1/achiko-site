@@ -1,0 +1,113 @@
+@import "../reset.css";
+@import "../header.css";
+@import "../footer.css";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+main {
+  width: 100vw; /* 전체 화면 너비 */
+  min-height: 100vh;
+  padding: 5px; /* 여백 유지 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 70px;
+  z-index: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.review-summary {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.rating-box {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.review-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.review-left {
+  display: flex;
+  align-items: flex-start;
+}
+
+.reviewer-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.review-content {
+  flex-grow: 1;
+}
+
+.review-name {
+  font-weight: bold;
+}
+
+.review-meta {
+  font-size: 14px;
+  color: gray;
+}
+
+.stars {
+  color: #ffcc00;
+}
+
+.review-ratings {
+  text-align: right;
+  min-width: 120px;
+  font-weight: bold;
+}
+
+.review-ratings p {
+  margin: 2px 0;
+}
+
+.write-review-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  font-size: 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.write-review-btn:hover {
+  background-color: #0056b3;
+}
