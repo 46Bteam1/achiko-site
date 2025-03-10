@@ -10,8 +10,6 @@ header {
   z-index: 9999;
   background-color: white;
   /* margin-bottom: 20px; */
-  min-height: 80px;
-  transition: min-height 0.3s ease-in-out;
 }
 
 /* header animation */
@@ -34,10 +32,6 @@ header.sticky .header-form {
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
   animation-name: slideUp;
-}
-
-header.sticky-reappear {
-  min-height: 150px; /* sticky 해제 후 높이를 조정 */
 }
 
 header.sticky-reappear .header-form {
@@ -210,7 +204,7 @@ header.sticky-reappear .simple-query-form {
 
 .query-form {
   position: absolute;
-  top: 30px;
+  top: 90px;
   left: calc(50% - 400px);
   width: 800px;
   height: 60px;
@@ -223,6 +217,14 @@ header.sticky-reappear .simple-query-form {
   justify-content: space-between;
   padding: 0 10px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+header.sticky-reappear .query-form {
+  display: flex; /* query-form을 표시 */
+}
+
+header.sticky-reappear + main {
+  padding-top: 70px; /* query-form 높이만큼 main을 아래로 밀어내기 */
 }
 
 .query-col {
