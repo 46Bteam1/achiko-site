@@ -25,7 +25,7 @@ main {
   min-width: 220px;
   background: white;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   aspect-ratio: 4 / 5;
@@ -33,6 +33,7 @@ main {
   max-height: 350px; */
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 @media (max-width: 1400px) {
