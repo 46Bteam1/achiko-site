@@ -103,4 +103,10 @@ public class UserService {
 		
 		return false;
 	}
+	
+	// 회원탈퇴
+	@Transactional
+	public void deleteUser(String loginId) {
+		userRepository.deleteByLoginId(loginId);
+	}
 }
