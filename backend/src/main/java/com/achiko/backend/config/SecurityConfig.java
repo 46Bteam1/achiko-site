@@ -59,6 +59,8 @@ public class SecurityConfig {
 		// POST 요청시 CSRF 토큰을 요청하므로 (Cross-Site Request Forgery) 비활성화(개발환경)
 		http
 			.csrf((auth) -> auth.disable());
+		
+		// 소셜로그인 설정
 		http
 		.oauth2Login((oauth2) -> oauth2
 				.userInfoEndpoint((userInfoEndpointConfig) ->
