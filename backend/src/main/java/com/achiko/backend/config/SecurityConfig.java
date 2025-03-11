@@ -7,19 +7,20 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.achiko.backend.handler.LoginFailureHandler;
 import com.achiko.backend.service.CustomOAuth2UserService;
+
+import lombok.RequiredArgsConstructor;
 
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-
 	
-	private CustomOAuth2UserService customOAuth2UserService;
+	private final LoginFailureHandler loginFailureHandler;		// 로그인 실패 처리 Handler
+	private final CustomOAuth2UserService customOAuth2UserService;
 
-	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
-		this.customOAuth2UserService = customOAuth2UserService;
-	}
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -45,7 +46,7 @@ public class SecurityConfig {
 					.loginProcessingUrl("/user/loginProc")
 					.usernameParameter("loginId")
 					.passwordParameter("password")
-					.failureUrl("/user/login?error=true")		// FailureHandler가 있으면 이 코드는 없어야함
+					.failureHandler(loginFailureHandler)		// FailureHandler가 있으면 이 코드는 없어야함
 					.permitAll());
 
 		// logout 설정

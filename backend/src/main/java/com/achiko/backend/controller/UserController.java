@@ -43,11 +43,15 @@ public class UserController {
 	}
 	
 	@GetMapping("/login")		// 로그인페이지
-	public String login() {
+	public String login(@RequestParam(value = "error", required = false) String error,
+						@RequestParam(value = "exception", required = false) String exception,
+						Model model) {
+		model.addAttribute("error", error);
+		model.addAttribute("exception", exception);
 		return "/user/login";
 	}
 	
-	@GetMapping("/findLoginId")
+	@GetMapping("/findLoginId")	//아이디 찾기
 	public String findLoginId() {
 		return "/user/findLoginId";
 	}
