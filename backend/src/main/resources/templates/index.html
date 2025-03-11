@@ -220,8 +220,8 @@
       <section id="listings-container" class="listings-grid">
         <div th:each="listing : ${shareList}" class="listing-card">
           <a th:href="@{/share/selectOne(shareId=${listing.shareId})}" class="listing-link">
-            <button class="favorite-btn">
-              <i class="far fa-heart"></i>
+            <button class="favorite-btn" th:attr="data-id=${listing.shareId}" th:classappend="${listing.isFavorite} ? ' active' : ''">
+              <i th:class="${listing.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"></i>
             </button>
             <th:block th:if="${listing.fileList != null and listing.fileList.size() > 0}">
               <img th:src="${listing.fileList[0].fileUrl}" alt="이미지">
@@ -384,8 +384,7 @@
     </div>
     <div class="company-description">
       <div class="Inc">
-        © 2025 Achiko, Inc.<span>·</span><a href="#">개인정보 처리방침</a><span>·</span><a href="#">이용약관</a><span>·</span><a
-          href="#">사이트맵</a><span>·</span><a href="#">한국의 변경된 환불 정책</a><span>·</span><a href="#">회사 세부정보</a>
+        © 2025 Achiko, Inc.<span>·</span><a href="#">개인정보 처리방침</a><span>·</span><a href="#">이용약관</a><span>·</span><a href="#">사이트맵</a><span>·</span><a href="#">한국의 변경된 환불 정책</a><span>·</span><a href="#">회사 세부정보</a>
       </div>
       <div class="icons">
         <div class="icons-left">

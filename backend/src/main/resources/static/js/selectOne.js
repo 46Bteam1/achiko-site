@@ -1,52 +1,47 @@
-// ================================
-// selectOne.js
-// ================================
-
-// 기존 기능: 공유하기, 찜하기, 편의시설 검색, 지도 기능 등
-
 document.addEventListener("DOMContentLoaded", function () {
+  // Thymeleaf로 전달받은 URL을 LINE 버튼에 설정 (공식 LINE 버튼을 사용하지 않는 경우 생략 가능)
+  // (참고: 이미지 버튼 방식 사용 시 window.shareUrl 변수를 활용할 수 있습니다.)
+  
   // 공유하기 모달 관련
   const shareModal = document.getElementById("shareModal");
   const shareButton = document.getElementById("shareButton");
   const closeShareModalBtn = document.getElementById("closeShareModalBtn");
   const yesMessageBtn = document.getElementById("yesMessageBtn");
   const shareId = document.getElementById("shareId").value;
+  
   yesMessageBtn.addEventListener("click", function () {
-    
     fetch(`/chat/create?shareId=${shareId}`, {
-      method: 'POST', // POST 방식으로 변경
-      headers: {
-        'Content-Type': 'application/json' // JSON 데이터를 보내겠다고 명시
-      },
-      body: JSON.stringify({ shareId: shareId }) // DTO 데이터 직렬화하여 전송
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ shareId: shareId })
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("네트워크 응답에 문제가 있습니다.");
-      }
-      return response.text(); // 필요 시 JSON으로 변경 가능
-    })
-    .then(result => {
-      
-      window.location.href = `/chatList?chatroomId=${result}`;
-    })
-    .catch(error => {
-      console.error("Fetch 호출 중 에러 발생:", error);
-    });
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("네트워크 응답에 문제가 있습니다.");
+        }
+        return response.text();
+      })
+      .then(result => {
+        window.location.href = `/chatList?chatroomId=${result}`;
+      })
+      .catch(error => {
+        console.error("Fetch 호출 중 에러 발생:", error);
+      });
   });
-
+  
   // 공유하기 버튼 클릭 시 공유 모달 열기
   shareButton.addEventListener("click", function () {
     shareModal.style.display = "block";
     document.body.classList.add("modal-open");
+    // 공식 LINE 공유 버튼 관련 스크립트 호출 대신, 이미지 버튼 방식을 사용하므로 별도 호출 없음
   });
-
+  
   // 공유 모달 닫기 버튼 클릭 시 모달 닫기
   closeShareModalBtn.addEventListener("click", function () {
     shareModal.style.display = "none";
     document.body.classList.remove("modal-open");
   });
-
+  
   // 모달 외부 클릭 시 모달 닫기 (공유 모달)
   window.addEventListener("click", function (event) {
     if (event.target === shareModal) {
@@ -54,26 +49,45 @@ document.addEventListener("DOMContentLoaded", function () {
       document.body.classList.remove("modal-open");
     }
   });
-
-  // 찜하기/찜취소하기 버튼 이벤트
-  const favoriteButton = document.getElementById("favoriteButton");
+  
+  // ★ 찜하기(찜취소) 버튼 이벤트 구현
+  const favoriteContainer = document.getElementById("favoriteContainer");
+  const favoriteButton = document.getElementById("favoriteBtn");
+  const favoriteCountSpan = favoriteContainer.querySelector("span");
+  
   favoriteButton.addEventListener("click", function () {
-    const shareId = favoriteButton.getAttribute("data-share-id");
-    const isFavorite =
-      favoriteButton.getAttribute("data-is-favorite") === "true";
-
+    const shareId = favoriteContainer.getAttribute("data-share-id");
+    const isFavorite = favoriteButton.getAttribute("data-is-favorite") === "true";
+    const icon = favoriteButton.querySelector("i");
+    
+    function getCurrentFavoriteCount() {
+      const text = favoriteCountSpan.textContent;
+      const match = text.match(/(\d+)/);
+      return match ? parseInt(match[1], 10) : 0;
+    }
+    
+    function updateFavoriteCount(newCount) {
+      let countText = (newCount > 1) ? " LIKES" : " LIKE";
+      let color = (newCount > 0) ? "red" : "slategrey";
+      favoriteCountSpan.innerHTML = '<b style="color: ' + color + '; font-size: 2em;">' + newCount + '</b>' +
+                                    '<span style="font-size: 1.5em; color: slategrey;">' + countText + '</span>';
+    }
+    
     if (!isFavorite) {
       fetch("/favorite/set", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shareId: shareId }),
+        body: JSON.stringify({ shareId: Number(shareId) }),
       })
         .then((response) => {
           if (response.ok) {
-            favoriteButton.innerText = "찜 취소하기";
+            icon.classList.remove("far");
+            icon.classList.add("fas");
             favoriteButton.setAttribute("data-is-favorite", "true");
+            let currentCount = getCurrentFavoriteCount();
+            updateFavoriteCount(currentCount + 1);
           } else {
-            alert("찜하기 실패!");
+            console.log("찜하기 실패");
           }
         })
         .catch((err) => console.error(err));
@@ -83,8 +97,11 @@ document.addEventListener("DOMContentLoaded", function () {
       })
         .then((response) => {
           if (response.ok) {
-            favoriteButton.innerText = "찜하기";
+            icon.classList.remove("fas");
+            icon.classList.add("far");
             favoriteButton.setAttribute("data-is-favorite", "false");
+            let currentCount = getCurrentFavoriteCount();
+            updateFavoriteCount(Math.max(0, currentCount - 1));
           } else {
             alert("찜 취소 실패!");
           }
@@ -92,134 +109,100 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch((err) => console.error(err));
     }
   });
-
+  
   // 모달 창: 편의시설 검색 기능
   const facilityModal = document.getElementById("facilityModal");
   const openFacilityModalBtn = document.getElementById("openFacilityModalBtn");
   const closeFacilityModal = document.getElementById("facilityModalClose");
-
+  
   openFacilityModalBtn.addEventListener("click", function () {
-    // 기존 편의시설 목록과 마커 초기화
     document.getElementById("place-list").innerHTML = "";
     clearFacilityMarkers();
     facilityModal.style.display = "block";
     document.body.classList.add("modal-open");
     initFacilityMap();
   });
-
+  
   closeFacilityModal.addEventListener("click", function () {
     facilityModal.style.display = "none";
     document.body.classList.remove("modal-open");
   });
-
+  
   window.addEventListener("click", function (event) {
     if (event.target === facilityModal) {
       facilityModal.style.display = "none";
       document.body.classList.remove("modal-open");
     }
   });
-
+  
   // 각 검색 버튼 이벤트 등록
-  document
-    .getElementById("searchConvenienceBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("convenience store");
-    });
-  document
-    .getElementById("searchSupermarketBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("supermarket");
-    });
-  document
-    .getElementById("searchCafeBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("cafe");
-    });
-  document
-    .getElementById("searchRestaurantBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("restaurant");
-    });
-  document
-    .getElementById("searchDrugstoreBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("drugstore");
-    });
-  document
-    .getElementById("searchLaundromatBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("laundromat");
-    });
-  // 카페 체인 검색 버튼 이벤트 등록
-  document
-    .getElementById("searchStarbucksBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("スターバックス");
-    });
-  document
-    .getElementById("searchDoutorBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("ドトールコーヒー");
-    });
-  document
-    .getElementById("searchTullysBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("タリーズコーヒー");
-    });
-  document
-    .getElementById("searchKomedaBtn")
-    .addEventListener("click", function () {
-      searchNearbyPlaces("コメダ珈琲店");
-    });
-
+  document.getElementById("searchConvenienceBtn").addEventListener("click", function () {
+    searchNearbyPlaces("convenience store");
+  });
+  document.getElementById("searchSupermarketBtn").addEventListener("click", function () {
+    searchNearbyPlaces("supermarket");
+  });
+  document.getElementById("searchCafeBtn").addEventListener("click", function () {
+    searchNearbyPlaces("cafe");
+  });
+  document.getElementById("searchRestaurantBtn").addEventListener("click", function () {
+    searchNearbyPlaces("restaurant");
+  });
+  document.getElementById("searchDrugstoreBtn").addEventListener("click", function () {
+    searchNearbyPlaces("drugstore");
+  });
+  document.getElementById("searchLaundromatBtn").addEventListener("click", function () {
+    searchNearbyPlaces("laundromat");
+  });
+  document.getElementById("searchStarbucksBtn").addEventListener("click", function () {
+    searchNearbyPlaces("スターバックス");
+  });
+  document.getElementById("searchDoutorBtn").addEventListener("click", function () {
+    searchNearbyPlaces("ドトールコーヒー");
+  });
+  document.getElementById("searchTullysBtn").addEventListener("click", function () {
+    searchNearbyPlaces("タリーズコーヒー");
+  });
+  document.getElementById("searchKomedaBtn").addEventListener("click", function () {
+    searchNearbyPlaces("コメダ珈琲店");
+  });
+  
   // 신고 모달 창 기능
   const reportModal = document.getElementById("reportModal");
   const reportButton = document.getElementById("reportButton");
   const reportModalClose = document.getElementById("reportModalClose");
   const submitReport = document.getElementById("submitReport");
-
-  // 신고 버튼 클릭 시 신고 모달 열기
+  
   reportButton.addEventListener("click", function () {
     reportModal.style.display = "block";
     document.body.classList.add("modal-open");
   });
-
-  // 신고 모달의 × 버튼 클릭 시 닫기
+  
   reportModalClose.addEventListener("click", function () {
     reportModal.style.display = "none";
     document.body.classList.remove("modal-open");
   });
-
-  // 모달 외부 클릭 시 닫기 (신고 모달)
+  
   window.addEventListener("click", function (event) {
     if (event.target === reportModal) {
       reportModal.style.display = "none";
       document.body.classList.remove("modal-open");
     }
   });
-
-  // 신고 제출 버튼 이벤트
+  
   submitReport.addEventListener("click", function () {
     const reason = document.getElementById("reportReason").value;
-    const description = document
-      .getElementById("reportDescription")
-      .value.trim();
-
+    const description = document.getElementById("reportDescription").value.trim();
     if (!reason) {
       alert("신고 사유를 선택하세요.");
       return;
     }
-
-    const shareId = document
-      .getElementById("favoriteButton")
-      .getAttribute("data-share-id");
-
+    const shareId = document.getElementById("favoriteContainer").getAttribute("data-share-id");
     const reportData = {
       shareId: shareId,
       reason: reason,
       description: description,
     };
-
     fetch("/report", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -236,31 +219,26 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .catch((error) => console.error("신고 오류:", error));
   });
-
-  // (추가) 방 사진 영역을 드래그로 스크롤할 수 있게 하는 코드
+  
   const roomPhotos = document.querySelector(".room-photos");
   if (roomPhotos) {
     let isDown = false;
     let startX;
     let scrollLeft;
-
     roomPhotos.addEventListener("mousedown", (e) => {
       isDown = true;
       startX = e.pageX - roomPhotos.offsetLeft;
       scrollLeft = roomPhotos.scrollLeft;
       roomPhotos.style.cursor = "grabbing";
     });
-
     roomPhotos.addEventListener("mouseleave", () => {
       isDown = false;
       roomPhotos.style.cursor = "grab";
     });
-
     roomPhotos.addEventListener("mouseup", () => {
       isDown = false;
       roomPhotos.style.cursor = "grab";
     });
-
     roomPhotos.addEventListener("mousemove", (e) => {
       if (!isDown) return;
       e.preventDefault();
@@ -269,51 +247,43 @@ document.addEventListener("DOMContentLoaded", function () {
       roomPhotos.scrollLeft = scrollLeft - walk;
     });
   }
-
-  // ★ 게스트 조회 모달 관련 (추가)
+  
+  // ★ 게스트 조회 모달 관련
   const guestModal = document.getElementById("guestModal");
   const confirmedGuestButton = document.getElementById("confirmedGuest");
   const guestModalClose = document.getElementById("guestModalClose");
-
   confirmedGuestButton.addEventListener("click", function () {
     guestModal.style.display = "block";
     document.body.classList.add("modal-open");
   });
-
   guestModalClose.addEventListener("click", function () {
     guestModal.style.display = "none";
     document.body.classList.remove("modal-open");
   });
-
-  // 모달 외부 클릭 시 닫기 (게스트 조회 모달)
   window.addEventListener("click", function (event) {
     if (event.target === guestModal) {
       guestModal.style.display = "none";
       document.body.classList.remove("modal-open");
     }
   });
-
-  // ★ 메시지 보내기 모달 관련 (새로 추가)
+  
+  // ★ 메시지 보내기 모달 관련
   const messageModal = document.getElementById("messageModal");
   const messageHostBtn = document.getElementById("messageHostBtn");
   const messageModalClose = document.getElementById("messageModalClose");
   const noMessageBtn = document.getElementById("noMessageBtn");
-
   messageHostBtn.addEventListener("click", function () {
     messageModal.style.display = "block";
     document.body.classList.add("modal-open");
   });
-
   messageModalClose.addEventListener("click", function () {
     messageModal.style.display = "none";
     document.body.classList.remove("modal-open");
   });
-
   noMessageBtn.addEventListener("click", function () {
     messageModal.style.display = "none";
     document.body.classList.remove("modal-open");
   });
-
   window.addEventListener("click", function (event) {
     if (event.target === messageModal) {
       messageModal.style.display = "none";
@@ -321,54 +291,53 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
-
-// 카카오 공유 버튼 이벤트는 SDK가 완전히 로드된 후에 등록 (window.onload 사용)
+  
+// 카카오 공유 버튼 이벤트 (window.onload 사용)
 window.addEventListener("load", function () {
-  const kakaoShareButton = document.getElementById("kakaoShareButton");
-  if (kakaoShareButton) {
-    kakaoShareButton.addEventListener("click", function () {
-      // URL에서 shareId 추출
+  const shareId = new URL(window.location.href).searchParams.get("shareId");
+  const shareUrl = window.location.origin + `/share/selectOne?shareId=${shareId}`;
+  Kakao.Link.createDefaultButton({
+    container: '#kakao-link-btn',
+    objectType: 'feed',
+    content: {
+      title: document.querySelector(".share-title").innerText,
+      description: "숙소 공유 게시글입니다.",
+      imageUrl: window.firstImageUrl,
+      link: {
+        mobileWebUrl: shareUrl,
+        webUrl: shareUrl,
+      },
+    },
+    buttons: [
+      {
+        title: '웹으로 보기',
+        link: {
+          mobileWebUrl: shareUrl,
+          webUrl: shareUrl,
+        },
+      },
+    ],
+  });
+});
+  
+// LINE 공유 버튼 이벤트 (이미지 버튼 방식)
+document.addEventListener("DOMContentLoaded", function () {
+  const lineShareBtn = document.getElementById("lineShareBtn");
+  if (lineShareBtn) {
+    lineShareBtn.addEventListener("click", function () {
       const shareId = new URL(window.location.href).searchParams.get("shareId");
-      // window.location.origin을 사용하여 현재 도메인 (예: http://localhost:8080) 기준 공유 URL 생성
-      const shareUrl =
-        window.location.origin + `/share/selectOne?shareId=${shareId}`;
-
-      if (Kakao && Kakao.Link && typeof Kakao.Link.sendDefault === "function") {
-        console.log("카카오 공유 이미지 URL:", window.firstImageUrl);
-        Kakao.Link.sendDefault({
-          objectType: "feed",
-          content: {
-            title: document.querySelector(".share-title").innerText,
-            description: "숙소 공유 게시글입니다.",
-            imageUrl: window.firstImageUrl, // 서버에서 전달받은 firstImageUrl 사용
-            link: {
-              mobileWebUrl: shareUrl,
-              webUrl: shareUrl,
-            },
-          },
-          buttons: [
-            {
-              title: "웹으로 보기",
-              link: {
-                mobileWebUrl: shareUrl,
-                webUrl: shareUrl,
-              },
-            },
-          ],
-        });
-      } else {
-        console.error(
-          "Kakao SDK가 아직 초기화되지 않았거나, Kakao.Link.sendDefault 함수가 정의되지 않았습니다."
-        );
-      }
+      const shareUrl = window.location.origin + `/share/selectOne?shareId=${shareId}`;
+      const shareText = encodeURIComponent("숙소 공유 게시글입니다. " + shareUrl);
+      const lineShareUrl = `https://line.me/R/msg/text/?text=${shareText}`;
+      window.open(lineShareUrl, '_blank', 'width=500,height=600');
     });
   }
 });
-
+  
 // 편의시설 지도 전용 변수 및 함수
 let facilityMap;
 let facilityMarkers = [];
-
+  
 function initFacilityMap() {
   console.log("편의시설 지도 초기화 시작");
   var geocoder = new google.maps.Geocoder();
@@ -388,13 +357,12 @@ function initFacilityMap() {
     }
   });
 }
-
+  
 function searchNearbyPlaces(keyword) {
   if (!facilityMap) {
     console.error("편의시설 지도가 로드되지 않았습니다.");
     return;
   }
-  var currentZoom = facilityMap.getZoom();
   facilityMap.setZoom(15);
   var service = new google.maps.places.PlacesService(facilityMap);
   var request = {
@@ -415,7 +383,6 @@ function searchNearbyPlaces(keyword) {
           title: place.name,
         });
         facilityMarkers.push(marker);
-
         let nameSpanStyle = "font-size:1.2em; font-weight: bold;";
         let storeColor = "";
         if (place.name.indexOf("ローソン") !== -1) {
@@ -453,7 +420,7 @@ function searchNearbyPlaces(keyword) {
     }
   });
 }
-
+  
 function clearFacilityMarkers() {
   facilityMarkers.forEach((marker) => marker.setMap(null));
   facilityMarkers = [];

@@ -115,6 +115,41 @@ main {
   background: transparent;
 }
 
+.favorite-btn {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    font-size: 24px;  /* 폰트 크기를 증가 */
+    cursor: pointer;
+    color: #ff5a5f;
+    border-radius: 50%;
+    width: 50px;      /* 버튼 너비 증가 */
+    height: 50px;     /* 버튼 높이 증가 */
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-right: 10px;
+}
+
+
+.favorite-btn i {
+  transition: color 0.2s;
+  font-size: 24px;
+}
+
+.favorite-btn:hover i {
+  color: red;
+}
+
+.favorite-btn.active {
+  background: rgba(255, 0, 0, 0.2); /* 클릭 시 배경에 붉은 기운 추가 */
+}
+
+.favorite-btn.active i {
+  color: red; /* 하트 아이콘을 빨간색으로 변경 */
+}
+
+
 /* 공유하기, 찜하기 버튼 영역 */
 .action-buttons {
     margin-bottom: 20px;
@@ -124,6 +159,11 @@ main {
     margin-right: 10px;
     padding: 8px 12px;
     cursor: pointer;
+}
+
+.line-it-button {
+  display: inline-block !important;
+  visibility: visible !important;
 }
 
 /* 방의 수 / 기간 / 가격, 호스트에게 메시지 */

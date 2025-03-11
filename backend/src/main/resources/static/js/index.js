@@ -19,7 +19,7 @@ $(document).ready(function () {
   });
 
   // simple-query-form 클릭 시 sticky 해제
-  $(".simple-query-form-btn").on("click", function () {
+  $(".simple-query-form-btn").on("click", function () { 
     if ($("header").hasClass("sticky")) {
       $("header").removeClass("sticky");
       isStickyDisabled = true; // 사용자가 의도적으로 sticky를 해제했음을 저장
@@ -168,8 +168,7 @@ $(document).ready(function () {
     if (cityId !== "all") queryParams.push(`cityId=${cityId}`);
     if (townId !== "all") queryParams.push(`townId=${townId}`);
 
-    const queryString =
-      queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+    const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
 
     fetch(`/api/search/shares${queryString}`)
       .then((response) => response.json())
@@ -182,46 +181,46 @@ $(document).ready(function () {
 
   // 검색 결과 업데이트 함수
   function updateListings(shares) {
-      const listingsContainer = document.getElementById("listings-container");
-      listingsContainer.innerHTML = ""; // 기존 목록 초기화
+    const listingsContainer = document.getElementById("listings-container");
+    listingsContainer.innerHTML = ""; // 기존 목록 초기화
 
-      shares.forEach((listing) => {
-          const card = document.createElement("div");
-          card.className = "listing-card";
+    shares.forEach((listing) => {
+      const card = document.createElement("div");
+      card.className = "listing-card";
 
-          // 검색 결과에서도 첫 번째 이미지 반영
-          const imageUrl = listing.firstImage ? listing.firstImage : "/images/no-image.png";
+      // 검색 결과에서도 첫 번째 이미지 반영
+      const imageUrl = listing.firstImage ? listing.firstImage : "/images/no-image.png";
 
-          card.innerHTML = `
-              <a href="/share/selectOne?shareId=${listing.id}" class="listing-link">
-                  <button class="favorite-btn"><i class="far fa-heart"></i></button>
-                  <img src="${imageUrl}" alt="숙소 이미지">
-                  <div class="listing-info">
-                      <h3>${listing.title}</h3>
-                      <p>${listing.regionName} ${listing.cityName} ${listing.townName}</p>
-                      <p>₩${new Intl.NumberFormat().format(listing.price)}/박</p>
-                      <p>최대 인원: ${listing.maxGuests}명</p>
-                  </div>
-              </a>
-          `;
+      // favorite 상태에 따라 버튼 클래스와 아이콘 결정
+      const favClass = listing.isFavorite ? "active" : "";
+      const iconClass = listing.isFavorite ? "fas fa-heart" : "far fa-heart";
 
-          listingsContainer.appendChild(card);
-      });
+      card.innerHTML = `
+        <a href="/share/selectOne?shareId=${listing.id}" class="listing-link">
+            <button class="favorite-btn ${favClass}" data-id="${listing.id}">
+                <i class="${iconClass}"></i>
+            </button>
+            <img src="${imageUrl}" alt="숙소 이미지">
+            <div class="listing-info">
+                <h3>${listing.title}</h3>
+                <p>${listing.regionName} ${listing.cityName} ${listing.townName}</p>
+                <p>₩${new Intl.NumberFormat().format(listing.price)}/박</p>
+                <p>최대 인원: ${listing.maxGuests}명</p>
+            </div>
+        </a>
+      `;
+      listingsContainer.appendChild(card);
+    });
   }
-
 
   //  마커 클릭 시 표시될 정보 창 생성
   function generateInfoWindowContent(share, fullAddress) {
     return `
             <div style="max-width: 250px;">
                 <h4>${share.title}</h4>
-                <p><strong>가격:</strong> ₩${new Intl.NumberFormat().format(
-                  share.price
-                )}/박</p>
+                <p><strong>가격:</strong> ₩${new Intl.NumberFormat().format(share.price)}/박</p>
                 <p><strong>위치:</strong> ${fullAddress}</p>
-                <a href="/share/selectOne?shareId=${
-                  share.shareId
-                }" target="_blank">상세 보기</a>
+                <a href="/share/selectOne?shareId=${share.shareId}" target="_blank">상세 보기</a>
             </div>
         `;
   }
@@ -250,6 +249,41 @@ $(document).ready(function () {
       $modalMenu.hide();
     }
   });
+
+  // 좋아요(찜) 버튼 클릭 시 이벤트 처리 - 하트 아이콘 토글
+  $(document).on("click", ".favorite-btn", function (e) {
+    e.preventDefault();
+    const button = $(this);
+    const shareId = button.data("id");
+  
+    if (!button.hasClass("active")) {
+      $.ajax({
+        url: "/favorite/set",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ shareId: Number(shareId) }),
+        success: function () {
+          button.addClass("active");
+          button.find("i").removeClass("far").addClass("fas");
+        },
+        error: function () {
+          console.error("찜하기 실패");
+        }
+      });
+    } else {
+      $.ajax({
+        url: "/favorite/cancel?shareId=" + shareId,
+        method: "DELETE",
+        success: function () {
+          button.removeClass("active");
+          button.find("i").removeClass("fas").addClass("far");
+        },
+        error: function () {
+          alert("찜 취소 실패!");
+        }
+      });
+    }
+  });
 });
 
 function updateRegionSelect() {
@@ -261,7 +295,7 @@ function updateRegionSelect() {
 
   // 하위 선택 박스 초기화
   regionSelect.innerHTML = '<option value="all">전체</option>';
-  citySelect.innerHTML = '<option value="all" >전체</option>';
+  citySelect.innerHTML = '<option value="all">전체</option>';
   townSelect.innerHTML = '<option value="all">전체</option>';
 
   if (selectedProvince !== "all" && selectedProvince !== "") {
@@ -292,7 +326,7 @@ function updateCitySelect() {
   const selectedRegion = regionSelect.value;
 
   // 하위 선택 박스 초기화
-  citySelect.innerHTML = '<option value="all" >전체</option>';
+  citySelect.innerHTML = '<option value="all">전체</option>';
   townSelect.innerHTML = '<option value="all">전체</option>';
 
   if (selectedRegion) {
@@ -315,7 +349,7 @@ function updateTownSelect() {
   const townSelect = document.getElementById("townId");
   const selectedCity = citySelect.value;
 
-  townSelect.innerHTML = '<option value="all" >전체</option>';
+  townSelect.innerHTML = '<option value="all">전체</option>';
 
   if (selectedCity !== "all") {
     fetch(`/api/location/towns?cityId=${selectedCity}`)
