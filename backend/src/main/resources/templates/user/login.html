@@ -81,7 +81,7 @@
         <input type="password" class="form-control" name="password" id="password" placeholder="비밀번호를 입력하세요" required>
       </div>
       <div class="mb-3">
-      	<span id="errorMessage" class="error-message" th:text="${exception}"></span>
+      	<span id="errorMessage" class="error-message" th:if="${error}" th:text="${exception}"></span>
       </div>
       <input type="submit" class="btn btn-success w-100 loginBtn" value="로그인">
       <div class="text-center mt-3 link-container">
