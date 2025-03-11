@@ -1,5 +1,7 @@
 package com.achiko.backend.service;
 
+import java.util.List;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +30,13 @@ public class UserService {
 
     // 아이디 찾기
 	public String findLoginId(UserDTO userDTO) {
-		UserEntity findedEntity = userRepository.findByEmail(userDTO.getEmail());
-		
+		List<UserEntity> findedEntities = userRepository.findByEmail(userDTO.getEmail());
+		UserEntity findedEntity = null;
+		for(UserEntity a : findedEntities) {
+			if(a.getProvider()==null) {
+				findedEntity = a;
+			}
+		}
 		if(findedEntity != null) {
 			if(userDTO.getRealName().equals(findedEntity.getRealName())) {
 				return "회원님의 아이디는 " + findedEntity.getLoginId() + " 입니다.";
@@ -69,6 +76,7 @@ public class UserService {
         return tempPw;
 	}
 
+	// 아이디 중복확인
 	public boolean isIdAvailable(String loginId) {
 		UserEntity userEntity = userRepository.findByLoginId(loginId);
 		
@@ -79,16 +87,20 @@ public class UserService {
 		return false;
 	}
 
+	// 이메일 중복확인
 	public boolean isEmailAvailable(String email) {
-		UserEntity userEntity = userRepository.findByEmail(email);
+		List<UserEntity> findedEntities = userRepository.findByEmail(email);
+		UserEntity findedEntity = null;
+		for(UserEntity a : findedEntities) {
+			if(a.getProvider()==null) {
+				findedEntity = a;
+			}
+		}
 		
-		if(userEntity == null) {
+		if(findedEntity == null) {
 			return true;
 		}
 		
-		if(userEntity.getProvider() != null) {
-			return true;
-		}
 		return false;
 	}
 }
