@@ -1767,3 +1767,5 @@ INSERT INTO town (name_kanji, city_id) VALUES
 ('吾川郡', (SELECT city_id FROM city WHERE name_kanji = '高知県')),
 ('高岡郡', (SELECT city_id FROM city WHERE name_kanji = '高知県')),
 ('幡多郡', (SELECT city_id FROM city WHERE name_kanji = '高知県'));
+
+commit;

@@ -78,4 +78,58 @@ public class ReviewEntity {
                 .createdAt(dto.getCreatedAt())
                 .build();
     }
+	
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@Column(name="review_id")
+//	private Long reviewId;
+//	
+//	// 리뷰 작성자 (Reviewer)
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "reviewer_id", referencedColumnName = "user_id")
+//    private UserEntity reviewer;
+//
+//    // 리뷰 대상자 (Reviewed User)
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "reviewed_user_id", referencedColumnName = "user_id")
+//    private UserEntity reviewedUser;
+//
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="share_id", nullable = false)
+//    private ShareEntity share;
+//	
+//	@Column(name="comment")
+//	private String comment;
+//	
+//	@Column(name="created_at")
+//	private LocalDateTime createdAt;
+//	
+////	@Column(name="cleanliness_rating")
+////	private Long cleanlinessRating;
+////	
+////	@Column(name="trust_rating")
+////	private Long trustRating;
+////	
+////	@Column(name="communication_rating")
+////	private Long communicationRating;
+////	
+////	@Column(name="manner_rating")
+////	private Long mannerRating;
+//	
+//	
+//	public static ReviewEntity toEntity(ReviewDTO dto, ShareEntity shareEntity,  UserEntity reviewer, UserEntity reviewedUser) {
+//    	return ReviewEntity.builder()
+//    			.reviewId(dto.getReviewId())
+//    			.reviewer(reviewer)
+//    			.reviewedUser(reviewedUser)
+//    			.share(shareEntity)
+//    			.comment(dto.getComment())
+////    			.cleanlinessRating(dto.getCleanlinessRating())
+////    			.trustRating(dto.getTrustRating())
+////    			.communicationRating(dto.getCommunicationRating())
+////    			.mannerRating(dto.getMannerRating())
+//    			.createdAt(dto.getCreatedAt() != null ? dto.getCreatedAt() : LocalDateTime.now()) // Null 방지
+//    			.build();
+//    }
+	
 }

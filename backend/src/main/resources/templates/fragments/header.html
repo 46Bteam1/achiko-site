@@ -1,97 +1,24 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="ko"
+  xmlns:th="http://thymeleaf.org"
+  xmlns:sec="http://thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Header</title>
-    <link rel="stylesheet" th:href="@{/css/header.css}" />
   </head>
   <body>
-    <header>
+    <header th:fragment="header">
       <div class="header-col">
-        <div class="header-col">
+        <a th:href="@{/}">
           <img
             th:src="@{/images/logo-achiko.png}"
             alt="Achiko Logo"
             width="204px"
             height="64px"
           />
-        </div>
-      </div>
-      <div class="header-col header-form">
-        <ul>
-          <li><span>숙소</span></li>
-          <li><span>체험</span></li>
-          <li><a href="#">온라인 체험</a></li>
-          <li><a th:href="@{/testTemp/testPage}">testpage</a></li>
-          <!-- 인증되지 않은 사용자 -->
-          <th:block sec:authorize="isAnonymous()">
-            <li><a th:href="@{/user/regist}">회원가입</a></li>
-            <li><a th:href="@{/user/login}">로그인</a></li>
-          </th:block>
-
-          <!-- 인증된 사용자 -->
-          <th:block sec:authorize="isAuthenticated()">
-            <li>안녕하세요, <span sec:authentication="name"></span>님!</li>
-            <li><a th:href="@{/user/logout}">로그아웃</a></li>
-            <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
-          </th:block>
-
-          <li><a th:href="@{/viewSubscribe/subscribePage}">구독page</a></li>
-          <li><a th:href="@{/viewSpline}">SplinePage</a></li>
-        </ul>
-        <div class="query-form">
-          <div class="query-col query-location">
-            <div class="query-title">위치</div>
-            <div class="query-location-input">
-              <input
-                type="text"
-                class="query-input"
-                placeholder="어디로 여행가세요?"
-              />
-            </div>
-          </div>
-          <div class="query-divide"></div>
-          <div class="query-col query-date">
-            <div class="query-date-start">
-              <div class="query-title">체크인</div>
-              <p class="query-input">날짜 입력</p>
-            </div>
-            <div class="query-divide"></div>
-            <div class="query-date-end">
-              <div class="query-title">체크아웃</div>
-              <p class="query-input">날짜 입력</p>
-            </div>
-          </div>
-          <div class="query-divide"></div>
-          <div class="query-col query-submit">
-            <div class="query-submit-count">
-              <div class="query-title">인원</div>
-              <p class="query-input">게스트 추가</p>
-            </div>
-            <div>
-              <button class="query-submit-btn">
-                <svg
-                  viewBox="0 0 32 32"
-                  style="
-                    display: block;
-                    height: 16px;
-                    width: 16px;
-                    stroke: white;
-                    stroke-width: 4;
-                    overflow: visible;
-                  "
-                >
-                  <g fill="none">
-                    <path
-                      d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
-                    ></path>
-                  </g>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+        </a>
       </div>
       <div class="simple-query-form">
         <div class="simple-query-btn-wrap">
@@ -121,7 +48,9 @@
       </div>
       <div class="header-col header-nav">
         <div class="header-nav-left">
-          <a class="sticky-black" href="#">호스트 되기</a>
+          <a class="sticky-black" href="#"
+            >あちこちの夢が集まり、ひとつの物語が生まれる</a
+          >
           <button>
             <svg class="sticky-black" width="16px" height="16px">
               <path
@@ -131,7 +60,7 @@
           </button>
         </div>
         <div class="header-nav-right">
-          <button>
+          <button id="menuButton">
             <div class="icon-list">
               <svg
                 viewBox="0 0 32 32"
@@ -160,6 +89,28 @@
               </svg>
             </div>
           </button>
+        </div>
+      </div>
+      <!-- 모달 (회원가입/로그인 메뉴) -->
+      <div id="modalMenu" class="modal">
+        <div class="modal-content">
+          <!-- <span class="close">&times;</span> -->
+          <div class="menu-group">
+            <th:block sec:authorize="isAnonymous()">
+              <li><a th:href="@{/user/regist}">회원가입</a></li>
+              <li><a th:href="@{/user/login}">로그인</a></li>
+            </th:block>
+            <th:block sec:authorize="isAuthenticated()">
+              <li><a th:href="@{/user/logout}">로그아웃</a></li>
+              <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
+            </th:block>
+          </div>
+          <div class="menu-divider"></div>
+          <div class="menu-group">
+            <li><a th:href="@{/viewSubscribe/subscribePage}">구독 page</a></li>
+            <li><a th:href="@{/viewSpline}">SplinePage</a></li>
+            <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
+          </div>
         </div>
       </div>
     </header>

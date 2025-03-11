@@ -116,3 +116,56 @@ public class TestService {
         }
     }
 }
+
+//
+//// 회원 탈퇴
+//@Transactional
+//public void deleteTest(Long userId) {
+//	if (userRepository.existsById(userId)) {
+//		userRepository.deleteById(userId);
+//	} else {
+//		throw new IllegalArgumentException("해당 ID의 데이터가 없습니다: " + userId);
+//	}
+//}
+//
+//// Viewing - 특정 유저의 전체 데이터 조회
+//
+//public List<ViewingDTO> getAllViewing(Long userId) {
+//	List<ViewingEntity> entityList = viewingRepository.findAllById(userId);
+//	List<ViewingDTO> dtoList = new ArrayList<>();
+//	
+//	for (ViewingEntity entity : entityList) {
+//		dtoList.add(ViewingDTO.toDTO(entity));
+//	}
+//	
+//	return dtoList;
+//}
+//
+//// Favorite - 특정 유저의 전체 데이터 조회
+//
+//public List<FavoriteDTO> getAllFavorites(Long userId) {
+//	List<FavoriteEntity> entityList = favoriteRepository.findAllById(userId);
+//	List<FavoriteDTO> dtoList = new ArrayList<>();
+//	
+//	for (FavoriteEntity entity : entityList) {
+//		dtoList.add(FavoriteDTO.toDTO(entity));
+//	}
+//	
+//	return dtoList;
+//}
+//
+
+//public UserDTO pwdCheck(String userId, String userPwd) {
+//	// TODO Auto-generated method stub
+//	return null;
+//}
+
+
+/*
+ * entity.setProfileImage(userDTO.getProfileImage());
+ * entity.setBio(userDTO.getBio()); entity.setLanguages(userDTO.getLanguages());
+ * entity.setReligion(userDTO.getReligion());
+ */
+
+
+

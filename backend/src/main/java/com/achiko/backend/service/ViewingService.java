@@ -151,3 +151,19 @@ public class ViewingService {
 	
 
 }
+
+//package com.achiko.backend.service;
+//
+//import java.util.List;
+//
+//import com.achiko.backend.controller.ViewingDTO;
+//
+//public class ViewingService {
+//
+//	// Viewing - 특정 유저의 전체 데이터 조회
+//	public List<ViewingDTO> getAllViewings(Long userId) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//}

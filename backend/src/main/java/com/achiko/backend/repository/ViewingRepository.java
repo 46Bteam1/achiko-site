@@ -50,4 +50,5 @@ Long findGuestIdByViewingId(@Param("viewingId") Long viewingId);
     nativeQuery = true)
 Long findHostIdByViewingId(@Param("viewingId") Long viewingId);
 	
+//	List<ViewingEntity> findByGuest_userId(Long userId);
 }

@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -24,9 +23,9 @@ import lombok.ToString;
 @ToString
 @Builder
 public class LoginUserDetails implements UserDetails {
- 	private static final long serialVersionUID = 1L;
-	
- 	private Long userId;
+	private static final long serialVersionUID = 1L;
+
+	private Long userId;
 	private String loginId;
 	private String password;
 	private String nickname;
@@ -34,7 +33,7 @@ public class LoginUserDetails implements UserDetails {
 	private String email;
 	private String role;
 	private String receiptId;
-	
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
@@ -52,34 +51,36 @@ public class LoginUserDetails implements UserDetails {
 		// TODO Auto-generated method stub
 		return this.loginId;
 	}
-	
+
 	public String getRealName() {
 		return this.realName;
 	}
-	
+
 	public String getNickname() {
 		return this.nickname;
 	}
-	
+
 	public String getEmail() {
 		return this.email;
 	}
-	
+
 	public String getReceiptId() {
 		return this.receiptId;
 	}
-	
+
+	public String getLoginId() {
+		return this.loginId;
+	}
+
+	public Long getUserId() {
+		return this.userId;
+	}
+
 	public static LoginUserDetails toDTO(UserEntity userEntity) {
-		return LoginUserDetails.builder()
-				.userId(userEntity.getUserId())
-				.loginId(userEntity.getLoginId())
-				.password(userEntity.getPassword())
-				.nickname(userEntity.getNickname())
-				.realName(userEntity.getRealName())
-				.email(userEntity.getEmail())
-				.receiptId(userEntity.getReceiptId())
-				.role(userEntity.getRole())
-				.build();
+		return LoginUserDetails.builder().userId(userEntity.getUserId()).loginId(userEntity.getLoginId())
+				.password(userEntity.getPassword()).nickname(userEntity.getNickname())
+				.realName(userEntity.getRealName()).email(userEntity.getEmail()).receiptId(userEntity.getReceiptId())
+				.role(userEntity.getRole()).build();
 	}
 
 }
