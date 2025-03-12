@@ -19,6 +19,7 @@ import lombok.ToString;
 @Builder
 public class UserDTO {
 	private Long userId;
+	private String provider;
 	private String loginId;
 	private String nickname;
 	private String profileImage;
@@ -42,6 +43,7 @@ public class UserDTO {
 	public static UserDTO toDTO(UserEntity userEntity) {
 		return UserDTO.builder()
 				.userId(userEntity.getUserId())
+				.provider(userEntity.getProvider())
 				.loginId(userEntity.getLoginId())
 				.nickname(userEntity.getNickname())
 				.profileImage(userEntity.getProfileImage())

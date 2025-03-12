@@ -29,6 +29,7 @@ public class EmailAuthService {
     
     
     public void sendAuthCode(EmailAuthDTO emailAuthDTO) {
+    	
         // 6자리 인증번호 생성
         authCode = generateAuthCode();
         emailAuthDTO.setAuthCode(authCode);
@@ -55,7 +56,7 @@ public class EmailAuthService {
         mailSender.send(message);
     }
     
-    //임의의 6자리 양수를 반환합니다.
+    //임의의 6자리 양수를 반환
     public String generateAuthCode() {
         Random r = new Random();
         String authCode = "";
@@ -66,6 +67,7 @@ public class EmailAuthService {
         return authCode;
     }
     
+    // 인증정보 저장
     @Transactional
     public void saveAuthInfo(EmailAuthDTO emailAuthDTO) {
         // 기존 인증 정보 삭제
