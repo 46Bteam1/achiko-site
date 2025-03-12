@@ -101,6 +101,11 @@ function viewingTable(resp) {
         ? item["guestNickname"]
         : item["hostNickname"];
 
+      let shareId = item["shareId"];
+      $.ajax({
+        url,
+      });
+
       let scheduledDate = item["scheduledDate"] || "날짜 없음"; //  기본값 설정
       let isCompleted = item["isCompleted"]; //  완료 여부 확인
       let disabledAttr = isCompleted ? "disabled" : ""; //  비활성화 속성 설정
@@ -134,10 +139,89 @@ function viewingTable(resp) {
   $(".deleteViewingBtn").on("click", deleteViewing);
 }
 
-// TODO: 3월 6일에 추가할 것
 // viewing 날짜 수정
 function updateViewing() {
-  let viewingId = $(this).attr("data-seq");
+  // 현재 버튼이 속한 행(row)을 선택
+  let row = $(this).closest("tr");
+  // 두 번째 셀(예약 날짜 셀)을 선택 (0부터 시작하므로 eq(1))
+  let scheduledCell = row.find("td:eq(1)");
+  let currentDate = scheduledCell.text().trim();
+
+  // 기존 날짜 문자열을 날짜와 시간으로 분리 (예: "2025-03-07T15:30:00")
+  let dateValue = "";
+  let timeValue = "";
+  if (currentDate && currentDate !== "날짜 없음") {
+    if (currentDate.indexOf("T") > -1) {
+      var parts = currentDate.split("T");
+      dateValue = parts[0];
+      // 시간은 HH:MM 형식으로 사용 (초는 생략)
+      timeValue = parts[1].substring(0, 5);
+    } else {
+      dateValue = currentDate;
+    }
+  }
+
+  // 예약 날짜 셀을 날짜와 시간 입력창으로 교체
+  scheduledCell.html(
+    '<input type="date" class="updateViewingDate" value="' +
+      dateValue +
+      '" />' +
+      '<input type="time" class="updateViewingTime" value="' +
+      timeValue +
+      '" />'
+  );
+
+  // 버튼의 텍스트를 "저장"으로 변경하고, 기존 이벤트 핸들러 제거
+  let btn = $(this);
+  btn.val("저장");
+  btn.off("click").on("click", function () {
+    // 입력된 날짜와 시간 값을 가져옴
+    let newDate = row.find(".updateViewingDate").val();
+    let newTime = row.find(".updateViewingTime").val();
+
+    if (!newDate || !newTime) {
+      alert("날짜와 시간을 모두 입력해주세요.");
+      return;
+    }
+
+    // 새로운 예약 날짜를 ISO 형식(예: "2025-03-07T15:30:00")으로 생성
+    let newScheduledDate = newDate + "T" + newTime + ":00";
+    // 새로운 날짜를 Date 객체로 변환하여 현재 날짜와 비교
+    let newScheduledDateObj = new Date(newScheduledDate);
+    let now = new Date();
+    if (newScheduledDateObj < now) {
+      alert("입력하신 날짜는 현재보다 이전입니다.");
+      return;
+    }
+
+    let viewingId = btn.attr("data-seq");
+
+    // 서버로 보낼 데이터 구성 (필요한 값에 맞게 수정)
+    let data = {
+      viewingId: viewingId,
+      scheduledDate: newScheduledDate,
+      shareId: $("#shareId").val(),
+    };
+
+    // PATCH 요청으로 서버의 changeDate API 호출
+    $.ajax({
+      url: "/viewing/changeDate",
+      method: "PATCH",
+      contentType: "application/json",
+      data: JSON.stringify(data),
+      success: function (resp) {
+        alert(resp);
+        // 성공 시 셀의 내용을 새로운 날짜 값으로 갱신
+        scheduledCell.text(newScheduledDate);
+        // 버튼을 원래 "날짜 수정"으로 복원하고 updateViewing 이벤트 다시 바인딩
+        btn.val("날짜 수정");
+        btn.off("click").on("click", updateViewing);
+      },
+      error: function (err) {
+        alert("수정에 실패했습니다.");
+      },
+    });
+  });
 }
 
 // viewing 취소
