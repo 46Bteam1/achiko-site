@@ -10,9 +10,7 @@
   <!-- Noto Sans Korean & Japanese 폰트 추가 -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet" />
 
   <!-- Font Awesome CSS 추가 (★ 찜하기 버튼에 사용) -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
@@ -21,9 +19,8 @@
   <!-- Noto Sans Korean & Japanese 폰트 추가 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+
   <!-- Swiper CSS (Head 내로 이동) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
 
@@ -125,8 +122,7 @@
   <script src="/js/carousel.js" defer></script>
 
   <!-- Google Maps API 스크립트 로드 (async defer 적용, 콜백은 initMap) -->
-  <script async defer
-    th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
+  <script async defer th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
 </head>
 
 <body>
@@ -143,7 +139,6 @@
     <a th:href="@{/mypage/mypageView}">
       <button> MY PAGE </button>
     </a>
-    </div>
     <!-- 로그인하지 않은 경우 로그인 페이지로 유도 -->
     <div class="mypage-area" th:unless="${loggedUser != null}">
       <a th:href="@{/user/login}">
@@ -177,11 +172,10 @@
         </button>
         <span>
           <b th:text="${share.favoriteCount}"
-            th:style="${share.favoriteCount > 0} ? 'color: red; font-size: 2em;' : 'color: slategrey; font-size: 2em;'"></b>
+             th:style="${share.favoriteCount > 0} ? 'color: red; font-size: 2em;' : 'color: slategrey; font-size: 2em;'"></b>
           <span style="font-size: 1.5em; color: slategrey;"
-            th:text="${share.favoriteCount > 1} ? ' LIKES' : ' LIKE'"></span>
+                th:text="${share.favoriteCount > 1} ? ' LIKES' : ' LIKE'"></span>
         </span>
-
       </div>
       <br>
       <button id="shareButton">공유하기</button>
@@ -190,7 +184,6 @@
       <button id="confirmedGuest">게스트 조회</button>
       <button id="reportButton">신고</button>
     </section>
-
 
     <!-- 공유 글의 세부 정보 출력 -->
     <section class="share-info">
@@ -217,25 +210,22 @@
       <div id="map" style="width: 100%; height: 400px; border-radius: 30px; overflow: hidden;"></div>
     </section>
 
+    <!-- 공유하기 모달 -->
     <div id="shareModal" class="modal">
       <div class="modal-content">
         <span id="closeShareModalBtn" class="close">&times;</span>
         <h3>공유하기</h3>
         <div>
-          <h5 th:text="${share.title}" style="color:slategrey;">게시글 제목</h5>
+          <h5 th:text="${share.title}" style="color: slategrey;">게시글 제목</h5>
         </div>
         <!-- 공유 관련 내용 및 SNS 링크 등 추가 -->
         <p>이 페이지의 URL을 복사하거나 SNS로 공유하세요.</p>
-
         <!-- Flexbox 레이아웃 적용한 공유 버튼 영역 -->
         <div class="share-buttons" style="display: flex; gap: 10px; align-items: center; justify-content: center;">
           <!-- 공식 카카오톡 공유 버튼 -->
           <a id="kakao-link-btn" href="javascript:void(0);">
-            <img
-              src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
-              alt="카카오톡 공유하기 버튼" />
+            <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png" alt="카카오톡 공유하기 버튼" />
           </a>
-
           <!-- 공식 라인 공유 버튼 -->
           <button id="lineShareBtn" style="border: none; background: none; cursor: pointer;">
             <img th:src="@{/images/line_logo.png}" alt="LINE 공유하기 버튼" style="width: 68px; height: 69px;">
@@ -243,46 +233,37 @@
         </div>
       </div>
     </div>
-    <!-- th:src="@{/images/line_logo.png} -->
 
-    <!-- 최신 LINE 공식 버튼 로더 스크립트  -->
-    <script src="https://d.line-scdn.net/r/web/social/plugins/loader.js"></script>
-
-    </div>
-    </div>
-
-    <!-- 모달 창: 편의시설 지도 및 검색 기능 -->
+    <!-- 편의시설 모달 -->
     <div id="facilityModal" class="modal">
       <div class="modal-content">
         <span class="close" id="facilityModalClose">&times;</span>
         <h3>편의시설 지도</h3>
         <div id="facilitymap" style="width: 100%; height: 300px;"></div>
         <br>
-        <!-- ★ 검색 버튼들: 각 버튼에 고유 ID 부여 -->
+        <!-- 검색 버튼들 -->
         <button id="searchConvenienceBtn">コンビニ</button>
         <button id="searchSupermarketBtn">スーパー</button>
         <button id="searchCafeBtn">カフェ</button>
         <button id="searchRestaurantBtn">レストラン</button>
         <button id="searchDrugstoreBtn">ドラックストア</button>
         <button id="searchLaundromatBtn">コインランドリー</button><br>
-
         <button id="searchStarbucksBtn">スターバックス</button>
         <button id="searchDoutorBtn">ドトールコーヒー</button>
         <button id="searchTullysBtn">タリーズコーヒー</button>
         <button id="searchKomedaBtn">コメダ珈琲店</button>
-
         <!-- 편의시설 목록 출력 영역 -->
         <ul id="place-list"></ul>
       </div>
     </div>
 
-    <!-- 신고 모달 창 -->
+    <!-- 신고 모달 -->
     <div id="reportModal" class="modal">
       <div class="modal-content">
         <span class="close" id="reportModalClose">&times;</span>
         <h3>게시물 신고</h3>
         <div>
-          <h3 th:text="${share.title}" style="color:slategrey;">게시글 제목</h3>
+          <h3 th:text="${share.title}" style="color: slategrey;">게시글 제목</h3>
         </div>
         <p>신고 사유를 선택하세요:</p>
         <select id="reportReason">
@@ -298,316 +279,115 @@
       </div>
     </div>
 
-    <!-- ★ 새로 추가된 게스트 조회 모달 -->
+    <!-- 게스트 조회 모달 -->
     <div id="guestModal" class="modal">
       <div class="modal-content">
         <span class="close" id="guestModalClose">&times;</span>
         <h2><b> 확정 게스트 정보 </b></h2>
         <div>
           <div>
-            <h5 th:text="${share.title}" style="color:slategrey;">게시글 제목</h5>
+            <h5 th:text="${share.title}" style="color: slategrey;">게시글 제목</h5>
           </div>
-          <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px"
-            style="border-radius: 50%; object-fit: cover;">
+          <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px" style="border-radius: 50%; object-fit: cover" />
         </div>
-        <!-- 로그인한 경우, 사용자 정보를 [nickname(login_id)] 형식으로 표시 -->
+        <!-- 로그인한 경우 사용자 정보 표시 -->
         <div class="mypage-area" th:if="${loggedUser != null}">
           <div>
-            <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px"
-              style="border-radius: 50%; object-fit: cover" />
-            <!-- 로그인하지 않은 경우 로그인 페이지로 유도 -->
-            <div class="mypage-area" th:unless="${loggedUser != null}">
-              <a th:href="@{/user/login}">
-                <button>로그인</button>
-              </a>
-            </div>
-          </div>
-
-        </div>
-        <div class="user-info">
-          <span th:text="${loggedUser.nickname} + '(' + ${loggedUser.loginId} + ')'">[nickname(login_id)]</span>
-        </div>
-        <a th:href="@{/user/selectOne}">
-          <button>MY PAGE</button>
-        </a>
-      </div>
-    </div>
-
-    <!-- 새로 추가된 메시지 보내기 모달 창 (독립적이며 Google Maps API에 영향을 주지 않음) -->
-    <div id="messageModal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="messageModalClose">&times;</span>
-        <h2>SEND A MESSAGE TO HOST</h2><br>
-        <!-- 게시글 제목을 표시 -->
-        <h3 th:text="${share.title}" style="color:slategrey;">게시글 제목</h3>
-
-        <!-- fileList의 첫번째 사진을 표시 -->
-        <div class="host-first-image">
-          <img th:src="${fileList[0].fileUrl}" alt="첫번째 방 사진" width="500px" length="300px" />
-        </div>
-        <div>
-          <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px"
-            style="border-radius: 50%; object-fit: cover;">
-        </div>
-        <div>
-          <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">
-            [nickname(login_id)]
-          </span>
-        </div>
-
-        <br>호스트에게 메시지를 보내겠습니까?
-        <br><br>
-        <button id="yesMessageBtn">YES</button>
-        <button id="noMessageBtn">NO</button>
-
-      </div>
-      </header>
-
-      <!-- 호스트 소개 영역 (수정됨) -->
-      <section class="host-intro">
-        <h2>호스트 소개</h2>
-        <div class="share-info-right">
-          <a th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}"><button>호스트 리뷰 보기</button></a>
-          <div class="host-details">
-            <div class="host-info">
-              <div>
-                <img th:src="@{/images/fubao.webp}" alt="푸바오" width="150px" height="150px"
-                  style="border-radius: 50%; object-fit: cover;">
-              </div>
-              <div>
-                <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">
-                  [nickname(login_id)]
-                </span>
-              </div>
-            </div>
-          </div>
-      </section>
-
-      <!-- 공유하기, 찜하기, 편의시설 검색, 게스트 조회, 신고 버튼 영역 (버튼은 인라인 배치) -->
-      <section class="action-buttons">
-        <button id="shareButton">공유하기</button>
-        <button id="favoriteButton" th:text="${isFavorite} ? '찜 취소하기' : '찜하기'" data-share-id="[[${share.shareId}]]"
-          data-is-favorite="[[${isFavorite}]]">
-          찜하기
-        </button>
-        <button id="openFacilityModalBtn">편의시설 검색</button>
-        <!-- ★ 새로 추가된 게스트 조회 버튼 -->
-        <button id="confirmedGuest">게스트 조회</button>
-        <button id="reportButton">신고</button>
-      </section>
-
-      <!-- 공유 글의 세부 정보 출력 -->
-      <section class="share-info">
-        <div class="share-info-left">
-          <input type="hidden" th:value="${share.shareId}" id="shareId" />
-          <p>
-            작성일:
-            <span th:text="${#temporals.format(share.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
-          </p>
-          <p>상세 설명: <span th:text="${share.description}">설명</span></p>
-          <p>최대 인원: <span th:text="${share.maxGuests}">0</span></p>
-          <p>현재 인원: <span th:text="${share.currentGuests}">0</span></p>
-          <p>
-            지역: <span th:text="${share.regionName}">지역명</span>,
-            <span th:text="${share.cityName}">도시명</span>,
-            <span th:text="${share.townName}">하위시/군/구</span>
-          </p>
-          <p>
-            주소: <span th:text="${share.address}"></span>
-            <span th:text="${share.detailAddress}"></span>
-          </p>
-          <p>우편번호: <span th:text="${share.postalCode}">000-0000</span></p>
-          <p>
-            요금:
-            <span th:text="${#numbers.formatDecimal(share.price, 0, 0)}"></span>
-            JPY
-          </p>
-        </div>
-      </section>
-
-      <!-- 메인 지도 영역 (공유글 주소 기반) -->
-      <section class="map-area">
-        <h3>지도</h3>
-        <div id="map" style="width: 100%; height: 400px"></div>
-      </section>
-
-
-      <div id="shareModal" class="modal">
-        <div class="modal-content">
-          <span id="closeShareModalBtn" class="close">&times;</span>
-          <h3>공유하기</h3>
-          <div>
-            <h5 th:text="${share.title}" style="color: slategrey">
-              게시글 제목
-            </h5>
-          </div>
-          <!-- 공유 관련 내용 및 SNS 링크 등 추가 -->
-          <p>이 페이지의 URL을 복사하거나 SNS로 공유하세요.</p>
-          <!-- 카카오 공유 버튼 추가 -->
-          <button id="kakaoShareButton">카카오로 공유하기</button>
-        </div>
-      </div>
-
-      <!-- 모달 창: 편의시설 지도 및 검색 기능 -->
-      <div id="facilityModal" class="modal">
-        <div class="modal-content">
-          <span class="close" id="facilityModalClose">&times;</span>
-          <h3>편의시설 지도</h3>
-          <div id="facilitymap" style="width: 100%; height: 300px"></div>
-          <br />
-          <!-- ★ 검색 버튼들: 각 버튼에 고유 ID 부여 -->
-          <button id="searchConvenienceBtn">コンビニ</button>
-          <button id="searchSupermarketBtn">スーパー</button>
-          <button id="searchCafeBtn">カフェ</button>
-          <button id="searchRestaurantBtn">レストラン</button>
-          <button id="searchDrugstoreBtn">ドラックストア</button>
-          <button id="searchLaundromatBtn">コインランドリー</button><br />
-
-          <button id="searchStarbucksBtn">スターバックス</button>
-          <button id="searchDoutorBtn">ドトールコーヒー</button>
-          <button id="searchTullysBtn">タリーズコーヒー</button>
-          <button id="searchKomedaBtn">コメダ珈琲店</button>
-
-          <!-- 편의시설 목록 출력 영역 -->
-          <ul id="place-list"></ul>
-        </div>
-      </div>
-
-      <!-- 신고 모달 창 -->
-      <div id="reportModal" class="modal">
-        <div class="modal-content">
-          <span class="close" id="reportModalClose">&times;</span>
-          <h3>게시물 신고</h3>
-          <div>
-            <h3 th:text="${share.title}" style="color: slategrey">
-              게시글 제목
-            </h3>
-          </div>
-          <p>신고 사유를 선택하세요:</p>
-          <select id="reportReason">
-            <option value="spam">스팸 / 광고</option>
-            <option value="offensive">부적절한 내용</option>
-            <option value="fraud">사기 또는 허위 정보</option>
-            <option value="other">기타</option>
-          </select>
-          <br /><br />
-          <textarea id="reportDescription" placeholder="상세 신고 내용을 입력하세요..." rows="4" cols="50"></textarea>
-          <br /><br />
-          <button id="submitReport">신고 제출</button>
-        </div>
-      </div>
-
-      <!-- ★ 새로 추가된 게스트 조회 모달 -->
-      <div id="guestModal" class="modal">
-        <div class="modal-content">
-          <span class="close" id="guestModalClose">&times;</span>
-          <h2><b> 확정 게스트 정보 </b></h2>
-          <div>
-            <div>
-              <h5 th:text="${share.title}" style="color: slategrey">
-                게시글 제목
-              </h5>
-            </div>
-            <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px"
-              style="border-radius: 50%; object-fit: cover" />
+            <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px" style="border-radius: 50%; object-fit: cover" />
           </div>
           <div class="user-info">
             <span th:text="${loggedUser.nickname} + '(' + ${loggedUser.loginId} + ')'">[nickname(login_id)]</span>
           </div>
         </div>
-      </div>
-
-      <!-- 새로 추가된 메시지 보내기 모달 창 (독립적이며 Google Maps API에 영향을 주지 않음) -->
-      <div id="messageModal" class="modal">
-        <div class="modal-content">
-          <span class="close" id="messageModalClose">&times;</span>
-          <h2>SEND A MESSAGE TO HOST</h2>
-          <br />
-          <!-- 게시글 제목을 표시 -->
-          <h3 th:text="${share.title}" style="color: slategrey">게시글 제목</h3>
-
-          <!-- fileList의 첫번째 사진을 표시 -->
-          <div class="host-first-image">
-            <!-- <img th:src="${fileList[0].fileUrl}" alt="첫번째 방 사진" width=500px length=300px /> -->
-            <th:block th:if="${fileList != null and #lists.size(fileList) > 0}">
-              <img th:src="${fileList[0].fileUrl}" alt="첫번째 방 사진" width="500px" length="300px" />
-            </th:block>
-            <th:block th:if="${fileList == null or #lists.size(fileList) == 0}">
-              <p>No file available.</p>
-            </th:block>
-          </div>
-          <div>
-            <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px"
-              style="border-radius: 50%; object-fit: cover" />
-          </div>
-          <div>
-            <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">
-              [nickname(login_id)]
-            </span>
-          </div>
-
-          <br />호스트에게 메시지를 보내겠습니까? <br /><br />
-          <button id="yesMessageBtn">YES</button>
-          <button id="noMessageBtn">NO</button>
+        <div class="mypage-area" th:unless="${loggedUser != null}">
+          <a th:href="@{/user/login}">
+            <button>로그인</button>
+          </a>
         </div>
+        <a th:href="@{/mypage/mypageView}">
+          <button>MY PAGE</button>
+        </a>
       </div>
+    </div>
 
-      <!-- 호스트 소개 영역 (수정됨) -->
-      <section class="host-intro">
-        <h2>호스트 소개</h2>
-        <div class="share-info-right">
-          <div>
-            <a th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}"><button>호스트 리뷰 보기</button></a>
-          </div>
-          <div class="host-details">
-            <div class="host-info">
-              <div>
-                <img th:src="@{/images/fubao.webp}" alt="푸바오" width="150px" height="150px"
-                  style="border-radius: 50%; object-fit: cover" />
-              </div>
-              <div>
-                <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">
-                  [nickname(login_id)]
-                </span>
-              </div>
+    <!-- 메시지 보내기 모달 -->
+    <div id="messageModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="messageModalClose">&times;</span>
+        <h2>SEND A MESSAGE TO HOST</h2>
+        <br />
+        <h3 th:text="${share.title}" style="color: slategrey;">게시글 제목</h3>
+        <div class="host-first-image">
+          <th:block th:if="${fileList != null and #lists.size(fileList) > 0}">
+            <img th:src="${fileList[0].fileUrl}" alt="첫번째 방 사진" width="500px" length="300px" />
+          </th:block>
+          <th:block th:if="${fileList == null or #lists.size(fileList) == 0}">
+            <p>No file available.</p>
+          </th:block>
+        </div>
+        <div>
+          <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px" style="border-radius: 50%; object-fit: cover" />
+        </div>
+        <div>
+          <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">[nickname(login_id)]</span>
+        </div>
+        <br />호스트에게 메시지를 보내겠습니까?<br /><br />
+        <button id="yesMessageBtn">YES</button>
+        <button id="noMessageBtn">NO</button>
+      </div>
+    </div>
+
+    <!-- 호스트 소개 영역 (메시지 모달 외부) -->
+    <section class="host-intro">
+      <h2>호스트 소개</h2>
+      <div class="share-info-right">
+        <div>
+          <a th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}">
+            <button>호스트 리뷰 보기</button>
+          </a>
+        </div>
+        <div class="host-details">
+          <div class="host-info">
+            <div>
+              <img th:src="@{/images/fubao.webp}" alt="푸바오" width="150px" height="150px" style="border-radius: 50%; object-fit: cover" />
+            </div>
+            <div>
+              <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">[nickname(login_id)]</span>
             </div>
           </div>
-          <div class="share-info-right" th:if="${!isOwner}">
-            <button id="messageHostBtn">호스트에게 메세지 보내기</button>
-          </div>
         </div>
-      </section>
+        <div class="share-info-right" th:if="${!isOwner}">
+          <button id="messageHostBtn">호스트에게 메세지 보내기</button>
+        </div>
+      </div>
+    </section>
 
-      <!-- 게시물 관리 영역: 소유자인 경우에만 노출 -->
-      <section class="review-section" th:if="${isOwner}">
-        <h2>게시물 관리</h2>
-        <a th:href="@{/share/update(shareId=${share.shareId})}">
-          <button>수정</button>
-        </a>
-        <a th:href="@{/share/delete(shareId=${share.shareId})}">
-          <button>삭제</button>
-        </a>
-      </section>
+    <!-- 게시물 관리 영역 (소유자만 노출) -->
+    <section class="review-section" th:if="${isOwner}">
+      <h2>게시물 관리</h2>
+      <a th:href="@{/share/update(shareId=${share.shareId})}">
+        <button>수정</button>
+      </a>
+      <a th:href="@{/share/delete(shareId=${share.shareId})}">
+        <button>삭제</button>
+      </a>
+    </section>
   </main>
 
-  <!-- ********** 이미지 캐러셀 모달 추가 ********** -->
+  <!-- 이미지 캐러셀 모달 -->
   <div id="carouselModal" class="modal carousel-modal">
     <div class="carousel-content">
       <span class="close" id="carouselModalClose">&times;</span>
       <div class="swiper-container myCarousel">
         <div class="swiper-wrapper">
-          <!-- 초기 슬라이드는 빈 상태로 두고, carousel.js에서 동적으로 selectOne.html의 사진을 로드 -->
+          <!-- 초기 슬라이드는 carousel.js에서 동적으로 로드 -->
         </div>
-        <!-- 좌우 버튼 -->
         <div class="swiper-button-prev"></div>
         <div class="swiper-button-next"></div>
-        <!-- 페이지네이션 -->
         <div class="swiper-pagination"></div>
       </div>
     </div>
   </div>
-  </footer>
 </body>
-
 
 </html>
