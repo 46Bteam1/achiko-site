@@ -52,6 +52,7 @@ public class ReviewViewController {
 		model.addAttribute("languages", reviewedUser.getLanguages());
 		model.addAttribute("religion", reviewedUser.getReligion());
 		model.addAttribute("bio", reviewedUser.getBio());
+		model.addAttribute("reviewedUser", reviewedUser);
 
 		// 평균 점수 계산
 		DoubleSummaryStatistics cleanlinessStats = reviews.stream().mapToDouble(ReviewDTO::getCleanlinessRating)
