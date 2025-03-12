@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>프로필 등록</title>
+    <script src="../../static/js/jquery-3.7.1.min.js" th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script src="../../static/js/user/regist.js" th:src="@{/js/user/regist.js}"></script>
+</head>
+
+<body>
+    <div class="content">
+        <form th:action="@{/user/registProfile}" method="POST">
+            <div class="article">
+
+                <table>
+                    <span>ID:<span th:text="${loginUser.loginId}"></span> </span>
+                    <span>프로필 사진<span></span> </span>
+                    <span>사용자 정보<span></span>is_host, is_email_verified 외에 성별, 나이, 국적, 종교, 구사 언어 중 표시할 항목 선택하기</span>
+                </table>
+
+
+
+                <div class="btns">
+                    <input type="submit" id="submitBtn" value="프로필 등록">&nbsp;
+                    <input type="reset" id="resetBtn" value="초기화">
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

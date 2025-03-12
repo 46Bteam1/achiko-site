@@ -1,13 +1,9 @@
 @import "../reset.css";
 @import "../header.css";
-@import "../main.css";
 @import "../footer.css";
 
 * {
   box-sizing: border-box;
-  /* margin: 0;
-    padding: 0; */
-  font-family: "Airbnb Cereal App", sans-serif;
 }
 
 body {
@@ -52,14 +48,15 @@ header {
   from {
     transform: translateX(0%);
   }
+
   to {
     transform: translateX(-50%);
   }
 }
 
-/* 메인 결제 컨테이너 (기본: 모바일 디자인) */
+/* 메인 결제 컨테이너 */
 .subscribe-container {
-  max-width: 450px;
+  max-width: 500px;
   margin: 10px auto;
   background: #fff;
   padding: 20px;

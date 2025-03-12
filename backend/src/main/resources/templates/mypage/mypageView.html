@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achiko 마이페이지</title>
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script th:src="@{/js/mypage/profileRegist.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/mypage/mypage.css}" />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+
+  <body>
+    <div class="logo">
+      <a href="../index.html" th:href="@{/}">
+        <img
+          th:src="@{/images/logo-achiko.png}"
+          alt="Achiko Logo"
+          width="204px"
+          height="64px"
+        />
+      </a>
+    </div>
+
+    <span>[[${loginUser}]]</span><br />
+    <hr />
+    <span>[[${userDTO}]]</span>
+    <hr />
+    <span>[[${viewingList}]]</span>
+    <hr />
+    <span>[[${favoriteList}]]</span>
+    <hr />
+    <span>[[${receivedReviewList}]]</span>
+    <hr />
+    <span>[[${writtenReviewList}]]</span>
+    <hr />
+    <span>[[${reviewReplyList}]]</span>
+    <hr />
+    <br />
+
+    <a th:href="@{/mypage/mypageSample(userId=${loginUser.userId})}">
+      <button>미리보기</button>
+    </a>
+  </body>
+</html>

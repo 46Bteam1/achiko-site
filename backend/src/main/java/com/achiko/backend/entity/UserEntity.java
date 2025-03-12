@@ -1,6 +1,8 @@
 package com.achiko.backend.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CurrentTimestamp;
 
@@ -8,9 +10,11 @@ import com.achiko.backend.dto.UserDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -120,4 +124,16 @@ public class UserEntity {
 				.receiptId(userDTO.getReceiptId())
 				.build();
 	}
+	
+    public void updateFromDTO(UserDTO userDTO) {
+        if (userDTO.getNickname() != null) this.nickname = userDTO.getNickname();
+        if (userDTO.getIsHost() != null) this.isHost = userDTO.getIsHost();
+        if (userDTO.getLanguages() != null) this.languages = userDTO.getLanguages();
+        if (userDTO.getAge() != null) this.age = userDTO.getAge();
+        if (userDTO.getNationality() != null) this.nationality = userDTO.getNationality();
+        if (userDTO.getReligion() != null) this.religion = userDTO.getReligion();
+        if (userDTO.getGender() != null) this.gender = userDTO.getGender();
+        if (userDTO.getBio() != null) this.bio = userDTO.getBio();
+    }
+	
 }

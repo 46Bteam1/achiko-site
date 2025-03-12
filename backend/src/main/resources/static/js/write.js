@@ -68,7 +68,7 @@ function updateRegionSelect() {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
 
   if (selectedProvince) {
-    fetch(`/api/regions?provinceId=${selectedProvince}`)
+    fetch(`/api/location/regions?provinceId=${selectedProvince}`)
       .then((response) => response.json())
       .then((regions) => {
         regions.forEach((region) => {
@@ -93,7 +93,7 @@ function updateCitySelect() {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
 
   if (selectedRegion) {
-    fetch(`/api/cities?regionId=${selectedRegion}`)
+    fetch(`/api/location/cities?regionId=${selectedRegion}`)
       .then((response) => response.json())
       .then((cities) => {
         cities.forEach((city) => {
@@ -115,7 +115,7 @@ function updateTownSelect() {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
 
   if (selectedCity) {
-    fetch(`/api/towns?cityId=${selectedCity}`)
+    fetch(`/api/location/towns?cityId=${selectedCity}`)
       .then((response) => response.json())
       .then((towns) => {
         towns.forEach((town) => {
@@ -281,9 +281,16 @@ function renderPhotoPreview() {
 }
 
 // 기존 파일 업로드 핸들러 (여러 파일 추가)
+// 변경된 사항: 파일 선택 시 총 첨부 개수가 5개를 초과하면 바로 alert를 띄우고 추가 업로드를 중단함
 function handlePhotoUpload(event) {
   const newFiles = Array.from(event.target.files);
   const currentCount = selectedFiles.length;
+
+  if (currentCount + newFiles.length > 5) {
+    alert("사진은 5개까지 첨부 가능합니다.");
+    event.target.value = "";
+    return;
+  }
 
   newFiles.forEach((file, index) => {
     if (!file.type.match("image.*")) {
@@ -501,7 +508,7 @@ function validatePrice() {
 }
 
 // --------------------------------------------------------------------
-// 폼 제출 전 전체 유효성 검사: 제목, 본문, 주소
+// 폼 제출 전 전체 유효성 검사: 제목, 본문, 주소, 사진
 // --------------------------------------------------------------------
 function validateForm() {
   const titleInput = document.getElementById("title");
@@ -527,5 +534,15 @@ function validateForm() {
   }
 
   // 주소 검사
-  return validateAddress();
+  if (!validateAddress()) {
+    return false;
+  }
+
+  // 사진 첨부 유효성 검사 (이제 파일 선택 시 미리 체크하므로 여기서는 생략 가능)
+  if (selectedFiles.length < 1) {
+    alert("사진을 최소 1장 이상 첨부해주세요.");
+    return false;
+  }
+
+  return true;
 }
