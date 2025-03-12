@@ -75,8 +75,8 @@ public class ViewingController {
 
 	// shareId로 viewing 가능 여부 판별하기
 	@GetMapping("/check")
-	public boolean checkViewing(@RequestParam(name="shareId")Long shareId) {
-		boolean result = viewingService.checkViewing(shareId);
+	public boolean checkViewing(@RequestParam(name="viewingId")Long viewingId) {
+		boolean result = viewingService.checkViewing(viewingId);
 		
 		return result;
 	}
