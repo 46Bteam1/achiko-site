@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achiko 활동내역</title>
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script th:src="@{/js/mypage/profileRegist.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/mypage/mypage.css}" />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+
+  <body>
+    <div class="logo">
+      <a href="../index.html" th:href="@{/}">
+        <img
+          th:src="@{/images/logo-achiko.png}"
+          alt="Achiko Logo"
+          width="204px"
+          height="64px"
+        />
+      </a>
+    </div>
+
+    <!-- 나의 프로필 -->
+    <div class="profile-container">
+      <div class="myProfileHeader">
+        <h2>My Achiko</h2>
+        <p>
+          안녕하세요.
+          <strong>[[${userDTO.nickname}]] ([[${userDTO.loginId}]])</strong>님!
+        </p>
+      </div>
+      <hr />
+      <h3>내 프로필</h3>
+      <hr />
+      <hr />
+      <button class="btn btn-light" id="registImage">프로필사진 등록</button>
+      <div class="myProfileBody">
+        <div class="profileImage">
+          <img
+            th:if="${userDTO.profileImage != null}"
+            th:src="@{${userDTO.profileImage}}"
+            width="100"
+            alt="프로필사진"
+          />
+          <img
+            th:if="${userDTO.profileImage == null}"
+            th:src="@{/images/user_icon.png}"
+            width="100"
+            alt="프로필사진"
+          />
+        </div>
+        <table class="profileTable">
+          <tr>
+            <th>닉네임:</th>
+            <td>[[${userDTO.nickname}]]</td>
+          </tr>
+          <tr>
+            <th>이메일:</th>
+            <td>[[${loginUser.email}]]</td>
+          </tr>
+          <tr>
+            <th>계정 유형:</th>
+            <td>
+              <th:block>
+                <span th:if="${userDTO.isHost == 1}">호스트</span>
+                <span th:ir="${userDTO.isHost == 0}">게스트</span>
+              </th:block>
+            </td>
+          </tr>
+          <tr>
+            <th>소개글:</th>
+            <td>
+              <th:block>
+                <span th:if="${userDTO.bio == null}">
+                  등록된 소개글이 없습니다.
+                </span>
+                <span th:unless="${userDTO.bio == null}"
+                  >[[${userDTO.bio}]]
+                </span>
+              </th:block>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- 프로필 수정 버튼 -->
+      <div
+        class="btn-container"
+        data-bs-toggle="modal"
+        data-bs-target="#profileRegist"
+      >
+        <button class="btn btn-danger" id="openModal">프로필 입력/수정</button>
+
+        <br /><br />
+
+        <a th:href="@{/mypage/mypageSample(userId=${loginUser.userId})}">
+          <button class="btn btn-primary">Achiko 활동내역 보러가기</button>
+        </a>
+      </div>
+    </div>
+
+    <!-- 프로필 수정 모달 창 -->
+    <div
+      id="profileModal"
+      class="modal fade"
+      tabindex="-1"
+      aria-labelledby="profileModalLabel"
+      style="display: none"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>나의 프로필 등록/수정하기</h2>
+            <span class="close" id="closeModal">닫기 &times;</span>
+          </div>
+          <div class="modal-body">
+            <form
+              id="profileForm"
+              th:action="@{/mypage/profileUpdate}"
+              method="POST"
+            >
+              <input
+                type="hidden"
+                id="userId"
+                name="userId"
+                th:value="${userDTO.userId}"
+              />
+              <input
+                type="hidden"
+                id="loginId"
+                name="loginId"
+                th:value="${userDTO.loginId}"
+              />
+
+              <table>
+                <tr>
+                  <th>프로필 이미지:</th>
+                  <td>
+                    <br />
+                    <img
+                      id="profileImage"
+                      th:src="@{${userDTO.profileImage}}"
+                      width="150"
+                      alt="프로필 이미지"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>닉네임:</th>
+                  <td>
+                    <input
+                      type="text"
+                      name="nickname"
+                      id="nickname"
+                      th:value="${userDTO.nickname}"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>계정 유형:</th>
+                  <td>
+                    <input
+                      type="radio"
+                      name="isHost"
+                      id="guest"
+                      value="0"
+                      th:checked="${userDTO.isHost == 0}"
+                    />
+                    게스트
+                    <input
+                      type="radio"
+                      name="isHost"
+                      id="host"
+                      value="1"
+                      th:checked="${userDTO.isHost == 1}"
+                    />
+                    호스트
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>소개글:</th>
+                  <td>
+                    <textarea
+                      name="bio"
+                      id="bio"
+                      placeholder="내용을 입력하세요."
+                      th:text="${userDTO.bio}"
+                    ></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <th>구사 언어:</th>
+                  <td>
+                    <input
+                      type="checkbox"
+                      name="languages"
+                      value="한국어"
+                      th:checked="${#lists.contains(userDTO.languages, '한국어')}"
+                    />
+                    한국어
+
+                    <input
+                      type="checkbox"
+                      name="languages"
+                      value="영어"
+                      th:checked="${#lists.contains(userDTO.languages, '영어')}"
+                    />
+                    영어
+
+                    <input
+                      type="checkbox"
+                      name="languages"
+                      value="중국어"
+                      th:checked="${#lists.contains(userDTO.languages, '중국어')}"
+                    />
+                    중국어
+
+                    <input
+                      type="checkbox"
+                      name="languages"
+                      value="일본어"
+                      th:checked="${#lists.contains(userDTO.languages, '일본어')}"
+                    />
+                    일본어
+                  </td>
+                </tr>
+                <tr>
+                  <th>나이:</th>
+                  <td>
+                    <input
+                      type="number"
+                      name="age"
+                      id="age"
+                      th:value="${userDTO.age}"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>국적:</th>
+                  <td>
+                    <select name="nationality" id="nationality">
+                      <option
+                        value="한국"
+                        th:selected="${userDTO.nationality == '한국'}"
+                      >
+                        한국
+                      </option>
+                      <option
+                        value="미국"
+                        th:selected="${userDTO.nationality == '미국'}"
+                      >
+                        미국
+                      </option>
+                      <option
+                        value="영국"
+                        th:selected="${userDTO.nationality == '영국'}"
+                      >
+                        영국
+                      </option>
+                      <option
+                        value="중국"
+                        th:selected="${userDTO.nationality == '중국'}"
+                      >
+                        중국
+                      </option>
+                      <option
+                        value="일본"
+                        th:selected="${userDTO.nationality == '일본'}"
+                      >
+                        일본
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>종교:</th>
+                  <td>
+                    <input
+                      type="radio"
+                      name="religion"
+                      value="기독교"
+                      th:checked="${userDTO.religion == '기독교'}"
+                    />기독교
+                    <input
+                      type="radio"
+                      name="religion"
+                      value="천주교"
+                      th:checked="${userDTO.religion == '천주교'}"
+                    />천주교
+                    <input
+                      type="radio"
+                      name="religion"
+                      value="불교"
+                      th:checked="${userDTO.religion == '불교'}"
+                    />불교
+                    <input
+                      type="radio"
+                      name="religion"
+                      value="힌두교"
+                      th:checked="${userDTO.religion == '힌두교'}"
+                    />힌두교
+                    <input
+                      type="radio"
+                      name="religion"
+                      value="이슬람"
+                      th:checked="${userDTO.religion == '이슬람'}"
+                    />이슬람
+                    <input
+                      type="radio"
+                      name="religion"
+                      value="기타"
+                      th:checked="${userDTO.religion == '기타'}"
+                    />기타
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>성별:</th>
+                  <td>
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="0"
+                      th:checked="${userDTO.gender == 0}"
+                    />남성
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="1"
+                      th:checked="${userDTO.gender == 1}"
+                    />여성
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="2"
+                      th:checked="${userDTO.gender == 2}"
+                    />비밀
+                  </td>
+                </tr>
+              </table>
+
+              <div class="modal-footer">
+                <button type="submit" id="updateBtn" class="btn btn-secondary">
+                  수정 완료
+                </button>
+                <button type="reset" id="resetBtn" class="btn btn-light">
+                  초기화
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 버튼 모음 - 호스팅 종료, 호스트 되기 -->
+    <div class="btn-container">
+      <th:block th:if="${userDTO.isHost == 1}">
+        <span>호스팅을 종료하시겠습니까? </span>
+        <button id="accountTypeChangeBtn" class="btn btn-secondary">
+          게스트 전환 요청하기
+        </button>
+      </th:block>
+    </div>
+    <div class="btn-container">
+      <th:block th:if="${userDTO.isHost == 0}">
+        <span>Achiko의 호스트가 되어 더 많은 혜택을 누려보세요!</span>
+        <a th:href="@{/share/write}">
+          <button class="btn btn-secondary" id="bacomeHostBtn">
+            호스트 되기
+          </button>
+        </a>
+      </th:block>
+    </div>
+
+    <!-- 프로필 이미지 등록 모달 창 -->
+    <div
+      id="registImageModal"
+      class="modal fade"
+      tabindex="-1"
+      aria-labelledby="registImageModalLabel"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="registImageModalLabel">
+              프로필 사진 등록하기
+            </h4>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <table>
+              <tr>
+                <th>프로필 이미지:</th>
+                <td>
+                  <input
+                    type="file"
+                    id="profileImageInput"
+                    accept="image/*"
+                    name="profileImageInput"
+                  />
+                  <br />
+                  <img
+                    id="profilePreview"
+                    th:src="@{${userDTO.profileImage}}"
+                    width="100"
+                    alt="프로필 미리보기"
+                  />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              취소하기
+            </button>
+            <button type="submit" id="registImageBtn" class="btn btn-primary">
+              등록하기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

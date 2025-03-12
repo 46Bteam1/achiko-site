@@ -15,9 +15,8 @@ import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.ChatParticipantDTO;
 import com.achiko.backend.dto.ChatRoomDTO;
 import com.achiko.backend.dto.LoginUserDetails;
-import com.achiko.backend.dto.UserDTO;
+import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.service.ChatService;
-import com.achiko.backend.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -61,8 +60,18 @@ public class ChatController {
 	// 채팅방 삭제 메서드
 	@DeleteMapping("/deleteRoom")
 	@Operation(summary = "채팅방 삭제 메서드", description = "특정 채팅방을 삭제합니다.")
-	public String deleteRoom() {
-		return "";
+	public String deleteRoom(@RequestParam("chatRoomId") Long chatRoomId, @AuthenticationPrincipal LoginUserDetails loginUser) {
+		String message = chatService.deleteRoom(chatRoomId, loginUser);
+		return message;
+	}
+	
+	// 해당 채팅방이 소속된 share 정보 넘기기
+	@GetMapping("/shareInfo")
+	public ShareDTO shareInfo(@RequestParam("chatRoomId")Long chatRoomId) {
+		ShareDTO shareInfo = chatService.shareInfoByRoomId(chatRoomId);
+		
+		return shareInfo;
+		
 	}
 	
 }

@@ -83,3 +83,86 @@ public class TestRestController {
         return ResponseEntity.noContent().build();
     }
 }
+
+
+
+
+//@GetMapping("/{userId}")
+//public ResponseEntity<MypageResponseDTO> getMypage(@PathVariable Long userId) {
+//	MypageResponseDTO response = mypageService.getMypage(userId);
+//	return ResponseEntity.ok(response);
+//}
+
+//	// 찜한 매물 목록 전체 데이터 조회 (JSON)
+//	@GetMapping("/favorites")
+//	public ResponseEntity<List<FavoriteDTO>> getFavorites(@RequestParam("userId") Long userId
+//			//@AuthenticationPrincipal UserDetails user
+//			) {
+//		List<FavoriteDTO> favorites = favoriteService.getAllFavoritesById(userId);
+//		return ResponseEntity.ok(favorites);
+//	}
+//
+//	// 예약 일정 전체 데이터 조회 (JSON)
+//	@GetMapping("/viewings")
+//	public ResponseEntity<List<ViewingDTO>> getUserviewings(@RequestParam("userId") Long userId
+//			//@AuthenticationPrincipal UserDetails user
+//			) {
+//		List<ViewingDTO> viewings = viewingService.getAllViewingsById(userId);
+//		return ResponseEntity.ok(viewings);
+//	}
+
+ //*@PutMapping("/user")
+//	public ResponseEntity<Void> updateUserInfo(@RequestBody UserDTO userDTO) {
+//		userService.updateUser(userDTO);
+//		return ResponseEntity.noContent().build();
+//	}*/
+//
+
+//
+//	// 내가 남긴 리뷰 조회
+//	@GetMapping("/reviews/written")
+//	public ResponseEntity<List<ReviewDTO>> getUserReviews(@AuthenticationPrincipal UserDetails user) {
+//		List<ReviewDTO> reviews = reviewService.getUserReviews(user.getUsername());
+//		return ResponseEntity.ok(reviews);
+//	}
+//
+//	// 내가 받은 평가 조회
+//	@GetMapping("/reviews/received")
+//	public ResponseEntity<List<ReviewDto>> getReceivedReviews(@AuthenticationPrincipal UserDetails user) {
+//		List<ReviewDto> receivedReviews = reviewService.getReceivedReviews(user.getUsername());
+//		return ResponseEntity.ok(receivedReviews);
+//	}
+
+	/*
+	 * @Operation(summary = "마이페이지 조회", description = "유저 ID로 마이페이지 조회")
+	 * 
+	 * @ApiResponse(responseCode = "200", description = "조회 성공")
+	 * 
+	 * @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음")
+	 * 
+	 * @GetMapping("/{userId}") public ResponseEntity<MypageResponseDto> selectOne(
+	 * 
+	 * @RequestParam @Parameter(description = "User ID") int UserId
+	 * , @RequestParam(required=false, defaultValue = "guest")String userType) {
+	 * MypageDTO mypage = mypageService.getMypage(UserId); return new String(); }
+	 */
+
+/**
+ * 개인 정보 수정을 위해 아이디와 비밀번호 체크 
+ * @param userId
+ * @param userPwd
+ * @return
+ */
+/*	@PostMapping("/pwdCheck")
+public String pwdCheck(
+		@RequestParam(name = "userId") String userId,
+		@RequestParam(name = "userPwd") String userPwd
+		) {
+	
+	// DB에 가서 아이디와 비밀번호가 맞는지 확인 
+	UserDTO userDTO = mypageService.pwdCheck(userId, userPwd);
+	
+	return "redirect:/";
+}
+*/	
+

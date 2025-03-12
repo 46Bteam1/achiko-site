@@ -1,3 +1,4 @@
+
 package com.achiko.backend.entity;
 
 import java.math.BigDecimal;
@@ -35,7 +36,6 @@ public class ShareEntity {
     
     // host를 OneToOne 관계로 UserEntity와 연결
     @OneToOne(fetch = FetchType.LAZY)
-
     @JoinColumn(name = "host_id", referencedColumnName = "user_id", nullable = false)
     private UserEntity host;
 
@@ -43,15 +43,15 @@ public class ShareEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "province_id",referencedColumnName = "province_id", nullable = false)
     private ProvinceEntity province;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", referencedColumnName = "region_id", nullable = false)
     private RegionEntity region;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", referencedColumnName = "city_id", nullable = false)
     private CityEntity city;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "town_id", referencedColumnName = "town_id", nullable = false)
     private TownEntity town;
@@ -84,11 +84,10 @@ public class ShareEntity {
     private LocalDateTime createdAt;
 
     @Column(name = "status")
-    private String status;  // "open"/"closed" 등
-
+    private String status; // "open"/"closed" 등
 
     public static ShareEntity fromDTO(com.achiko.backend.dto.ShareDTO dto) {
-        //if (dto == null) return null;
+        // if (dto == null) return null;
         return ShareEntity.builder()
                 .shareId(dto.getShareId())
                 .host(UserEntity.builder().userId(dto.getHostId()).build())
@@ -110,15 +109,20 @@ public class ShareEntity {
     }
 }
 
-
 /*
- @NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
-@ToString
-@Builder
-
-@Entity
-@Table(name = "share")
+ * @NoArgsConstructor
+ * 
+ * @AllArgsConstructor
+ * 
+ * @Setter
+ * 
+ * @Getter
+ * 
+ * @ToString
+ * 
+ * @Builder
+ * 
+ * @Entity
+ * 
+ * @Table(name = "share")
  */

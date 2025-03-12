@@ -1,27 +1,44 @@
 $(document).ready(function () {
   let lastScrollTop = 0; // 마지막 스크롤 위치 저장
   let isStickyDisabled = false; // sticky가 해제되었는지 상태 확인
+  let mapVisible = false; // 지도 표시 여부 상태
   let map, geocoder;
   let markers = [];
 
   // 스크롤 이벤트: 일정 부분 이상 스크롤되면 sticky 추가
   $(window).on("scroll", function () {
     let scrollTop = $(window).scrollTop();
+    let windowHeight = $(window).height();
+    let documentHeight = $(document).height();
+    let footerHeight = $("footer").outerHeight();
 
-    if (scrollTop > 100 && !isStickyDisabled) {
-      $("header").addClass("sticky");
-    } else if (scrollTop <= 100) {
+    // footer가 화면에 일정 부분 보이면 버튼 숨기기
+    let footerVisibleThreshold =
+      documentHeight - footerHeight + footerHeight / 2;
+    if (scrollTop + windowHeight > footerVisibleThreshold) {
+      $("#mapButton").fadeOut(); // 부드럽게 숨기기
+    } else {
+      $("#mapButton").fadeIn(); // 다시 보이기
+    }
+
+    if (scrollTop > 150) {
+      $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
+      $("header").removeClass("sticky-reappear");
+    } else if (scrollTop <= 150 && lastScrollTop >= 150 && !mapVisible) {
       $("header").removeClass("sticky");
-      isStickyDisabled = false; // 스크롤이 최상단이면 다시 sticky 허용
+      $("header").addClass("sticky-reappear");
+      isStickyDisabled = false; // 스크롤이 최상단이면 다시 sticky 허용 = 큰 검색창 나옴
     }
 
     lastScrollTop = scrollTop; // 마지막 스크롤 위치 저장
   });
 
   // simple-query-form 클릭 시 sticky 해제
-  $(".simple-query-form-btn").on("click", function () { 
+  $(".simple-query-form-btn").on("click", function () {
     if ($("header").hasClass("sticky")) {
       $("header").removeClass("sticky");
+      $("header").addClass("sticky-reappear");
+      $("header").addClass("");
       isStickyDisabled = true; // 사용자가 의도적으로 sticky를 해제했음을 저장
     }
   });
@@ -33,6 +50,7 @@ $(document).ready(function () {
         $(event.target).closest(".simple-query-form, .query-form").length > 0;
       if (!isClickInsideQueryForm) {
         $("header").addClass("sticky");
+        $("header").removeClass("sticky-reappear");
         isStickyDisabled = false; // 다시 sticky 허용
       }
     }
@@ -44,17 +62,21 @@ $(document).ready(function () {
     searchShares();
   });
 
-  let mapVisible = false; // 지도 표시 여부 상태
-
   $("#mapButton").click(function () {
     if (!mapVisible) {
       $(".near-trip").hide(); // 기존 여행지 숨기기
       $("#mapContainer").show(); // 지도 컨테이너 표시
       $(this).text("목록 보기"); // 버튼 텍스트 변경
+      $("body").addClass("mapScrollHidden");
+      $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
+      $("header").removeClass("sticky-reappear");
       loadGoogleMap(); // 구글 맵 로드
     } else {
       $(".near-trip").show(); // 기존 여행지 다시 표시
       $("#mapContainer").hide(); // 지도 숨기기
+      $("body").removeClass("mapScrollHidden");
+      $("header").removeClass("sticky");
+      $("header").addClass("sticky-reappear");
       $(this).text("지도 표시하기"); // 버튼 텍스트 변경
     }
     mapVisible = !mapVisible; // 상태 변경
@@ -209,6 +231,7 @@ $(document).ready(function () {
             </div>
         </a>
       `;
+
       listingsContainer.appendChild(card);
     });
   }
@@ -255,7 +278,7 @@ $(document).ready(function () {
     e.preventDefault();
     const button = $(this);
     const shareId = button.data("id");
-  
+
     if (!button.hasClass("active")) {
       $.ajax({
         url: "/favorite/set",
