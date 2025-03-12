@@ -161,9 +161,13 @@ function getRoommates(chatRoomId) {
       let tag = ``;
 
       $.each(resp, function (index, item) {
+        let profileImage = item["profileImage"]
+          ? item["profileImage"]
+          : "/images/fubao.webp";
+
         tag += `
         <div style="display: flex; flex-direction: column; align-items: center;">
-          <img src="/images/fubao.webp" alt="푸바오" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
+          <img src="${profileImage}" alt="프로필 이미지" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
           <p class="guestNickname" style="text-align: center; margin-top: 5px;">${item["nickname"]}</p>
         </div>
         `;
@@ -181,8 +185,12 @@ function getHost(chatRoomId) {
     method: "GET",
     data: { chatRoomId: chatRoomId },
     success: function (resp) {
+      let profileImage = resp.profileImage
+        ? resp.profileImage
+        : "/images/fubao.webp";
+
       let tag = `
-        <img src="/images/fubao.webp" alt="푸바오" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
+        <img src="${profileImage}" alt="프로필 이미지" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
         <h4 class="hostNickname">HOST: ${resp.nickname}</h4>
       `;
 
