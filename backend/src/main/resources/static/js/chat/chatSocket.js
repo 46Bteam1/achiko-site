@@ -162,9 +162,9 @@ function getRoommates(chatRoomId) {
 
       $.each(resp, function (index, item) {
         tag += `
-        <div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
           <img src="/images/fubao.webp" alt="푸바오" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
-          <p class="guestNickname">${item["nickname"]}</p>
+          <p class="guestNickname" style="text-align: center; margin-top: 5px;">${item["nickname"]}</p>
         </div>
         `;
       });

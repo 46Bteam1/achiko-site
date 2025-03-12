@@ -20,101 +20,118 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
     <script th:src="@{/js/chat/chatSocket.js}"></script>
+    <!-- <script th:src="@{/js/chat/chatRoom.js}"></script> -->
     <script th:src="@{/js/chat/viewing.js}"></script>
 
-    <link rel="stylesheet" th:href="@{/css/chat/chatList.css}">
+    <link rel="stylesheet" th:href="@{/css/chat/chatList.css}" />
   </head>
   <body>
     <div id="logos">
       <div id="logo">
-        
-          <a th:href="@{/}">
-            <img th:src="@{/images/achiko-logo3.png}" alt="로고">
-          </a>
-        
+        <a th:href="@{/}">
+          <img th:src="@{/images/achiko-logo3.png}" alt="로고" />
+        </a>
       </div>
       <div>
         <h3>あちこちの夢が集まり、ひとつの物語が生まれる</h3>
       </div>
       <div>
-        <input type="button" id="toMyPageBtn" class="btn btn-outline-success" value="My Page" />
-        <input type="button" id="chatRoomsBtn" class="btn btn-outline-success" value="Chat Rooms" />
+        <input
+          type="button"
+          id="toMyPageBtn"
+          class="btn btn-outline-success"
+          value="My Page"
+        />
+        <input
+          type="button"
+          id="chatRoomsBtn"
+          class="btn btn-outline-success"
+          value="Chat Rooms"
+        />
       </div>
     </div>
 
-    <div id="users">
-      <h3>현재 확정 지은 이용자들</h3>
-      <div id="userBox">
-        <div id="hostBox"></div>
-        <div id="guestBox"></div>
-      </div>
-      
-    </div>
-    <div>
-      <div class="card text-center mb-3" style="width: 18rem;">
-        <div id="shareBox" class="card-body"> 
-        </div>
-      </div>
-      <!-- Button trigger modal -->
-    <button
-      type="button"
-      class="btn btn-primary"
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
-    >
-    viewing 관리
-  </button>
-      <div id="detailBoxs">
-        <div id="descriptionBox">
-          <input type="hidden" th:value="${chatroomId}" id="chatroomId" />
-          <input type="hidden" th:value="${userId}" id="userId" />
-          <input type="hidden" th:value="${nickname}" id="nickname" />
-          <input type="hidden" th:value="${role}" id="role" />
-          <input type="hidden" th:value="${shareId}" id="shareId" />
-          <div id="alertBox">
-            <table>
-              <tbody id="alertTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div id="chatBox">
-          <div id="chats"></div>
-
-          <div id="writeBox">
-            <input type="text" id="message" />
-            <input type="button" id="sendMessage" value="전송" />
-          </div>
-        </div>
+    <div id="chatRooms">
+      <div class="card" style="width: 18rem">
+        <div class="card-header">Chat Rooms</div>
+        <ul class="list-group list-group-flush" id="chatRooms"></ul>
       </div>
     </div>
 
-    
-
-    <!-- Modal -->
-    <div
-      class="modal fade"
-      id="exampleModal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">My Viewing</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+    <div id="chatLists">
+      <div id="chatComponents">
+        <div id="users">
+          <h3>현재 확정 지은 이용자들</h3>
+          <div id="userBox" style="display: flex; gap: 10px;">
+            <div id="hostBox"></div>
+            <div id="guestBox" style="display: flex; gap: 10px;"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card text-center mb-3" style="width: 18rem">
+            <div id="shareBox" class="card-body"></div>
           </div>
 
-          <!-- modal body -->
-          <div class="modal-body">
-            <div id="existingReviews"></div>
-            <th:block th:if="${role =='Guest'}">
+          <!-- Button trigger modal -->
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+          >
+            viewing 관리
+          </button>
+          <div id="detailBoxs">
+            <div id="descriptionBox">
+              <input type="hidden" th:value="${chatroomId}" id="chatroomId" />
+              <input type="hidden" th:value="${userId}" id="userId" />
+              <input type="hidden" th:value="${nickname}" id="nickname" />
+              <input type="hidden" th:value="${role}" id="role" />
+              <input type="hidden" th:value="${shareId}" id="shareId" />
+              <div id="alertBox">
+                <table>
+                  <tbody id="alertTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div id="chatBox">
+              <div id="chats"></div>
+
+              <div id="writeBox">
+                <input type="text" id="message" />
+                <input type="button" id="sendMessage" value="전송" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="exampleModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div
+            class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+          >
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">My Viewing</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+
+              <!-- modal body -->
+              <div class="modal-body">
+                <div id="existingReviews"></div>
+                <th:block th:if="${role =='Guest'}">
               <br>
               <hr>
               <div id="schedule">
@@ -123,8 +140,10 @@
                 <input type="button" value="정하기" id="scheduleBtn" />
               </div>
             </th:block>
+              </div>
+              <div class="modal-footer">ACHIKO</div>
+            </div>
           </div>
-          <div class="modal-footer">ACHIKO</div>
         </div>
       </div>
     </div>

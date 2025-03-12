@@ -93,6 +93,23 @@ public class ViewingService {
 		if(vEntity.getIsCompleted()) {
 			return "이미 확정된 viewing입니다.";
 		}else {
+			// share에서 currentGuests 추가
+			
+	        Long shareId = viewingRepository.findShareIdById(viewingId);
+	        
+	        Optional<ShareEntity> temp2 = shareRepository.findById(shareId);
+	        if(temp2.isEmpty()) return "존재하지 않는 share입니다";
+	        
+	        ShareEntity shareEntity = temp2.get();
+	        int maxGuests = shareEntity.getMaxGuests();
+	        int currentGuests = shareEntity.getCurrentGuests();
+	        
+	        // 이때 currentGuests == maxGuests이면 return "이미 꽉 찬 share입니다.";
+			if(currentGuests == maxGuests) return "이미 모집 인원이 다 찼습니다.";
+			
+			shareEntity.setCurrentGuests(currentGuests+1);
+			shareRepository.save(shareEntity);
+			
 			// viewing 확정으로 수정
 			vEntity.setIsCompleted(true);
 			
@@ -148,22 +165,23 @@ public class ViewingService {
 		return "해당 viewing에 관계없는 유저입니다.";
 	}
 
-	
+	// shareId로 viewing 가능 share인지 판별
+	public boolean checkViewing(Long shareId) {
+		Optional<ShareEntity> temp = shareRepository.findById(shareId);
+		if(temp.isEmpty()) return false;
+		
+		ShareEntity share = temp.get();
+		
+		int maxGuests = share.getMaxGuests();
+		int currentGuests = share.getCurrentGuests();
+		
+		if(maxGuests >= currentGuests) {
+			return false;
+		}else {
+			return true;
+		}
+		
+	}
 
 }
 
-//package com.achiko.backend.service;
-//
-//import java.util.List;
-//
-//import com.achiko.backend.controller.ViewingDTO;
-//
-//public class ViewingService {
-//
-//	// Viewing - 특정 유저의 전체 데이터 조회
-//	public List<ViewingDTO> getAllViewings(Long userId) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//}

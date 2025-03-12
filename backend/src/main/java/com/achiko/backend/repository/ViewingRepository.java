@@ -49,6 +49,13 @@ Long findGuestIdByViewingId(@Param("viewingId") Long viewingId);
             "WHERE v.viewing_id = :viewingId", 
     nativeQuery = true)
 Long findHostIdByViewingId(@Param("viewingId") Long viewingId);
+
+@Query(value = "SELECT s.share_id " +
+        "FROM viewing v " +
+        "JOIN share s ON v.share_id = s.share_id " +
+        "WHERE v.viewing_id = :viewingId", 
+nativeQuery = true)
+Long findShareIdById(@Param("viewingId")Long viewingId);
 	
 //	List<ViewingEntity> findByGuest_userId(Long userId);
 }
