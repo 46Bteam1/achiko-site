@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Similarity Results</title>
+    <link rel="stylesheet" th:href="@{/css/find.css}">
+</head>
+<body>
+	<header>
+    	<img src="/images/achiko-logo3.png" alt="Achiko Logo" class="logo">
+	</header>
+    <h1>게스트/호스트 추천</h1>
+    
+    <p><strong>나의 자기소개:</strong> <span th:text="${selectedBio}"></span></p>
+    
+    <h2>잘 맞을 거 같아요!</h2>
+	
+	<div class="user-grid">
+    	<div th:each="entry : ${similarityResults}" class="user-card">
+        	<img th:src="${userDetails[entry.key].profileImage}" 
+            	 alt="Profile Image" 
+            	 class="profile-img" />
+        	<h3 th:text="${entry.key}"></h3>
+        	<p><strong>추천 점수:</strong> <span th:text="${#numbers.formatDecimal(entry.value, 1, 2)} + '%'"></span></p>
+        	<p><strong>언어:</strong> <span th:text="${userDetails[entry.key].languages} ?: 'N/A'"></span></p>
+        	<p><strong>나이:</strong> <span th:text="${userDetails[entry.key].age} ?: 'N/A'"></span></p>
+        	<p><strong>국적:</strong> <span th:text="${userDetails[entry.key].nationality} ?: 'N/A'"></span></p>
+        	<p><strong>종교:</strong> <span th:text="${userDetails[entry.key].religion} ?: 'N/A'"></span></p>
+        	<p><strong>성별:</strong> 
+            	<span th:text="${userDetails[entry.key].gender == 0 ? 'Male' : 
+                           (userDetails[entry.key].gender == 1 ? 'Female' : 'Other')} ?: 'N/A'"></span>
+        	</p>
+    	</div>
+	</div>
+	
+    
+	<div class="back-buttons">
+    	<a th:href="@{/find/guest-to-host}" th:if="${selectedMode == 'guest-to-host'}">호스트 검색 창으로 돌아가기</a>
+		<a th:href="@{/find/host-to-guest}" th:if="${selectedMode == 'host-to-guest'}">게스트 검색 창으로 돌아가기</a>
+	</div>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+    		console.log("Hiding loading screen on result.html");
+    		document.getElementById("loading-screen").style.display = "none";
+		});
+	</script>
+	
+</body>
+</html>
