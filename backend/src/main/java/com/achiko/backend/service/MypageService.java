@@ -7,15 +7,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
-import org.springframework.lang.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.achiko.backend.dto.FavoriteDTO;
@@ -26,16 +29,21 @@ import com.achiko.backend.dto.ViewingDTO;
 import com.achiko.backend.entity.FavoriteEntity;
 import com.achiko.backend.entity.ReviewEntity;
 import com.achiko.backend.entity.ReviewReplyEntity;
+import com.achiko.backend.entity.RoommateEntity;
+import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.entity.ViewingEntity;
 import com.achiko.backend.repository.FavoriteRepository;
 import com.achiko.backend.repository.ReviewReplyRepository;
 import com.achiko.backend.repository.ReviewRepository;
+import com.achiko.backend.repository.RoommateRepository;
+import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.repository.ViewingRepository;
 import com.achiko.backend.util.WebPConverter;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,10 +53,12 @@ import lombok.extern.slf4j.Slf4j;
 public class MypageService {
 
 	private final UserRepository userRepository;
+	private final ShareRepository shareRepository;
 	private final ViewingRepository viewingRepository;
 	private final FavoriteRepository favoriteRepository;
 	private final ReviewRepository reviewRepository;
 	private final ReviewReplyRepository reviewReplyRepository;
+	private final RoommateRepository roommateRepository;
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -56,9 +66,9 @@ public class MypageService {
 	private String UPLOAD_DIR;
 
 	@PostConstruct
-    public void checkPath() {
-        System.out.println("=== uploadDir: [" + UPLOAD_DIR + "]");
-    }
+	public void checkPath() {
+		System.out.println("=== uploadDir: [" + UPLOAD_DIR + "]");
+	}
 
 	// 특정 사용자의 데이터 조회
 	public UserDTO getMypage(Long userId) {
@@ -129,8 +139,7 @@ public class MypageService {
 
 	// 프로필 추가정보 입력, 수정 with 프로필 이미지
 	@Transactional
-	public void updateUserProfile(Long userId, UserDTO userDTO)
-			throws IOException {
+	public void updateUserProfile(Long userId, UserDTO userDTO) throws IOException {
 
 		UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -166,9 +175,9 @@ public class MypageService {
 
 		Optional<UserEntity> temp = userRepository.findByUserId(userId);
 		UserEntity userEntity = temp.get();
-		
+
 		userEntity.setProfileImage(webpFile.getAbsolutePath());
-		
+
 		// 5. 변환된 WebP 파일의 경로 반환
 		return webpFile.getAbsolutePath();
 	}
@@ -182,34 +191,36 @@ public class MypageService {
 		}
 
 		// 파일 크기 확인 (2MB 이하)
-        if (file.getSize() > 2 * 1024 * 1024) {
-            throw new IllegalArgumentException("파일 크기는 2MB 이하만 가능합니다.");
-        }
+		if (file.getSize() > 2 * 1024 * 1024) {
+			throw new IllegalArgumentException("파일 크기는 2MB 이하만 가능합니다.");
+		}
 	}
 
-	// 회원 탈퇴 위해 아이디와 비밀번호 체크
-	public UserDTO pwdCheck(Long userId, String password) {
-		Optional<UserEntity> temp = userRepository.findById(userId);
-
-		if (temp.isPresent()) {
-			UserEntity entity = temp.get();
-			String encodedPwd = entity.getPassword();
-			boolean result = bCryptPasswordEncoder.matches(password, encodedPwd);
-			if (result) {
-				return UserDTO.toDTO(entity);
-			}
+	// 회원 탈퇴 요청 전 세션 유지 확인
+	@GetMapping("/checkSession")
+	public ResponseEntity<Map<String, Object>> checkSession(HttpSession session) {
+		Long userId = (Long) session.getAttribute("userId");
+		if (userId == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false));
 		}
-		return null;
+		return ResponseEntity.ok(Map.of("success", true, "userId", userId));
 	}
 
 	// 회원 탈퇴
 	@Transactional
-	public void deleteUser(Long userId) {
-		if (userRepository.existsById(userId)) {
-			userRepository.deleteById(userId);
-		} else {
-			throw new IllegalArgumentException("해당 ID의 데이터가 없습니다: " + userId);
+	public boolean deleteUser(Long userId, String password) {
+		Optional<UserEntity> temp = userRepository.findById(userId);
+
+		if (temp.isPresent()) {
+			UserEntity entity = temp.get();
+
+			// 비밀번호 검증
+			if (bCryptPasswordEncoder.matches(password, entity.getPassword())) {
+				userRepository.deleteById(userId);
+				return true;
+			}
 		}
+		return false; // 비밀번호 불일치 또는 사용자 없음
 	}
 
 	public void uploadProfileImage(Long userId, MultipartFile file) throws IOException {
@@ -218,21 +229,63 @@ public class MypageService {
 			return;
 		}
 		UserEntity userEntity = temp.get();
-		
+
 		String uuidFileName = UUID.randomUUID().toString() + ".webp";
 		Path targetPath = Paths.get(UPLOAD_DIR, uuidFileName);
 		File outputFile = targetPath.toFile();
-		
+
 		File tempFile = File.createTempFile("upload", ".tmp");
 		file.transferTo(tempFile);
 		WebPConverter.convertToWebP(tempFile, outputFile);
-		
+
 		String fileUrl = "/images/" + uuidFileName;
-		
+
 		userEntity.setProfileImage(fileUrl);
 		userRepository.save(userEntity);
-		
-		
+
 	}
 
+	public boolean updateUserAccountType(UserDTO userDTO) {
+		Optional<UserEntity> userOptional = userRepository.findById(userDTO.getUserId());
+		if (userOptional.isPresent()) {
+			UserEntity user = userOptional.get();
+			user.setIsHost(0);
+			userRepository.save(user);
+			return true;
+		}
+		return false;
+	}
+
+//	 public boolean switchToGuest(Long userId) {
+//	        // 사용자의 쉐어 정보를 조회
+//	        List<ShareEntity> shares = shareRepository.findByHost(userId);
+//	        
+//	        // 진행 중인 쉐어가 있는지 확인
+//	        boolean hasOngoingShare = shares.stream()
+//	            .anyMatch(share -> !(share.getStatus().equals("done") || share.getStatus().equals("closed")));
+//
+//	        if (hasOngoingShare) {
+//	            return false; // 아직 진행 중인 매칭 있음
+//	        }
+//
+//	        // is_host를 0(게스트)로 변경
+//	        userRepository.updateIsHost(userId, 0);
+//	        return true;
+//	    }
+//
+//	 public boolean switchToHost(Long userId) {
+//	        // 사용자의 roommate 기록 확인
+//	        List<RoommateEntity> roommates = roommateRepository.findByUserId(userId);
+//	        
+//	        for (Roommate roommate : roommates) {
+//	            Share share = shareRepository.findById(roommate.getShareId()).orElse(null);
+//	            if (share != null && "matching".equals(share.getStatus())) {
+//	                return false; // 진행 중인 매칭 있음
+//	            }
+//	        }
+//
+//	        // is_host를 1(호스트)로 변경
+//	        userRepository.updateIsHost(userId, 1);
+//	        return true;
+//	    }
 }

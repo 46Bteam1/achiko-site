@@ -1,14 +1,8 @@
-// 프로필 업데이트
 $(document).ready(function () {
-  // $("#updateBtn").on("click", updateBtn);
-  $("#confirmDeleteBtn").on("click", deleteUser);
+  // 프로필 업데이트
+  $("#updateBtn").on("click", updateBtn);
 
-  // 회원 탈퇴 기능 - 모달 닫을 때 입력된 비밀번호 초기화
-  $("#deleteUserModal").on("hidden.bs.modal", function () {
-    $("#passwordInput").val("");
-  });
-
-  // 프로필 등록/수정 관련
+  // 프로필 등록/수정 모달 동작
   $("#openModal").on("click", function () {
     $("#profileModal").modal("show");
   });
@@ -20,9 +14,31 @@ $(document).ready(function () {
   // 프로필 사진 미리보기
   $("#profileImageInput").change(previewProfileImage);
 
-  // 사진 등록 버튼 클릭 시 updateBtn 활성화
+  // 프로필 사진 등록 버튼 클릭 시 registImageModal
   $("#registImage").on("click", function () {
-    $("#updateBtn").prop("disabled", false); // 이미지 등록 후 수정 버튼 활성화
+    $("#registImageModal").modal("show");
+  });
+
+  // 모달창 내 등록하기 버튼 누르면 프로필 이미지 등록
+  $("#registImageBtn").on("click", handleImageUpload);
+
+  // 모달이 닫힐 때 페이지 새로고침 (리다이렉트)
+  $("#registImageModal").on("hidden.bs.modal", function () {
+    window.location.reload();
+  });
+
+  // 회원 탈퇴
+  $("#confirmDeleteBtn").on("click", withdraw);
+
+  // 회원 탈퇴 기능 - 모달 닫을 때 입력된 비밀번호 초기화
+  $("#deleteUserModal").on("hidden.bs.modal", function () {
+    $("#passwordInput").val("");
+  });
+
+  // 계정 타입 변경 기능
+
+  $("#accountTypeChangeBtn").on("click", function () {
+    alert("게스트 전환 요청이 접수되었습니다.");
   });
 });
 
@@ -59,10 +75,7 @@ function updateBtn() {
     },
     success: function (response) {
       alert("프로필 등록/수정이 완료되었습니다.");
-      window.location.href = "/mypage/mypageSample";
-    },
-    error: function () {
-      alert("서버와의 통신 오류가 발생했습니다.");
+      window.location.href = "/mypage/mypageView";
     },
   });
 }
@@ -78,19 +91,6 @@ function previewProfileImage() {
 
   if (fileInput) {
     reader.readAsDataURL(fileInput);
-  }
-}
-
-// 파일 선택 시, 조건부 블록을 표시
-function showBlock() {
-  const fileInput = document.getElementById("profileImageInput");
-  const profileImageBlock = document.getElementById("profileImageBlock");
-
-  // 파일이 선택되었을 경우
-  if (fileInput.files.length > 0) {
-    profileImageBlock.style.display = "block"; // 블록을 표시
-  } else {
-    profileImageBlock.style.display = "none"; // 파일이 없으면 숨김
   }
 }
 
@@ -163,11 +163,9 @@ function saveImageToServer(webpImage) {
     processData: false, // FormData는 자동으로 처리되므로 이 옵션을 false로 설정
     contentType: false, // 서버에 파일을 전송할 때 자동으로 콘텐츠 타입을 설정하지 않음
     success: function (response) {
+      alert("이미지 업로드 성공!");
       console.log(response);
-      // 사진 등록이 완료되면 updateBtn 활성화
-      $("#updateBtn").prop("disabled", false);
-      // 조건부 렌더링을 위한 th:block 종료
-      document.getElementById("profileImageBlock").style.display = "none";
+      $("#registImageModal").modal("hide");
     },
     error: function (error) {
       alert("이미지 업로드 실패!");
@@ -180,28 +178,47 @@ function saveImageToServer(webpImage) {
 function deleteUser() {
   const password = $("#passwordInput").val();
 
-  if (!password) {
-    alert("비밀번호를 입력해주세요.");
-    return;
-  }
-
   $.ajax({
-    type: "POST",
+    method: "DELETE",
     url: "/mypage/deleteUser",
-    data: {
+    contentType: "application/json",
+    data: JSON.stringify({
       password: password,
-    },
+    }),
     success: function (response) {
       if (response.success) {
         $("#deleteUserModal").modal("hide");
         alert("회원 탈퇴 접수가 완료되었습니다.");
-        window.location.href = "/logout";
+        window.location.href = "/index";
       } else {
-        alert("비밀번호가 올바르지 않습니다.");
+        alert(response.message || "비밀번호가 올바르지 않습니다.");
       }
     },
-    error: function () {
-      alert("서버 오류가 발생했습니다. 다시 시도해 주세요.");
+    error: function (xhr) {
+      if (xhr.status === 401) {
+        alert("로그인이 필요합니다. 다시 로그인해 주세요.");
+        window.location.href = "/user/login"; // 로그인 페이지로 리디렉트
+      } else {
+        alert("서버 오류가 발생했습니다. 다시 시도해 주세요.");
+      }
+    },
+  });
+}
+
+// 회원 탈퇴
+function withdraw() {
+  if (!confirm("정말로 회원을 탈퇴하시겠습니까?")) {
+    return;
+  }
+  $.ajax({
+    url: "/user/deleteUser",
+    type: "DELETE",
+    success: function (response) {
+      alert(response); // 서버에서 받은 메시지 출력
+      window.location.href = "/"; // 메인페이지로 이동
+    },
+    error: function (xhr) {
+      alert("탈퇴 실패: " + xhr.responseText); // 서버에서 보낸 오류 메시지 출력
     },
   });
 }
