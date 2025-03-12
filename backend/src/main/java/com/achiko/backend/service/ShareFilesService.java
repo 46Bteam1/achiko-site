@@ -97,7 +97,10 @@ public class ShareFilesService {
             f.setShare(share);
             f.setSessionId(null);
         }
+        // 변경된 엔티티들을 명시적으로 저장하여 DB에 업데이트
+        shareFilesRepository.saveAll(tempFiles);
     }
+
 
     /**
      * 3) 특정 shareId의 파일 목록 조회

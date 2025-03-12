@@ -1,0 +1,395 @@
+@import "../reset.css";
+@import "../main.css";
+@import "../footer.css";
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    height: 200vh;
+    font-family: 'Airbnb Cereal App', sans-serif;
+}
+
+
+header {
+    position: static;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 150px;
+    z-index: 100;
+    border-bottom: 1px solid #dddddd;
+}
+
+/* header animation */
+header.sticky {
+    background: white;
+    color: black;
+}
+
+header.sticky .sticky-pink {
+    fill: rgb(255, 56, 92);
+}
+
+header.sticky .sticky-black {
+    color: black;
+    fill: black;
+}
+
+header.sticky .header-form {
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    animation-name: slideUp;
+}
+
+@keyframes slideDown {
+    from {
+        transform: scale(0.3, 0.75) translateY(-80px);
+    }
+
+    to {
+        transform: scale(1, 1) translateY(0px);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: scale(1, 1) translateY(0px);
+        opacity: 0.5;
+    }
+
+    to {
+        transform: scale(0.3, 0.75) translateY(-80px);
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes showEffect {
+    from {
+        visibility: hidden;
+    }
+
+    to {
+        visibility: visible;
+    }
+}
+
+/* -------------- */
+
+
+
+.header-col {
+    flex: 1 1 33%;
+}
+
+.header-col .airbnbIcon {
+    fill: white;
+}
+
+.header-col ul {
+    display: flex;
+    justify-content: center;
+}
+
+.header-col ul li {
+    list-style: none;
+    color: black;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 15px 20px;
+}
+
+.header-col ul li:hover {
+    opacity: 0.5;
+}
+
+.header-col ul li:first-child span {
+    padding: 10px 0;
+    border-bottom: 1px solid white;
+}
+
+.header-col ul li:hover {
+    cursor: pointer;
+}
+
+.header-col ul li:hover span,
+.header-col ul li:hover a {
+    padding: 10px 0;
+    border-bottom: 1px solid white;
+}
+
+.header-nav {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color: grey;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.header-nav-left {
+    flex-grow: 1;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.header-nav-left a {
+    margin: 0 15px;
+}
+
+.header-nav-left button {
+    display: flex;
+    background: none;
+    border: none;
+    fill: grey;
+}
+
+.header-nav-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 77px;
+    height: 42px;
+}
+
+.header-nav-right button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background: white;
+    border-radius: 20px;
+    padding: 5px 5px 5px 12px;
+
+    border: 1px solid rgb(221, 221, 221);
+}
+
+.icon-list {
+    margin-left: 3px;
+}
+
+.icon-user-circle {
+    fill: gray;
+    width: 28.69px;
+    height: 28.69px;
+}
+
+.mb-1 {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #dddddd;
+    padding-bottom: 20px;
+}
+
+.mb-2 {
+    padding: 10px;
+    font-size: large;
+    font-weight: 500;
+}
+
+.link-container {
+    text-align: center;
+    font-size: 15px;
+    color: #666;
+}
+
+.link-container a {
+    text-decoration: none;
+    color: #666;
+    margin: 0 8px;
+}
+
+.link-container a:hover {
+    color: #333;
+}
+
+.link-container span {
+    color: #bbb;
+}
+
+.loginBtn {
+    margin-bottom: 5px;
+}
+
+body {
+    background-color: #f7f7f7;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #DDDDDD;
+}
+
+.findId-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #DDDDDD;
+}
+
+.findPassword-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #DDDDDD;
+}
+
+.result-box {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.findResult-btn-group {
+    text-align: center;
+}
+
+.btn-success {
+    margin-bottom: 5px;
+}
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #ccc; /* hr 스타일 */
+    margin: 0 10px;
+}
+
+.divider span {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+}
+
+/* 공통 로그인 버튼 스타일 */
+.login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 전체 컨텐츠는 가운데 정렬 */
+    width: 100%;
+    height: 52px; /* 버튼 높이 통일 */
+    border-radius: 8px; /* 둥근 모서리 */
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 0 16px; /* 내부 여백 추가 */
+    margin-bottom: 10px;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+    position: relative;
+}
+
+/* 컨텐츠 정렬을 위한 래퍼 */
+.login-button .content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+/* 로고 스타일 (왼쪽 정렬) */
+.login-button img {
+    width: 24px; /* 로고 크기 통일 */
+    height: 24px;
+    position: absolute;
+    left: 16px; /* 버튼 내부 왼쪽 여백 */
+}
+
+/* 텍스트 스타일 (가운데 정렬) */
+.login-button span {
+    flex-grow: 1; /* 텍스트가 가운데 오도록 설정 */
+    text-align: center;
+}
+
+/* Google 로그인 버튼 */
+.google {
+    background-color: white;
+    border: 1px solid #d9d9d9;
+    color: #757575;
+    font-family: "Roboto", sans-serif;
+}
+.google img {
+	margin-left: 5px;
+}
+
+.google:hover {
+    background-color: #f0f0f0;
+}
+
+/* Kakao 로그인 버튼 */
+.kakao {
+    background-color: #fee500;
+    border: none;
+    color: #3c1e1e;
+    font-family: "Malgun Gothic", sans-serif;
+}
+.kakao img {
+	width: 35px;
+	height: 35px;
+}
+.kakao:hover {
+    background-color: #f7d900;
+}
+
+/* Naver 로그인 버튼 */
+.naver {
+    background-color: #03c75a;
+    border: none;
+    color: white;
+    font-family: "Malgun Gothic", sans-serif;
+}
+
+.naver img {
+	width: 35px;
+	height: 35px;
+}
+.naver:hover {
+    background-color: #029e4f;
+}
+
+/* 클릭 시 살짝 눌리는 효과 */
+.login-button:active {
+    transform: scale(0.98);
+}
+
+.error-message {
+			display:flex;
+            background-color: #f8d7da;
+            color: red;
+            font-size: 0.8em;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
