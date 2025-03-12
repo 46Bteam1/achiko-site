@@ -1,92 +1,73 @@
 <!DOCTYPE html>
-<html
-  lang="ko"
-  xmlns:th="http://thymeleaf.org"
-  xmlns:sec="http://thymeleaf.org/extras/spring-security"
->
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Achiko</title>
-    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
+<html lang="ko" xmlns:th="http://thymeleaf.org" xmlns:sec="http://thymeleaf.org/extras/spring-security">
 
-    <!-- CSS -->
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
-      crossorigin="anonymous"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Achiko</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
 
-    <!-- JavaScript -->
-    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
-    <script th:src="@{/js/index.js}" defer></script>
+  <!-- CSS -->
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" crossorigin="anonymous" />
 
-    <!-- google map -->
-    <script
-      async
-      defer
-      th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"
-    ></script>
+  <!-- JavaScript -->
+  <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+  <script th:src="@{/js/index.js}" defer></script>
 
-    <!-- <script th:inline="javascript">
+  <!-- google map -->
+  <script async defer
+    th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"></script>
+
+  <!-- <script th:inline="javascript">
       window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ "";
     </script> -->
-  </head>
+</head>
 
-  <body>
-    <!-- 헤더 header -->
-    <header th:replace="~{fragments/headerTest :: header}"></header>
+<body>
+  <!-- 헤더 header -->
+  <header th:replace="~{fragments/headerTest :: header}"></header>
 
-    <!-- 메인 컨텐츠 main -->
-    <main>
-      <article class="near-trip">
-        <section id="listings-container" class="listings-grid">
-          <div th:each="listing : ${shareList}" class="listing-card">
-            <a
-              th:href="@{/share/selectOne(shareId=${listing.shareId})}"
-              class="listing-link"
-            >
-              <button class="favorite-btn">
-                <i class="far fa-heart"></i>
-              </button>
-              <th:block
-                th:if="${listing.fileList != null and listing.fileList.size() > 0}"
-              >
-                <img th:src="${listing.fileList[0].fileUrl}" alt="이미지" />
-              </th:block>
-              <th:block
-                th:unless="${listing.fileList != null and listing.fileList.size() > 0}"
-              >
-                <p>이미지가 없습니다.</p>
-              </th:block>
 
-              <div class="listing-info">
-                <h3 th:text="${listing.title}"></h3>
-                <p
-                  th:text="${listing.regionName + ' ' + listing.cityName + ' ' + listing.townName}"
-                ></p>
-                <p>
-                  ₩<span
-                    th:text="${#numbers.formatInteger(listing.price, 3, 'COMMA')}"
-                  ></span
-                  >/박
-                </p>
-                <p th:text="'최대 인원: ' + ${listing.maxGuests} + '명'"></p>
-              </div>
-            </a>
-          </div>
-        </section>
-      </article>
+  <!-- 메인 컨텐츠 main -->
+  <main>
+    <article class="near-trip">
+      <section id="listings-container" class="listings-grid">
+        <div th:each="listing : ${shareList}" class="listing-card">
+          <a th:href="@{/share/selectOne(shareId=${listing.shareId})}" class="listing-link">
+            <button class="favorite-btn" th:attr="data-id=${listing.shareId}"
+              th:classappend="${listing.isFavorite} ? ' active' : ''">
+              <i th:class="${listing.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"></i>
+            </button>
+            <th:block th:if="${listing.fileList != null and listing.fileList.size() > 0}">
+              <img th:src="${listing.fileList[0].fileUrl}" alt="이미지" />
+            </th:block>
+            <th:block th:unless="${listing.fileList != null and listing.fileList.size() > 0}">
+              <p>이미지가 없습니다.</p>
+            </th:block>
 
-      <!-- google map (구글 맵) -->
-      <article id="mapContainer" style="display: none">
-        <div id="googleMap"></div>
-      </article>
-      <button id="mapButton">지도 표시하기</button>
-    </main>
+            <div class="listing-info">
+              <h3 th:text="${listing.title}"></h3>
+              <p th:text="${listing.regionName + ' ' + listing.cityName + ' ' + listing.townName}"></p>
+              <p>
+                ₩<span th:text="${#numbers.formatInteger(listing.price, 3, 'COMMA')}"></span>/박
+              </p>
+              <p th:text="'최대 인원: ' + ${listing.maxGuests} + '명'"></p>
+            </div>
+          </a>
+        </div>
+      </section>
+    </article>
 
-    <!-- 푸터 -->
-    <footer th:replace="~{fragments/footerTest :: footer}"></footer>
-  </body>
+    <!-- google map (구글 맵) -->
+    <article id="mapContainer" style="display: none">
+      <div id="googleMap"></div>
+    </article>
+    <button id="mapButton">지도 표시하기</button>
+  </main>
+
+  <!-- 푸터 -->
+  <footer th:replace="~{fragments/footerTest :: footer}"></footer>
+</body>
+
 </html>

@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,10 +33,10 @@ public class ShareEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "share_id")
     private Long shareId;
-
-    // host를 ManyToOne 관계로 UserEntity와 연결
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "host_id", nullable = false)
+    
+    // host를 OneToOne 관계로 UserEntity와 연결
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "host_id", referencedColumnName = "user_id", nullable = false)
     private UserEntity host;
 
     // region, city, town을 ManyToOne 관계로 각각 연결

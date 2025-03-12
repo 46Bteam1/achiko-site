@@ -105,6 +105,14 @@ main {
   color: red;
 }
 
+.favorite-btn.active {
+  background: rgba(255, 0, 0, 0.2); /* 클릭 시 배경에 붉은 기운 추가 */
+}
+
+.favorite-btn.active i {
+  color: red; /* 하트 아이콘을 빨간색으로 변경 */
+}
+
 /* ------------- */
 .background-text-wrap {
   width: 600px;

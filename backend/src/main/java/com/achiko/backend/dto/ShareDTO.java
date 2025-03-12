@@ -43,7 +43,9 @@ public class ShareDTO {
     
     private List<ShareFilesDTO> fileList;
 
-
+    private Boolean isFavorite;
+    private Long favoriteCount;
+    
     public static ShareDTO fromEntity(ShareEntity entity) {
         //if (entity == null) return null;
         return ShareDTO.builder()
@@ -67,6 +69,8 @@ public class ShareDTO {
                 .regionName(entity.getRegion() != null ? entity.getRegion().getNameKanji() : null)
                 .cityName(entity.getCity() != null ? entity.getCity().getNameKanji() : null)
                 .townName(entity.getTown() != null ? entity.getTown().getNameKanji() : null)
+                .isFavorite(false)
+                .favoriteCount(0L)
                 .build();
     }
 }
