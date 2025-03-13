@@ -166,7 +166,10 @@ public class ViewingService {
 	}
 
 	// shareId로 viewing 가능 share인지 판별
-	public boolean checkViewing(Long shareId) {
+	public boolean checkViewing(Long viewingId) {
+		Optional<ViewingEntity> vTemp = viewingRepository.findById(viewingId);
+		if(vTemp.isEmpty()) return false;
+		Long shareId = viewingRepository.findShareIdById(viewingId);
 		Optional<ShareEntity> temp = shareRepository.findById(shareId);
 		if(temp.isEmpty()) return false;
 		
@@ -175,10 +178,10 @@ public class ViewingService {
 		int maxGuests = share.getMaxGuests();
 		int currentGuests = share.getCurrentGuests();
 		
-		if(maxGuests >= currentGuests) {
-			return false;
-		}else {
+		if(maxGuests > currentGuests) {
 			return true;
+		}else {
+			return false;
 		}
 		
 	}

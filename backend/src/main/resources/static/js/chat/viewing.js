@@ -101,11 +101,6 @@ function viewingTable(resp) {
         ? item["guestNickname"]
         : item["hostNickname"];
 
-      let shareId = item["shareId"];
-      $.ajax({
-        url,
-      });
-
       let scheduledDate = item["scheduledDate"] || "날짜 없음"; //  기본값 설정
       let isCompleted = item["isCompleted"]; //  완료 여부 확인
       let disabledAttr = isCompleted ? "disabled" : ""; //  비활성화 속성 설정
@@ -253,15 +248,27 @@ function confirmViewing() {
     )
   ) {
     $.ajax({
-      url: "/viewing/confirm",
-      method: "PATCH",
+      url: "/viewing/check",
+      method: "GET",
       data: { viewingId: viewingId },
       success: function (resp) {
-        alert(resp);
-        // data-seq 값이 같은 모든 input 버튼 비활성화 처리
-        $('input[data-seq="' + viewingId + '"]')
-          .prop("disabled", true)
-          .addClass("disabled");
+        console.log(resp);
+        if (resp) {
+          $.ajax({
+            url: "/viewing/confirm",
+            method: "PATCH",
+            data: { viewingId: viewingId },
+            success: function (resp) {
+              alert(resp);
+              // data-seq 값이 같은 모든 input 버튼 비활성화 처리
+              $('input[data-seq="' + viewingId + '"]')
+                .prop("disabled", true)
+                .addClass("disabled");
+            },
+          });
+        } else {
+          alert("이미 해당 share의 인원이 다 찼습니다.");
+        }
       },
     });
   } else {

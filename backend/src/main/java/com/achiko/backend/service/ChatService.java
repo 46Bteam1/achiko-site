@@ -23,6 +23,7 @@ import com.achiko.backend.repository.ChatRoomRepository;
 import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -133,6 +134,7 @@ public class ChatService {
 	}
 
 	// 채팅방 만들기
+	@Transactional
 	public Long createRoom(ChatRoomDTO chatRoomDTO, Long shareId, Long userId) {
 		// shareId로 share 찾기
 		Optional<ShareEntity> temp = shareRepository.findById(shareId);
@@ -142,6 +144,7 @@ public class ChatService {
 		// 기존 채팅방이 있으면 기존 아이디, 없으면 새로운 아이디
 		Long hostId = shareRepository.findHostIdByShareId(shareId);
 		UserEntity host = userRepository.findById(hostId).get();
+		
 		UserEntity guest = userRepository.findById(userId).get();
 		Optional<ChatParticipantEntity> temp2 = participantRepository.findByHost_UserIdAndGuest_UserId(hostId, userId);
 		

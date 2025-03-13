@@ -40,6 +40,8 @@ $(document).ready(function () {
   $("#accountTypeChangeBtn").on("click", function () {
     alert("게스트 전환 요청이 접수되었습니다.");
   });
+
+  initChatRooms();
 });
 
 // let newProfileImage = $("#profileImageInput")[0].files[0]; // 수정
@@ -219,6 +221,80 @@ function withdraw() {
     },
     error: function (xhr) {
       alert("탈퇴 실패: " + xhr.responseText); // 서버에서 보낸 오류 메시지 출력
+    },
+  });
+}
+
+function initChatRooms() {
+  console.log("!!!!!!initChatrooms");
+
+  $.ajax({
+    url: "/chat/selectRooms",
+    method: "GET",
+    success: getChatRooms,
+  });
+}
+
+function getChatRooms(resp) {
+  const nickname = $("#userNickname").val();
+
+  let tag = `<table>`;
+
+  $.each(resp, function (index, item) {
+    let nicknameCheck = item["hostNickname"] === nickname;
+    let displayNickname = nicknameCheck
+      ? item["guestNickname"]
+      : item["hostNickname"];
+    tag += `
+        <tr>
+            <td>${displayNickname}</td>
+            <td class="btns">
+                <input type="button" value="입장" 
+                class="enterBtn"
+                data-seq="${item["chatroomId"]}">
+                <input type="button" value="삭제"
+                class="deleteBtn"
+                data-seq="${item["chatroomId"]}">
+            </td>
+        </tr>
+    `;
+  });
+  tag += `</table>`;
+
+  $("#chatroomTable").html(tag);
+
+  $(".deleteBtn").on("click", deleteRoom);
+  $(".enterBtn").on("click", enterRoom);
+}
+
+/* 채팅방 삭제 함수 */
+function deleteRoom() {
+  let chatroomId = $(this).attr("data-seq");
+
+  let answer = confirm("삭제하시겠습니까?");
+
+  if (!answer) return;
+
+  $.ajax({
+    url: `/chat/deleteRoom?chatRoomId=${chatroomId}`,
+    method: "DELETE",
+    success: function (resp) {
+      alert(resp);
+      initChatRooms();
+    },
+  });
+}
+
+/* 채팅방 입장 함수 */
+function enterRoom() {
+  let chatroomId = $(this).attr("data-seq");
+  console.log(chatroomId);
+
+  $.ajax({
+    url: "/chatList",
+    data: { chatroomId: chatroomId },
+    success: function (response) {
+      window.location.href = "/chatList?chatroomId=" + chatroomId;
     },
   });
 }
