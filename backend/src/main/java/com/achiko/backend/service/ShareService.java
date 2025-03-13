@@ -81,7 +81,7 @@ public class ShareService {
         if (entity.getCreatedAt() == null) {
             entity.setCreatedAt(LocalDateTime.now());
         }
-        ShareEntity saved = shareRepository.save(entity);
+        ShareEntity saved = shareRepository.saveAndFlush(entity);
         return convertToDTO(saved);
     }
   
