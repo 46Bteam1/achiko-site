@@ -1,7 +1,5 @@
 package com.achiko.backend.controller;
 
-import java.util.Optional;
-
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -9,9 +7,7 @@ import org.springframework.stereotype.Controller;
 
 import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.LoginUserDetails;
-import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.service.ChatService;
-import com.achiko.backend.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

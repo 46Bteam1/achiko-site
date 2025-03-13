@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.ChatParticipantDTO;
 import com.achiko.backend.dto.ChatRoomDTO;
+import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.entity.ChatMessageEntity;
 import com.achiko.backend.entity.ChatParticipantEntity;
 import com.achiko.backend.entity.ChatRoomEntity;
@@ -22,6 +23,7 @@ import com.achiko.backend.repository.ChatRoomRepository;
 import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -111,7 +113,6 @@ public class ChatService {
      		
      	// 특정 채팅방을 구독 중인 사용자들에게 메시지 전달
             String destination = "/topic/chatroom/" + chatMessage.getChatroomId();
-            log.info("왜왜왜:{}", chatMessage.toString());
             
             messagingTemplate.convertAndSend(destination, chatMessage);
 	}
@@ -133,6 +134,7 @@ public class ChatService {
 	}
 
 	// 채팅방 만들기
+	@Transactional
 	public Long createRoom(ChatRoomDTO chatRoomDTO, Long shareId, Long userId) {
 		// shareId로 share 찾기
 		Optional<ShareEntity> temp = shareRepository.findById(shareId);
@@ -142,6 +144,7 @@ public class ChatService {
 		// 기존 채팅방이 있으면 기존 아이디, 없으면 새로운 아이디
 		Long hostId = shareRepository.findHostIdByShareId(shareId);
 		UserEntity host = userRepository.findById(hostId).get();
+		
 		UserEntity guest = userRepository.findById(userId).get();
 		Optional<ChatParticipantEntity> temp2 = participantRepository.findByHost_UserIdAndGuest_UserId(hostId, userId);
 		
@@ -171,5 +174,35 @@ public class ChatService {
 		if(temp1.isEmpty()) return null;
 		
 		return temp1.get().getShare().getShareId();
+	}
+
+	public String deleteRoom(Long chatRoomId, LoginUserDetails loginUser) {
+		// 로그인한 유저가 관계자인지 판별하고 삭제
+		
+		Long userId = loginUser.getUserId();
+		
+		Long hostId = participantRepository.findHostIdByChatRoomId(chatRoomId);
+		Long guestId = participantRepository.findGuestIdByChatRoomId(chatRoomId);
+		
+		if(userId.equals(hostId) || userId.equals(guestId)) {
+			roomRepository.deleteById(chatRoomId);
+			
+			return "채팅방을 삭제했습니다.";
+		}
+		
+		return "해당 채팅방의 참여자만 삭제 가능합니다.";
+	}
+
+	public ShareDTO shareInfoByRoomId(Long chatroomId) {
+		Optional<ChatRoomEntity> temp1 = roomRepository.findById(chatroomId);
+		if(temp1.isEmpty()) return null;
+		
+		Long shareId = roomRepository.findShareIdByChatroomId(chatroomId);
+		Optional<ShareEntity> sEntity = shareRepository.findById(shareId);
+		if(sEntity.isEmpty()) return null;
+		
+		ShareDTO share = ShareDTO.fromEntity(sEntity.get());
+		
+		return share;
 	}
 }

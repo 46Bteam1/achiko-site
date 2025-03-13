@@ -51,14 +51,14 @@ function deleteRoom() {
 
   if (!answer) return;
 
-  // TODO: 채팅방 삭제 구현하기
-
-  // $.ajax({
-  //   url: "/chat/deleteRoom",
-  //   method: "DELETE",
-  //   data: { chatroomId: chatroomId },
-  //   success: initChatRooms,
-  // });
+  $.ajax({
+    url: `/chat/deleteRoom?chatRoomId=${chatroomId}`,
+    method: "DELETE",
+    success: function (resp) {
+      alert(resp);
+      initChatRooms();
+    },
+  });
 }
 
 /* 채팅방 입장 함수 */

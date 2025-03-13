@@ -68,7 +68,6 @@ function updateRegionSelect() {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
 
   if (selectedProvince) {
-    //    fetch(`/api/regions?provinceId=${selectedProvince}`)
     fetch(`/api/location/regions?provinceId=${selectedProvince}`)
       .then((response) => response.json())
       .then((regions) => {

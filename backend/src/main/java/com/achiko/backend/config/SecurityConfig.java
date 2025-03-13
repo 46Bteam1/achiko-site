@@ -7,11 +7,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.achiko.backend.handler.LoginFailureHandler;
+import com.achiko.backend.service.CustomOAuth2UserService;
+
+import lombok.RequiredArgsConstructor;
+
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-	// Handler 사용
+	
+	private final LoginFailureHandler loginFailureHandler;		// 로그인 실패 처리 Handler
+	private final CustomOAuth2UserService customOAuth2UserService;
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -20,17 +28,17 @@ public class SecurityConfig {
 						.requestMatchers(
 								"/"
 								,"/api/location/**"
+								, "/oauth2/**"
+								, "/viewSpline/**"
 								, "/user/**"
 								, "/user/verifyAuthCode"
 								, "/user/findLoginIdResult"
-								, "/viewSpline/**"
 								, "/images/**"
 								, "/css/**"
 								, "/js/**")
 						.permitAll()
 						.requestMatchers("/admin").hasRole("ADMIN")
 						.requestMatchers("/user/mypage").hasAnyRole("ADMIN", "USER")
-						.requestMatchers("/chat/**", "/chatList", "/chatRooms").authenticated()
 						.anyRequest().authenticated());
 		// Custom Login 설정
 		http
@@ -39,7 +47,7 @@ public class SecurityConfig {
 					.loginProcessingUrl("/user/loginProc")
 					.usernameParameter("loginId")
 					.passwordParameter("password")
-					.failureUrl("/user/login?error=true")		// FailureHandler가 있으면 이 코드는 없어야함
+					.failureHandler(loginFailureHandler)		// FailureHandler가 있으면 이 코드는 없어야함
 					.permitAll());
 
 		// logout 설정
@@ -53,8 +61,15 @@ public class SecurityConfig {
 		// POST 요청시 CSRF 토큰을 요청하므로 (Cross-Site Request Forgery) 비활성화(개발환경)
 		http
 			.csrf((auth) -> auth.disable());
+		
+		// 소셜로그인 설정
+		http
+		.oauth2Login((oauth2) -> oauth2
+				.userInfoEndpoint((userInfoEndpointConfig) ->
+				userInfoEndpointConfig.userService(customOAuth2UserService)));
 
 		return http.build();
+		
 	}
 
 	// 단방향 비밀번호 암호화
@@ -63,4 +78,3 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 }
-

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.RoommateDTO;
+import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.service.RoommateService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,12 +35,18 @@ public class RoommateController {
 	
 	// 룸메이트 조회
 	@GetMapping("/findRoommates")
-	public List<RoommateDTO> findRoommates(@RequestParam("chatRoomId")Long chatRoomId){
+	public List<UserDTO> findRoommates(@RequestParam("chatRoomId")Long chatRoomId){
 		log.info("findRoommates:{}",chatRoomId);
-		List<RoommateDTO> list = roommateService.findRoommates(chatRoomId);
+		List<UserDTO> list = roommateService.findRoommates(chatRoomId);
 		
 		return list;
 	}
 	
+	@GetMapping("/findHost")
+	public UserDTO findHost(@RequestParam("chatRoomId") Long chatRoomId) {
+		UserDTO host = roommateService.findHost(chatRoomId);
+		
+		return host;
+	}
 	// 룸메이트 취소
 }

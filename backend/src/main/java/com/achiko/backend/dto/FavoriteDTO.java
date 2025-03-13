@@ -1,7 +1,6 @@
 package com.achiko.backend.dto;
 
 import java.time.LocalDateTime;
-
 import com.achiko.backend.entity.FavoriteEntity;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class FavoriteDTO {
-    private Long favoriteId;
+    private Integer favoriteId;
     private Long userId;
     private Long shareId;
     private LocalDateTime createdAt;
@@ -47,3 +46,4 @@ public class FavoriteDTO {
     foreign key (share_id) references share(share_id) on delete cascade,
     unique (user_id, share_id)
 );*/
+
