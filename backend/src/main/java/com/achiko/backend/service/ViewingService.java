@@ -177,9 +177,6 @@ public class ViewingService {
 		
 		int maxGuests = share.getMaxGuests();
 		int currentGuests = share.getCurrentGuests();
-		log.info("max:{}", maxGuests);
-		log.info("current:{}", currentGuests);
-		log.info("shareId:{}", share.getShareId());
 		
 		if(maxGuests > currentGuests) {
 			return true;
