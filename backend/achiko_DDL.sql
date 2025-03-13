@@ -1,4 +1,4 @@
--- 0304
+-- 0312
 drop database if exists achiko;
 create database achiko;
 use achiko;
@@ -55,26 +55,27 @@ CREATE TABLE town (
 );
 
 create table users (
-    user_id int auto_increment not null primary key,
-    login_id varchar(50) not null unique,
-    nickname varchar(100) not null unique,
-    profile_image char(255) default null,
-    real_name varchar(100) not null,
-    email varchar(255) not null unique,
-    password varchar(255),
-    is_host tinyint default 0 check (is_host in (0,1,2)),  -- 0:게스트, 1:호스트, 2:관리자 
-    role varchar(30) default 'user' check (role in ('user','admin')),
-    is_email_verified boolean default false,
-    reported_count int default 0,
-    is_malicious boolean default false,
-    languages varchar(255),
-    age int check (age > 0),
-    nationality varchar(50),
-    religion varchar(100) default null,
-    gender tinyint default 0 check (gender in (0,1,2)),
-    bio text,
-    created_at timestamp default current_timestamp,
-    receipt_id varchar(100) default null
+				user_id int auto_increment not null primary key,
+				provider varchar(50),
+				login_id varchar(50) not null unique,
+				nickname varchar(100) not null unique,
+				profile_image char(255) default null,
+				real_name varchar(100) not null,
+				email varchar(255) not null unique,
+				password varchar(255),            
+ 				is_host tinyint default 0 check (is_host in (0,1,2)),  
+				role varchar(30) default 'user' check (role in ('user','admin')),
+				is_email_verified boolean default false,
+				reported_count int default 0,
+				is_malicious boolean default false,
+				languages varchar(255),            
+				age int check (age > 0),          
+				nationality varchar(50),             
+				religion varchar(100) default null,
+				gender tinyint default 0 check (gender in (0,1,2)),
+				bio text,
+				created_at timestamp default current_timestamp,
+				receipt_id varchar(100) default null
 );
 
 CREATE TABLE share (
