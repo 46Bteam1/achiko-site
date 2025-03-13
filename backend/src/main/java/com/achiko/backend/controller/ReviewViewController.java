@@ -1,5 +1,6 @@
 package com.achiko.backend.controller;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
@@ -24,7 +25,6 @@ import com.achiko.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 @Tag(name = "Review", description = "Review API")
 @Controller
@@ -37,7 +37,10 @@ public class ReviewViewController {
 
 	@Operation(summary = "리뷰페이지 조회", description = "reviewPage를 반환합니다.")
 	@GetMapping("/reviewPage")
-	public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId, Model model) {
+	public String reviewPage(
+			@RequestParam(name = "reviewedUserId") Long reviewedUserId,
+			@AuthenticationPrincipal LoginUserDetails loginUser,
+			Model model) {
 
 		List<ReviewDTO> reviews = reviewService.getUserReviews(reviewedUserId);
 		UserDTO reviewedUser = userService.getUserById(reviewedUserId);
@@ -53,6 +56,7 @@ public class ReviewViewController {
 		model.addAttribute("religion", reviewedUser.getReligion());
 		model.addAttribute("bio", reviewedUser.getBio());
 		model.addAttribute("reviewedUser", reviewedUser);
+		model.addAttribute("loginUserId", loginUser.getUserId());
 
 		// 평균 점수 계산
 		DoubleSummaryStatistics cleanlinessStats = reviews.stream().mapToDouble(ReviewDTO::getCleanlinessRating)
@@ -84,6 +88,10 @@ public class ReviewViewController {
 		model.addAttribute("reviewedUserDTO", reviewedUserDTO);
 		model.addAttribute("reviewedUserName", reviewedUserDTO.getRealName());
 		model.addAttribute("review", new ReviewDTO()); // 빈 객체 추가
+		model.addAttribute("reviewedUser", reviewedUserDTO);
+
+		List<String> ratingCategories = Arrays.asList("청결도", "신뢰도", "소통능력", "매너");
+		model.addAttribute("ratingCategories", ratingCategories);
 
 		return "review/reviewRegist"; // templates/review/reviewRegist.html과 연결
 	}
@@ -97,7 +105,7 @@ public class ReviewViewController {
 
 	// ✅ 리뷰 등록 API
 	@PostMapping("/regist")
-	public ResponseEntity<String> reviewRegister(@ModelAttribute ReviewDTO reviewDTO,
+	public String reviewRegister(@ModelAttribute ReviewDTO reviewDTO,
 			@RequestParam(name = "reviewedUserId") Long reviewedUserId,
 			@AuthenticationPrincipal LoginUserDetails loginUser) {
 		System.out.println(reviewDTO.toString());
@@ -106,18 +114,19 @@ public class ReviewViewController {
 		String loginId = loginUser.getLoginId();
 
 		reviewService.registReview(reviewDTO, reviewedUserId, loginId);
-
-		try {
-
-			if (reviewDTO.getReviewedUserId() == null) {
-				return ResponseEntity.badRequest().body("필수 입력값이 누락되었습니다.");
-			}
-
-			return ResponseEntity.ok("리뷰가 성공적으로 등록되었습니다.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.internalServerError().body("서버 오류 발생: " + e.getMessage());
-		}
+		return "redirect:/review/reviewPage?reviewedUserId=" + reviewedUserId;
+		// try {
+		//
+		// if (reviewDTO.getReviewedUserId() == null) {
+		// return ResponseEntity.badRequest().body("필수 입력값이 누락되었습니다.");
+		// }
+		//
+		// return ResponseEntity.ok("리뷰가 성공적으로 등록되었습니다.");
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// return ResponseEntity.internalServerError().body("서버 오류 발생: " +
+		// e.getMessage());
+		// }
 
 	}
 
@@ -137,6 +146,15 @@ public class ReviewViewController {
 		model.addAttribute("review", review);
 		model.addAttribute("reviewerName", reviewerDTO.getRealName()); // ✅ 추가
 		model.addAttribute("reviewedUserName", reviewedUserDTO.getRealName()); // ✅ 리뷰 대상자 이름 추가
+		model.addAttribute("reviewedUser", reviewedUserDTO);
+
+		// 평점 카테고리 및 DTO 필드 매핑
+		List<String> ratingCategories = Arrays.asList("청결도", "신뢰도", "소통능력", "매너");
+		List<String> ratingFields = Arrays.asList("cleanlinessRating", "trustRating", "communicationRating",
+				"mannerRating");
+
+		model.addAttribute("ratingCategories", ratingCategories);
+		model.addAttribute("ratingFields", ratingFields);
 
 		return "review/reviewUpdate"; // templates/review/reviewUpdate.html과 연결
 	}
@@ -157,6 +175,5 @@ public class ReviewViewController {
 			return "redirect:/error"; // ✅ 오류 발생 시 에러 페이지로 이동
 		}
 	}
-
 
 }

@@ -28,6 +28,7 @@ public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final UserRepository userRepository;
 	private final RoommateRepository roommateRepository;
+	private final UserService userService;
 
 	// ✅ 모든 유저의 모든 리뷰 가져오기
 	public List<ReviewDTO> getAllReviews() {
@@ -47,7 +48,7 @@ public class ReviewService {
 		List<ReviewDTO> dtoList = new ArrayList<>();
 
 		for (ReviewEntity entity : entityList) {
-			dtoList.add(ReviewDTO.toDTO(entity));
+			dtoList.add(ReviewDTO.toDTOWithReviewerInfo(entity, userService));
 		}
 
 		return dtoList;
@@ -156,5 +157,9 @@ public class ReviewService {
                 .map(ReviewDTO::toDTO)
                 .collect(Collectors.toList());
     }
+
+	public boolean hasUserReviewed(Long loginUserId, Long reviewedUserId) {
+		return reviewRepository.existsByReviewerIdAndReviewedUserId(loginUserId, reviewedUserId);
+	}
 
 }
