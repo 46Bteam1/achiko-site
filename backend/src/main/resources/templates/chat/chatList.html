@@ -62,9 +62,9 @@
       <div id="chatComponents">
         <div id="users">
           <h3>현재 확정 지은 이용자들</h3>
-          <div id="userBox" style="display: flex; gap: 10px;">
+          <div id="userBox" style="display: flex; gap: 10px">
             <div id="hostBox"></div>
-            <div id="guestBox" style="display: flex; gap: 10px;"></div>
+            <div id="guestBox" style="display: flex; gap: 10px"></div>
           </div>
         </div>
         <div>
@@ -131,15 +131,15 @@
               <!-- modal body -->
               <div class="modal-body">
                 <div id="existingReviews"></div>
+                <br />
+                <hr />
                 <th:block th:if="${role =='Guest'}">
-              <br>
-              <hr>
-              <div id="schedule">
-                <input type="date" id="viewingDate" />
-                <input type="time" id="viewingTime" />
-                <input type="button" value="정하기" id="scheduleBtn" />
-              </div>
-            </th:block>
+                  <div id="schedule">
+                    <input type="date" id="viewingDate" />
+                    <input type="time" id="viewingTime" />
+                    <input type="button" value="정하기" id="scheduleBtn" />
+                  </div>
+                </th:block>
               </div>
               <div class="modal-footer">ACHIKO</div>
             </div>
