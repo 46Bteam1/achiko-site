@@ -75,6 +75,18 @@
           </table>
         </div>
       </div>
+
+      <!-- 채팅방 목록 -->
+      <div class="section">
+        <h3>채팅방 목록</h3>
+        <input type="hidden" th:value="${userDTO.nickname}" id="userNickname" />
+        <div class="table-container">
+          <table>
+            <tbody id="chatroomTable"></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- 찜목록 -->
       <th:block th:if="${userDTO.isHost == 0}">
         <div class="section">
