@@ -28,14 +28,14 @@ header.sticky .sticky-black {
 }
 
 header.sticky .header-form {
-  animation-duration: 0.3s;
+  animation-duration: 0.2s;
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
   animation-name: slideUp;
 }
 
 header.sticky-reappear .header-form {
-  animation-duration: 0.3s;
+  animation-duration: 0.2s;
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
   animation-name: slideDown;
@@ -321,16 +321,14 @@ header.sticky-reappear + main {
 /* 모달 스타일 */
 .modal {
   display: none;
-  position: absolute;
-  z-index: 1000;
-  top: 10vh;
-  right: 15vh;
-}
+  left: calc(100vw - 350px);
+  position: fixed;
+  top: 75px;
 
-/* 모달 내부 컨텐츠 */
-.modal-content {
+  z-index: 50;
   background-color: white;
   width: 250px;
+  height: 250px;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
