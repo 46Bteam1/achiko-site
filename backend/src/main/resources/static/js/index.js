@@ -1,4 +1,9 @@
 $(document).ready(function () {
+  if (!sessionStorage.getItem("visited")) {
+    sessionStorage.setItem("visited", "true");
+    window.location.href = "/viewSpline"; // 처음 방문 시 splinePage.html로 이동
+  }
+
   let lastScrollTop = 0; // 마지막 스크롤 위치 저장
   let isStickyDisabled = false; // sticky가 해제되었는지 상태 확인
   let mapVisible = false; // 지도 표시 여부 상태
@@ -21,10 +26,10 @@ $(document).ready(function () {
       $("#mapButton").fadeIn(); // 다시 보이기
     }
 
-    if (scrollTop > 150) {
+    if (scrollTop > 70) {
       $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
       $("header").removeClass("sticky-reappear");
-    } else if (scrollTop <= 150 && lastScrollTop >= 150 && !mapVisible) {
+    } else if (scrollTop <= 70 && lastScrollTop >= 70 && !mapVisible) {
       $("header").removeClass("sticky");
       $("header").addClass("sticky-reappear");
       isStickyDisabled = false; // 스크롤이 최상단이면 다시 sticky 허용 = 큰 검색창 나옴
@@ -190,7 +195,8 @@ $(document).ready(function () {
     if (cityId !== "all") queryParams.push(`cityId=${cityId}`);
     if (townId !== "all") queryParams.push(`townId=${townId}`);
 
-    const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+    const queryString =
+      queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
 
     fetch(`/api/search/shares${queryString}`)
       .then((response) => response.json())
@@ -211,7 +217,9 @@ $(document).ready(function () {
       card.className = "listing-card";
 
       // 검색 결과에서도 첫 번째 이미지 반영
-      const imageUrl = listing.firstImage ? listing.firstImage : "/images/no-image.png";
+      const imageUrl = listing.firstImage
+        ? listing.firstImage
+        : "/images/no-image.png";
 
       // favorite 상태에 따라 버튼 클래스와 아이콘 결정
       const favClass = listing.isFavorite ? "active" : "";
@@ -225,7 +233,9 @@ $(document).ready(function () {
             <img src="${imageUrl}" alt="숙소 이미지">
             <div class="listing-info">
                 <h3>${listing.title}</h3>
-                <p>${listing.regionName} ${listing.cityName} ${listing.townName}</p>
+                <p>${listing.regionName} ${listing.cityName} ${
+        listing.townName
+      }</p>
                 <p>₩${new Intl.NumberFormat().format(listing.price)}/박</p>
                 <p>최대 인원: ${listing.maxGuests}명</p>
             </div>
@@ -241,9 +251,13 @@ $(document).ready(function () {
     return `
             <div style="max-width: 250px;">
                 <h4>${share.title}</h4>
-                <p><strong>가격:</strong> ₩${new Intl.NumberFormat().format(share.price)}/박</p>
+                <p><strong>가격:</strong> ₩${new Intl.NumberFormat().format(
+                  share.price
+                )}/박</p>
                 <p><strong>위치:</strong> ${fullAddress}</p>
-                <a href="/share/selectOne?shareId=${share.shareId}" target="_blank">상세 보기</a>
+                <a href="/share/selectOne?shareId=${
+                  share.shareId
+                }" target="_blank">상세 보기</a>
             </div>
         `;
   }
@@ -291,7 +305,7 @@ $(document).ready(function () {
         },
         error: function () {
           console.error("찜하기 실패");
-        }
+        },
       });
     } else {
       $.ajax({
@@ -303,7 +317,7 @@ $(document).ready(function () {
         },
         error: function () {
           alert("찜 취소 실패!");
-        }
+        },
       });
     }
   });
