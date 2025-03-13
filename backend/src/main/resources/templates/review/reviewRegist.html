@@ -1,241 +1,360 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>리뷰 작성</title>
-<link rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<script src="https://kit.fontawesome.com/a076d05399.js"
-	crossorigin="anonymous"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Achiko</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
 
-<style>
-body {
-	font-family: Arial, sans-serif;
-	background-color: #f8f8f8;
-	padding: 30px;
-}
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
 
-.container {
-	max-width: 1000px;
-	margin: auto;
-	display: flex;
-	gap: 30px;
-	background-color: #fff;
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+    <link rel="stylesheet" th:href="@{/css/review/reviewRegist.css}" />
 
-/* ✅ 왼쪽 섹션 (숙소 정보) */
-.left-section {
-	width: 35%;
-}
+    <!-- jQuery 추가 -->
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 
-.property-image {
-	width: 100%;
-	height: 200px;
-	border-radius: 10px;
-	background-color: #ddd;
-}
+    <!-- JS 파일 추가 -->
+    <script th:src="@{/js/review/reviewRegist.js}"></script>
 
-.property-info {
-	margin-top: 10px;
-	font-size: 14px;
-	color: #555;
-}
+    <!-- <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f8f8;
+        padding: 30px;
+      }
 
-/* ✅ 오른쪽 섹션 (리뷰 입력) */
-.right-section {
-	width: 65%;
-}
+      .container {
+        max-width: 1000px;
+        margin: auto;
+        display: flex;
+        gap: 30px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
 
-.review-header {
-	font-size: 20px;
-	font-weight: bold;
-	margin-bottom: 15px;
-}
+      /* ✅ 왼쪽 섹션 (숙소 정보) */
+      .left-section {
+        width: 35%;
+      }
 
-.review-description {
-	font-size: 14px;
-	color: #777;
-	margin-bottom: 15px;
-}
+      .property-image {
+        width: 100%;
+        height: 200px;
+        border-radius: 10px;
+        background-color: #ddd;
+      }
 
-.rating-box {
-	padding: 10px 0;
-	border-bottom: 1px solid #ddd;
-	margin-bottom: 10px;
-}
+      .property-info {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #555;
+      }
 
-/* ✅ 별점 스타일 */
-.stars {
-	display: flex;
-	flex-direction: row-reverse;
-	justify-content: flex-start;
-	gap: 5px;
-}
+      /* ✅ 오른쪽 섹션 (리뷰 입력) */
+      .right-section {
+        width: 65%;
+      }
 
-.stars input {
-	display: none;
-}
+      .review-header {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
 
-.stars label {
-	font-size: 24px;
-	cursor: pointer;
-	color: #ccc;
-}
+      .review-description {
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 15px;
+      }
 
-.stars input:checked ~ label, .stars label:hover, .stars label:hover ~
-	label {
-	color: #ffcc00;
-}
+      .rating-box {
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 10px;
+      }
 
-.comment-box {
-	margin-top: 15px;
-}
+      /* ✅ 별점 스타일 */
+      .stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-start;
+        gap: 5px;
+      }
 
-/* ✅ 제출 버튼 스타일 */
-.submit-btn {
-	background-color: #28a745;
-	color: white;
-	width: 100%;
-	padding: 12px;
-	border: none;
-	font-size: 16px;
-	border-radius: 10px;
-	cursor: pointer;
-	margin-top: 20px;
-}
+      .stars input {
+        display: none;
+      }
 
-.submit-btn:hover {
-	background-color: #218838;
-}
-</style>
-</head>
-<body>
-	<div class="container">
-		<!-- ✅ 왼쪽 섹션: 리뷰 대상 정보 -->
-		<div class="left-section">
-			<div class="property-image"></div>
-			<div class="property-info">
-				<p>
-					<strong>유저 이름:</strong> 하하
-				</p>
-				<p>
-					<strong>게스트 여부:</strong> O
-				</p>
-				<p>
-					<strong>성별:</strong> 여성
-				</p>
-				<p>
-					<strong>언어:</strong> 한국어
-				</p>
-				<p>
-					<strong>종교:</strong> 천주교
-				</p>
-			</div>
-		</div>
+      .stars label {
+        font-size: 24px;
+        cursor: pointer;
+        color: #ccc;
+      }
 
-		<!-- ✅ 오른쪽 섹션: 리뷰 작성 -->
-		<div class="right-section">
-			<div class="review-header">
-				<span th:text="${reviewedUserName}"></span>님에 대한 후기를 작성하세요.
-			</div>
-			<div class="review-description">14일 동안 후기를 작성할 수 있습니다. 후기를 작성한
-				후에는 회원님의 피드백을 받을 수 있습니다. 후기 작성 가이드를 참고하세요.</div>
+      .stars input:checked ~ label,
+      .stars label:hover,
+      .stars label:hover ~ label {
+        color: #ffcc00;
+      }
 
-			<form th:action="@{/review/regist}" method="post">
-				<input type="hidden" name="reviewId" th:value="${review.reviewId}">
-				<input type="hidden" name="reviewedUserId"
-					th:value="${review.reviewedUserId != null ? review.reviewedUserId : 15}">
+      .comment-box {
+        margin-top: 15px;
+      }
 
+      /* ✅ 제출 버튼 스타일 */
+      .submit-btn {
+        background-color: #28a745;
+        color: white;
+        width: 100%;
+        padding: 12px;
+        border: none;
+        font-size: 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
 
-				<!-- ✅ 청결도 -->
-				<div class="rating-box">
-					<p>
-						<strong>청결도</strong>
-					</p>
-					<p>룸메이트는 회원님이 예상한 것만큼 청결했나요?</p>
-					<div class="stars">
-						<input type="radio" name="cleanlinessRating" value="5"
-							id="cleanliness-5"><label for="cleanliness-5">★</label> <input
-							type="radio" name="cleanlinessRating" value="4"
-							id="cleanliness-4"><label for="cleanliness-4">★</label> <input
-							type="radio" name="cleanlinessRating" value="3"
-							id="cleanliness-3"><label for="cleanliness-3">★</label> <input
-							type="radio" name="cleanlinessRating" value="2"
-							id="cleanliness-2"><label for="cleanliness-2">★</label> <input
-							type="radio" name="cleanlinessRating" value="1"
-							id="cleanliness-1"><label for="cleanliness-1">★</label>
-					</div>
-				</div>
+      .submit-btn:hover {
+        background-color: #218838;
+      }
+    </style> -->
+  </head>
+  <body>
+    <!-- 헤더 header -->
+    <header th:replace="~{fragments/header :: header}"></header>
 
-				<!-- ✅ 신뢰도 -->
-				<div class="rating-box">
-					<p>
-						<strong>신뢰도</strong>
-					</p>
-					<p>룸메이트는 신뢰할 수 있었나요?</p>
-					<div class="stars">
-						<input type="radio" name="trustRating" value="5" id="trust-5"><label
-							for="trust-5">★</label> <input type="radio" name="trustRating"
-							value="4" id="trust-4"><label for="trust-4">★</label> <input
-							type="radio" name="trustRating" value="3" id="trust-3"><label
-							for="trust-3">★</label> <input type="radio" name="trustRating"
-							value="2" id="trust-2"><label for="trust-2">★</label> <input
-							type="radio" name="trustRating" value="1" id="trust-1"><label
-							for="trust-1">★</label>
-					</div>
-				</div>
+    <main class="container">
+      <div class="review-container">
+        <!--  왼쪽: 사용자 정보 -->
+        <aside class="user-card">
+          <img
+            th:src="${reviewedUser.profileImage} ?: '/images/default-profile.png'"
+            alt="Profile Image"
+            class="profile-img"
+          />
+          <h3 th:text="${reviewedUser.nickname}"></h3>
+          <p th:text="${reviewedUser.bio}"></p>
+          <div class="user-info">
+            <span
+              th:text="${reviewedUser.isHost == 0 ? '게스트' : (reviewedUser.isHost == 1 ? '호스트' : '관리자')}"
+            ></span>
+            · <span th:text="${reviewedUser.nationality}"></span> ·
+            <span
+              th:text="${reviewedUser.gender == 0 ? '남성' : (reviewedUser.gender == 1 ? '여성' : '기타')}"
+            ></span>
+            · <span th:text="${reviewedUser.languages}"></span> ·
+            <span th:text="${reviewedUser.religion}"></span>
+          </div>
+        </aside>
 
-				<!-- ✅ 소통능력 -->
-				<div class="rating-box">
-					<p>
-						<strong>소통능력</strong>
-					</p>
-					<p>룸메이트와의 의사소통은 원활했나요?</p>
-					<div class="stars">
-						<input type="radio" name="communicationRating" value="5"
-							id="communication-5"><label for="communication-5">★</label>
-						<input type="radio" name="communicationRating" value="4"
-							id="communication-4"><label for="communication-4">★</label>
-						<input type="radio" name="communicationRating" value="3"
-							id="communication-3"><label for="communication-3">★</label>
-						<input type="radio" name="communicationRating" value="2"
-							id="communication-2"><label for="communication-2">★</label>
-						<input type="radio" name="communicationRating" value="1"
-							id="communication-1"><label for="communication-1">★</label>
-					</div>
-				</div>
+        <!--  오른쪽: 리뷰 작성 폼 -->
+        <section class="review-form-container">
+          <h2>
+            <span th:text="${reviewedUser.realName}"></span>님에 대한 후기를
+            작성하세요.
+          </h2>
+          <p class="review-description">
+            14일 동안 후기를 작성할 수 있습니다. 후기를 작성한 후에는 회원님의
+            피드백을 받을 수 있습니다.
+          </p>
 
-				<!-- ✅ 매너 -->
-				<div class="rating-box">
-					<p>
-						<strong>매너</strong>
-					</p>
-					<p>룸메이트는 친절하고 매너가 좋았나요?</p>
-					<div class="stars">
-						<input type="radio" name="mannerRating" value="5" id="manner-5"><label
-							for="manner-5">★</label> <input type="radio" name="mannerRating"
-							value="4" id="manner-4"><label for="manner-4">★</label> <input
-							type="radio" name="mannerRating" value="3" id="manner-3"><label
-							for="manner-3">★</label> <input type="radio" name="mannerRating"
-							value="2" id="manner-2"><label for="manner-2">★</label> <input
-							type="radio" name="mannerRating" value="1" id="manner-1"><label
-							for="manner-1">★</label>
-					</div>
-				</div>
-				<!-- ✅ 코멘트 입력 -->
-				<div class="comment-box">
-					<label for="comment">의견을 남겨주세요:</label>
-					<textarea class="form-control" id="comment" name="comment" rows="4"
-						required></textarea>
-				</div>
+          <form th:action="@{/review/regist}" method="post">
+            <input
+              type="hidden"
+              name="reviewedUserId"
+              th:value="${reviewedUser.userId}"
+            />
 
-				<!-- ✅ 제출 버튼 -->
-				<button type="submit" class="submit-btn">리뷰 제출</button>
-			</form>
-		</div>
-	</div>
-</body>
+            <!--  청결도 -->
+            <div class="rating-box">
+              <p>
+                <strong>청결도</strong>
+              </p>
+              <p>룸메이트는 회원님이 예상한 것만큼 청결했나요?</p>
+              <div class="stars">
+                <input
+                  type="radio"
+                  name="cleanlinessRating"
+                  value="5"
+                  id="cleanliness-5"
+                /><label for="cleanliness-5">★</label>
+                <input
+                  type="radio"
+                  name="cleanlinessRating"
+                  value="4"
+                  id="cleanliness-4"
+                /><label for="cleanliness-4">★</label>
+                <input
+                  type="radio"
+                  name="cleanlinessRating"
+                  value="3"
+                  id="cleanliness-3"
+                /><label for="cleanliness-3">★</label>
+                <input
+                  type="radio"
+                  name="cleanlinessRating"
+                  value="2"
+                  id="cleanliness-2"
+                /><label for="cleanliness-2">★</label>
+                <input
+                  type="radio"
+                  name="cleanlinessRating"
+                  value="1"
+                  id="cleanliness-1"
+                /><label for="cleanliness-1">★</label>
+              </div>
+            </div>
+
+            <!-- 신뢰도 -->
+            <div class="rating-box">
+              <p>
+                <strong>신뢰도</strong>
+              </p>
+              <p>룸메이트는 신뢰할 수 있었나요?</p>
+              <div class="stars">
+                <input
+                  type="radio"
+                  name="trustRating"
+                  value="5"
+                  id="trust-5"
+                /><label for="trust-5">★</label>
+                <input
+                  type="radio"
+                  name="trustRating"
+                  value="4"
+                  id="trust-4"
+                /><label for="trust-4">★</label>
+                <input
+                  type="radio"
+                  name="trustRating"
+                  value="3"
+                  id="trust-3"
+                /><label for="trust-3">★</label>
+                <input
+                  type="radio"
+                  name="trustRating"
+                  value="2"
+                  id="trust-2"
+                /><label for="trust-2">★</label>
+                <input
+                  type="radio"
+                  name="trustRating"
+                  value="1"
+                  id="trust-1"
+                /><label for="trust-1">★</label>
+              </div>
+            </div>
+
+            <!--  소통능력 -->
+            <div class="rating-box">
+              <p>
+                <strong>소통능력</strong>
+              </p>
+              <p>룸메이트와의 의사소통은 원활했나요?</p>
+              <div class="stars">
+                <input
+                  type="radio"
+                  name="communicationRating"
+                  value="5"
+                  id="communication-5"
+                /><label for="communication-5">★</label>
+                <input
+                  type="radio"
+                  name="communicationRating"
+                  value="4"
+                  id="communication-4"
+                /><label for="communication-4">★</label>
+                <input
+                  type="radio"
+                  name="communicationRating"
+                  value="3"
+                  id="communication-3"
+                /><label for="communication-3">★</label>
+                <input
+                  type="radio"
+                  name="communicationRating"
+                  value="2"
+                  id="communication-2"
+                /><label for="communication-2">★</label>
+                <input
+                  type="radio"
+                  name="communicationRating"
+                  value="1"
+                  id="communication-1"
+                /><label for="communication-1">★</label>
+              </div>
+            </div>
+
+            <!--  매너 -->
+            <div class="rating-box">
+              <p>
+                <strong>매너</strong>
+              </p>
+              <p>룸메이트는 친절하고 매너가 좋았나요?</p>
+              <div class="stars">
+                <input
+                  type="radio"
+                  name="mannerRating"
+                  value="5"
+                  id="manner-5"
+                /><label for="manner-5">★</label>
+                <input
+                  type="radio"
+                  name="mannerRating"
+                  value="4"
+                  id="manner-4"
+                /><label for="manner-4">★</label>
+                <input
+                  type="radio"
+                  name="mannerRating"
+                  value="3"
+                  id="manner-3"
+                /><label for="manner-3">★</label>
+                <input
+                  type="radio"
+                  name="mannerRating"
+                  value="2"
+                  id="manner-2"
+                /><label for="manner-2">★</label>
+                <input
+                  type="radio"
+                  name="mannerRating"
+                  value="1"
+                  id="manner-1"
+                /><label for="manner-1">★</label>
+              </div>
+            </div>
+
+            <!--  코멘트 입력 -->
+            <div class="comment-box">
+              <label for="comment">의견을 남겨주세요:</label>
+              <textarea
+                class="form-control"
+                id="comment"
+                name="comment"
+                rows="4"
+                required
+              ></textarea>
+            </div>
+
+            <!--  제출 버튼 -->
+            <div class="btn-container">
+              <button type="submit" class="submit-btn">리뷰 제출</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer th:replace="~{fragments/footerTest :: footer}"></footer>
+  </body>
 </html>

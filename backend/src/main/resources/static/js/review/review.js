@@ -1,15 +1,17 @@
 $(document).ready(function () {
   console.log("📢 페이지 로드 완료, 차트 실행");
-  loadChart(); // ✅ 페이지 로드 시 차트 실행
+  loadChart(); //  페이지 로드 시 차트 실행
 
-  // ✅ 정렬 이벤트 발생 시 차트 다시 로드
+  //  정렬 이벤트 발생 시 차트 다시 로드
   $("#reviewFilter").on("change", function () {
     console.log("📢 정렬 방식 변경됨:", $(this).val());
-    sortReviews(); // ✅ 리뷰 정렬
-    loadChart(); // ✅ 차트 업데이트
+    sortReviews(); //  리뷰 정렬
+    loadChart(); //  차트 업데이트
   });
 
-  // ✅ 삭제 버튼 클릭 이벤트
+  $("#writeReviewBtn").on("click", writeReview);
+
+  // 삭제 버튼 클릭 이벤트
   $(document).on("click", ".delete-review", deleteReview);
 
   // ✅ 리뷰 정렬 이벤트
@@ -206,6 +208,37 @@ function sortReviews() {
     error: function (xhr) {
       console.error("❌ 리뷰 정렬 오류:", xhr.status, xhr.responseText);
       alert("리뷰 정렬 중 문제가 발생했습니다.");
+    },
+  });
+}
+
+// 리뷰 작성하기 버튼
+function writeReview() {
+  let reviewedUserId = $(this).data("reviewed-user-id");
+  let loginUserId = $(this).data("login-user-id");
+  let reviewRegistUrl = $(this).data("url");
+
+  // 본인이 본인에게 리뷰 작성 불가
+  if (reviewedUserId === loginUserId) {
+    alert("자신에게 리뷰를 작성할 수 없습니다.");
+    return;
+  }
+
+  // AJAX로 리뷰 작성 여부 체크
+  $.ajax({
+    type: "GET",
+    url: "/review/checkReview",
+    data: { reviewedUserId: reviewedUserId },
+    success: function (response) {
+      if (response.exists) {
+        alert("이미 리뷰를 작성한 사용자입니다.");
+      } else {
+        window.location.href =
+          reviewRegistUrl + "?reviewedUserId=" + reviewedUserId;
+      }
+    },
+    error: function () {
+      alert("리뷰 확인 중 오류가 발생했습니다.");
     },
   });
 }
