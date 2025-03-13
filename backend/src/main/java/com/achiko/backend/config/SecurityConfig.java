@@ -23,6 +23,7 @@ public class SecurityConfig {
 								, "/user/**"
 								, "/user/verifyAuthCode"
 								, "/user/findLoginIdResult"
+								, "/viewSpline/**"
 								, "/images/**"
 								, "/css/**"
 								, "/js/**")
