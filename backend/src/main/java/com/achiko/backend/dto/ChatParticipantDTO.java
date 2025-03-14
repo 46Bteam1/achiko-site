@@ -25,14 +25,18 @@ public class ChatParticipantDTO {
 	private String hostNickname;
 	private String guestNickname;
 	private LocalDateTime joinedAt;
+	private String profileImage;
 	
-	public static ChatParticipantDTO toDTO(ChatParticipantEntity pEntity, Long chatroomId, String hostNickname, String guestNickname) {
+	public static ChatParticipantDTO toDTO(ChatParticipantEntity pEntity, Long chatroomId, String hostNickname, String guestNickname, String profileImage) {
 		return ChatParticipantDTO.builder()
 				.participantId(pEntity.getParticipantId())
 				.chatroomId(chatroomId)
 				.hostNickname(hostNickname)
 				.guestNickname(guestNickname)
 				.joinedAt(pEntity.getJoinedAt())
+				.profileImage(profileImage)
 				.build();
 	}
+	
+	
 }
