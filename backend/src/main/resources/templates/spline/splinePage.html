@@ -48,8 +48,8 @@
       }
 
       .btn-container {
-        position: absolute;
-        bottom: 35%;
+        position: fixed;
+        top: 50px;
         left: 50.3%;
         transform: translate(-50%, -50%);
         z-index: 10;
@@ -93,6 +93,11 @@
         />
       </a>
     </div>
+
+    <div class="btn-container">
+      <button class="btn" onclick="location.href='/'">셰어하우스 찾으러가기</button>
+    </div>
+
     <!-- Spline 컨테이너 -->
     <div class="container">
       <spline-viewer
@@ -100,9 +105,6 @@
         loading-anim-type="spinner-big-dark"
       >
       </spline-viewer>
-    </div>
-    <div class="btn-container">
-      <button class="btn" onclick="location.href='/'">Go to Achiko</button>
     </div>
   </body>
 </html>
