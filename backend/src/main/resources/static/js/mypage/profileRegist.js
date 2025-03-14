@@ -226,8 +226,6 @@ function withdraw() {
 }
 
 function initChatRooms() {
-  console.log("!!!!!!initChatrooms");
-
   $.ajax({
     url: "/chat/selectRooms",
     method: "GET",
@@ -236,17 +234,20 @@ function initChatRooms() {
 }
 
 function getChatRooms(resp) {
-  const nickname = $("#userNickname").val();
-
   let tag = `<table>`;
 
   $.each(resp, function (index, item) {
+    let profileImage = item["profileImage"]
+      ? item["profileImage"]
+      : "/images/fubao.webp";
+    const nickname = $("#userNickname").val();
     let nicknameCheck = item["hostNickname"] === nickname;
     let displayNickname = nicknameCheck
       ? item["guestNickname"]
       : item["hostNickname"];
     tag += `
         <tr>
+            <td><img src="${profileImage}" alt="프로필 이미지" width="50px" height="50px" style="border-radius: 50%; object-fit: cover;"></td>
             <td>${displayNickname}</td>
             <td class="btns">
                 <input type="button" value="입장" 
