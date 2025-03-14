@@ -4,12 +4,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.ShareFilesDTO;
+import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.entity.CityEntity;
 import com.achiko.backend.entity.ProvinceEntity;
 import com.achiko.backend.entity.RegionEntity;
@@ -17,6 +20,7 @@ import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.TownEntity;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.RegionRepository;
+import com.achiko.backend.repository.ReviewRepository;
 import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.UserRepository;
 
@@ -32,6 +36,8 @@ public class ShareService {
     private final UserRepository userRepository;
     private final RegionRepository regionRepository;
     private final ShareFilesService shareFilesService;
+    private final ReviewRepository reviewRepository;
+    private final RatingService ratingService; 
     
     /**
      * 특정 shareId로 Share 조회
@@ -157,9 +163,34 @@ public class ShareService {
     public List<ShareDTO> getShareListAll() {
         List<ShareEntity> shareEntities = shareRepository.findAll();
         List<ShareDTO> shareDTOList = new ArrayList<>();
+
+        // 모든 share의 호스트 ID 추출 (중복 제거)
+        Set<Long> hostIds = shareEntities.stream()
+                .filter(entity -> entity.getHost() != null)
+                .map(entity -> entity.getHost().getUserId())
+                .collect(java.util.stream.Collectors.toSet());
+
+        // RatingService를 통해 평균 평점 계산
+        Map<Long, Double> avgRatingByHostId = ratingService.getAvgRatingsByHostIds(hostIds);
+
         for (ShareEntity entity : shareEntities) {
             ShareDTO dto = ShareDTO.fromEntity(entity);
-            // 게시글에 연결된 파일 목록을 조회하여 DTO에 설정
+
+            if (entity.getHost() != null) {
+                Long hostId = entity.getHost().getUserId();
+                double avgRating = avgRatingByHostId.getOrDefault(hostId, 0.0);
+
+                if (dto.getHostDTO() == null) {
+                    UserDTO hostDTO = new UserDTO();
+                    hostDTO.setUserId(hostId);
+                    hostDTO.setAvgRating(avgRating);
+                    dto.setHostDTO(hostDTO);
+                } else {
+                    dto.getHostDTO().setAvgRating(avgRating);
+                }
+            }
+
+            // 파일 목록 세팅
             List<ShareFilesDTO> files = shareFilesService.getFilesByShareId(entity.getShareId());
             dto.setFileList(files);
             shareDTOList.add(dto);
