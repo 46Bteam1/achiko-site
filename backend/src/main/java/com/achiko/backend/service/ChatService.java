@@ -12,6 +12,7 @@ import com.achiko.backend.dto.ChatParticipantDTO;
 import com.achiko.backend.dto.ChatRoomDTO;
 import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.ShareDTO;
+import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.entity.ChatMessageEntity;
 import com.achiko.backend.entity.ChatParticipantEntity;
 import com.achiko.backend.entity.ChatRoomEntity;
@@ -50,11 +51,16 @@ public class ChatService {
 		
 		// 2. UserEntity로 본인이 속한 chatParticipantEntity list 가져오기
 		// 이 때 user가 host인지 guest인지 확인
+		
+		// chatParticipantEntity에서 상대방의 id 가져옴
+		// id로 userEntity 얻고 userDTO로 변
 		if(user.getIsHost() == 0) {
 			// 게스트인 경우
 			List<ChatParticipantEntity> participantList = participantRepository.findByGuest_UserId(user.getUserId());
 			participantList.forEach((e)->{
-				list.add(ChatParticipantDTO.toDTO(e,e.getChatroom().getChatroomId(), e.getHost().getNickname(), e.getGuest().getNickname()));
+				UserEntity host = e.getHost();
+				String profileImage = host.getProfileImage();
+				list.add(ChatParticipantDTO.toDTO(e,e.getChatroom().getChatroomId(), e.getHost().getNickname(), e.getGuest().getNickname(), profileImage));
 			});
 			
 			
@@ -62,7 +68,9 @@ public class ChatService {
 			// 호스트인 경우
 			List<ChatParticipantEntity> participantList = participantRepository.findByHost_UserId(user.getUserId());
 			participantList.forEach((e)->{
-				list.add(ChatParticipantDTO.toDTO(e,e.getChatroom().getChatroomId(), e.getHost().getNickname(), e.getGuest().getNickname()));
+				UserEntity guest = e.getGuest();
+				String profileImage = guest.getProfileImage();
+				list.add(ChatParticipantDTO.toDTO(e,e.getChatroom().getChatroomId(), e.getHost().getNickname(), e.getGuest().getNickname(),profileImage));
 			});
 		}
 		

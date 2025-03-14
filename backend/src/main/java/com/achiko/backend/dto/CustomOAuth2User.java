@@ -1,3 +1,4 @@
+
 package com.achiko.backend.dto;
 
 import java.util.ArrayList;
@@ -48,7 +49,12 @@ public class CustomOAuth2User implements OAuth2User {
     @Override
     public String getName() {
 
-        return oAuth2Response.getName();
+        return oAuth2Response.getProvider()+"_"+oAuth2Response.getProviderId();
+    }
+    
+    public String getRealname() {
+    	
+    	return oAuth2Response.getName();
     }
 
     public String getUsername() {

@@ -25,6 +25,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+
+
 @Slf4j
 @Tag(name = "Review", description = "Review API")
 @Controller
@@ -35,7 +38,9 @@ public class ReviewViewController {
 	private final ReviewService reviewService;
 	private final UserService userService;
 
-	@GetMapping("/reviewPage")
+
+	@Operation(summary = "리뷰페이지 조회", description = "reviewPage를 반환합니다.")
+	   @GetMapping("/reviewPage")
 	   public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId, 
 	         @AuthenticationPrincipal LoginUserDetails loginUser, Model model) {
 
@@ -84,6 +89,7 @@ public class ReviewViewController {
 		UserDTO reviewedUserDTO = userService.selectOneUser(reviewedUserId);
 		UserDTO hostUserDTO = userService.selectOneUser(reviewedUserDTO.getUserId());
 
+		
 		model.addAttribute("loginId", loginUser.getLoginId());
 		model.addAttribute("reviewedUserId", reviewedUserId);
 		model.addAttribute("reviewedUserDTO", reviewedUserDTO);
@@ -107,26 +113,23 @@ public class ReviewViewController {
 	public ResponseEntity<String> reviewRegister(@ModelAttribute ReviewDTO reviewDTO,
 			@RequestParam(name = "reviewedUserId") Long reviewedUserId,
 			@AuthenticationPrincipal LoginUserDetails loginUser) {
-		System.out.println(reviewDTO.toString());
-		System.out.println("리뷰를 당할 사람의 Long 형태의 userId: " + reviewedUserId);
 
 		String loginId = loginUser.getLoginId();
+		log.info("✅ 리뷰 등록 요청 - 리뷰어: {}, 리뷰 대상: {}", loginId, reviewedUserId);
 
-		reviewService.registReview(reviewDTO, reviewedUserId, loginId);
-
-		try {
-
-			if (reviewDTO.getReviewedUserId() == null) {
-				return ResponseEntity.badRequest().body("필수 입력값이 누락되었습니다.");
-			}
-
-			return ResponseEntity.ok("리뷰가 성공적으로 등록되었습니다.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.internalServerError().body("서버 오류 발생: " + e.getMessage());
+		
+		boolean isSuccess = reviewService.registReview(reviewDTO, reviewedUserId, loginId);
+		
+		if (!isSuccess) {
+			log.warn("🚨 리뷰 등록 실패: 같은 공유 주거 공간이 아님");
+			return ResponseEntity.badRequest().body("리뷰 등록 실패: 같은 공유 주거 공간이 아닙니다.");
 		}
 
-	}
+		log.info("✅ 리뷰 등록 성공: {}", reviewDTO);
+		return ResponseEntity.ok("리뷰가 성공적으로 등록되었습니다.");
+		}
+	
+		
 
 	@GetMapping("/reviewUpdate")
 	public String reviewUpdate(@RequestParam("reviewId") Long reviewId, Model model) {
