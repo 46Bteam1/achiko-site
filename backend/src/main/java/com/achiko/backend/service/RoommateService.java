@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.RoommateDTO;
+import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.entity.ChatRoomEntity;
 import com.achiko.backend.entity.RoommateEntity;
 import com.achiko.backend.entity.ShareEntity;
@@ -47,7 +48,7 @@ public class RoommateService {
 	}
 
 	// roommate인 사람들 조회하기
-	public List<RoommateDTO> findRoommates(Long chatRoomId) {
+	public List<UserDTO> findRoommates(Long chatRoomId) {
 		// 1. chatRoomId로 유무 확인, share 가져오기
 		Optional<ChatRoomEntity> temp1 = roomRepository.findById(chatRoomId);
 		if(temp1.isEmpty()) return null;
@@ -56,14 +57,32 @@ public class RoommateService {
 		// 2. share가 share인 roommate들 가져오기
 		List<RoommateEntity> list = roommateRepository.findByShare(share);
 		
-		List<RoommateDTO> dtoList = new ArrayList<>();
-		
+		List<UserEntity> uEntityList = new ArrayList<>();
 		list.forEach((e)->{
-			dtoList.add(RoommateDTO.toDTO(e));
+			uEntityList.add(userRepository.findById(e.getUser().getUserId()).get());
 		});
 		
-		// 3. DTO list 내보내기
-		return dtoList;
+		List<UserDTO> uDTOList = new ArrayList<>();
+		uEntityList.forEach((e)->{
+			uDTOList.add(UserDTO.toDTO(e));
+		});
+		
+		return uDTOList;
+	}
+
+	public UserDTO findHost(Long chatRoomId) {
+		// 1. chatRoomId로 유무 확인, share 가져오기
+		Optional<ChatRoomEntity> temp1 = roomRepository.findById(chatRoomId);
+		if(temp1.isEmpty()) return null;
+				
+		ShareEntity share = temp1.get().getShare();
+		
+		Long hostId = shareRepository.findHostIdByShareId(share.getShareId());
+		
+		UserEntity userEntity = userRepository.findById(hostId).get();
+		
+		UserDTO userDTO = UserDTO.toDTO(userEntity);
+		return userDTO;
 	}
 
 }

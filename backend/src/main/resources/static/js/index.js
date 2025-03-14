@@ -1,18 +1,33 @@
 $(document).ready(function () {
   let lastScrollTop = 0; // 마지막 스크롤 위치 저장
   let isStickyDisabled = false; // sticky가 해제되었는지 상태 확인
+  let mapVisible = false; // 지도 표시 여부 상태
   let map, geocoder;
   let markers = [];
 
   // 스크롤 이벤트: 일정 부분 이상 스크롤되면 sticky 추가
   $(window).on("scroll", function () {
     let scrollTop = $(window).scrollTop();
+    let windowHeight = $(window).height();
+    let documentHeight = $(document).height();
+    let footerHeight = $("footer").outerHeight();
 
-    if (scrollTop > 100 && !isStickyDisabled) {
-      $("header").addClass("sticky");
-    } else if (scrollTop <= 100) {
+    // footer가 화면에 일정 부분 보이면 버튼 숨기기
+    let footerVisibleThreshold =
+      documentHeight - footerHeight + footerHeight / 2;
+    if (scrollTop + windowHeight > footerVisibleThreshold) {
+      $("#mapButton").fadeOut(); // 부드럽게 숨기기
+    } else {
+      $("#mapButton").fadeIn(); // 다시 보이기
+    }
+
+    if (scrollTop > 150) {
+      $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
+      $("header").removeClass("sticky-reappear");
+    } else if (scrollTop <= 150 && lastScrollTop >= 150 && !mapVisible) {
       $("header").removeClass("sticky");
-      isStickyDisabled = false; // 스크롤이 최상단이면 다시 sticky 허용
+      $("header").addClass("sticky-reappear");
+      isStickyDisabled = false; // 스크롤이 최상단이면 다시 sticky 허용 = 큰 검색창 나옴
     }
 
     lastScrollTop = scrollTop; // 마지막 스크롤 위치 저장
@@ -22,6 +37,8 @@ $(document).ready(function () {
   $(".simple-query-form-btn").on("click", function () {
     if ($("header").hasClass("sticky")) {
       $("header").removeClass("sticky");
+      $("header").addClass("sticky-reappear");
+      $("header").addClass("");
       isStickyDisabled = true; // 사용자가 의도적으로 sticky를 해제했음을 저장
     }
   });
@@ -33,6 +50,7 @@ $(document).ready(function () {
         $(event.target).closest(".simple-query-form, .query-form").length > 0;
       if (!isClickInsideQueryForm) {
         $("header").addClass("sticky");
+        $("header").removeClass("sticky-reappear");
         isStickyDisabled = false; // 다시 sticky 허용
       }
     }
@@ -44,17 +62,21 @@ $(document).ready(function () {
     searchShares();
   });
 
-  let mapVisible = false; // 지도 표시 여부 상태
-
   $("#mapButton").click(function () {
     if (!mapVisible) {
       $(".near-trip").hide(); // 기존 여행지 숨기기
       $("#mapContainer").show(); // 지도 컨테이너 표시
       $(this).text("목록 보기"); // 버튼 텍스트 변경
+      $("body").addClass("mapScrollHidden");
+      $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
+      $("header").removeClass("sticky-reappear");
       loadGoogleMap(); // 구글 맵 로드
     } else {
       $(".near-trip").show(); // 기존 여행지 다시 표시
       $("#mapContainer").hide(); // 지도 숨기기
+      $("body").removeClass("mapScrollHidden");
+      $("header").removeClass("sticky");
+      $("header").addClass("sticky-reappear");
       $(this).text("지도 표시하기"); // 버튼 텍스트 변경
     }
     mapVisible = !mapVisible; // 상태 변경
@@ -168,8 +190,7 @@ $(document).ready(function () {
     if (cityId !== "all") queryParams.push(`cityId=${cityId}`);
     if (townId !== "all") queryParams.push(`townId=${townId}`);
 
-    const queryString =
-      queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+    const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
 
     fetch(`/api/search/shares${queryString}`)
       .then((response) => response.json())
@@ -182,46 +203,47 @@ $(document).ready(function () {
 
   // 검색 결과 업데이트 함수
   function updateListings(shares) {
-      const listingsContainer = document.getElementById("listings-container");
-      listingsContainer.innerHTML = ""; // 기존 목록 초기화
+    const listingsContainer = document.getElementById("listings-container");
+    listingsContainer.innerHTML = ""; // 기존 목록 초기화
 
-      shares.forEach((listing) => {
-          const card = document.createElement("div");
-          card.className = "listing-card";
+    shares.forEach((listing) => {
+      const card = document.createElement("div");
+      card.className = "listing-card";
 
-          // 검색 결과에서도 첫 번째 이미지 반영
-          const imageUrl = listing.firstImage ? listing.firstImage : "/images/no-image.png";
+      // 검색 결과에서도 첫 번째 이미지 반영
+      const imageUrl = listing.firstImage ? listing.firstImage : "/images/no-image.png";
 
-          card.innerHTML = `
-              <a href="/share/selectOne?shareId=${listing.id}" class="listing-link">
-                  <button class="favorite-btn"><i class="far fa-heart"></i></button>
-                  <img src="${imageUrl}" alt="숙소 이미지">
-                  <div class="listing-info">
-                      <h3>${listing.title}</h3>
-                      <p>${listing.regionName} ${listing.cityName} ${listing.townName}</p>
-                      <p>₩${new Intl.NumberFormat().format(listing.price)}/박</p>
-                      <p>최대 인원: ${listing.maxGuests}명</p>
-                  </div>
-              </a>
-          `;
+      // favorite 상태에 따라 버튼 클래스와 아이콘 결정
+      const favClass = listing.isFavorite ? "active" : "";
+      const iconClass = listing.isFavorite ? "fas fa-heart" : "far fa-heart";
 
-          listingsContainer.appendChild(card);
-      });
+      card.innerHTML = `
+        <a href="/share/selectOne?shareId=${listing.id}" class="listing-link">
+            <button class="favorite-btn ${favClass}" data-id="${listing.id}">
+                <i class="${iconClass}"></i>
+            </button>
+            <img src="${imageUrl}" alt="숙소 이미지">
+            <div class="listing-info">
+                <h3>${listing.title}</h3>
+                <p>${listing.regionName} ${listing.cityName} ${listing.townName}</p>
+                <p>₩${new Intl.NumberFormat().format(listing.price)}/박</p>
+                <p>최대 인원: ${listing.maxGuests}명</p>
+            </div>
+        </a>
+      `;
+
+      listingsContainer.appendChild(card);
+    });
   }
-
 
   //  마커 클릭 시 표시될 정보 창 생성
   function generateInfoWindowContent(share, fullAddress) {
     return `
             <div style="max-width: 250px;">
                 <h4>${share.title}</h4>
-                <p><strong>가격:</strong> ₩${new Intl.NumberFormat().format(
-                  share.price
-                )}/박</p>
+                <p><strong>가격:</strong> ₩${new Intl.NumberFormat().format(share.price)}/박</p>
                 <p><strong>위치:</strong> ${fullAddress}</p>
-                <a href="/share/selectOne?shareId=${
-                  share.shareId
-                }" target="_blank">상세 보기</a>
+                <a href="/share/selectOne?shareId=${share.shareId}" target="_blank">상세 보기</a>
             </div>
         `;
   }
@@ -250,6 +272,41 @@ $(document).ready(function () {
       $modalMenu.hide();
     }
   });
+
+  // 좋아요(찜) 버튼 클릭 시 이벤트 처리 - 하트 아이콘 토글
+  $(document).on("click", ".favorite-btn", function (e) {
+    e.preventDefault();
+    const button = $(this);
+    const shareId = button.data("id");
+
+    if (!button.hasClass("active")) {
+      $.ajax({
+        url: "/favorite/set",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ shareId: Number(shareId) }),
+        success: function () {
+          button.addClass("active");
+          button.find("i").removeClass("far").addClass("fas");
+        },
+        error: function () {
+          console.error("찜하기 실패");
+        }
+      });
+    } else {
+      $.ajax({
+        url: "/favorite/cancel?shareId=" + shareId,
+        method: "DELETE",
+        success: function () {
+          button.removeClass("active");
+          button.find("i").removeClass("fas").addClass("far");
+        },
+        error: function () {
+          alert("찜 취소 실패!");
+        }
+      });
+    }
+  });
 });
 
 function updateRegionSelect() {
@@ -261,7 +318,7 @@ function updateRegionSelect() {
 
   // 하위 선택 박스 초기화
   regionSelect.innerHTML = '<option value="all">전체</option>';
-  citySelect.innerHTML = '<option value="all" >전체</option>';
+  citySelect.innerHTML = '<option value="all">전체</option>';
   townSelect.innerHTML = '<option value="all">전체</option>';
 
   if (selectedProvince !== "all" && selectedProvince !== "") {
@@ -292,7 +349,7 @@ function updateCitySelect() {
   const selectedRegion = regionSelect.value;
 
   // 하위 선택 박스 초기화
-  citySelect.innerHTML = '<option value="all" >전체</option>';
+  citySelect.innerHTML = '<option value="all">전체</option>';
   townSelect.innerHTML = '<option value="all">전체</option>';
 
   if (selectedRegion) {
@@ -315,7 +372,7 @@ function updateTownSelect() {
   const townSelect = document.getElementById("townId");
   const selectedCity = citySelect.value;
 
-  townSelect.innerHTML = '<option value="all" >전체</option>';
+  townSelect.innerHTML = '<option value="all">전체</option>';
 
   if (selectedCity !== "all") {
     fetch(`/api/location/towns?cityId=${selectedCity}`)
