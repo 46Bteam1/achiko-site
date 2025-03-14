@@ -1,6 +1,11 @@
 $(function () {
   // 유저가 속한 전체 채팅방들 출력
   initChatRooms();
+
+  $("#toMyPageBtn").on("click", function () {
+    // TODO: 마이페이지 돌아가는 버튼 만들기
+    $.ajax({});
+  });
 });
 
 function initChatRooms() {
@@ -17,12 +22,17 @@ function output(resp) {
   let tag = `<table>`;
 
   $.each(resp, function (index, item) {
+    let profileImage = item["profileImage"]
+      ? item["profileImage"]
+      : "/images/fubao.webp";
+
     let nicknameCheck = item["hostNickname"] === nickname;
     let displayNickname = nicknameCheck
       ? item["guestNickname"]
       : item["hostNickname"];
     tag += `
         <tr>
+            <td><img src="${profileImage}" alt="프로필 이미지" width="100px" height="100px" style="border-radius: 50%; object-fit: cover;"></td>
             <td>${displayNickname}</td>
             <td class="btns">
                 <input type="button" value="입장" 

@@ -15,7 +15,6 @@ $(function () {
     window.location.href = "/chatRooms";
   });
 
-  getHost(chatRoomId);
   getRoommates(chatRoomId);
   shareInfo(chatRoomId);
 
@@ -49,6 +48,14 @@ $(function () {
     // 메시지 전송 버튼 이벤트
     $("#sendMessage").on("click", function () {
       sendChat(chatRoomId, nickname);
+    });
+
+    $("#message").keydown(function (event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        // Shift+Enter는 줄 바꿈, Enter만 누르면 전송
+        event.preventDefault(); // 기본 엔터 동작(줄 바꿈) 방지
+        sendChat(chatRoomId, nickname);
+      }
     });
   });
 
@@ -94,13 +101,27 @@ $(function () {
 function showChat(data) {
   console.log("여기는 showChat:", data);
 
-  let sentAt = data["sentAt"] ? data["sentAt"].split(".")[0] : "시간 정보 없음";
+  let sentAt = "시간 정보 없음";
+
+  if (data["sentAt"]) {
+    let date = new Date(data["sentAt"]); // UTC 기준 Date 객체 생성
+    date.setHours(date.getHours() + 9);
+
+    sentAt = date.toLocaleString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  }
 
   let tag = `
     <tr>
-      <td>${data["nickname"]}</td>
-      <td>${data["message"]}</td>
-      <td>${sentAt}</td>
+      <td class="chatNickname">${data["nickname"]}</td>
+      <td class="chatMessage">${data["message"]}</td>
+      <td class="chatTime">${sentAt}</td>
     </tr>`;
 
   $("#chats table").append(tag);
@@ -132,11 +153,23 @@ function chats(resp) {
   let tag = `<table>`;
 
   $.each(resp, function (index, item) {
+    let date = new Date(item["sentAt"]); // UTC 시간 기준으로 Date 객체 생성
+    date.setHours(date.getHours());
+
+    let formattedDate = date.toLocaleString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
     tag += `
         <tr>
-            <td>${item["nickname"]}</td>
-            <td>${item["message"]}</td>
-            <td>${item["sentAt"]}</td>
+            <td class="chatNickname">${item["nickname"]}</td>
+            <td class="chatMessage">${item["message"]}</td>
+            <td class="chatTime">${formattedDate}</td>
         </tr>
     `;
   });
@@ -168,33 +201,17 @@ function getRoommates(chatRoomId) {
         tag += `
         <div style="display: flex; flex-direction: column; align-items: center;">
           <img src="${profileImage}" alt="프로필 이미지" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
-          <p class="guestNickname" style="text-align: center; margin-top: 5px;">${item["nickname"]}</p>
+          <p class="isHost" style="text-align: center; margin-top: 5px; font-weight: bold; color: ${
+            item["isHost"] === 0 ? "#28a745" : "#d9534f"
+          };">${item["isHost"] === 0 ? "Guest" : "Host"}</p>
+          <p class="guestNickname" style="text-align: center; margin-top: 5px;">${
+            item["nickname"]
+          }</p>
         </div>
         `;
       });
 
       $("#guestBox").html(tag);
-    },
-  });
-}
-
-// 호스트 정보 불러오는 함수
-function getHost(chatRoomId) {
-  $.ajax({
-    url: "/roommate/findHost",
-    method: "GET",
-    data: { chatRoomId: chatRoomId },
-    success: function (resp) {
-      let profileImage = resp.profileImage
-        ? resp.profileImage
-        : "/images/fubao.webp";
-
-      let tag = `
-        <img src="${profileImage}" alt="프로필 이미지" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
-        <h4 class="hostNickname">HOST: ${resp.nickname}</h4>
-      `;
-
-      $("#hostBox").html(tag);
     },
   });
 }

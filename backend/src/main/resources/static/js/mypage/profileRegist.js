@@ -236,6 +236,9 @@ function initChatRooms() {
 }
 
 function getChatRooms(resp) {
+  let profileImage = item["profileImage"]
+    ? item["profileImage"]
+    : "/images/fubao.webp";
   const nickname = $("#userNickname").val();
 
   let tag = `<table>`;
@@ -247,6 +250,7 @@ function getChatRooms(resp) {
       : item["hostNickname"];
     tag += `
         <tr>
+            <td><img src="${profileImage}" alt="프로필 이미지" width="50px" height="50px" style="border-radius: 50%; object-fit: cover;"></td>
             <td>${displayNickname}</td>
             <td class="btns">
                 <input type="button" value="입장" 
