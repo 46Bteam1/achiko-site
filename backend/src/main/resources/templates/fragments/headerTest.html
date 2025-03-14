@@ -22,25 +22,6 @@
       </div>
       <div class="header-col header-form">
         <ul>
-          <!-- <li><a th:href="@{/testTemp/testPage}">testpage</a></li>
-          <th:block sec:authorize="isAnonymous()">
-            <li><a th:href="@{/user/regist}">회원가입</a></li>
-            <li><a th:href="@{/user/login}">로그인</a></li>
-          </th:block>
-
-          <th:block sec:authorize="isAuthenticated()">
-            <li><a th:href="@{/user/logout}">로그아웃</a></li>
-            <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
-          </th:block>
-
-          
-          <li><a th:href="@{/viewSpline}">SplinePage</a></li>
-
-          <li>
-            <a th:href="@{/share/write}">글 작성 페이지</a>
-          </li> -->
-          <!-- <li><a th:href="@{/viewSubscribe/subscribePage}">구독</a></li> -->
-
           <li>
             <a class="sticky-black" href="#"
               >あちこちの夢が集まり、ひとつの物語が生まれる</a
@@ -200,23 +181,23 @@
       </div>
       <!-- 모달 (회원가입/로그인 메뉴) -->
       <div id="modalMenu" class="modal">
-          <!-- <span class="close">&times;</span> -->
-          <div class="menu-group">
-            <th:block sec:authorize="isAnonymous()">
-              <li><a th:href="@{/user/regist}">회원가입</a></li>
-              <li><a th:href="@{/user/login}">로그인</a></li>
-            </th:block>
-            <th:block sec:authorize="isAuthenticated()">
-              <li><a th:href="@{/user/logout}">로그아웃</a></li>
-              <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
-            </th:block>
-          </div>
-          <div class="menu-divider"></div>
-          <div class="menu-group">
-            <li><a th:href="@{/viewSubscribe/subscribePage}">구독 page</a></li>
-            <li><a th:href="@{/viewSpline}">SplinePage</a></li>
-            <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
-          </div>
+        <!-- <span class="close">&times;</span> -->
+        <div class="menu-group">
+          <th:block sec:authorize="isAnonymous()">
+            <li><a th:href="@{/user/regist}">회원가입</a></li>
+            <li><a th:href="@{/user/login}">로그인</a></li>
+          </th:block>
+          <th:block sec:authorize="isAuthenticated()">
+            <li><a th:href="@{/user/logout}">로그아웃</a></li>
+            <li><a th:href="@{/mypage/mypageView}">개인정보 수정</a></li>
+          </th:block>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-group">
+          <li><a th:href="@{/viewSubscribe/subscribePage}">구독 page</a></li>
+          <li><a th:href="@{/viewSpline}">SplinePage</a></li>
+          <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
+        </div>
       </div>
     </header>
   </body>
