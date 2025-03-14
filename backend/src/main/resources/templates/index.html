@@ -27,8 +27,6 @@
   <!-- 헤더 header -->
   <header th:replace="~{fragments/headerTest :: header}"></header>
 
-  <!-- 메인 컨텐츠 main -->
-  <main>
     <article class="near-trip">
       <section id="listings-container" class="listings-grid">
         <div th:each="listing : ${shareList}" class="listing-card">

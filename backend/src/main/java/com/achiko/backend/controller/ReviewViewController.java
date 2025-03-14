@@ -24,7 +24,8 @@ import com.achiko.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Tag(name = "Review", description = "Review API")
 @Controller
 @RequestMapping("/review")
@@ -34,48 +35,47 @@ public class ReviewViewController {
 	private final ReviewService reviewService;
 	private final UserService userService;
 
-	@Operation(summary = "리뷰페이지 조회", description = "reviewPage를 반환합니다.")
 	@GetMapping("/reviewPage")
-	public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId, 
-			@AuthenticationPrincipal LoginUserDetails loginUser, Model model) {
+	   public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId, 
+	         @AuthenticationPrincipal LoginUserDetails loginUser, Model model) {
 
-		List<ReviewDTO> reviews = reviewService.getUserReviews(reviewedUserId);
-		UserDTO reviewedUser = userService.getUserById(reviewedUserId);
+	      List<ReviewDTO> reviews = reviewService.getUserReviews(reviewedUserId);
+	      UserDTO reviewedUser = userService.getUserById(reviewedUserId);
 
-		// reviews가 null이면 빈 리스트를 모델에 추가
-		model.addAttribute("reviews", reviews != null ? reviews : Collections.emptyList());
-		model.addAttribute("reviewedUserName", reviewedUser.getRealName()); // 리뷰 대상자 이름
-		model.addAttribute("reviewedUserId", reviewedUserId); // ID 추가
-		model.addAttribute("isHost", reviewedUser.getIsHost()); // ✅ UserDTO 객체에서 값 가져오기
-		model.addAttribute("nationality", reviewedUser.getNationality());
-		model.addAttribute("gender", reviewedUser.getGender());
-		model.addAttribute("languages", reviewedUser.getLanguages());
-		model.addAttribute("religion", reviewedUser.getReligion());
-		model.addAttribute("bio", reviewedUser.getBio());
-		model.addAttribute("reviewedUser", reviewedUser);
+	      // reviews가 null이면 빈 리스트를 모델에 추가
+	      model.addAttribute("reviews", reviews != null ? reviews : Collections.emptyList());
+	      model.addAttribute("reviewedUserName", reviewedUser.getRealName()); // 리뷰 대상자 이름
+	      model.addAttribute("reviewedUserId", reviewedUserId); // ID 추가
+	      model.addAttribute("isHost", reviewedUser.getIsHost()); // ✅ UserDTO 객체에서 값 가져오기
+	      model.addAttribute("nationality", reviewedUser.getNationality());
+	      model.addAttribute("gender", reviewedUser.getGender());
+	      model.addAttribute("languages", reviewedUser.getLanguages());
+	      model.addAttribute("religion", reviewedUser.getReligion());
+	      model.addAttribute("bio", reviewedUser.getBio());
+	      model.addAttribute("reviewedUser", reviewedUser);
 
-		// 평균 점수 계산
-		DoubleSummaryStatistics cleanlinessStats = reviews.stream().mapToDouble(ReviewDTO::getCleanlinessRating)
-				.summaryStatistics();
-		DoubleSummaryStatistics trustStats = reviews.stream().mapToDouble(ReviewDTO::getTrustRating)
-				.summaryStatistics();
-		DoubleSummaryStatistics communicationStats = reviews.stream().mapToDouble(ReviewDTO::getCommunicationRating)
-				.summaryStatistics();
-		DoubleSummaryStatistics mannerStats = reviews.stream().mapToDouble(ReviewDTO::getMannerRating)
-				.summaryStatistics();
+	      // 평균 점수 계산
+	      DoubleSummaryStatistics cleanlinessStats = reviews.stream().mapToDouble(ReviewDTO::getCleanlinessRating)
+	            .summaryStatistics();
+	      DoubleSummaryStatistics trustStats = reviews.stream().mapToDouble(ReviewDTO::getTrustRating)
+	            .summaryStatistics();
+	      DoubleSummaryStatistics communicationStats = reviews.stream().mapToDouble(ReviewDTO::getCommunicationRating)
+	            .summaryStatistics();
+	      DoubleSummaryStatistics mannerStats = reviews.stream().mapToDouble(ReviewDTO::getMannerRating)
+	            .summaryStatistics();
 
-		model.addAttribute("averageCleanliness", cleanlinessStats.getAverage());
-		model.addAttribute("averageTrust", trustStats.getAverage());
-		model.addAttribute("averageCommunication", communicationStats.getAverage());
-		model.addAttribute("averageManner", mannerStats.getAverage());
-		model.addAttribute("reviewedUserId", reviewedUserId);
-		
-		if (loginUser != null) {
-	        model.addAttribute("loggedUserId", loginUser.getUserId());
-	    }
-		
-		return "review/reviewPage"; // Thymeleaf 파일명 (확장자 제외)
-	}
+	      model.addAttribute("averageCleanliness", cleanlinessStats.getAverage());
+	      model.addAttribute("averageTrust", trustStats.getAverage());
+	      model.addAttribute("averageCommunication", communicationStats.getAverage());
+	      model.addAttribute("averageManner", mannerStats.getAverage());
+	      model.addAttribute("reviewedUserId", reviewedUserId);
+	      
+	      if (loginUser != null) {
+	           model.addAttribute("loggedUserId", loginUser.getUserId());
+	       }
+	      
+	      return "review/reviewPage"; // Thymeleaf 파일명 (확장자 제외)
+	   }
 
 	// ✅ 리뷰 작성 페이지로 이동 (경로 변경: /review/regist)
 	@GetMapping("/reviewRegist")

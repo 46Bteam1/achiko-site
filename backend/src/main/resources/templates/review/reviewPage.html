@@ -299,8 +299,6 @@
       </div>
     </div>
   </div>
-
-
 <a class="write-review-btn" 
    th:if="${loggedUserId == null or loggedUserId != reviewedUserId}"
    th:href="@{/review/reviewRegist(reviewedUserId=${reviewedUserId})}">
