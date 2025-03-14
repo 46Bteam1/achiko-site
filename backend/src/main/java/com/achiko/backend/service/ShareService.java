@@ -16,8 +16,11 @@ import com.achiko.backend.entity.RegionEntity;
 import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.TownEntity;
 import com.achiko.backend.entity.UserEntity;
+import com.achiko.backend.repository.CityRepository;
+import com.achiko.backend.repository.ProvinceRepository;
 import com.achiko.backend.repository.RegionRepository;
 import com.achiko.backend.repository.ShareRepository;
+import com.achiko.backend.repository.TownRepository;
 import com.achiko.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,9 @@ public class ShareService {
     private final ShareRepository shareRepository;
     private final UserRepository userRepository;
     private final RegionRepository regionRepository;
+    private final ProvinceRepository provinceRepository;
+    private final CityRepository cityRepository;
+    private final TownRepository townRepository;
     private final ShareFilesService shareFilesService;
     
     /**
@@ -100,6 +106,25 @@ public class ShareService {
         existing.setDetailAddress(shareDTO.getDetailAddress());
         existing.setPrice(shareDTO.getPrice());
         existing.setCreatedAt(LocalDateTime.now());
+        
+     // 위치 정보 업데이트
+        if (shareDTO.getProvinceId() != null) {
+            ProvinceEntity province = provinceRepository.getReferenceById(shareDTO.getProvinceId().intValue());
+            existing.setProvince(province);
+        }
+        if (shareDTO.getRegionId() != null) {
+            RegionEntity region = regionRepository.getReferenceById(shareDTO.getRegionId().intValue());
+            existing.setRegion(region);
+        }
+        if (shareDTO.getCityId() != null) {
+            CityEntity city = cityRepository.getReferenceById(shareDTO.getCityId().intValue());
+            existing.setCity(city);
+        }
+        if (shareDTO.getTownId() != null) {
+            TownEntity town = townRepository.getReferenceById(shareDTO.getTownId().intValue());
+            existing.setTown(town);
+        }
+        
         ShareEntity updatedEntity = shareRepository.save(existing);
         return convertToDTO(updatedEntity);
     }

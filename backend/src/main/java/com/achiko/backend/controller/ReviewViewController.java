@@ -26,6 +26,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+
+
 @Slf4j
 @Tag(name = "Review", description = "Review API")
 @Controller
@@ -35,6 +37,7 @@ public class ReviewViewController {
 
 	private final ReviewService reviewService;
 	private final UserService userService;
+
 
 	@Operation(summary = "리뷰페이지 조회", description = "reviewPage를 반환합니다.")
 	   @GetMapping("/reviewPage")
@@ -85,6 +88,7 @@ public class ReviewViewController {
 			@RequestParam(name = "reviewedUserId") Long reviewedUserId, Model model) {
 		UserDTO reviewedUserDTO = userService.selectOneUser(reviewedUserId);
 		UserDTO hostUserDTO = userService.selectOneUser(reviewedUserDTO.getUserId());
+
 		
 		model.addAttribute("loginId", loginUser.getLoginId());
 		model.addAttribute("reviewedUserId", reviewedUserId);

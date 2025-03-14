@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://thymeleaf.org" xmlns:sec="http://thymeleaf.org/extras/spring-security">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,10 +31,18 @@
       <section id="listings-container" class="listings-grid">
         <div th:each="listing : ${shareList}" class="listing-card">
           <a th:href="@{/share/selectOne(shareId=${listing.shareId})}" class="listing-link">
-            <button class="favorite-btn" th:attr="data-id=${listing.shareId}"
-              th:classappend="${listing.isFavorite} ? ' active' : ''">
-              <i th:class="${listing.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"></i>
-            </button>
+            <!-- 로그인 상태에 따른 찜 버튼 -->
+            <th:block th:if="${isLoggedIn}">
+              <button class="favorite-btn" th:attr="data-id=${listing.shareId}"
+                th:classappend="${listing.isFavorite} ? ' active' : ''">
+                <i th:class="${listing.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"></i>
+              </button>
+            </th:block>
+            <th:block th:unless="${isLoggedIn}">
+              <button class="favorite-btn disabled" title="로그인 후 이용 가능합니다." disabled>
+                <i class="far fa-heart"></i>
+              </button>
+            </th:block>
             <th:block th:if="${listing.fileList != null and listing.fileList.size() > 0}">
               <img th:src="${listing.fileList[0].fileUrl}" alt="이미지" />
             </th:block>
@@ -53,6 +60,7 @@
             </div>
           </a>
         </div>
+        
       </section>
     </article>
 

@@ -219,7 +219,8 @@ public class ShareController {
         shareDTO.setCreatedAt(LocalDateTime.now());
   
         ShareDTO updated = shareService.updateShare(shareDTO);
-  
+        
+        
         return "redirect:/share/selectOne?shareId=" + updated.getShareId();
     }
   
