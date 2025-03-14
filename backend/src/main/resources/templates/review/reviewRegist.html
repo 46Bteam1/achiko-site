@@ -116,24 +116,37 @@ body {
 	<div class="container">
 		<!-- ✅ 왼쪽 섹션: 리뷰 대상 정보 -->
 		<div class="left-section">
-			<div class="property-image"></div>
-			<div class="property-info">
-				<p>
-					<strong>유저 이름:</strong> 하하
-				</p>
-				<p>
-					<strong>게스트 여부:</strong> O
-				</p>
-				<p>
-					<strong>성별:</strong> 여성
-				</p>
-				<p>
-					<strong>언어:</strong> 한국어
-				</p>
-				<p>
-					<strong>종교:</strong> 천주교
-				</p>
+			<div class="property-image">
+			<div>
+          <img th:src="${hostUser.profileImage != null and !#strings.isEmpty(hostUser.profileImage) ? hostUser.profileImage : '/images/default-profile.webp'}"
+               alt="호스트 이미지"
+               width="150px"
+               height="150px"
+               style="border-radius: 50%; object-fit: cover" />
+        </div>
 			</div>
+			<div class="property-info">
+  <p>
+    <strong>유저 이름:</strong>
+    <span th:text="${reviewedUserDTO.realName}">기본 이름</span>
+  </p>
+  <p>
+    <strong>게스트 여부:</strong>
+    <span th:text="${reviewedUserDTO.isHost == 0 ? '호스트' : (reviewedUserDTO.isHost == 1 ? '게스트' : '관리자')}">상태</span>
+  </p>
+  <p>
+    <strong>성별:</strong>
+    <span th:text="${reviewedUserDTO.gender == 0 ? '남성' : (reviewedUserDTO.gender == 1 ? '여성' : '기타')}">성별</span>
+  </p>
+  <p>
+    <strong>언어:</strong>
+    <span th:text="${reviewedUserDTO.languages}">언어</span>
+  </p>
+  <p>
+    <strong>종교:</strong>
+    <span th:text="${reviewedUserDTO.religion}">종교</span>
+  </p>
+</div>
 		</div>
 
 		<!-- ✅ 오른쪽 섹션: 리뷰 작성 -->

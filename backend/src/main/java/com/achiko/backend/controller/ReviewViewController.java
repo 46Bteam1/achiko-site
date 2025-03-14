@@ -24,7 +24,6 @@ import com.achiko.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 @Tag(name = "Review", description = "Review API")
 @Controller
@@ -37,7 +36,8 @@ public class ReviewViewController {
 
 	@Operation(summary = "리뷰페이지 조회", description = "reviewPage를 반환합니다.")
 	@GetMapping("/reviewPage")
-	public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId, Model model) {
+	public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId, 
+			@AuthenticationPrincipal LoginUserDetails loginUser, Model model) {
 
 		List<ReviewDTO> reviews = reviewService.getUserReviews(reviewedUserId);
 		UserDTO reviewedUser = userService.getUserById(reviewedUserId);
@@ -69,7 +69,11 @@ public class ReviewViewController {
 		model.addAttribute("averageCommunication", communicationStats.getAverage());
 		model.addAttribute("averageManner", mannerStats.getAverage());
 		model.addAttribute("reviewedUserId", reviewedUserId);
-
+		
+		if (loginUser != null) {
+	        model.addAttribute("loggedUserId", loginUser.getUserId());
+	    }
+		
 		return "review/reviewPage"; // Thymeleaf 파일명 (확장자 제외)
 	}
 
@@ -78,6 +82,7 @@ public class ReviewViewController {
 	public String showReviewRegistPage(@AuthenticationPrincipal LoginUserDetails loginUser,
 			@RequestParam(name = "reviewedUserId") Long reviewedUserId, Model model) {
 		UserDTO reviewedUserDTO = userService.selectOneUser(reviewedUserId);
+		UserDTO hostUserDTO = userService.selectOneUser(reviewedUserDTO.getUserId());
 
 		model.addAttribute("loginId", loginUser.getLoginId());
 		model.addAttribute("reviewedUserId", reviewedUserId);
@@ -85,6 +90,8 @@ public class ReviewViewController {
 		model.addAttribute("reviewedUserName", reviewedUserDTO.getRealName());
 		model.addAttribute("review", new ReviewDTO()); // 빈 객체 추가
 
+		model.addAttribute("hostUser", hostUserDTO);
+		
 		return "review/reviewRegist"; // templates/review/reviewRegist.html과 연결
 	}
 

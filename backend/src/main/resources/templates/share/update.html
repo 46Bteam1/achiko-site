@@ -177,7 +177,7 @@
         <!-- 요금 -->
         <div class="form-group">
           <label for="price">요금</label>
-          <input type="text" step="0.01" id="price" name="price" class="form-control" th:value="${share.price}" placeholder="요금 (JPY)" required />
+          <input type="text" step="0.01" id="price" name="price" class="form-control" th:value="${#numbers.formatDecimal(share.price, 0, 0)}" placeholder="요금 (JPY)" required />
         </div>
 
         <!-- ★ 사진 등록 영역 (업데이트 시에도 기존 이미지와 새 이미지 모두 수정/삭제 가능) ★ -->

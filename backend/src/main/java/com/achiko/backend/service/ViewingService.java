@@ -47,7 +47,7 @@ public class ViewingService {
 	    }
 		
 		ViewingEntity viewingEntity = ViewingEntity.toEntity(viewingDTO, share, user);
-		viewingRepository.save(viewingEntity);
+		viewingRepository.saveAndFlush(viewingEntity);
 		return "viewing 생성 성공";
 	}
 
