@@ -226,8 +226,6 @@ function withdraw() {
 }
 
 function initChatRooms() {
-  console.log("!!!!!!initChatrooms");
-
   $.ajax({
     url: "/chat/selectRooms",
     method: "GET",
@@ -236,14 +234,13 @@ function initChatRooms() {
 }
 
 function getChatRooms(resp) {
-  let profileImage = item["profileImage"]
-    ? item["profileImage"]
-    : "/images/fubao.webp";
-  const nickname = $("#userNickname").val();
-
   let tag = `<table>`;
 
   $.each(resp, function (index, item) {
+    let profileImage = item["profileImage"]
+      ? item["profileImage"]
+      : "/images/fubao.webp";
+    const nickname = $("#userNickname").val();
     let nicknameCheck = item["hostNickname"] === nickname;
     let displayNickname = nicknameCheck
       ? item["guestNickname"]

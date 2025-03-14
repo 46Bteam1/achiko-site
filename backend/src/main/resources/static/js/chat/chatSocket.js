@@ -7,8 +7,7 @@ $(function () {
   const nickname = $("#nickname").val();
 
   $("#toMyPageBtn").on("click", function () {
-    // TODO: 마이페이지 돌아가는 버튼 만들기
-    $.ajax({});
+    window.location.href = `http://localhost:8080/mypage/mypageSample?userId=${userId}`;
   });
 
   $("#chatRoomsBtn").on("click", function () {

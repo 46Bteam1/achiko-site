@@ -1,10 +1,10 @@
 $(function () {
   // 유저가 속한 전체 채팅방들 출력
   initChatRooms();
+  const userId = $("#userId").val();
 
   $("#toMyPageBtn").on("click", function () {
-    // TODO: 마이페이지 돌아가는 버튼 만들기
-    $.ajax({});
+    window.location.href = `http://localhost:8080/mypage/mypageSample?userId=${userId}`;
   });
 });
 

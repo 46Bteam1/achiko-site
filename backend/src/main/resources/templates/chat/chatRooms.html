@@ -21,7 +21,8 @@
 
     <div id="chatroomContainer">
       <div>
-        <input type="hidden" th:value="${nickname}" id="nickname" />
+        <input type="hidden" th:value="${user.userId}" id="userId" />
+        <input type="hidden" th:value="${user.nickname}" id="nickname" />
       </div>
       <div class="count"></div>
       <div id="chatRooms"></div>
