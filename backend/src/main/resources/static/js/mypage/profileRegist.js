@@ -42,6 +42,8 @@ $(document).ready(function () {
   });
 
   initChatRooms();
+
+  $(".delete-btn").on("click", deleteShare);
 });
 
 // let newProfileImage = $("#profileImageInput")[0].files[0]; // 수정
@@ -247,6 +249,7 @@ function getChatRooms(resp) {
       let profileImage = item["profileImage"]
         ? item["profileImage"]
         : "/images/fubao.webp";
+      const nickname = $("#userNickname").val();
       let nicknameCheck = item["hostNickname"] === nickname;
       let displayNickname = nicknameCheck
         ? item["guestNickname"]
@@ -304,6 +307,27 @@ function enterRoom() {
     data: { chatroomId: chatroomId },
     success: function (response) {
       window.location.href = "/chatList?chatroomId=" + chatroomId;
+    },
+  });
+}
+
+function deleteShare() {
+  let shareId = $(this).attr("data-shareId");
+
+  if (!confirm("정말로 삭제하시겠습니까?")) {
+    return;
+  }
+
+  $.ajax({
+    type: "GET",
+    url: "/share/delete",
+    data: { shareId: shareId },
+    success: function (response) {
+      alert("게시물이 삭제되었습니다.");
+      window.location.href = "/mypage/mypageView";
+    },
+    error: function (xhr) {
+      alert(xhr.responseText || "삭제에 실패했습니다.");
     },
   });
 }

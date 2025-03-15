@@ -52,7 +52,9 @@
             <thead>
               <tr>
                 <th class="no">No.</th>
-                <th class="title">쉐어하우스</th>
+                <th
+                  th:text="${userDTO.isHost == 0 ? '쉐어하우스' : '게스트'}"
+                ></th>
                 <th class="create_date">뷰잉 예정일</th>
               </tr>
             </thead>
@@ -62,26 +64,32 @@
                   <td colspan="4" class="no-data">예정된 뷰잉이 없습니다.</td>
                 </tr>
               </th:block>
-
-              <tr th:each="viewing, status : ${viewingList}">
-                <td th:text="${status.count}"></td>
-                <td>
-                  <a
-                    th:href="@{/share/selectOne(shareId=${viewing.shareId}, 
-      userId=${userDTO.userId})}"
-                    th:text="${viewing.shareTitle}"
-                  ></a>
-                </td>
-                <td
-                  th:text="${#temporals.format(viewing.scheduledDate, 'yyyy-MM-dd HH:mm')}"
-                ></td>
-              </tr>
+              <th:block
+                th:unless="${viewingList == null or viewingList.isEmpty()}"
+              >
+                <tr th:each="viewing, status : ${viewingList}">
+                  <td th:text="${status.count}"></td>
+                  <td th:if="${userDTO.isHost == 0}">
+                    <a
+                      th:href="@{/share/selectOne(shareId=${viewing.shareId}, userId=${userDTO.userId})}"
+                      th:text="${viewing.shareTitle}"
+                    ></a>
+                  </td>
+                  <td
+                    th:unless="${userDTO.isHost == 0}"
+                    th:text="${viewing.guestNickname}"
+                  ></td>
+                  <td
+                    th:text="${#temporals.format(viewing.scheduledDate, 'yyyy-MM-dd HH:mm')}"
+                  ></td>
+                </tr>
+              </th:block>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- 작성한 쉐어 글 목록 -->
+      <!-- 작성한 쉐어 글 목록 (for host) -->
       <th:block th:if="${userDTO.isHost == 1}">
         <div class="section">
           <h3>나의 쉐어하우스</h3>
@@ -148,7 +156,7 @@
         </div>
       </div>
 
-      <!-- 찜목록 -->
+      <!-- 찜목록 (for guest) -->
       <th:block th:if="${userDTO.isHost == 0}">
         <div class="section">
           <h3>찜한 목록</h3>
@@ -191,7 +199,8 @@
             <thead>
               <tr>
                 <th class="no">No.</th>
-                <th class="reviewContent">작성한 리뷰 내용</th>
+                <th colspan="2" class="reviewContent">작성한 리뷰 내용</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -204,11 +213,15 @@
               </th:block>
               <tr th:each="review, status : ${writtenReviewList}">
                 <td th:text="${status.count}"></td>
+                <td th:text="${review.comment}"></td>
                 <td>
                   <a
-                    th:href="@{/review/reviewDetail(reviewId=${review.reviewId}, userId=${userId})}"
-                    th:text="${review.comment}"
-                  ></a>
+                    th:href="@{/review/reviewPage(reviewId=${review.reviewId}, reviewedUserId=${userId})}"
+                  >
+                    <button class="btn btn-secondary" id="reviewreviewedUserId">
+                      해당 리뷰 보러가기
+                    </button>
+                  </a>
                 </td>
               </tr>
             </tbody>
@@ -233,7 +246,7 @@
                 <td th:text="${status.count}"></td>
                 <td>
                   <a
-                    th:href="@{/review/reviewDetail(reviewId=${review.reviewId}, userId=${userId})}"
+                    th:href="@{/review/reviewPage(reviewId=${review.reviewId}, reviewedUserId=${userId})}"
                     th:text="${review.comment}"
                   ></a>
                 </td>
@@ -246,7 +259,7 @@
         </div>
       </div>
 
-      <!-- 댓글 -->
+      <!-- 댓글 (for guest) -->
       <th:block th:if="${userDTO.isHost == 0}">
         <div class="section">
           <h3>내 댓글 보기</h3>
@@ -270,7 +283,7 @@
                   <td th:text="${status.count}"></td>
                   <td>
                     <a
-                      th:href="@{/review/reviewDetail(reviewId=${reviewReply.reviewId}, userId=${userId})}"
+                      th:href="@{/review/reviewPage(reviewId=${reviewReply.reviewId}, userId=${userId})}"
                       th:text="${reviewReply.content}"
                     ></a>
                   </td>
