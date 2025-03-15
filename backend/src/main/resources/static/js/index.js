@@ -324,6 +324,11 @@ $(document).ready(function () {
 
   // 좋아요(찜) 버튼 클릭 시 이벤트 처리 - 하트 아이콘 토글
   $(document).on("click", ".favorite-btn", function (e) {
+    if ($(this).is("[disabled]")) {
+      e.preventDefault();
+      alert("로그인 후 이용 가능합니다.");
+      return;
+    }
     e.preventDefault();
     const button = $(this);
     const shareId = button.data("id");

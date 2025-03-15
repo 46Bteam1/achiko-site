@@ -55,7 +55,7 @@ public class ReviewService {
 	}
 
 	@Transactional
-	public void registReview(ReviewDTO reviewDTO, Long reviewedUserId, String reviewerId) {
+	public boolean registReview(ReviewDTO reviewDTO, Long reviewedUserId, String reviewerId) {
 		UserEntity userEntity = userRepository.findByLoginId(reviewerId);
 		Long reviewerUserId = userEntity.getUserId();
 
@@ -74,7 +74,12 @@ public class ReviewService {
 				.flatMap(reviewer -> reviewedRoommates.stream()
 						.filter(reviewed -> reviewer.getShare().getShareId().equals(reviewed.getShare().getShareId()))
 						.map(reviewed -> reviewed.getShare().getShareId()))
-				.findFirst().orElseThrow(() -> new IllegalArgumentException("사용자가 같은 공유 주거 공간에 속해 있지 않습니다."));
+				.findFirst().orElse(null);
+		
+				if (shareId == null) {
+        log.warn("🚨 같은 공유 주거 공간이 아닙니다. 리뷰 등록 실패.");
+        return false;
+    }	
 
 		log.info("✅ 공유 주거 공간 ID: {}", shareId);
 
@@ -87,6 +92,10 @@ public class ReviewService {
 		// DTO를 Entity로 변환 후 저장
 		ReviewEntity reviewEntity = ReviewEntity.toEntity(reviewDTO);
 		reviewRepository.save(reviewEntity);
+
+		log.info("✅ 리뷰 저장 완료 - ID: {}, 리뷰어: {}, 대상자: {}", reviewEntity.getReviewId(), reviewEntity.getReviewerId(), reviewEntity.getReviewedUserId());
+
+		return true;
 	}
 
 	public ReviewDTO getReviewById(Long reviewId) {

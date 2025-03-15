@@ -25,7 +25,9 @@ import com.achiko.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Tag(name = "Review", description = "Review API")
 @Controller
 @RequestMapping("/review")
@@ -37,10 +39,8 @@ public class ReviewViewController {
 
 	@Operation(summary = "리뷰페이지 조회", description = "reviewPage를 반환합니다.")
 	@GetMapping("/reviewPage")
-	public String reviewPage(
-			@RequestParam(name = "reviewedUserId") Long reviewedUserId,
-			@AuthenticationPrincipal LoginUserDetails loginUser,
-			Model model) {
+	public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId,
+			@AuthenticationPrincipal LoginUserDetails loginUser, Model model) {
 
 		List<ReviewDTO> reviews = reviewService.getUserReviews(reviewedUserId);
 		UserDTO reviewedUser = userService.getUserById(reviewedUserId);
@@ -74,6 +74,10 @@ public class ReviewViewController {
 		model.addAttribute("averageManner", mannerStats.getAverage());
 		model.addAttribute("reviewedUserId", reviewedUserId);
 
+		if (loginUser != null) {
+			model.addAttribute("loggedUserId", loginUser.getUserId());
+		}
+
 		return "review/reviewPage"; // Thymeleaf 파일명 (확장자 제외)
 	}
 
@@ -82,6 +86,7 @@ public class ReviewViewController {
 	public String showReviewRegistPage(@AuthenticationPrincipal LoginUserDetails loginUser,
 			@RequestParam(name = "reviewedUserId") Long reviewedUserId, Model model) {
 		UserDTO reviewedUserDTO = userService.selectOneUser(reviewedUserId);
+		UserDTO hostUserDTO = userService.selectOneUser(reviewedUserDTO.getUserId());
 
 		model.addAttribute("loginId", loginUser.getLoginId());
 		model.addAttribute("reviewedUserId", reviewedUserId);
@@ -92,6 +97,8 @@ public class ReviewViewController {
 
 		List<String> ratingCategories = Arrays.asList("청결도", "신뢰도", "소통능력", "매너");
 		model.addAttribute("ratingCategories", ratingCategories);
+
+		model.addAttribute("hostUser", hostUserDTO);
 
 		return "review/reviewRegist"; // templates/review/reviewRegist.html과 연결
 	}
@@ -105,16 +112,15 @@ public class ReviewViewController {
 
 	// ✅ 리뷰 등록 API
 	@PostMapping("/regist")
-	public String reviewRegister(@ModelAttribute ReviewDTO reviewDTO,
+	public ResponseEntity<String> reviewRegister(@ModelAttribute ReviewDTO reviewDTO,
 			@RequestParam(name = "reviewedUserId") Long reviewedUserId,
 			@AuthenticationPrincipal LoginUserDetails loginUser) {
-		System.out.println(reviewDTO.toString());
-		System.out.println("리뷰를 당할 사람의 Long 형태의 userId: " + reviewedUserId);
 
 		String loginId = loginUser.getLoginId();
+		log.info("✅ 리뷰 등록 요청 - 리뷰어: {}, 리뷰 대상: {}", loginId, reviewedUserId);
 
-		reviewService.registReview(reviewDTO, reviewedUserId, loginId);
-		return "redirect:/review/reviewPage?reviewedUserId=" + reviewedUserId;
+//		reviewService.registReview(reviewDTO, reviewedUserId, loginId);
+//		return "redirect:/review/reviewPage?reviewedUserId=" + reviewedUserId;
 		// try {
 		//
 		// if (reviewDTO.getReviewedUserId() == null) {
@@ -128,8 +134,18 @@ public class ReviewViewController {
 		// e.getMessage());
 		// }
 
+		boolean isSuccess = reviewService.registReview(reviewDTO, reviewedUserId, loginId);
+
+		if (!isSuccess) {
+			log.warn("🚨 리뷰 등록 실패: 같은 공유 주거 공간이 아님");
+			return ResponseEntity.badRequest().body("리뷰 등록 실패: 같은 공유 주거 공간이 아닙니다.");
+		}
+
+		log.info("✅ 리뷰 등록 성공: {}", reviewDTO);
+		return ResponseEntity.ok("리뷰가 성공적으로 등록되었습니다.");
 	}
 
+	
 	@GetMapping("/reviewUpdate")
 	public String reviewUpdate(@RequestParam("reviewId") Long reviewId, Model model) {
 		// 리뷰 조회

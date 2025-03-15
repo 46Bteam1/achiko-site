@@ -281,34 +281,61 @@
 
     <!-- 게스트 조회 모달 -->
     <div id="guestModal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="guestModalClose">&times;</span>
-        <h2><b> 확정 게스트 정보 </b></h2>
-        <div>
-          <div>
-            <h5 th:text="${share.title}" style="color: slategrey;">게시글 제목</h5>
-          </div>
-          <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px" style="border-radius: 50%; object-fit: cover" />
-        </div>
-        <!-- 로그인한 경우 사용자 정보 표시 -->
-        <div class="mypage-area" th:if="${loggedUser != null}">
-          <div>
-            <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px" style="border-radius: 50%; object-fit: cover" />
-          </div>
-          <div class="user-info">
-            <span th:text="${loggedUser.nickname} + '(' + ${loggedUser.loginId} + ')'">[nickname(login_id)]</span>
-          </div>
-        </div>
-        <div class="mypage-area" th:unless="${loggedUser != null}">
-          <a th:href="@{/user/login}">
-            <button>로그인</button>
-          </a>
-        </div>
-        <a th:href="@{/mypage/mypageView}">
-          <button>MY PAGE</button>
-        </a>
+  <div class="modal-content">
+    <span class="close" id="guestModalClose">&times;</span>
+    <h2><b> 확정 게스트 정보 </b></h2>
+    <div>
+      <div>
+        <h5 th:text="${share.title}" style="color: slategrey;">게시글 제목</h5>
+        <div class="host-details">
+          <div class="host-info">
+            <div>
+              <img 
+                th:src="${hostUser.profileImage != null and !#strings.isEmpty(hostUser.profileImage) ? hostUser.profileImage : '/images/default-profile.webp'}"
+                alt="호스트 이미지"
+                width="150px"
+                height="150px"
+                style="border-radius: 50%; object-fit: cover" 
+              />
+            </div>
+            <div class="host-info-nickname">
+    			<span>HOST : </span>
+    			<span th:text="${hostUser.nickname}">[nickname]</span>
+			</div>
+			<br>
+            <div class="mypage-area" th:if="${loggedUser != null}">
+              <div>
+                <img 
+                  th:src="@{/images/fubao.webp}" 
+                  alt="푸바오" 
+                  width="100px" 
+                  height="100px" 
+                  style="border-radius: 50%; object-fit: cover" 
+                />
+              </div>
+              <div class="user-info">
+                <span th:text="${loggedUser.nickname}">[nickname]</span>
+              </div>
+            </div>
+
+            <div class="mypage-area" th:unless="${loggedUser != null}">
+              <a th:href="@{/user/login}">
+                <button>로그인</button>
+              </a>
+            </div>
+			<br>
+            <div>
+              <a th:href="@{/mypage/mypageView}">
+                <button>MY PAGE</button>
+              </a>
+            </div>
+          </div> <!-- host-info 종료 -->
+        </div> <!-- host-details 종료 -->
       </div>
     </div>
+  </div>
+</div>
+
 
     <!-- 메시지 보내기 모달 -->
     <div id="messageModal" class="modal">
@@ -326,7 +353,11 @@
           </th:block>
         </div>
         <div>
-          <img th:src="@{/images/fubao.webp}" alt="푸바오" width="100px" height="100px" style="border-radius: 50%; object-fit: cover" />
+          <img th:src="${hostUser.profileImage != null and !#strings.isEmpty(hostUser.profileImage) ? hostUser.profileImage : '/images/default-profile.webp'}"
+               alt="호스트 이미지"
+               width="150px"
+               height="150px"
+               style="border-radius: 50%; object-fit: cover" />
         </div>
         <div>
           <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">[nickname(login_id)]</span>
@@ -339,28 +370,35 @@
 
     <!-- 호스트 소개 영역 (메시지 모달 외부) -->
     <section class="host-intro">
-      <h2>호스트 소개</h2>
-      <div class="share-info-right">
+  <h2>호스트 소개</h2>
+  <div class="share-info-right">
+    <div>
+      <a th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}">
+        <button>호스트 리뷰 보기</button>
+      </a>
+    </div>
+    <div class="host-details">
+      <div class="host-info">
         <div>
-          <a th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}">
-            <button>호스트 리뷰 보기</button>
-          </a>
+          <!-- hostUser의 profileImage가 존재하면 사용, 없으면 기본 이미지로 대체 -->
+          <img th:src="${hostUser.profileImage != null and !#strings.isEmpty(hostUser.profileImage) ? hostUser.profileImage : '/images/default-profile.webp'}"
+               alt="호스트 이미지"
+               width="150px"
+               height="150px"
+               style="border-radius: 50%; object-fit: cover" />
         </div>
-        <div class="host-details">
-          <div class="host-info">
-            <div>
-              <img th:src="@{/images/fubao.webp}" alt="푸바오" width="150px" height="150px" style="border-radius: 50%; object-fit: cover" />
-            </div>
-            <div>
-              <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">[nickname(login_id)]</span>
-            </div>
-          </div>
-        </div>
-        <div class="share-info-right" th:if="${!isOwner}">
-          <button id="messageHostBtn">호스트에게 메세지 보내기</button>
+        <div>
+          <span th:text="'HOST: ' + ${hostUser.nickname} + '(' + ${hostUser.loginId} + ')'">
+            [nickname(login_id)]
+          </span>
         </div>
       </div>
-    </section>
+    </div>
+    <div class="share-info-right" th:if="${!isOwner}">
+      <button id="messageHostBtn">호스트에게 메세지 보내기</button>
+    </div>
+  </div>
+</section>
 
     <!-- 게시물 관리 영역 (소유자만 노출) -->
     <section class="review-section" th:if="${isOwner}">
