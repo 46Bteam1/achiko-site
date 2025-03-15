@@ -10,12 +10,14 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.achiko.backend.dto.RoommateDTO;
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.ShareFilesDTO;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.entity.CityEntity;
 import com.achiko.backend.entity.ProvinceEntity;
 import com.achiko.backend.entity.RegionEntity;
+import com.achiko.backend.entity.RoommateEntity;
 import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.TownEntity;
 import com.achiko.backend.entity.UserEntity;
@@ -23,6 +25,7 @@ import com.achiko.backend.repository.CityRepository;
 import com.achiko.backend.repository.ProvinceRepository;
 import com.achiko.backend.repository.RegionRepository;
 import com.achiko.backend.repository.ReviewRepository;
+import com.achiko.backend.repository.RoommateRepository;
 import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.TownRepository;
 import com.achiko.backend.repository.UserRepository;
@@ -44,6 +47,7 @@ public class ShareService {
     private final ShareFilesService shareFilesService;
     private final ReviewRepository reviewRepository;
     private final RatingService ratingService; 
+    private final RoommateRepository roommateRepository;
     
     /**
      * 특정 shareId로 Share 조회
@@ -222,4 +226,13 @@ public class ShareService {
         }
         return shareDTOList;
     }
+
+	public List<RoommateDTO> findRoommate(Long shareId) {
+		List<RoommateEntity> entityList = roommateRepository.findByShare_ShareId(shareId);
+		List<RoommateDTO> dtoList = new ArrayList<>();
+		
+		entityList.forEach((entity) -> dtoList.add(RoommateDTO.toDTO(entity)));
+		
+		return dtoList;
+	}
 }
