@@ -1,66 +1,120 @@
 <!DOCTYPE html>
-<html
-  lang="ko"
-  xmlns:th="http://thymeleaf.org"
-  xmlns:sec="http://thymeleaf.org/extras/spring-security"
->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Footer</title>
+    <link rel="stylesheet" th:href="@{/css/footer.css}" />
   </head>
   <body>
-    <footer th:fragment="footer">
+    <footer>
       <div class="footer-sections">
+        <!-- 프로젝트 개요 -->
         <section>
-          <h3>소개</h3>
+          <h3>프로젝트 개요</h3>
           <ul>
-            <li>あちこちうち 이용 방법</li>
-            <li>뉴스룸</li>
-            <li>あちこちうち 2025</li>
-            <li>투자자 정보</li>
-            <li>あちこちうち 플러스</li>
-            <li>あちこちうち 비즈니스 프로그램</li>
-            <li>호스트 분들이 있기에 가능합니다</li>
-            <li>채용정보</li>
-            <li>창립자 편지</li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >개발 문화</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >프로젝트 기획서</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >프로젝트 공정도</a
+              >
+            </li>
           </ul>
         </section>
+
+        <!-- 문서 자료 -->
         <section>
-          <h3>커뮤니티</h3>
+          <h3>문서 자료</h3>
           <ul>
-            <li>다양성 및 소속감</li>
-            <li>접근성</li>
-            <li>게스트 추천</li>
-            <li>Achiko.site</li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >테이블 명세서 및 ERD</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >요구사항 명세서</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >UI 설계서</a
+              >
+            </li>
           </ul>
         </section>
+
+        <!-- 개발 과정 -->
         <section>
-          <h3>호스팅하기</h3>
+          <h3>개발 과정</h3>
           <ul>
-            <li>숙소 호스팅</li>
-            <li>온라인 체험 호스팅하기</li>
-            <li>체험 호스팅하기</li>
-            <li>책임감 있는 호스팅</li>
-            <li>자료 센터</li>
-            <li>커뮤니티 센터</li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >UCC</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >주간 회고</a
+              >
+            </li>
           </ul>
         </section>
+
+        <!-- 기타 자료 -->
         <section>
-          <h3>あちこちうち 지원</h3>
+          <h3>기타 자료</h3>
           <ul>
-            <li>도움말 센터</li>
-            <li>예약 취소 옵션</li>
-            <li>신뢰와 안전</li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >오픈소스 라이선스</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://bonkri.notion.site/1b7c310b84a1810b99cad6a84346ec3f"
+                target="_blank"
+                >연락처</a
+              >
+            </li>
           </ul>
         </section>
       </div>
+
       <div class="company-description">
         <div class="Inc">
-          © 2025 Achiko, Inc.<span>·</span><a href="#">개인정보 처리방침</a
-          ><span>·</span><a href="#">이용약관</a><span>·</span
-          ><a href="#">사이트맵</a><span>·</span
-          ><a href="#">한국의 변경된 환불 정책</a><span>·</span
-          ><a href="#">회사 세부정보</a>
+          © 2025 Achiko, Inc.<span>·</span>
+          <a href="#"
+            >본 서비스는 비영리 교육용 프로젝트로, 테스트 목적으로 운영되며,
+            모든 데이터는 프로젝트 종료 후 영구 삭제됩니다.</a
+          >
         </div>
         <div class="icons">
           <div class="icons-left">
