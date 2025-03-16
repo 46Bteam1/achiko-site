@@ -12,23 +12,51 @@ let addressModified = false;
 
 // (B) DOMContentLoaded 초기화
 document.addEventListener("DOMContentLoaded", function () {
+  // header
+  // Fragment가 동적으로 로드된 후 이벤트 바인딩
+  $(document).on("click", "#menuButton", function (event) {
+    event.stopPropagation();
+    const $modalMenu = $("#modalMenu");
+
+    if ($modalMenu.is(":visible")) {
+      $modalMenu.hide();
+    } else {
+      $modalMenu.show();
+    }
+  });
+
+  // 모달 바깥 클릭 시 모달 닫기
+  $(document).on("click", function (event) {
+    if (
+      !$("#modalMenu").is(event.target) &&
+      !$("#modalMenu").has(event.target).length &&
+      !$("#menuButton").is(event.target)
+    ) {
+      $("#modalMenu").hide();
+    }
+  });
+
   const updateForm = document.getElementById("updateForm");
   // 인라인 onsubmit 속성이 있다면 제거하여 중복 제출을 방지
   updateForm.removeAttribute("onsubmit");
 
   // 캡처링 단계에서 제출 이벤트 가로채기
-  updateForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    if (!validateForm()) {
-      // 유효성 검사 실패 시 해당 입력창에 포커스를 주고, 제출을 중단
-      return false;
-    }
-    // 유효성 검사 통과 시 파일 저장 작업 실행
-    await saveUpdatedFiles();
-    // 유효성 검사 통과 후 실제 제출 (테스트 중에는 여기서 updateForm.submit() 호출을 주석 처리하면 제출이 차단됩니다)
-    updateForm.submit();
-  }, true); // 캡처링 단계에서 실행
+  updateForm.addEventListener(
+    "submit",
+    async function (e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (!validateForm()) {
+        // 유효성 검사 실패 시 해당 입력창에 포커스를 주고, 제출을 중단
+        return false;
+      }
+      // 유효성 검사 통과 시 파일 저장 작업 실행
+      await saveUpdatedFiles();
+      // 유효성 검사 통과 후 실제 제출 (테스트 중에는 여기서 updateForm.submit() 호출을 주석 처리하면 제출이 차단됩니다)
+      updateForm.submit();
+    },
+    true
+  ); // 캡처링 단계에서 실행
 
   // 드롭다운, 지도 등 초기화
   initProvinceRegionCityTown();
@@ -41,7 +69,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // update.html에 숨은 필드로 전달된 sessionId (또는 shareId) 사용
-  let sessionId = document.getElementById("sessionId") ? document.getElementById("sessionId").value : "";
+  let sessionId = document.getElementById("sessionId")
+    ? document.getElementById("sessionId").value
+    : "";
   let existing = window.existingFiles;
   if (typeof existing === "string") {
     try {
@@ -52,8 +82,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   if (existing && Array.isArray(existing)) {
-    selectedFiles = existing.map(file => {
-      return { file: null, fileId: file.fileId, fileUrl: file.fileUrl, isNew: false };
+    selectedFiles = existing.map((file) => {
+      return {
+        file: null,
+        fileId: file.fileId,
+        fileUrl: file.fileUrl,
+        isNew: false,
+      };
     });
     renderPhotoPreview();
   }
@@ -138,19 +173,19 @@ window.handlePhotoUpload = function (event) {
       method: "POST",
       body: formData,
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error("파일 업로드 실패. 상태코드: " + response.status);
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         console.log("파일 업로드 성공:", data);
         selectedFiles[currentCount + index].fileId = data.fileId;
         selectedFiles[currentCount + index].fileUrl = data.fileUrl;
         renderPhotoPreview();
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("파일 업로드 에러:", err);
       });
   });
@@ -181,9 +216,11 @@ function modifyFile(index) {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: params.toString(),
       })
-        .then(response => {
+        .then((response) => {
           if (!response.ok) {
-            throw new Error("기존 파일 삭제 실패. 상태코드: " + response.status);
+            throw new Error(
+              "기존 파일 삭제 실패. 상태코드: " + response.status
+            );
           }
           console.log("기존 파일 삭제 성공");
           selectedFiles[index].file = newFile;
@@ -191,7 +228,7 @@ function modifyFile(index) {
           selectedFiles[index].isNew = true;
           uploadModifiedFile(index, newFile);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("기존 파일 삭제 에러:", err);
         });
     } else {
@@ -220,19 +257,19 @@ function uploadModifiedFile(index, file) {
     method: "POST",
     body: formData,
   })
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
         throw new Error("수정 파일 업로드 실패. 상태코드: " + response.status);
       }
       return response.json();
     })
-    .then(data => {
+    .then((data) => {
       console.log("수정 파일 업로드 성공:", data);
       selectedFiles[index].fileId = data.fileId;
       selectedFiles[index].fileUrl = data.fileUrl;
       renderPhotoPreview();
     })
-    .catch(err => {
+    .catch((err) => {
       console.error("수정 파일 업로드 에러:", err);
     });
 }
@@ -248,18 +285,18 @@ function deleteFile(index) {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: params.toString(),
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error("파일 삭제 실패. 상태코드: " + response.status);
         }
         return response.text();
       })
-      .then(result => {
+      .then((result) => {
         console.log("파일 삭제 성공:", result);
         selectedFiles.splice(index, 1);
         renderPhotoPreview();
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("파일 삭제 에러:", err);
       });
   } else {
@@ -280,9 +317,9 @@ window.updateRegionSelect = function (callback) {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
   if (selectedProvince) {
     fetch(`/api/location/regions?provinceId=${selectedProvince}`)
-      .then(response => response.json())
-      .then(regions => {
-        regions.forEach(region => {
+      .then((response) => response.json())
+      .then((regions) => {
+        regions.forEach((region) => {
           const option = document.createElement("option");
           option.value = region.id;
           option.text = region.name;
@@ -290,7 +327,7 @@ window.updateRegionSelect = function (callback) {
         });
         if (callback) callback();
       })
-      .catch(error => console.error("Error fetching regions:", error));
+      .catch((error) => console.error("Error fetching regions:", error));
   } else {
     if (callback) callback();
   }
@@ -305,9 +342,9 @@ window.updateCitySelect = function (callback) {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
   if (selectedRegion) {
     fetch(`/api/location/cities?regionId=${selectedRegion}`)
-      .then(response => response.json())
-      .then(cities => {
-        cities.forEach(city => {
+      .then((response) => response.json())
+      .then((cities) => {
+        cities.forEach((city) => {
           const option = document.createElement("option");
           option.value = city.id;
           option.text = city.name;
@@ -315,7 +352,7 @@ window.updateCitySelect = function (callback) {
         });
         if (callback) callback();
       })
-      .catch(error => console.error("Error fetching cities:", error));
+      .catch((error) => console.error("Error fetching cities:", error));
   } else {
     if (callback) callback();
   }
@@ -328,9 +365,9 @@ window.updateTownSelect = function (callback) {
   townSelect.innerHTML = '<option value="">-- 선택하세요 --</option>';
   if (selectedCity) {
     fetch(`/api/location/towns?cityId=${selectedCity}`)
-      .then(response => response.json())
-      .then(towns => {
-        towns.forEach(town => {
+      .then((response) => response.json())
+      .then((towns) => {
+        towns.forEach((town) => {
           const option = document.createElement("option");
           option.value = town.id;
           option.text = town.name;
@@ -338,7 +375,7 @@ window.updateTownSelect = function (callback) {
         });
         if (callback) callback();
       })
-      .catch(error => console.error("Error fetching towns:", error));
+      .catch((error) => console.error("Error fetching towns:", error));
   } else {
     if (callback) callback();
   }
@@ -360,8 +397,10 @@ window.validateAddress = function () {
   const addressInput = document.getElementById("address");
   const regionSelect = document.getElementById("regionId");
   const townSelect = document.getElementById("townId");
-  const selectedRegionText = regionSelect.options[regionSelect.selectedIndex]?.text || "";
-  const selectedTownText = townSelect.options[townSelect.selectedIndex]?.text || "";
+  const selectedRegionText =
+    regionSelect.options[regionSelect.selectedIndex]?.text || "";
+  const selectedTownText =
+    townSelect.options[townSelect.selectedIndex]?.text || "";
   const addressValue = addressInput.value;
   if (selectedRegionText && !addressValue.includes(selectedRegionText)) {
     alert("지역을 다시 한번 확인해주세요.");
@@ -442,7 +481,9 @@ function updateMapAndPostalCode() {
       fetchEnglishAddress(location.lat(), location.lng());
       isMapUpdated = true;
     } else if (status === "ZERO_RESULTS") {
-      alert("입력하신 주소로 검색 결과가 없습니다. 유효한 주소를 입력해 주세요.");
+      alert(
+        "입력하신 주소로 검색 결과가 없습니다. 유효한 주소를 입력해 주세요."
+      );
     } else {
       console.error("Geocode 실패: " + status);
     }
@@ -463,7 +504,7 @@ function resetAddress() {
   autocomplete = new google.maps.places.Autocomplete(addressInput, {
     componentRestrictions: { country: "JP" },
     fields: ["formatted_address", "geometry", "address_components", "name"],
-    language: "ja"
+    language: "ja",
   });
   autocomplete.addListener("place_changed", function () {
     if (!window.isMapReady) {
@@ -479,45 +520,52 @@ function initMap() {
   console.log("Google Maps API가 정상적으로 로드되었습니다.");
   const defaultLocation = { lat: 35.6895, lng: 139.6917 };
   const mapContainer = document.getElementById("map");
-  if (window.fullAddress && window.fullAddress.trim() !== "" && window.fullAddress !== "Default Address, Default Detail") {
+  if (
+    window.fullAddress &&
+    window.fullAddress.trim() !== "" &&
+    window.fullAddress !== "Default Address, Default Detail"
+  ) {
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address: window.fullAddress }, function (results, status) {
-      if (status === "OK" && results.length > 0) {
-        const location = results[0].geometry.location;
-        map = new google.maps.Map(mapContainer, {
-          center: location,
-          zoom: 13
-        });
-        marker = new google.maps.Marker({
-          position: location,
-          map: map,
-          draggable: false
-        });
-      } else {
-        console.error("초기 주소 geocode 실패: " + status);
-        map = new google.maps.Map(mapContainer, {
-          center: defaultLocation,
-          zoom: 13
-        });
-        marker = new google.maps.Marker({
-          position: defaultLocation,
-          map: map,
-          draggable: false
-        });
+    geocoder.geocode(
+      { address: window.fullAddress },
+      function (results, status) {
+        if (status === "OK" && results.length > 0) {
+          const location = results[0].geometry.location;
+          map = new google.maps.Map(mapContainer, {
+            center: location,
+            zoom: 13,
+          });
+          marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            draggable: false,
+          });
+        } else {
+          console.error("초기 주소 geocode 실패: " + status);
+          map = new google.maps.Map(mapContainer, {
+            center: defaultLocation,
+            zoom: 13,
+          });
+          marker = new google.maps.Marker({
+            position: defaultLocation,
+            map: map,
+            draggable: false,
+          });
+        }
+        window.isMapReady = true;
+        updateMapAndPostalCode();
+        initializeAddressListeners();
       }
-      window.isMapReady = true;
-      updateMapAndPostalCode();
-      initializeAddressListeners();
-    });
+    );
   } else {
     map = new google.maps.Map(mapContainer, {
       center: defaultLocation,
-      zoom: 13
+      zoom: 13,
     });
     marker = new google.maps.Marker({
       position: defaultLocation,
       map: map,
-      draggable: false
+      draggable: false,
     });
     window.isMapReady = true;
     initializeAddressListeners();
@@ -526,7 +574,9 @@ function initMap() {
 
 function onPlaceChanged() {
   if (!map || !marker) {
-    console.error("onPlaceChanged 호출 시 map이 초기화되지 않았습니다. 강제로 initMap()을 호출합니다.");
+    console.error(
+      "onPlaceChanged 호출 시 map이 초기화되지 않았습니다. 강제로 initMap()을 호출합니다."
+    );
     initMap();
     return;
   }
@@ -553,26 +603,29 @@ function onPlaceChanged() {
 
 function fetchEnglishAddress(lat, lng) {
   fetch(`/api/geocode?lat=${lat}&lng=${lng}`)
-    .then(response => response.text())
-    .then(text => {
+    .then((response) => response.text())
+    .then((text) => {
       let data;
       try {
         data = JSON.parse(text);
       } catch (e) {
         console.error("JSON 파싱 오류:", e);
-        document.getElementById("englishAddress").innerHTML = "영문 주소 로드 실패";
+        document.getElementById("englishAddress").innerHTML =
+          "영문 주소 로드 실패";
         return;
       }
       console.log("Geocode API 응답:", data);
       if (data.status === "OK" && data.results.length > 0) {
-        document.getElementById("englishAddress").innerHTML = data.results[0].formatted_address;
+        document.getElementById("englishAddress").innerHTML =
+          data.results[0].formatted_address;
       } else {
         document.getElementById("englishAddress").innerHTML = "Not Found";
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("Error fetching English address:", error);
-      document.getElementById("englishAddress").innerHTML = "영문 주소 로드 실패";
+      document.getElementById("englishAddress").innerHTML =
+        "영문 주소 로드 실패";
     });
 }
 
@@ -586,19 +639,25 @@ function initializeAddressListeners() {
   addressInput.addEventListener("keydown", function (event) {
     if (!firstKeyPressed) {
       firstKeyPressed = true;
-      autocompleteService.getPlacePredictions({ input: " " }, function (predictions, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK &&
-            predictions && predictions.length > 0) {
-          addressInput.value = predictions[0].description;
-          addressInput.dispatchEvent(new Event("input", { bubbles: true }));
+      autocompleteService.getPlacePredictions(
+        { input: " " },
+        function (predictions, status) {
+          if (
+            status === google.maps.places.PlacesServiceStatus.OK &&
+            predictions &&
+            predictions.length > 0
+          ) {
+            addressInput.value = predictions[0].description;
+            addressInput.dispatchEvent(new Event("input", { bubbles: true }));
+          }
         }
-      });
+      );
     }
   });
   autocomplete = new google.maps.places.Autocomplete(addressInput, {
     componentRestrictions: { country: "JP" },
     fields: ["formatted_address", "geometry", "address_components", "name"],
-    language: "ja"
+    language: "ja",
   });
   autocomplete.addListener("place_changed", function () {
     if (!window.isMapReady) {
@@ -616,19 +675,39 @@ window.initProvinceRegionCityTown = function () {
   const regionSelect = document.getElementById("regionId");
   const citySelect = document.getElementById("cityId");
   const townSelect = document.getElementById("townId");
-  if (provinceSelect && window.provinceId && window.provinceId !== "0" && window.provinceId !== 0) {
+  if (
+    provinceSelect &&
+    window.provinceId &&
+    window.provinceId !== "0" &&
+    window.provinceId !== 0
+  ) {
     provinceSelect.value = window.provinceId;
   }
   window.updateRegionSelect(function () {
-    if (regionSelect && window.regionId && window.regionId !== "0" && window.regionId !== 0) {
+    if (
+      regionSelect &&
+      window.regionId &&
+      window.regionId !== "0" &&
+      window.regionId !== 0
+    ) {
       regionSelect.value = window.regionId;
     }
     window.updateCitySelect(function () {
-      if (citySelect && window.cityId && window.cityId !== "0" && window.cityId !== 0) {
+      if (
+        citySelect &&
+        window.cityId &&
+        window.cityId !== "0" &&
+        window.cityId !== 0
+      ) {
         citySelect.value = window.cityId;
       }
       window.updateTownSelect(function () {
-        if (townSelect && window.townId && window.townId !== "0" && window.townId !== 0) {
+        if (
+          townSelect &&
+          window.townId &&
+          window.townId !== "0" &&
+          window.townId !== 0
+        ) {
           townSelect.value = window.townId;
         }
       });

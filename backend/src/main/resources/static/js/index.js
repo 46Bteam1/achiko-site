@@ -1,4 +1,9 @@
 $(document).ready(function () {
+  if (!sessionStorage.getItem("visited")) {
+    sessionStorage.setItem("visited", "true");
+    window.location.href = "/torii"; // 처음 방문 시 splinePage.html로 이동
+  }
+
   let lastScrollTop = 0; // 마지막 스크롤 위치 저장
   let isStickyDisabled = false; // sticky가 해제되었는지 상태 확인
   let mapVisible = false; // 지도 표시 여부 상태
@@ -21,10 +26,10 @@ $(document).ready(function () {
       $("#mapButton").fadeIn(); // 다시 보이기
     }
 
-    if (scrollTop > 150) {
+    if (scrollTop > 70) {
       $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
       $("header").removeClass("sticky-reappear");
-    } else if (scrollTop <= 150 && lastScrollTop >= 150 && !mapVisible) {
+    } else if (scrollTop <= 70 && lastScrollTop >= 70 && !mapVisible) {
       $("header").removeClass("sticky");
       $("header").addClass("sticky-reappear");
       isStickyDisabled = false; // 스크롤이 최상단이면 다시 sticky 허용 = 큰 검색창 나옴
@@ -66,7 +71,7 @@ $(document).ready(function () {
     if (!mapVisible) {
       $(".near-trip").hide(); // 기존 여행지 숨기기
       $("#mapContainer").show(); // 지도 컨테이너 표시
-      $(this).text("목록 보기"); // 버튼 텍스트 변경
+      $(this).text("🌸목록 보기🌸"); // 버튼 텍스트 변경
       $("body").addClass("mapScrollHidden");
       $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
       $("header").removeClass("sticky-reappear");
@@ -77,7 +82,7 @@ $(document).ready(function () {
       $("body").removeClass("mapScrollHidden");
       $("header").removeClass("sticky");
       $("header").addClass("sticky-reappear");
-      $(this).text("지도 표시하기"); // 버튼 텍스트 변경
+      $(this).text("🌸지도 표시하기🌸"); // 버튼 텍스트 변경
     }
     mapVisible = !mapVisible; // 상태 변경
   });
@@ -121,6 +126,7 @@ $(document).ready(function () {
   }
 
   //  마커 추가 (Google Geocoding API 활용)
+  let currentInfoWindow = null;
   function addMarker(share) {
     return new Promise((resolve, reject) => {
       let fullAddress = `${share.address} ${share.detailAddress || ""}`.trim();
@@ -139,7 +145,12 @@ $(document).ready(function () {
           });
 
           marker.addListener("click", function () {
+            // 이미 열린 InfoWindow가 있다면 닫는다.
+            if (currentInfoWindow) {
+              currentInfoWindow.close();
+            }
             infoWindow.open(map, marker);
+            currentInfoWindow = infoWindow;
           });
 
           resolve(marker);
@@ -190,7 +201,8 @@ $(document).ready(function () {
     if (cityId !== "all") queryParams.push(`cityId=${cityId}`);
     if (townId !== "all") queryParams.push(`townId=${townId}`);
 
-    const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+    const queryString =
+      queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
 
     fetch(`/api/search/shares${queryString}`)
       .then((response) => response.json())
@@ -210,27 +222,59 @@ $(document).ready(function () {
       const card = document.createElement("div");
       card.className = "listing-card";
 
-      // 검색 결과에서도 첫 번째 이미지 반영
-      const imageUrl = listing.firstImage ? listing.firstImage : "/images/no-image.png";
+      // (1) 첫 번째 이미지가 있으면 사용, 없으면 기본 이미지
+      const imageUrl = listing.firstImage || "/images/default-profile.png";
 
-      // favorite 상태에 따라 버튼 클래스와 아이콘 결정
+      // (2) favorite 상태에 따른 heart 아이콘
       const favClass = listing.isFavorite ? "active" : "";
       const iconClass = listing.isFavorite ? "fas fa-heart" : "far fa-heart";
 
+      // (3) 별점 표시 로직: avgRating이 0.0이면 "아직 리뷰가 없는 호스트입니다"로 표시
+      let ratingText = "";
+      console.log(listing.avgRating);
+      console.log(listing.profileImage);
+      if (listing.avgRating !== undefined) {
+        ratingText =
+          listing.avgRating === 0.0
+            ? "⭐ 아직 리뷰가 없는 호스트입니다"
+            : "⭐" + listing.avgRating;
+      }
+
+      // (4) 가격 표시 (Thymeleaf의 #numbers.formatInteger 대신 Intl.NumberFormat 사용)
+      const formattedPrice = new Intl.NumberFormat().format(listing.price);
+
+      // (5) 링크 주소 (Thymeleaf의 th:href="@{/share/selectOne(shareId=${...})}" 대신 쿼리 파라미터 사용)
+      const detailLink = `/share/selectOne?shareId=${listing.id}`;
+
       card.innerHTML = `
-        <a href="/share/selectOne?shareId=${listing.id}" class="listing-link">
-            <button class="favorite-btn ${favClass}" data-id="${listing.id}">
-                <i class="${iconClass}"></i>
-            </button>
-            <img src="${imageUrl}" alt="숙소 이미지">
-            <div class="listing-info">
-                <h3>${listing.title}</h3>
-                <p>${listing.regionName} ${listing.cityName} ${listing.townName}</p>
-                <p>₩${new Intl.NumberFormat().format(listing.price)}/박</p>
-                <p>최대 인원: ${listing.maxGuests}명</p>
+      <a href="${detailLink}" class="listing-link">
+        <button class="favorite-btn ${favClass}" data-id="${listing.id}">
+          <i class="${iconClass}"></i>
+        </button>
+        <img src="${listing.firstImage}" alt="이미지" />
+        <div class="listing-info">
+          <h3>${listing.title || ""}</h3>
+          <div class="host-info">
+            <img src="${
+              listing.profileImage || "/images/default-profile.png"
+            }" alt="hostImage"/>
+            <div class="host-detail">
+              <span>${listing.nickname || ""}</span>
+              <span>${ratingText}</span>
             </div>
-        </a>
-      `;
+          </div>
+          <p>${listing.regionName || ""} ${listing.cityName || ""} ${
+        listing.townName || ""
+      }</p>
+          <p>
+            ₩ <span>${formattedPrice}</span> / 월
+          </p>
+          <p>인원: ${listing.currentGuests || 0} / ${
+        listing.maxGuests || 0
+      }명</p>
+        </div>
+      </a>
+    `;
 
       listingsContainer.appendChild(card);
     });
@@ -239,12 +283,17 @@ $(document).ready(function () {
   //  마커 클릭 시 표시될 정보 창 생성
   function generateInfoWindowContent(share, fullAddress) {
     return `
-            <div style="max-width: 250px;">
-                <h4>${share.title}</h4>
-                <p><strong>가격:</strong> ₩${new Intl.NumberFormat().format(share.price)}/박</p>
-                <p><strong>위치:</strong> ${fullAddress}</p>
-                <a href="/share/selectOne?shareId=${share.shareId}" target="_blank">상세 보기</a>
-            </div>
+    <div class="info-window">
+      <img src="${share.fileList[0].fileUrl}" alt="이미지"/>
+      <h4>${share.title}</h4>
+      <p class="price">₩ ${new Intl.NumberFormat().format(share.price)} / 월</p>
+      <p class="address">${fullAddress}</p>
+      <a href="/share/selectOne?shareId=${
+        share.shareId
+      }" target="_blank" class="detail-link">
+        상세 보기
+      </a>
+    </div>
         `;
   }
 
@@ -296,7 +345,7 @@ $(document).ready(function () {
         },
         error: function () {
           console.error("찜하기 실패");
-        }
+        },
       });
     } else {
       $.ajax({
@@ -308,7 +357,7 @@ $(document).ready(function () {
         },
         error: function () {
           alert("찜 취소 실패!");
-        }
+        },
       });
     }
   });

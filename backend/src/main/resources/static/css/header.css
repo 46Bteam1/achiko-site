@@ -2,16 +2,13 @@ header {
   position: sticky;
   top: 0;
   left: 0;
-  width: 100vw;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 100px;
   z-index: 9999;
   background-color: white;
-  /* margin-bottom: 20px; */
-  min-height: 80px;
-  transition: min-height 0.3s ease-in-out;
+  font-family: "Noto Sans KR", "Noto Sans JP", sans-serif;
 }
 
 /* header animation */
@@ -30,18 +27,14 @@ header.sticky .sticky-black {
 }
 
 header.sticky .header-form {
-  animation-duration: 0.3s;
+  animation-duration: 0.2s;
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
   animation-name: slideUp;
 }
 
-header.sticky-reappear {
-  min-height: 150px; /* sticky 해제 후 높이를 조정 */
-}
-
 header.sticky-reappear .header-form {
-  animation-duration: 0.3s;
+  animation-duration: 0.2s;
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
   animation-name: slideDown;
@@ -105,6 +98,11 @@ header.sticky-reappear .simple-query-form {
   flex: 1 1 33%;
 }
 
+.header-col:first-child {
+  /* 로고 영역: 고정 너비 사용 */
+  flex: 0 0 auto;
+}
+
 .header-col .airbnbIcon {
   fill: white;
 }
@@ -142,13 +140,20 @@ header.sticky-reappear .simple-query-form {
   border-bottom: 1px solid white;
 }
 
-.header-nav {
+/* .header-nav {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   color: black;
   font-weight: 700;
   font-size: 14px;
+} */
+
+.header-nav {
+  /* 오른쪽 영역: 내용에 맞게 크기 조절 */
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
 }
 
 .header-nav-left {
@@ -171,12 +176,22 @@ header.sticky-reappear .simple-query-form {
   fill: black;
 }
 
-.header-nav-right {
+/* .header-nav-right {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 77px;
   height: 42px;
+} */
+
+.header-nav-right {
+  /* 고정 너비 대신 내부 여백으로 조정 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
+  background: white;
+  cursor: pointer;
 }
 
 .header-nav-right button {
@@ -187,7 +202,8 @@ header.sticky-reappear .simple-query-form {
   width: 100%;
   background: white;
   border-radius: 20px;
-  padding: 5px 5px 5px 12px;
+  padding: 5px;
+  gap: 7px;
   cursor: pointer;
 
   border: 1px solid rgb(221, 221, 221);
@@ -204,13 +220,19 @@ header.sticky-reappear .simple-query-form {
 }
 
 /* query form */
-.header-form {
+/* .header-form {
   position: relative;
+} */
+
+.header-form {
+  /* 중앙 영역: 여유 공간 모두 사용 */
+  flex: 1 1 auto;
+  text-align: center;
 }
 
 .query-form {
   position: absolute;
-  top: 30px;
+  top: 90px;
   left: calc(50% - 400px);
   width: 800px;
   height: 60px;
@@ -223,6 +245,14 @@ header.sticky-reappear .simple-query-form {
   justify-content: space-between;
   padding: 0 10px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+header.sticky-reappear .query-form {
+  display: flex; /* query-form을 표시 */
+}
+
+header.sticky-reappear + main {
+  padding-top: 70px; /* query-form 높이만큼 main을 아래로 밀어내기 */
 }
 
 .query-col {
@@ -317,26 +347,25 @@ header.sticky-reappear .simple-query-form {
 
 /* 메뉴 모달창 css */
 /* 모달 스타일 */
-.modal {
+#modalMenu {
   display: none;
-  position: absolute;
-  z-index: 1000;
-  top: 10vh;
-  right: 15vh;
-}
+  left: calc(100vw - 380px);
+  position: fixed;
+  top: 75px;
 
-/* 모달 내부 컨텐츠 */
-.modal-content {
+  z-index: 50;
   background-color: white;
   width: 250px;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+
+  max-height: 30vh;
+  overflow-y: auto;
 }
 
 /* 메뉴 그룹 스타일 */
 .menu-group {
-  padding: 10px 0;
   list-style-type: none;
   text-align: center;
 }
@@ -360,4 +389,8 @@ header.sticky-reappear .simple-query-form {
   height: 1px;
   background-color: #ddd;
   margin: 5px 0;
+}
+
+.modal-backdrop {
+  display: none !important;
 }

@@ -138,7 +138,4 @@ $(document).ready(function () {
     }
   });
 
-  // header관련
-  $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
-  $("header").removeClass("sticky-reappear");
 });

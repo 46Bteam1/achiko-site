@@ -1,0 +1,219 @@
+@import "../reset.css";
+@import "../header.css";
+@import "../footer.css";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* body * {
+  all: unset;
+}
+
+main.bootstrap-active {
+  all: revert;
+} */
+
+/* main {
+  width: 100vw; 
+  min-height: 100vh;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+} */
+
+/* 메인 컨테이너 */
+#chatContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+  padding: 10px;
+  gap: 10px;
+}
+
+/* 왼쪽: 채팅방 목록 */
+#chatListSection {
+  width: 25%;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+#chatRooms table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#chatRooms td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+#chatRooms .btns input {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+/* 오른쪽: 채팅 상세 */
+#chatDetailSection {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 사용자 정보 */
+#users {
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 채팅 박스 */
+#chatContent {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+}
+
+#chats {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+#writeBox {
+  display: flex;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+#writeBox input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+#writeBox button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#writeBox button:hover {
+  background-color: #0056b3;
+}
+
+/* Viewing 모달 */
+.modal-content {
+  padding: 20px;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-footer {
+  text-align: center;
+}
+
+/* header {
+  height: 100px;
+  position: relative;
+} */
+/* 
+#alertBox {
+  height: 5vh;
+  min-height: 50px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 3px;
+}
+
+#alertBox table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#alertBox td {
+  border-bottom: 1px solid #ddd;
+  padding: 3px;
+}
+
+#chats {
+  height: 70vh;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+#detailBoxs {
+  position: relative;
+  width: 100%;
+}
+
+#descriptionBox,
+#chatBox {
+  width: 90vh;
+  position: absolute;
+  right: 0;
+  margin-right: 8%;
+}
+
+#descriptionBox {
+  background-color: yellowgreen;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  top: 0;
+}
+
+#chatBox {
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  top: 10vh;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} */

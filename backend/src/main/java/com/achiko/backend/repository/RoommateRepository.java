@@ -14,4 +14,6 @@ public interface RoommateRepository extends JpaRepository<RoommateEntity, Long> 
 
     List<RoommateEntity> findByShare(ShareEntity share);
 
+	List<RoommateEntity> findByShare_ShareId(Long shareId);
+
 }

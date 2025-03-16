@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.service.FavoriteService;
+import com.achiko.backend.service.RatingService;
 import com.achiko.backend.service.SearchService;
 import com.achiko.backend.service.ShareFilesService;
 
@@ -31,7 +33,8 @@ public class SearchController {
     private final ShareFilesService shareFilesService;
     private final FavoriteService favoriteService;
     private final UserRepository userRepository;
-    
+    private final RatingService ratingService; // RatingService 주입
+
     @ResponseBody
     @GetMapping("/shares")
     public List<Map<String, Object>> searchShares(
@@ -39,9 +42,8 @@ public class SearchController {
             @RequestParam(name = "regionId", required = false) Integer regionId,
             @RequestParam(name = "cityId", required = false) Integer cityId,
             @RequestParam(name = "townId", required = false) Integer townId,
-            Principal principal  // 로그인한 사용자 정보 받기
+            Principal principal
     ) {
-        // 람다 내부에서 사용할 변수는 final 또는 effectively final 이어야 합니다.
         final Long userIdFinal;
         if (principal != null) {
             UserEntity loggedUser = userRepository.findByLoginId(principal.getName());
@@ -51,6 +53,15 @@ public class SearchController {
         }
         
         List<ShareEntity> shares = searchService.searchShares(provinceId, regionId, cityId, townId);
+
+        // 모든 share의 호스트 ID 추출
+        Set<Long> hostIds = shares.stream()
+                .filter(share -> share.getHost() != null)
+                .map(share -> share.getHost().getUserId())
+                .collect(java.util.stream.Collectors.toSet());
+        
+        // RatingService를 통해 평균 평점 계산
+        Map<Long, Double> avgRatingByHostId = ratingService.getAvgRatingsByHostIds(hostIds);
         
         return shares.stream().map(share -> {
             Map<String, Object> result = new HashMap<>();
@@ -61,23 +72,25 @@ public class SearchController {
             result.put("townName", share.getTown().getNameKanji());
             result.put("price", share.getPrice());
             result.put("maxGuests", share.getMaxGuests());
+            result.put("currentGuests", share.getCurrentGuests());
             result.put("address", share.getAddress());
             result.put("detailAddress", share.getDetailAddress());
             
-            // 첫 번째 이미지 URL 설정
             List<ShareFilesDTO> files = shareFilesService.getFilesByShareId(share.getShareId());
-            if (!files.isEmpty()) {
-                result.put("firstImage", files.get(0).getFileUrl());
-            } else {
-                result.put("firstImage", "/images/no-image.png");
-            }
+            result.put("firstImage", !files.isEmpty() ? files.get(0).getFileUrl() : "/images/default-profile.png");
             
-            // 로그인한 사용자가 있다면 favorite 상태를 확인
             boolean isFav = false;
             if (userIdFinal != null) {
                 isFav = favoriteService.isFavorite(share.getShareId(), userIdFinal);
             }
             result.put("isFavorite", isFav);
+            
+            result.put("nickname", share.getHost().getNickname());
+            result.put("profileImage", share.getHost().getProfileImage());
+            // 호스트의 평균 평점 추가
+            Long hostId = share.getHost().getUserId();
+            Double avgRating = avgRatingByHostId.getOrDefault(hostId, 0.0);
+            result.put("avgRating", avgRating);
             
             return result;
         }).collect(Collectors.toList());

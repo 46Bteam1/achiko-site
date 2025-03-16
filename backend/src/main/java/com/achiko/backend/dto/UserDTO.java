@@ -40,6 +40,8 @@ public class UserDTO {
 	private LocalDateTime createdAt;
 	private String receiptId;
 	
+	private Double avgRating;
+	
 	public static UserDTO toDTO(UserEntity userEntity) {
 		return UserDTO.builder()
 				.userId(userEntity.getUserId())
@@ -63,6 +65,7 @@ public class UserDTO {
 				.bio(userEntity.getBio())
 				.createdAt(userEntity.getCreatedAt())
 				.receiptId(userEntity.getReceiptId())
+				.avgRating(0.0)
 				.build();
 	}
 }

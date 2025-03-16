@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="ko"
+  xmlns:th="http://thymeleaf.org"
+  xmlns:sec="http://thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Footer</title>
-    <link rel="stylesheet" th:href="@{/css/footer.css}" />
   </head>
   <body>
-    <footer>
+    <footer th:fragment="footer">
       <div class="footer-sections">
         <section>
           <h3>소개</h3>
