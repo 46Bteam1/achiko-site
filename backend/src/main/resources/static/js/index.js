@@ -442,3 +442,4 @@ function updateTownSelect() {
       .catch((error) => console.error("Error fetching towns:", error));
   }
 }
+
