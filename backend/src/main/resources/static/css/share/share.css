@@ -1,0 +1,577 @@
+@import "../reset.css";
+@import "../header.css";
+@import "../footer.css";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Noto Sans KR", "Noto Sans JP", sans-serif;
+  background-color: #f9f9f9;
+}
+
+h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #2c3e50; /* 어두운 슬레이트 색상 */
+}
+
+/* 메인 컨테이너 */
+main {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+/* 글 제목 */
+.share-title-section {
+  margin-bottom: 20px;
+}
+.share-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* =========================================================
+   1) 사진 영역 기본 스타일
+   ========================================================= */
+/* 캐러셀 컨테이너를 고정 비율(여기서는 3:4)로 설정 */
+.room-photos {
+  width: 100%;
+  max-width: 900px;
+  aspect-ratio: 5 / 2.5; /* 1:1로 하려면 1 / 1; */
+  margin-bottom: 20px;
+  overflow: hidden;
+  border-radius: 12px;
+  /* 필요에 따라 flex 대신 block으로 변경 */
+  display: block;
+}
+
+/* 캐러셀 내부의 슬라이드가 컨테이너를 모두 채우도록 */
+.room-photos .carousel-inner {
+  width: 100%;
+  height: 100%;
+}
+
+/* 슬라이드 내 이미지가 컨테이너를 꽉 채우며 중앙에서 자르도록 */
+.room-photos .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel .d-block.w-100 {
+  aspect-ratio: 5 / 2.5; /* 1:1 비율 유지 */
+  object-fit: cover; /* 이미지가 컨테이너를 채우면서 중앙 집중식으로 자르기 */
+}
+
+/* 캐러셀 인디케이터 스타일 */
+.carousel-indicators button {
+  border: 1px solid black;
+  background-color: black;
+}
+
+.carousel-indicators button.active {
+  background-color: #0c5f24;
+  opacity: 1;
+}
+
+/* 네비게이션 버튼 컨테이너 스타일 */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  padding: 10px;
+  background-color: rgb(53, 224, 18);
+  border: 5px solid rgb(53, 224, 18);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  box-sizing: content-box; /* 기본값이 content-box라면 명시적으로 추가 */
+}
+
+/* 아이콘을 검은색으로 고정 (필요한 경우 invert 필터 제거) */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  /* filter: invert(1);  */
+}
+
+/* =========================================================
+  좋아요 버튼, 신고 모달, 공유하기 모달 
+   ========================================================= */
+/*  한 줄 정렬을 위한 컨테이너 */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/*  버튼들을 가로 정렬 */
+.action-container {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* 버튼 간격 */
+}
+
+/*  찜하기 버튼 스타일 유지 */
+.favorite-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.favorite-btn {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #ff5a5f;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.favorite-btn i {
+  transition: color 0.2s;
+  font-size: 24px;
+}
+
+.favorite-btn:hover i {
+  color: red;
+}
+
+.favorite-btn.active {
+  background: rgba(255, 0, 0, 0.2);
+}
+
+.favorite-btn.active i {
+  color: red;
+}
+
+/*  찜하기 수 스타일 */
+.favorite-count {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #555;
+}
+
+/*  공유 & 신고 버튼 공통 스타일 */
+.action-btn {
+  padding: 10px 15px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+/*  공유 버튼 */
+.share-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.share-btn:hover {
+  background-color: #0056b3;
+}
+
+/*  신고 버튼 */
+.report-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.report-btn:hover {
+  background-color: #a71d2a;
+}
+
+/* =========================================================
+  셰어하우스 정보 
+   ========================================================= */
+/* 셰어하우스 정보 섹션 */
+.share-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  background-color: #f8f9fa; /* 연한 회색 배경 */
+  border-radius: 10px;
+}
+
+/* 내부 컨테이너 */
+.share-info-container {
+  width: 100%;
+  max-width: 650px;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 제목 스타일 */
+.share-info-title {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* 정보 테이블 스타일 */
+.share-info-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* 각 행 스타일 */
+.info-row {
+  display: flex;
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  background: white;
+}
+
+/* 마지막 행 보더 제거 */
+.info-row:last-child {
+  border-bottom: none;
+}
+
+/* 라벨 스타일 */
+.info-label {
+  flex: 1;
+  font-weight: bold;
+  color: #555;
+  background: #f1f3f5;
+  padding: 10px;
+  text-align: center;
+  border-right: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+/* 값 스타일 */
+.info-value {
+  flex: 2;
+  padding: 10px;
+  color: #333;
+}
+
+/* 가격 정보 스타일 */
+.price-row {
+  background: #fff4e6;
+}
+
+.price-value {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #0faf3b;
+}
+
+/* 신고 모달 (공통 모달 스타일) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+  }
+}
+
+/* =========================================================
+  호스트 소개 
+   ========================================================= */
+/*  호스트 소개 섹션 */
+.host-intro {
+  text-align: center;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/*  카드 스타일 */
+.host-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  text-align: center;
+}
+
+/*  호스트 이미지 */
+.host-image img {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ddd;
+}
+
+/*  호스트 정보 (닉네임 & 평점) */
+.host-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+/* 닉네임 */
+.host-name {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+/*  평점 */
+.host-rating {
+  text-align: center;
+  color: #ff9800;
+}
+
+/* 버튼 그룹 */
+.host-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 250px; /* 버튼 그룹 전체의 최대 너비 */
+  margin-top: 15px;
+  text-align: center;
+}
+
+/* 버튼 스타일 */
+.host-actions .btn {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1em;
+  border-radius: 8px;
+  text-align: center;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  display: inline-block;
+}
+
+/* a 태그만 max-width: 150px 적용 */
+.host-actions a {
+  max-width: 150px;
+  width: 100%; /* 내부 컨텐츠 크기에 맞게 */
+  display: inline-block;
+  text-align: center;
+}
+
+.host-actions .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.host-actions .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.host-actions .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+.host-actions .btn-secondary:hover {
+  background-color: #545b62;
+}
+
+/* 게시물 관리 섹션 스타일 */
+.review-section {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* =========================================================
+  위치 및 편의시설 검색 - Google Map 
+   ========================================================= */
+/* 메인 지도 영역 */
+.map-area {
+  margin-bottom: 40px; /* 하단과의 여백 추가 */
+  padding: 20px 0; /* 내부 여백 */
+}
+
+.map-area h2 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+/* 편의시설 버튼 그룹 */
+.facility-btns {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+.facility-btns .facility-btn {
+  flex: 0 0 auto;
+}
+
+/* 지도와 편의시설 목록을 나란히 배치하는 컨테이너 */
+.map-container {
+  display: flex;
+  gap: 15px;
+}
+
+/* 지도 영역 스타일 */
+.map-display {
+  flex: 1;
+  height: 450px;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.facility-list-container > ul:first-of-type {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #34495e;
+}
+
+/* 편의시설 목록 패널 스타일 */
+.facility-list-container {
+  width: 25%; /* 원하는 너비 */
+  height: 450px; /* 지도와 동일한 높이 */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+
+.review-section button {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* 추가: 모달이 열렸을 때 배경 스크롤 막기 */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* =========================================================
+   확정된 하우스 메이트 
+   ========================================================= */
+/* 섹션 스타일 */
+.roommate-section {
+  padding: 20px;
+}
+
+/* 가로 스크롤 가능한 컨테이너 */
+.roommate-container {
+  display: flex;
+  overflow-x: auto; /* 가로 스크롤 */
+  gap: 15px;
+  padding: 15px;
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+
+/* 개별 카드 스타일 */
+.roommate-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* 카드 hover 효과 */
+.roommate-card:hover {
+  transform: translateY(-5px);
+}
+
+/* 프로필 이미지 스타일 */
+.roommate-image img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* 닉네임 스타일 */
+.roommate-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* 리뷰 버튼 스타일 */
+.roommate-review-btn {
+  display: inline-block;
+  background-color: #0faf3b;
+  color: #ffffff;
+  font-size: 0.9em;
+  padding: 8px 12px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background 0.3s;
+  margin-top: 5px;
+}
+
+.roommate-review-btn:hover {
+  background-color: #1e8b41;
+  color: white;
+}

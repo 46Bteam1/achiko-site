@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Page</title>
+  <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+  <script th:src="@{/js/testJS.js}"></script>
+</head>
+
+<body>
+  <h1>테스트 페이지</h1>
+  <p th:text="${message}"></p>
+
+  <h2>데이터 입력</h2>
+  <form id="testForm">
+    ID:
+    <input type="number" id="id" placeholder="PUT, PATCH, DELETE할 때만 id 넣기" style="width: 400px" /><br />
+    Boolean Value: <input type="checkbox" id="boolValue" /><br />
+    TinyInt Value: <input type="number" id="tinyintValue" /><br />
+    Varchar Value: <input type="text" id="varcharValue" /><br />
+    Char Value: <input type="text" id="charValue" /><br />
+    Text Value: <input type="text" id="textValue" /><br />
+    Decimal Value: <input type="number" id="decimalValue" step="0.01" /><br />
+    Datetime Value: <input type="datetime-local" id="datetimeValue" /><br />
+    Timestamp Value: <input type="datetime-local" id="timestampValue" /><br />
+    <button type="button" onclick="createTest()">추가</button>
+    <button type="button" onclick="updateTest()">수정 (PUT)</button>
+    <button type="button" onclick="patchTest()">부분 수정 (PATCH)</button>
+    <button type="button" onclick="deleteTest()">삭제</button>
+  </form>
+
+  <h2>데이터 조회</h2>
+  <button onclick="getAllTests()">전체 조회</button>
+  <button onclick="getTestById()">ID로 조회</button>
+  <input type="number" id="searchId" placeholder="조회할 ID 입력" />
+
+  <h3>데이터 리스트</h3>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Boolean</th>
+        <th>TinyInt</th>
+        <th>Varchar</th>
+        <th>Char</th>
+        <th>Text</th>
+        <th>Decimal</th>
+        <th>Datetime</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody id="dataList"></tbody>
+  </table>
+</body>
+
+</html>

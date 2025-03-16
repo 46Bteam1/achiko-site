@@ -1,0 +1,95 @@
+/* 전체 페이지 스타일 */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+/* 로고 영역 스타일 */
+#logos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+#logos h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+#toMyPageBtn {
+  padding: 8px 15px;
+  border: none;
+  background-color: #28a745;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#toMyPageBtn:hover {
+  background-color: #218838;
+}
+
+/* 채팅방 컨테이너 */
+#chatroomContainer {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 채팅방 리스트 테이블 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table tr {
+  border-bottom: 1px solid #ddd;
+}
+
+table td {
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 프로필 이미지 스타일 */
+td img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 버튼 스타일 */
+.btns input {
+  padding: 5px 10px;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 2px;
+}
+
+.enterBtn {
+  background-color: #007bff;
+}
+
+.enterBtn:hover {
+  background-color: #0056b3;
+}
+
+.deleteBtn {
+  background-color: #dc3545;
+}
+
+.deleteBtn:hover {
+  background-color: #c82333;
+}
