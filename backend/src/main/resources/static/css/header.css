@@ -390,3 +390,7 @@ header.sticky-reappear + main {
   background-color: #ddd;
   margin: 5px 0;
 }
+
+.modal-backdrop {
+  display: none !important;
+}

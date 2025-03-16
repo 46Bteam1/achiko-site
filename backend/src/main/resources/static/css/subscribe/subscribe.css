@@ -14,11 +14,11 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
-
+/* 
 header {
   height: 100px;
   position: relative;
-}
+} */
 
 /* 무한 스크롤 배너 */
 .marquee-container {
