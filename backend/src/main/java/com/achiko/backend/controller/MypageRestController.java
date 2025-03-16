@@ -136,20 +136,6 @@ public class MypageRestController {
 		return myShareList;
 	}
 
-	// 게스트/호스트 전환 요청을 처리하는 메서드
-	@PostMapping("/changeAccountType")
-	public String changeAccountType(HttpSession session) {
-		UserDTO userDTO = (UserDTO) session.getAttribute("user"); // 세션에서 사용자 정보 가져오기
-
-		// isHost 값을 0으로 변경
-		userDTO.setIsHost(0); // 또는 1로 변경할 수도 있음
-
-		boolean isUpdated = mypageService.updateUserAccountType(userDTO);
-
-		return "redirect:/mypage/mypageView";
-
-	}
-
 	@DeleteMapping("/deleteUser")
 	public ResponseEntity<Map<String, Object>> deleteUser(@AuthenticationPrincipal LoginUserDetails loginUser,
 			@RequestBody Map<String, String> request) {
@@ -173,25 +159,5 @@ public class MypageRestController {
 					.body(Map.of("success", false, "message", "비밀번호가 올바르지 않습니다."));
 		}
 	}
-
-//    @PutMapping("/{userId}/switch-to-guest")
-//    public ResponseEntity<?> switchToGuest(@PathVariable Long userId) {
-//        boolean canSwitch = mypageService.switchToGuest(userId);
-//        if (!canSwitch) {
-//            return ResponseEntity.status(HttpStatus.CONFLICT)
-//                .body("아직 진행 중인 매칭이 있습니다. 기존 매칭 완료 처리를 위한 페이지로 이동하시겠습니까?");
-//        }
-//        return ResponseEntity.ok("게스트 전환 완료");
-//    }
-//
-//    @PutMapping("/{userId}/switch-to-host")
-//    public ResponseEntity<?> switchToHost(@PathVariable Long userId) {
-//        boolean canSwitch = mypageService.switchToHost(userId);
-//        if (!canSwitch) {
-//            return ResponseEntity.status(HttpStatus.CONFLICT)
-//                .body("아직 진행 중인 매칭이 있습니다. 진행 중인 매칭 확인 페이지로 이동하시겠습니까?");
-//        }
-//        return ResponseEntity.ok("호스트 전환 완료");
-//    }
 
 }
