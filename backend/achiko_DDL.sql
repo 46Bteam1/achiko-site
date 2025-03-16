@@ -1,4 +1,4 @@
--- 0312
+-- 0314
 drop database if exists achiko;
 create database achiko;
 use achiko;
@@ -94,7 +94,7 @@ CREATE TABLE share (
     address VARCHAR(255) NOT NULL,
     detail_address VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(50) DEFAULT 'open' CHECK (status IN ('open','closed')),
+    status VARCHAR(50) DEFAULT 'open' CHECK (status IN ('open','living', 'closed')),
     FOREIGN KEY (host_id) REFERENCES users(user_id),
     FOREIGN KEY (province_id) REFERENCES province(province_id),
     FOREIGN KEY (region_id) REFERENCES region(region_id),
@@ -244,7 +244,6 @@ CREATE TABLE share_files (
     FOREIGN KEY (share_id) REFERENCES share(share_id) ON DELETE CASCADE
 );
 
----------------------------------------------------
 
 INSERT INTO province (name_kanji, name_en) VALUES
 ('北海道', 'Hokkaido'),
