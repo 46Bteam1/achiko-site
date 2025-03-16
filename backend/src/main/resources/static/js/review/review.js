@@ -1,12 +1,36 @@
 $(document).ready(function () {
+  // header 관련
+  // Fragment가 동적으로 로드된 후 이벤트 바인딩
+  $(document).on("click", "#menuButton", function (event) {
+    event.stopPropagation();
+    const $modalMenu = $("#modalMenu");
+
+    if ($modalMenu.is(":visible")) {
+      $modalMenu.hide();
+    } else {
+      $modalMenu.show();
+    }
+  });
+
+  // 모달 바깥 클릭 시 모달 닫기
+  $(document).on("click", function (event) {
+    if (
+      !$("#modalMenu").is(event.target) &&
+      !$("#modalMenu").has(event.target).length &&
+      !$("#menuButton").is(event.target)
+    ) {
+      $("#modalMenu").hide();
+    }
+  });
+
   console.log("📢 페이지 로드 완료, 차트 실행");
-  loadChart(); //  페이지 로드 시 차트 실행
+  // loadChart(); //  페이지 로드 시 차트 실행
 
   //  정렬 이벤트 발생 시 차트 다시 로드
   $("#reviewFilter").on("change", function () {
     console.log("📢 정렬 방식 변경됨:", $(this).val());
     sortReviews(); //  리뷰 정렬
-    loadChart(); //  차트 업데이트
+    // loadChart(); //  차트 업데이트
   });
 
   $("#writeReviewBtn").on("click", writeReview);
@@ -21,10 +45,17 @@ $(document).ready(function () {
   Kakao.init("85ca9d17a9851b6fed154a7b6a161304");
 
   // ✅ 공유 버튼 클릭 시 모달창 열기
-  $("#ShareButton").on("click", function () {
+  const shareModal = new bootstrap.Modal(
+    document.getElementById("shareModal"),
+    {
+      backdrop: false, // 백드롭 비활성화
+    }
+  );
+  $("#shareButton").on("click", function () {
     console.log("📢 공유 버튼 클릭됨");
-    $("#shareModal").fadeIn();
     $("#shareUrl").val(window.location.href);
+    shareModal.show();
+    document.body.classList.add("modal-open");
   });
 
   // ✅ 카카오톡 공유 버튼 이벤트 등록
@@ -55,12 +86,14 @@ $(document).ready(function () {
 
     // 공유 완료 후 모달창 닫기
     $("#shareModal").fadeOut();
+    document.body.classList.remove("modal-open");
   });
 
   // ✅ 모달 닫기 버튼 이벤트
   $("#closeShareModalBtn").on("click", function () {
     console.log("📢 모달 닫기 버튼 클릭됨");
-    $("#shareModal").fadeOut();
+    shareModal.hide();
+    document.body.classList.remove("modal-open");
   });
 
   // ✅ URL 복사 기능
@@ -73,50 +106,50 @@ $(document).ready(function () {
 });
 
 // ✅ 차트를 생성하는 함수 (전역에서 선언)
-function loadChart() {
-  console.log("📊 차트 로딩 중...");
+// function loadChart() {
+//   console.log("📊 차트 로딩 중...");
 
-  let cleanliness = parseFloat($("#cleanlinessRating").text()) || 0;
-  let trust = parseFloat($("#trustRating").text()) || 0;
-  let communication = parseFloat($("#communicationRating").text()) || 0;
-  let manner = parseFloat($("#mannerRating").text()) || 0;
+//   let cleanliness = parseFloat($("#cleanlinessRating").text()) || 0;
+//   let trust = parseFloat($("#trustRating").text()) || 0;
+//   let communication = parseFloat($("#communicationRating").text()) || 0;
+//   let manner = parseFloat($("#mannerRating").text()) || 0;
 
-  let ctx = document.getElementById("reviewDonutChart").getContext("2d");
+// let ctx = document.getElementById("reviewDonutChart").getContext("2d");
 
-  if (window.reviewChart) {
-    window.reviewChart.destroy(); // ✅ 기존 차트를 삭제하고 새로 생성
-  }
+// if (window.reviewChart) {
+//   window.reviewChart.destroy(); // ✅ 기존 차트를 삭제하고 새로 생성
+// }
 
-  window.reviewChart = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: ["청결도", "신뢰도", "소통 능력", "매너"],
-      datasets: [
-        {
-          data: [cleanliness, trust, communication, manner],
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function (tooltipItem) {
-              return tooltipItem.label + ": " + tooltipItem.raw + " / 5.0";
-            },
-          },
-        },
-      },
-    },
-  });
+// window.reviewChart = new Chart(ctx, {
+//   type: "doughnut",
+//   data: {
+//     labels: ["청결도", "신뢰도", "소통 능력", "매너"],
+//     datasets: [
+//       {
+//         data: [cleanliness, trust, communication, manner],
+//         backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+//         borderWidth: 1,
+//       },
+//     ],
+//   },
+//   options: {
+//     responsive: true,
+//     maintainAspectRatio: false,
+//     plugins: {
+//       legend: { display: false },
+//       tooltip: {
+//         callbacks: {
+//           label: function (tooltipItem) {
+//             return tooltipItem.label + ": " + tooltipItem.raw + " / 5.0";
+//           },
+//         },
+//       },
+//     },
+//   },
+// });
 
-  console.log("✅ 차트 로드 완료!");
-}
+// console.log("✅ 차트 로드 완료!");
+// }
 
 // ✅ 리뷰 삭제 함수
 function deleteReview() {
@@ -137,7 +170,7 @@ function deleteReview() {
       console.log(`리뷰 ${reviewId} 삭제 완료`);
       $(`#review-${reviewId}`).remove();
       updateReviewCount(-1);
-      loadChart(); // ✅ 리뷰 삭제 후 차트 업데이트
+      // loadChart(); // ✅ 리뷰 삭제 후 차트 업데이트
     },
     error: function (xhr) {
       console.error("삭제 오류:", xhr.responseText);
@@ -203,7 +236,7 @@ function sortReviews() {
       });
 
       // ✅ 정렬 후 차트 다시 로드
-      loadChart();
+      // loadChart();
     },
     error: function (xhr) {
       console.error("❌ 리뷰 정렬 오류:", xhr.status, xhr.responseText);
