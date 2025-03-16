@@ -244,8 +244,6 @@ CREATE TABLE share_files (
     FOREIGN KEY (share_id) REFERENCES share(share_id) ON DELETE CASCADE
 );
 
----------------------------------------------------
-
 INSERT INTO province (name_kanji, name_en) VALUES
 ('北海道', 'Hokkaido'),
 ('東北', 'Tohoku'),
