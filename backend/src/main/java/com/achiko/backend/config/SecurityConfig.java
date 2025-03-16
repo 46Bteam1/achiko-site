@@ -50,6 +50,7 @@ public class SecurityConfig {
 					.usernameParameter("loginId")
 					.passwordParameter("password")
 					.failureHandler(loginFailureHandler)		// FailureHandler가 있으면 이 코드는 없어야함
+					.defaultSuccessUrl("/", true)
 					.permitAll());
 
 		// logout 설정

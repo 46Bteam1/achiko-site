@@ -4,7 +4,8 @@ $(function () {
   const userId = $("#userId").val();
 
   $("#toMyPageBtn").on("click", function () {
-    window.location.href = `http://localhost:8080/mypage/mypageSample?userId=${userId}`;
+    // window.location.href = `http://localhost:8080/mypage/mypageSample?userId=${userId}`;
+    window.location.href = `https://achiko.site/mypage/mypageSample?userId=${userId}`;
   });
 });
 
