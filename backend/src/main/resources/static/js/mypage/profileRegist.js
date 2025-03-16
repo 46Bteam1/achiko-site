@@ -28,7 +28,7 @@ $(document).ready(function () {
   });
 
   // 회원 탈퇴
-  $("#confirmDeleteBtn").on("click", withdraw);
+  $("#confirmDeleteBtn").on("click", deleteUser);
 
   // 회원 탈퇴 기능 - 모달 닫을 때 입력된 비밀번호 초기화
   $("#deleteUserModal").on("hidden.bs.modal", function () {
@@ -42,6 +42,8 @@ $(document).ready(function () {
   });
 
   initChatRooms();
+
+  $(".delete-btn").on("click", deleteShare);
 });
 
 // let newProfileImage = $("#profileImageInput")[0].files[0]; // 수정
@@ -236,30 +238,39 @@ function initChatRooms() {
 function getChatRooms(resp) {
   let tag = `<table>`;
 
-  $.each(resp, function (index, item) {
-    let profileImage = item["profileImage"]
-      ? item["profileImage"]
-      : "/images/fubao.webp";
-    const nickname = $("#userNickname").val();
-    let nicknameCheck = item["hostNickname"] === nickname;
-    let displayNickname = nicknameCheck
-      ? item["guestNickname"]
-      : item["hostNickname"];
+  if (!resp || resp.length === 0) {
     tag += `
         <tr>
+            <td colspan="3" style="text-align:center; color:grey">활성화 된 채팅이 없습니다.</td>
+        </tr>
+    `;
+  } else {
+    $.each(resp, function (index, item) {
+      let profileImage = item["profileImage"]
+        ? item["profileImage"]
+        : "/images/fubao.webp";
+      const nickname = $("#userNickname").val();
+      let nicknameCheck = item["hostNickname"] === nickname;
+      let displayNickname = nicknameCheck
+        ? item["guestNickname"]
+        : item["hostNickname"];
+      tag += `
+        <tr>
+            <td>${index + 1}</td>
             <td><img src="${profileImage}" alt="프로필 이미지" width="50px" height="50px" style="border-radius: 50%; object-fit: cover;"></td>
             <td>${displayNickname}</td>
             <td class="btns">
                 <input type="button" value="입장" 
-                class="enterBtn"
+                class="enterBtn btn btn-secondary"
                 data-seq="${item["chatroomId"]}">
                 <input type="button" value="삭제"
-                class="deleteBtn"
+                class="deleteBtn btn btn-danger"
                 data-seq="${item["chatroomId"]}">
             </td>
         </tr>
     `;
-  });
+    });
+  }
   tag += `</table>`;
 
   $("#chatroomTable").html(tag);
@@ -296,6 +307,27 @@ function enterRoom() {
     data: { chatroomId: chatroomId },
     success: function (response) {
       window.location.href = "/chatList?chatroomId=" + chatroomId;
+    },
+  });
+}
+
+function deleteShare() {
+  let shareId = $(this).attr("data-shareId");
+
+  if (!confirm("정말로 삭제하시겠습니까?")) {
+    return;
+  }
+
+  $.ajax({
+    type: "GET",
+    url: "/share/delete",
+    data: { shareId: shareId },
+    success: function (response) {
+      alert("게시물이 삭제되었습니다.");
+      window.location.href = "/mypage/mypageView";
+    },
+    error: function (xhr) {
+      alert(xhr.responseText || "삭제에 실패했습니다.");
     },
   });
 }

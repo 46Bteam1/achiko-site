@@ -73,7 +73,7 @@
             <td>
               <th:block>
                 <span th:if="${userDTO.isHost == 1}">호스트</span>
-                <span th:ir="${userDTO.isHost == 0}">게스트</span>
+                <span th:if="${userDTO.isHost == 0}">게스트</span>
               </th:block>
             </td>
           </tr>
@@ -88,6 +88,70 @@
                   >[[${userDTO.bio}]]
                 </span>
               </th:block>
+            </td>
+          </tr>
+          <tr>
+            <th>구사 언어:</th>
+            <td>
+              <span
+                th:if="${userDTO.languages != null and not #lists.isEmpty(userDTO.languages)}"
+              >
+                [[${#strings.arrayJoin(userDTO.languages, ', ')}]]
+              </span>
+              <span
+                th:if="${userDTO.languages == null or #lists.isEmpty(userDTO.languages)}"
+              >
+                선택된 언어가 없습니다.
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <th>나이:</th>
+            <td>
+              <span th:if="${userDTO.age != null}">
+                [[${userDTO.age}]] 세
+              </span>
+              <span th:if="${userDTO.age == null}">
+                나이를 입력하지 않았습니다.
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <th>국적:</th>
+            <td>
+              <span th:if="${userDTO.nationality != null}">
+                [[${userDTO.nationality}]]
+              </span>
+              <span th:if="${userDTO.nationality == null}">
+                국적을 선택하지 않았습니다.
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <th>종교:</th>
+            <td>
+              <span th:if="${userDTO.religion != null}">
+                [[${userDTO.religion}]]
+              </span>
+              <span th:if="${userDTO.religion == null}">
+                종교를 선택하지 않았습니다.
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <th>성별:</th>
+            <td>
+              <span th:if="${userDTO.gender != null}">
+                <span th:if="${userDTO.gender == 0}">남성</span>
+                <span th:if="${userDTO.gender == 1}">여성</span>
+                <span th:if="${userDTO.gender == 2}">비밀</span>
+              </span>
+              <span th:if="${userDTO.gender == null}">
+                성별을 선택하지 않았습니다.
+              </span>
             </td>
           </tr>
         </table>
@@ -147,10 +211,16 @@
                   <td>
                     <br />
                     <img
-                      id="profileImage"
+                      th:if="${userDTO.profileImage != null}"
                       th:src="@{${userDTO.profileImage}}"
-                      width="150"
-                      alt="프로필 이미지"
+                      width="100"
+                      alt="프로필사진"
+                    />
+                    <img
+                      th:if="${userDTO.profileImage == null}"
+                      th:src="@{/images/user_icon.png}"
+                      width="100"
+                      alt="프로필사진"
                     />
                   </td>
                 </tr>
