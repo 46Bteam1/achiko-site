@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.UserEntity;
 
@@ -30,4 +29,6 @@ public interface ShareRepository extends JpaRepository<ShareEntity, Long> {
 	
 	@Query("SELECT s.host.userId FROM ShareEntity s WHERE s.shareId = :shareId")
     Long findHostIdByShareId(@Param("shareId") Long shareId);
+
+	List<ShareEntity> findByHost_UserId(Long userId);
 }
