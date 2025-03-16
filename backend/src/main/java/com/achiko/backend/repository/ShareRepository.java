@@ -30,4 +30,6 @@ public interface ShareRepository extends JpaRepository<ShareEntity, Long> {
 	
 	@Query("SELECT s.host.userId FROM ShareEntity s WHERE s.shareId = :shareId")
     Long findHostIdByShareId(@Param("shareId") Long shareId);
+
+	List<ShareEntity> findByHost_UserId(Long userId);
 }
