@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achiko 마이페이지</title>
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script th:src="@{/js/mypage/profileRegist.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/mypage/mypage.css}" />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+
+  <body>
+    <div class="logo">
+      <a href="../index.html" th:href="@{/}">
+        <img
+          th:src="@{/images/logo-achiko.png}"
+          alt="Achiko Logo"
+          width="204px"
+          height="64px"
+        />
+      </a>
+    </div>
+
+    <h2>My Achiko 활동내역</h2>
+    <!-- 활동내역 -->
+    <div class="profile-container">
+      <div class="myProfileHeader">
+        <p>
+          <strong>[[${userDTO.nickname}]] ([[${userDTO.loginId}]])</strong>님의
+          Achiko
+          <strong th:text="${userDTO.isHost == 0 ? '[게스트]' : '[호스트]'}">
+          </strong>
+          활동내역입니다.
+        </p>
+      </div>
+
+      <!-- 뷰잉 -->
+      <div class="section">
+        <h3>예약된 뷰잉</h3>
+        <input type="hidden" th:value="${userDTO.userId}" id="userId" />
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="no">No.</th>
+                <th
+                  th:text="${userDTO.isHost == 0 ? '쉐어하우스' : '게스트'}"
+                ></th>
+                <th class="create_date">뷰잉 예정일</th>
+              </tr>
+            </thead>
+            <tbody id="viewingTable">
+              <th:block th:if="${viewingList == null or viewingList.isEmpty()}">
+                <tr>
+                  <td colspan="4" class="no-data">예정된 뷰잉이 없습니다.</td>
+                </tr>
+              </th:block>
+              <th:block
+                th:unless="${viewingList == null or viewingList.isEmpty()}"
+              >
+                <tr th:each="viewing, status : ${viewingList}">
+                  <td th:text="${status.count}"></td>
+                  <td th:if="${userDTO.isHost == 0}">
+                    <a
+                      th:href="@{/share/selectOne(shareId=${viewing.shareId}, userId=${userDTO.userId})}"
+                      th:text="${viewing.shareTitle}"
+                    ></a>
+                  </td>
+                  <td
+                    th:unless="${userDTO.isHost == 0}"
+                    th:text="${viewing.guestNickname}"
+                  ></td>
+                  <td
+                    th:text="${#temporals.format(viewing.scheduledDate, 'yyyy-MM-dd HH:mm')}"
+                  ></td>
+                </tr>
+              </th:block>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 작성한 쉐어 글 목록 (for host) -->
+      <th:block th:if="${userDTO.isHost == 1}">
+        <div class="section">
+          <h3>나의 쉐어하우스</h3>
+          <div class="table-container">
+            <table id="myShareTable">
+              <thead>
+                <tr>
+                  <th class="no">No.</th>
+                  <th class="title">쉐어하우스</th>
+                  <th>관리</th>
+                </tr>
+              </thead>
+              <tbody>
+                <th:block
+                  th:if="${myShareList == null or myShareList.isEmpty()}"
+                >
+                  <tr>
+                    <td colspan="2" class="no-data">작성한 글이 없습니다.</td>
+                  </tr>
+                </th:block>
+                <th:block
+                  th:unless="${myShareList == null or myShareList.isEmpty()}"
+                >
+                  <tr th:each="share, status: ${myShareList}">
+                    <td th:text="${status.count}"></td>
+                    <td>
+                      <a
+                        th:href="@{/share/selectOne(shareId=${share.shareId}, userId=${share.hostId})}"
+                        th:text="${share.title}"
+                      ></a>
+                    </td>
+                    <td>
+                      <button
+                        class="delete-btn btn btn-danger"
+                        th:data-shareId="${share.shareId}"
+                      >
+                        삭제
+                      </button>
+                    </td>
+                  </tr>
+                </th:block>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </th:block>
+
+      <!-- 채팅방 목록 -->
+      <div class="section">
+        <h3>채팅방 목록</h3>
+        <input type="hidden" th:value="${userDTO.nickname}" id="userNickname" />
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="no">No.</th>
+                <th>프로필 이미지</th>
+                <th>채팅 참가자</th>
+                <th>채팅방 관리</th>
+              </tr>
+            </thead>
+            <tbody id="chatroomTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 찜목록 (for guest) -->
+      <th:block th:if="${userDTO.isHost == 0}">
+        <div class="section">
+          <h3>찜한 목록</h3>
+          <div class="table-container">
+            <table id="favoriteTable">
+              <thead>
+                <tr>
+                  <th class="no">No.</th>
+                  <th class="title">쉐어하우스</th>
+                </tr>
+              </thead>
+              <tbody>
+                <th:block
+                  th:if="${favoriteList == null or favoriteList.isEmpty()}"
+                >
+                  <tr>
+                    <td colspan="2" class="no-data">찜한 목록이 없습니다.</td>
+                  </tr>
+                </th:block>
+                <tr th:each="favorite, status : ${favoriteList}">
+                  <td th:text="${status.count}"></td>
+                  <td>
+                    <a
+                      th:href="@{/share/selectOne(shareId=${favorite.shareId}, userId=${userId})}"
+                      th:text="${favorite.shareTitle}"
+                    ></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </th:block>
+
+      <!-- 리뷰 -->
+      <div class="section">
+        <h3>내 리뷰</h3>
+        <div class="table-container">
+          <table id="writtenReviewTable" class="reviewTable">
+            <thead>
+              <tr>
+                <th class="no">No.</th>
+                <th colspan="2" class="reviewContent">작성한 리뷰 내용</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <th:block
+                th:if="${writtenReviewList == null or writtenReviewList.isEmpty()}"
+              >
+                <tr>
+                  <td colspan="2" class="no-data">작성한 리뷰가 없습니다.</td>
+                </tr>
+              </th:block>
+              <tr th:each="review, status : ${writtenReviewList}">
+                <td th:text="${status.count}"></td>
+                <td th:text="${review.comment}"></td>
+                <td>
+                  <a
+                    th:href="@{/review/reviewPage(reviewId=${review.reviewId}, reviewedUserId=${userId})}"
+                  >
+                    <button class="btn btn-secondary" id="reviewreviewedUserId">
+                      해당 리뷰 보러가기
+                    </button>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table id="receivedReviewTable" class="reviewTable">
+            <thead>
+              <tr>
+                <th class="no">No.</th>
+                <th class="reviewContent">받은 리뷰 내용</th>
+                <th class="avg">평균 평점</th>
+              </tr>
+            </thead>
+            <tbody>
+              <th:block
+                th:if="${receivedReviewList == null or receivedReviewList.isEmpty()}"
+              >
+                <tr>
+                  <td colspan="2" class="no-data">받은 리뷰가 없습니다.</td>
+                </tr>
+              </th:block>
+              <tr th:each="review, status : ${receivedReviewList}">
+                <td th:text="${status.count}"></td>
+                <td>
+                  <a
+                    th:href="@{/review/reviewPage(reviewId=${review.reviewId}, reviewedUserId=${userId})}"
+                    th:text="${review.comment}"
+                  ></a>
+                </td>
+                <td
+                  th:text="${(review.cleanlinessRating + review.trustRating + review.communicationRating + review.mannerRating) / 4}"
+                ></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 댓글 (for guest) -->
+      <th:block th:if="${userDTO.isHost == 0}">
+        <div class="section">
+          <h3>내 댓글 보기</h3>
+          <div class="table-container">
+            <table id="reviewReplyTable">
+              <thead>
+                <tr>
+                  <th class="no">No.</th>
+                  <th class="replyContent">내 댓글</th>
+                </tr>
+              </thead>
+              <tbody>
+                <th:block
+                  th:if="${reviewReplyList == null or reviewReplyList.isEmpty()}"
+                >
+                  <tr>
+                    <td colspan="3" class="no-data">등록한 댓글이 없습니다.</td>
+                  </tr>
+                </th:block>
+                <tr th:each="reviewReply, status : ${reviewReplyList}">
+                  <td th:text="${status.count}"></td>
+                  <td>
+                    <a
+                      th:href="@{/review/reviewPage(reviewId=${reviewReply.reviewId}, userId=${userId})}"
+                      th:text="${reviewReply.content}"
+                    ></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </th:block>
+    </div>
+
+    <!-- 회원 탈퇴 버튼 -->
+    <div class="btn-container">
+      <span>회원 탈퇴를 원하시나요? </span>
+      <button
+        id="openDUModal"
+        class="btn btn-secondary"
+        data-bs-toggle="modal"
+        data-bs-target="#deleteUserModal"
+      >
+        회원 탈퇴하기
+      </button>
+    </div>
+
+    <!-- 회원 탈퇴 모달 창 -->
+    <div
+      id="deleteUserModal"
+      class="modal fade"
+      tabindex="-1"
+      aria-labelledby="deleteUserModalLabel"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteUserModalLabel">회원 탈퇴</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>탈퇴를 원하시는 현재 계정의 비밀번호를 한번 더 입력하세요.</p>
+            <input
+              type="password"
+              id="passwordInput"
+              class="form-control"
+              placeholder="비밀번호 입력"
+              required
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              취소하기
+            </button>
+            <button
+              id="confirmDeleteBtn"
+              class="btn btn-danger"
+              data-user-id="${userDTO.userId}"
+            >
+              탈퇴하기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

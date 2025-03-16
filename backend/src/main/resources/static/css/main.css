@@ -1,243 +1,327 @@
-.background-img {
-    background-image: url("https://a0.muscache.com/im/pictures/57b9f708-bb12-498c-bc33-769f8fc43e63.jpg?im_w=960");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
-    min-height: 890px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* 메인 컨테이너를 화면 전체 차지 */
+main {
+  width: 100vw; /* 전체 화면 너비 */
+  min-height: 100vh;
+  padding: 5px; /* 여백 유지 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 70px;
 }
 
+.listings-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.listing-card {
+  flex: 1 1 calc(20% - 20px);
+  max-width: 320px;
+  min-width: 280px;
+
+  background-color: #f9f9f9;
+  /* border-radius: 15px; */
+  overflow: hidden;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); */
+  transition: transform 0.2s ease-in-out;
+  /* aspect-ratio: 4 / 5; */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+}
+
+@media (max-width: 1400px) {
+  .listing-card {
+    flex: 1 1 calc(25% - 20px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .listing-card {
+    flex: 1 1 calc(33.333% - 20px);
+  }
+}
+
+@media (max-width: 800px) {
+  .listing-card {
+    flex: 1 1 calc(50% - 20px);
+  }
+}
+
+@media (max-width: 500px) {
+  .listing-card {
+    flex: 1 1 calc(100% - 20px);
+  }
+}
+
+.listing-card:hover {
+  /* transform: scale(1.02); */
+}
+
+.listing-card img {
+  /* width: 100%;
+  height: 230px;
+  object-fit: cover;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px; */
+
+  width: 100%;
+  aspect-ratio: 1 / 1; /* 정사각형 */
+  object-fit: cover;
+  border-radius: 15px;
+  display: block; /* 혹은 inline-block으로도 가능 */
+}
+
+.listing-info {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.listing-info h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.listing-info p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.host-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2px 0;
+}
+
+.host-info img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+}
+
+.host-detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 9px;
+}
+
+.host-detail span {
+  font-size: 14px;
+  color: #555;
+}
+
+.listing-info p {
+  font-size: 14px;
+  color: #666;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.8); /* 반투명 배경 */
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #ff5a5f;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 50; /* 이미지 위로 배치 */
+}
+
+.favorite-btn i {
+  transition: color 0.2s;
+}
+
+.favorite-btn:hover i {
+  color: red;
+  transform: scale(1.1);
+}
+
+/* .favorite-btn.active {
+  background: rgba(255, 0, 0, 0.2); 
+} */
+
+.favorite-btn.active i {
+  color: red; /* 하트 아이콘을 빨간색으로 변경 */
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+  gap: 5px;
+}
+
+.rating i {
+  color: #ff5a5f;
+}
+
+/* ------------- */
 .background-text-wrap {
-    width: 600px;
-    height: 500px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 0 80px 0;
+  width: 600px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 0 80px 0;
 }
 
 .background-text-wrap .text {
-    font-size: 18px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
 }
 
 .background-text-wrap button {
-    padding: 15px 50px;
-    border-radius: 30px;
-    border-style: none;
-    border-width: 0;
-    background: white;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  padding: 15px 50px;
+  border-radius: 30px;
+  border-style: none;
+  border-width: 0;
+  background: white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .background-text-wrap button span {
-
-    background: linear-gradient(90deg, #6F019C 0%, #C6017E 135.12%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: bold;
-    font-size: 18px;
+  background: linear-gradient(90deg, #6f019c 0%, #c6017e 135.12%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  font-size: 18px;
 }
 
 /* near-trip */
 
 .near-trip {
-    width: 100%;
-    padding: 10px 100px;
+  width: 100%;
+  padding: 10px 5px;
 }
 
 .near-trip h2 {
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 52px;
-    padding: 8px;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 52px;
+  padding: 8px;
 }
 
-.near-trip-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    padding: 8px;
-    gap: 20px;
+/* map button */
+#mapButton {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: white;
+  padding: 12px 14px 15px 15px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1100;
+  text-align: center;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.near-trip-list li{
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
- 
-.near-trip-list img {
-    width: 68px;
-    height: 68px;
-    margin-right: 15px;
-    border-radius: 10px;
+#mapButton:hover {
+  background-color: #333;
 }
 
-.near-trip-title {
-    font-weight: 600;
-    padding-bottom: 5px;
-    overflow: hidden;
+/* 구글 맵 컨테이너 */
+#mapContainer {
+  width: 100vw;
+  height: calc(100vh - 80px);
+  display: none;
+  background-color: white;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  z-index: 1000;
+  box-sizing: border-box;
 }
 
-/* anywhere trip */
-.anywhere-trip {
-    width: 100%;
-    padding: 20px 100px;
+/* 구글 맵 자체 */
+#googleMap {
+  width: 100%;
+  height: 100%;
 }
 
-.anywhere-trip h2 {
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 52px;
-    padding: 8px;
+/* google map marker css */
+/* Info Window 컨테이너 스타일 */
+.info-window {
+  width: 160px;
+  background: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
 }
 
-.anywhere-trip-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    padding: 8px;
-    gap: 20px;
+/* 이미지 스타일: 고정 높이와 object-fit 활용 */
+.info-window img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 5px;
 }
 
-.anywhere-trip-list li:hover {
-    cursor: pointer;
+/* 제목 스타일 */
+.info-window h4 {
+  font-size: 14px;
+  color: #333;
+  margin: 0 0 2px 0;
 }
 
-.anywhere-trip-list img {
-    width: 100%;
-    margin-right: 15px;
-    border-radius: 10px;
-    margin-bottom: 5px;
+/* 가격 및 주소 스타일 */
+.info-window .price,
+.info-window .address {
+  font-size: 12px;
+  color: #555;
 }
 
-.anywhere-trip-subtitle {
-    font-weight: 700;
-    padding-bottom: 5px;
-    overflow: hidden;
-    letter-spacing: 1px;
+/* 상세보기 링크 스타일 */
+.info-window .detail-link {
+  display: inline-block;
+  margin-top: 8px;
+  text-decoration: none;
+  color: green;
+  font-weight: bold;
+  border: 1px solid green;
+  padding: 2px 3px;
+  border-radius: 3px;
+  transition: background 0.2s, color 0.2s;
 }
 
-/* hosting start */
-
-.hosting-start {
-    width: 100%;
-    padding: 30px 108px;
-}
-
-.hosting-start-background {
-    width: 100%;
-    height: 100%;
-    background-image: url("https://a0.muscache.com/im/pictures/2595054e-d1d9-4fde-8046-58d51fcb3164.jpg?im_w=1440");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    border-radius: 10px;
-    min-height: 400px;
-    position: relative;
-}
-
-.hosting-start-background:hover {
-    cursor: pointer;
-}
-
-.hosting-start-text-wrap {
-    width: 50%;
-    height: 100%;
-    position: absolute;
-    padding: 0 80px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: white;
-}
-
-.hosting-start-text-wrap h2 {
-    font-size: 40px;
-    line-height: 36px;
-    font-weight: 700;
-}
-
-.hosting-start-subtitle {
-    font-size: 16px;
-    line-height: 20px;
-    padding-top:  15px;
-}
-
-.hosting-start-btn-wrap {
-    width: 130px;
-    font-size: 13px;
-    font-weight: 600;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    background: white;
-    color: black;
-    padding: 10px 0;
-    margin-top: 15px;
-}
-
-/* special-trip */
-.special-trip {
-    width: 100%;
-    padding: 20px 100px;
-}
-
-.special-trip h2 {
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 52px;
-    padding: 8px;
-}
-
-.special-trip-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    padding: 5px;
-    gap: 20px;
-    cursor: pointer;
-}
-
-
-.special-trip-img-wrap {
-    position: relative;
-}
-
-.special-trip-img-wrap p {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: white;
-    padding: 5px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.special-trip-list img {
-    width: 100%;
-    margin-right: 15px;
-    border-radius: 10px;
-    margin-bottom: 5px;
-}
-
-.special-trip-title {
-    font-weight: 700;
-    overflow: hidden;
-    letter-spacing: 1px;
-    padding-bottom: 8px;
-}
-
-.special-trip-subtitle {
-    font-size: 13px;
+.info-window .detail-link:hover {
+  background: green;
+  color: #fff;
 }

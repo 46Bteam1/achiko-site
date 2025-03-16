@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>리뷰 수정</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" th:href="@{/css/review/reviewUpdate.css}" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="left-section">
+        <div class="property-image"></div>
+        <div class="property-info">
+          <p><strong>숙소명:</strong> Daphne And Andrew</p>
+          <p><strong>위치:</strong> San Jose</p>
+          <p><strong>숙박 기간:</strong> 2016년 07월 30일 - 2016년 08월 06일</p>
+          <p><strong>총 후기:</strong> 34개</p>
+        </div>
+      </div>
+
+      <div class="right-section">
+        <div class="review-header">
+          <span th:text="${reviewedUserName}"></span>님의 후기 수정
+        </div>
+        <div class="review-description">수정 후 다시 제출해주세요.</div>
+
+        <form th:action="@{/review/update}" method="post">
+          <input type="hidden" name="reviewId" th:value="${review.reviewId}" />
+          <input
+            type="hidden"
+            name="reviewedUserId"
+            th:value="${review.reviewedUserId}"
+          />
+
+          <!-- ✅ 청결도 -->
+          <div class="rating-box">
+            <p>
+              <strong>청결도</strong>
+            </p>
+            <div class="stars">
+              <input
+                type="radio"
+                name="cleanlinessRating"
+                value="5"
+                id="cleanliness-5"
+                th:checked="${review.cleanlinessRating == 5}"
+              /><label for="cleanliness-5">★</label>
+              <input
+                type="radio"
+                name="cleanlinessRating"
+                value="4"
+                id="cleanliness-4"
+                th:checked="${review.cleanlinessRating == 4}"
+              /><label for="cleanliness-4">★</label>
+              <input
+                type="radio"
+                name="cleanlinessRating"
+                value="3"
+                id="cleanliness-3"
+                th:checked="${review.cleanlinessRating == 3}"
+              /><label for="cleanliness-3">★</label>
+              <input
+                type="radio"
+                name="cleanlinessRating"
+                value="2"
+                id="cleanliness-2"
+                th:checked="${review.cleanlinessRating == 2}"
+              /><label for="cleanliness-2">★</label>
+              <input
+                type="radio"
+                name="cleanlinessRating"
+                value="1"
+                id="cleanliness-1"
+                th:checked="${review.cleanlinessRating == 1}"
+              /><label for="cleanliness-1">★</label>
+            </div>
+          </div>
+
+          <!-- ✅ 신뢰도 -->
+          <div class="rating-box">
+            <p>
+              <strong>신뢰도</strong>
+            </p>
+            <div class="stars">
+              <input
+                type="radio"
+                name="trustRating"
+                value="5"
+                id="trust-5"
+                th:checked="${review.trustRating == 5}"
+              /><label for="trust-5">★</label>
+              <input
+                type="radio"
+                name="trustRating"
+                value="4"
+                id="trust-4"
+                th:checked="${review.trustRating == 4}"
+              /><label for="trust-4">★</label>
+              <input
+                type="radio"
+                name="trustRating"
+                value="3"
+                id="trust-3"
+                th:checked="${review.trustRating == 3}"
+              /><label for="trust-3">★</label>
+              <input
+                type="radio"
+                name="trustRating"
+                value="2"
+                id="trust-2"
+                th:checked="${review.trustRating == 2}"
+              /><label for="trust-2">★</label>
+              <input
+                type="radio"
+                name="trustRating"
+                value="1"
+                id="trust-1"
+                th:checked="${review.trustRating == 1}"
+              /><label for="trust-1">★</label>
+            </div>
+          </div>
+
+          <!-- ✅ 소통능력 -->
+          <div class="rating-box">
+            <p>
+              <strong>소통능력</strong>
+            </p>
+            <div class="stars">
+              <input
+                type="radio"
+                name="communicationRating"
+                value="5"
+                id="communication-5"
+                th:checked="${review.communicationRating == 5}"
+              /><label for="communication-5">★</label>
+              <input
+                type="radio"
+                name="communicationRating"
+                value="4"
+                id="communication-4"
+                th:checked="${review.communicationRating == 4}"
+              /><label for="communication-4">★</label>
+              <input
+                type="radio"
+                name="communicationRating"
+                value="3"
+                id="communication-3"
+                th:checked="${review.communicationRating == 3}"
+              /><label for="communication-3">★</label>
+              <input
+                type="radio"
+                name="communicationRating"
+                value="2"
+                id="communication-2"
+                th:checked="${review.communicationRating == 2}"
+              /><label for="communication-2">★</label>
+              <input
+                type="radio"
+                name="communicationRating"
+                value="1"
+                id="communication-1"
+                th:checked="${review.communicationRating == 1}"
+              /><label for="communication-1">★</label>
+            </div>
+          </div>
+          <!-- ✅ 매너 -->
+          <div class="rating-box">
+            <p>
+              <strong>매너</strong>
+            </p>
+            <p>숙소 제공자는 친절하고 매너가 좋았나요?</p>
+            <div class="stars">
+              <input
+                type="radio"
+                name="mannerRating"
+                value="5"
+                id="manner-5"
+                th:checked="${review.mannerRating == 5}"
+              />
+              <label for="manner-5">★</label>
+              <input
+                type="radio"
+                name="mannerRating"
+                value="4"
+                id="manner-4"
+                th:checked="${review.mannerRating == 4}"
+              />
+              <label for="manner-4">★</label>
+              <input
+                type="radio"
+                name="mannerRating"
+                value="3"
+                id="manner-3"
+                th:checked="${review.mannerRating == 3}"
+              />
+              <label for="manner-3">★</label>
+              <input
+                type="radio"
+                name="mannerRating"
+                value="2"
+                id="manner-2"
+                th:checked="${review.mannerRating == 2}"
+              />
+              <label for="manner-2">★</label>
+              <input
+                type="radio"
+                name="mannerRating"
+                value="1"
+                id="manner-1"
+                th:checked="${review.mannerRating == 1}"
+              />
+              <label for="manner-1">★</label>
+            </div>
+          </div>
+
+          <!-- ✅ 코멘트 입력 -->
+          <div class="comment-box">
+            <label for="comment">의견을 남겨주세요:</label>
+            <textarea
+              class="form-control"
+              id="comment"
+              name="comment"
+              rows="4"
+              th:text="${review.comment}"
+              required
+            ></textarea>
+          </div>
+
+          <!-- ✅ 제출 버튼 -->
+          <button type="submit" class="submit-btn">리뷰 수정</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
