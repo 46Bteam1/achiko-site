@@ -32,7 +32,7 @@ public class UserController {
 	
 	@GetMapping("/regist")	// 회원가입 페이지
 	public String regist() {
-		return "/user/regist";
+		return "user/regist";
 	}
 	
 	@PostMapping("/regist")		// 회원가입
@@ -48,31 +48,31 @@ public class UserController {
 						Model model) {
 		model.addAttribute("error", error);
 		model.addAttribute("exception", exception);
-		return "/user/login";
+		return "user/login";
 	}
 	
 	@GetMapping("/findLoginId")	//아이디 찾기
 	public String findLoginId() {
-		return "/user/findLoginId";
+		return "user/findLoginId";
 	}
 	
 	@PostMapping("/findLoginId")
 	public String findLoginId(@ModelAttribute UserDTO userDTO, Model model) {
 		String findedId = userService.findLoginId(userDTO);
 		model.addAttribute("findedId", findedId);
-		return "/user/findLoginIdResult";
+		return "user/findLoginIdResult";
 	}
 	
 	@GetMapping("/findPassword")
 	public String findPassword() {
-		return "/user/findPassword";
+		return "user/findPassword";
 	}
 	
 	@PostMapping("/findPassword")
 	public String findPassword(@ModelAttribute UserDTO userDTO, Model model) {
 		String tempPw = userService.findPassword(userDTO);
 		model.addAttribute("tempPw", tempPw);
-		return "/user/findPasswordResult";
+		return "user/findPasswordResult";
 	}
 	
 	@PostMapping("/chkIdDuplication")
@@ -91,7 +91,7 @@ public class UserController {
 	
 	@GetMapping("/temp")
 	public String temp() {
-		return "/user/temp";
+		return "user/temp";
 	}
 	
 	@DeleteMapping("/deleteUser")

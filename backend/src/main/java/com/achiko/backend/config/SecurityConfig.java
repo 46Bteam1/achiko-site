@@ -42,6 +42,7 @@ public class SecurityConfig {
 						.requestMatchers("/admin").hasRole("ADMIN")
 						.requestMatchers("/user/mypage").hasAnyRole("ADMIN", "USER")
 						.anyRequest().authenticated());
+						
 		// Custom Login 설정
 		http
 			.formLogin((auth) -> auth
@@ -68,6 +69,7 @@ public class SecurityConfig {
 		// 소셜로그인 설정
 		http
 		.oauth2Login((oauth2) -> oauth2
+				.defaultSuccessUrl("/", true)
 				.userInfoEndpoint((userInfoEndpointConfig) ->
 				userInfoEndpointConfig.userService(customOAuth2UserService)));
 
