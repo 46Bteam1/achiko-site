@@ -255,7 +255,7 @@ function shareInfo(chatRoomId) {
           : resp.description;
 
       let tag = `
-      <h5>쉐어하우스 타이틀: ${resp.title}</h5>
+      <h3>${resp.title}</h3>
       <p>${description}</p>
       `;
 

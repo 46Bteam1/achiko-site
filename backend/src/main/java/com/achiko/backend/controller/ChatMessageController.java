@@ -1,13 +1,16 @@
 package com.achiko.backend.controller;
 
+import java.security.Principal;
+
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
 import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.PrincipalDetails;
+
+import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,10 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequiredArgsConstructor
 public class ChatMessageController {
-	
-	private final SimpMessagingTemplate messagingTemplate;
-	
     private final ChatService chatService;
+    private final UserRepository userRepository;
     
     
     // 클라이언트가 "/app/chat.sendMessage"로 메시지를 보내면 실행됨

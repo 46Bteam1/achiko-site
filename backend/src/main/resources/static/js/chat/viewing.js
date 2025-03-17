@@ -124,12 +124,12 @@ function viewingTable(resp) {
   } else {
     //  데이터가 있을 경우 테이블 출력
     tag += `
-      <table border="1">
-        <tr>
-          <th style="border: 1px solid black; padding: 5px;">상대방</th>
-          <th style="border: 1px solid black; padding: 5px;">예약 날짜</th>
-          <th style="border: 1px solid black; padding: 5px;"></th>
-        </tr>`;
+      table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #f9f9f9;">
+  <tr style="background-color: #4CAF50; color: white; font-weight: bold;">
+    <th style="border: 1px solid black; padding: 10px; text-align: center;">상대방</th>
+    <th style="border: 1px solid black; padding: 10px; text-align: center;">예약 날짜</th>
+    <th style="border: 1px solid black; padding: 10px; text-align: center;"></th>
+  </tr>`;
 
     const nickname = $("#nickname").val();
     $.each(resp, function (index, item) {
@@ -138,27 +138,33 @@ function viewingTable(resp) {
         ? item["guestNickname"]
         : item["hostNickname"];
 
-      let scheduledDate = item["scheduledDate"] || "날짜 없음"; //  기본값 설정
-      let isCompleted = item["isCompleted"]; //  완료 여부 확인
-      let disabledAttr = isCompleted ? "disabled" : ""; //  비활성화 속성 설정
+      let scheduledDate = item["scheduledDate"] || "날짜 없음"; // 기본값 설정
+      let isCompleted = item["isCompleted"]; // 완료 여부 확인
+      let disabledAttr = isCompleted ? "disabled" : ""; // 비활성화 속성 설정
 
       tag += `
-            <tr>
-              <td style="border: 1px solid black; padding: 5px;">${displayNickname}</td>
-              <td style="border: 1px solid black; padding: 5px;">${scheduledDate}</td>
-              <td>
-                <input type="button" value="날짜 수정" class="updateViewingBtn" 
-                data-seq="${item["viewingId"]}" ${disabledAttr}>
-                ${
-                  nicknameCheck
-                    ? `<input type="button" value="확정" class="confirmViewingBtn" 
-                    data-seq="${item["viewingId"]}" ${disabledAttr}>`
-                    : ""
-                }
-                <input type="button" value="뷰잉 삭제" class="deleteViewingBtn" data-role="${role}"
-                data-seq="${item["viewingId"]}" ${disabledAttr}>
-              </td>
-            </tr>`;
+    <tr style="border: 1px solid #ddd; text-align: center; ${
+      index % 2 === 0 ? "background-color: #f2f2f2;" : ""
+    }">
+      <td style="border: 1px solid black; padding: 10px;">${displayNickname}</td>
+      <td style="border: 1px solid black; padding: 10px;">${scheduledDate}</td>
+      <td style="border: 1px solid black; padding: 10px;">
+        <input type="button" value="날짜 수정" class="updateViewingBtn" 
+        data-seq="${
+          item["viewingId"]
+        }" style="padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: #ffcc00; color: black; font-size: 14px;" ${disabledAttr}>
+        ${
+          nicknameCheck
+            ? `<input type="button" value="확정" class="confirmViewingBtn" 
+        data-seq="${item["viewingId"]}" style="padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: #008CBA; color: white; font-size: 14px;" ${disabledAttr}>`
+            : ""
+        }
+        <input type="button" value="뷰잉 삭제" class="deleteViewingBtn" data-role="${role}"
+        data-seq="${
+          item["viewingId"]
+        }" style="padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: #f44336; color: white; font-size: 14px;" ${disabledAttr}>
+      </td>
+    </tr>`;
     });
 
     tag += `</table>`;

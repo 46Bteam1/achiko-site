@@ -175,6 +175,7 @@ public class ChatService {
 													.guest(guest)
 													.build();
 		participantRepository.save(participantEntity);
+		
 		return newRoom.getChatroomId();
 	}
 
@@ -186,10 +187,9 @@ public class ChatService {
 	}
 
 	public String deleteRoom(Long chatRoomId, PrincipalDetails loginUser) {
+
 		// 로그인한 유저가 관계자인지 판별하고 삭제
-		
 		Long userId = loginUser.getUserId();
-		
 		Long hostId = participantRepository.findHostIdByChatRoomId(chatRoomId);
 		Long guestId = participantRepository.findGuestIdByChatRoomId(chatRoomId);
 		
