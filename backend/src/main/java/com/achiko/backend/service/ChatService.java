@@ -11,6 +11,7 @@ import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.ChatParticipantDTO;
 import com.achiko.backend.dto.ChatRoomDTO;
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.entity.ChatMessageEntity;
@@ -184,7 +185,7 @@ public class ChatService {
 		return temp1.get().getShare().getShareId();
 	}
 
-	public String deleteRoom(Long chatRoomId, LoginUserDetails loginUser) {
+	public String deleteRoom(Long chatRoomId, PrincipalDetails loginUser) {
 		// 로그인한 유저가 관계자인지 판별하고 삭제
 		
 		Long userId = loginUser.getUserId();

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.achiko.backend.dto.FavoriteDTO;
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.dto.ReviewReplyDTO;
 import com.achiko.backend.dto.ShareDTO;
@@ -30,7 +31,7 @@ public class MypageViewController {
 
 	// 마이페이지 화면 요청
 	@GetMapping("/mypage/mypageView")
-	public String mypageView(@AuthenticationPrincipal LoginUserDetails loginUser, Model model) {
+	public String mypageView(@AuthenticationPrincipal PrincipalDetails loginUser, Model model) {
 		if (loginUser == null) {
 			return "redirect:/user/login";
 		}
@@ -47,7 +48,7 @@ public class MypageViewController {
 	}
 
 	@GetMapping("/mypage/mypageSample")
-	public String showMypageSample(@AuthenticationPrincipal LoginUserDetails loginUser, Model model) {
+	public String showMypageSample(@AuthenticationPrincipal PrincipalDetails loginUser, Model model) {
 		if (loginUser == null) {
 			return "redirect:/user/login";
 		}

@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.achiko.backend.service.TextService;
+import com.achiko.backend.dto.CustomOAuth2User;
 import com.achiko.backend.repository.UsersRepository;
 
 @Controller
@@ -66,7 +67,11 @@ public class TextController {
     private String getCurrentUserLoginId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            return ((UserDetails) authentication.getPrincipal()).getUsername();
+            String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+            return userRepository.findBioByLoginId(username);
+        } else if (authentication != null && authentication.getPrincipal() instanceof CustomOAuth2User) {
+        	String username = ((CustomOAuth2User) authentication.getPrincipal()).getUsername();
+            return userRepository.findBioByLoginId(username);
         }
         return null;
     }
@@ -118,6 +123,9 @@ public class TextController {
         
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+            return userRepository.findBioByLoginId(username);
+        } else if (authentication != null && authentication.getPrincipal() instanceof CustomOAuth2User) {
+        	String username = ((CustomOAuth2User) authentication.getPrincipal()).getUsername();
             return userRepository.findBioByLoginId(username);
         }
         return "No bio available";

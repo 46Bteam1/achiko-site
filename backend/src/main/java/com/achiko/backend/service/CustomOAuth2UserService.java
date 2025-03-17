@@ -12,6 +12,7 @@ import com.achiko.backend.dto.GoogleResponse;
 import com.achiko.backend.dto.KakaoResponse;
 import com.achiko.backend.dto.NaverResponse;
 import com.achiko.backend.dto.OAuth2Response;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.UserRepository;
 
@@ -50,12 +51,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         String username = oAuth2Response.getProvider()+"_"+oAuth2Response.getProviderId();
         String userNickname = oAuth2Response.getProvider()+"_"+oAuth2Response.getEmail().split("@")[0];	// provider + 이메일 주소의 @앞부분을 닉네임으로 설정
-        UserEntity existData = userRepository.findByLoginId(username);
+        UserEntity userEntity = userRepository.findByLoginId(username);
+        Long userId = null;
 
         String role = "user";
-        if (existData == null) {
+        if (userEntity == null) {
 
-            UserEntity userEntity = new UserEntity();
+            userEntity = new UserEntity();
             userEntity.setLoginId(username);
             userEntity.setEmail(oAuth2Response.getEmail());
             userEntity.setRole(role);
@@ -67,14 +69,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         else {
 
-            existData.setLoginId(username);
-            existData.setEmail(oAuth2Response.getEmail());
+        	userEntity.setLoginId(username);
+        	userEntity.setEmail(oAuth2Response.getEmail());
 
-            role = existData.getRole();
+            role = userEntity.getRole();
 
-            userRepository.save(existData);
+            userRepository.save(userEntity);
         }
+        
+        userId = userRepository.findByLoginId(username).getUserId();
 
-        return new CustomOAuth2User(oAuth2Response, role);
+        // ✅ `CustomOAuth2User` 생성
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(oAuth2Response, userEntity.getRole(), userEntity.getUserId());
+
+        // ✅ `PrincipalDetails`로 변환하여 반환
+        return new PrincipalDetails(customOAuth2User);
     }
 }

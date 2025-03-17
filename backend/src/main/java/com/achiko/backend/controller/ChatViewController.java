@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.service.ChatService;
 import com.achiko.backend.service.UserService;
 
@@ -20,7 +21,7 @@ public class ChatViewController {
 
 	@GetMapping("/chatList")
 	public String chatList(@RequestParam(name="chatroomId") Long chatroomId, Model model,
-			@AuthenticationPrincipal LoginUserDetails loginUser) {
+			@AuthenticationPrincipal PrincipalDetails loginUser) {
 		Long userId = userService.getUserId(loginUser.getLoginId());
 		String nickname = loginUser.getNickname();
 		String role = userService.getIsGuest(userId);
@@ -36,7 +37,7 @@ public class ChatViewController {
 	
 	@GetMapping("/chatRooms")
 	public String chatRoom(Model model,
-			@AuthenticationPrincipal LoginUserDetails loginUser) {
+			@AuthenticationPrincipal PrincipalDetails loginUser) {
 		
 		model.addAttribute("user", loginUser);
 		return "chat/chatRooms";

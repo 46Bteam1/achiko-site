@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.UserRepository;
 
@@ -27,6 +28,7 @@ public class LoginUserDetailsService implements UserDetailsService {
 		if(userEntity == null) {
 			throw new UsernameNotFoundException("계정이 존재하지 않습니다. 회원가입 후 로그인 해주세요.");
 		}
-		return LoginUserDetails.toDTO(userEntity);
+		 LoginUserDetails loginUserDetails = LoginUserDetails.toDTO(userEntity);
+	     return new PrincipalDetails(loginUserDetails); // ✅ PrincipalDetails로 변환
 	}
 }
