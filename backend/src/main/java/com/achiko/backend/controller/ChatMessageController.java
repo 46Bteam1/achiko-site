@@ -7,7 +7,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
 import com.achiko.backend.dto.ChatMessageDTO;
-import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.PrincipalDetails;
 
 import com.achiko.backend.entity.UserEntity;
@@ -21,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ChatMessageController {
     private final ChatService chatService;
-    private final UserRepository userRepository;
-    
     
     // 클라이언트가 "/app/chat.sendMessage"로 메시지를 보내면 실행됨
     // 특정 채팅방에 메세지 보내기

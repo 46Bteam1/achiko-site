@@ -248,7 +248,7 @@ function getChatRooms(resp) {
     $.each(resp, function (index, item) {
       let profileImage = item["profileImage"]
         ? item["profileImage"]
-        : "/images/fubao.webp";
+        : "/images/default-profile.png";
       const nickname = $("#userNickname").val();
       let nicknameCheck = item["hostNickname"] === nickname;
       let displayNickname = nicknameCheck
