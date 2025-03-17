@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.achiko.backend.dto.FavoriteDTO;
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.dto.ReviewReplyDTO;
 import com.achiko.backend.dto.UserDTO;
@@ -72,7 +73,7 @@ public class MypageRestController {
 
 	// webp 형식으로 변환 - base64 변환 거친 이미지 저장하기
 	@PostMapping("/uploadProfileImage")
-	public ResponseEntity<String> uploadProfileImage(@AuthenticationPrincipal LoginUserDetails loginUser,
+	public ResponseEntity<String> uploadProfileImage(@AuthenticationPrincipal PrincipalDetails loginUser,
 			@RequestParam("image") MultipartFile image) {
 
 		Long userId = loginUser.getUserId();
@@ -143,7 +144,7 @@ public class MypageRestController {
 	}
 
 	@DeleteMapping("/deleteUser")
-	public ResponseEntity<Map<String, Object>> deleteUser(@AuthenticationPrincipal LoginUserDetails loginUser,
+	public ResponseEntity<Map<String, Object>> deleteUser(@AuthenticationPrincipal PrincipalDetails loginUser,
 			@RequestBody Map<String, String> request) {
 
 		if (loginUser == null) {

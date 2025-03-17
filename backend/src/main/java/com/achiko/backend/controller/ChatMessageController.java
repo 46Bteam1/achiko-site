@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 
 import com.achiko.backend.dto.ChatMessageDTO;
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class ChatMessageController {
     // 클라이언트가 "/app/chatEnterRoom"으로 메시지를 보내면 실행됨
     // 유저 입장
     @MessageMapping("/chatEnterRoom")
-    public void enterRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal LoginUserDetails loginUser) {      
+    public void enterRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal PrincipalDetails loginUser) {      
         // 로그인한 유저 닉네임 받아오기
         String nickname = loginUser.getNickname();   
         
@@ -41,7 +42,7 @@ public class ChatMessageController {
     
     // 유저 퇴장
     @MessageMapping("/chatLeaveRoom")
-    public void leaveRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal LoginUserDetails loginUser) {   
+    public void leaveRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal PrincipalDetails loginUser) {   
         // 로그인한 유저 닉네임 받아오기
         String nickname = loginUser.getNickname();  
         

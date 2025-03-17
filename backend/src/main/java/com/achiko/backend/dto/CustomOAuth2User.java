@@ -4,19 +4,27 @@ package com.achiko.backend.dto;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+
+import com.achiko.backend.entity.UserEntity;
+import com.achiko.backend.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2Response oAuth2Response;
     private final String role;
+    private final Long userId;
 
-    public CustomOAuth2User(OAuth2Response oAuth2Response, String role) {
+    public CustomOAuth2User(OAuth2Response oAuth2Response, String role, Long userId) {
 
         this.oAuth2Response = oAuth2Response;
         this.role = role;
+        this.userId = userId;
     }
 
     @Override
@@ -56,6 +64,10 @@ public class CustomOAuth2User implements OAuth2User {
     	
     	return oAuth2Response.getName();
     }
+    
+    public String getNickname() {
+    	return oAuth2Response.getProvider()+"_"+oAuth2Response.getEmail().split("@")[0];
+    }
 
     public String getUsername() {
 
@@ -64,5 +76,15 @@ public class CustomOAuth2User implements OAuth2User {
     
     public String getProvider() {
     	return oAuth2Response.getProvider();
+    }
+    
+    public String getEmail() {
+    	
+    	return oAuth2Response.getEmail();
+    }
+    
+    public Long getUserId() {
+    	
+    	return userId;
     }
 }

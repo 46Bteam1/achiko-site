@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.service.SubscribeService;
 
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class SubscribeRestController {
 	 * 결제 성공 후 receiptId 변경 API
 	 */
 	@PostMapping("/updateSubscription")
-	public ResponseEntity<Map<String, String>> updateSubscription(@AuthenticationPrincipal LoginUserDetails loginUser,
+	public ResponseEntity<Map<String, String>> updateSubscription(@AuthenticationPrincipal PrincipalDetails loginUser,
 			@RequestParam(name = "receiptId") String receiptId) {
 		if (loginUser == null) {
 			return ResponseEntity.ok(Map.of("redirectUrl", "/user/login", "message", "로그인이 필요합니다."));

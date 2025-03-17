@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.RoommateDTO;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.service.RoommateService;
@@ -27,7 +28,7 @@ public class RoommateController {
 	
 	// 룸메이트 등록
 	@PostMapping("/regist")
-	public String registRoommate(@RequestBody RoommateDTO roommateDTO, @AuthenticationPrincipal LoginUserDetails loginUser) {
+	public String registRoommate(@RequestBody RoommateDTO roommateDTO, @AuthenticationPrincipal PrincipalDetails loginUser) {
 		roommateService.registRoommate(roommateDTO, loginUser.getUsername());
 		
 		return "룸메이트가 되었습니다!";
