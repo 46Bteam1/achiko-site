@@ -4,20 +4,30 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.achiko.backend.dto.RoommateDTO;
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.ShareFilesDTO;
+import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.entity.CityEntity;
 import com.achiko.backend.entity.ProvinceEntity;
 import com.achiko.backend.entity.RegionEntity;
+import com.achiko.backend.entity.RoommateEntity;
 import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.TownEntity;
 import com.achiko.backend.entity.UserEntity;
+import com.achiko.backend.repository.CityRepository;
+import com.achiko.backend.repository.ProvinceRepository;
 import com.achiko.backend.repository.RegionRepository;
+import com.achiko.backend.repository.ReviewRepository;
+import com.achiko.backend.repository.RoommateRepository;
 import com.achiko.backend.repository.ShareRepository;
+import com.achiko.backend.repository.TownRepository;
 import com.achiko.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +41,13 @@ public class ShareService {
     private final ShareRepository shareRepository;
     private final UserRepository userRepository;
     private final RegionRepository regionRepository;
+    private final ProvinceRepository provinceRepository;
+    private final CityRepository cityRepository;
+    private final TownRepository townRepository;
     private final ShareFilesService shareFilesService;
+    private final ReviewRepository reviewRepository;
+    private final RatingService ratingService; 
+    private final RoommateRepository roommateRepository;
     
     /**
      * 특정 shareId로 Share 조회
@@ -100,6 +116,25 @@ public class ShareService {
         existing.setDetailAddress(shareDTO.getDetailAddress());
         existing.setPrice(shareDTO.getPrice());
         existing.setCreatedAt(LocalDateTime.now());
+        
+     // 위치 정보 업데이트
+        if (shareDTO.getProvinceId() != null) {
+            ProvinceEntity province = provinceRepository.getReferenceById(shareDTO.getProvinceId().intValue());
+            existing.setProvince(province);
+        }
+        if (shareDTO.getRegionId() != null) {
+            RegionEntity region = regionRepository.getReferenceById(shareDTO.getRegionId().intValue());
+            existing.setRegion(region);
+        }
+        if (shareDTO.getCityId() != null) {
+            CityEntity city = cityRepository.getReferenceById(shareDTO.getCityId().intValue());
+            existing.setCity(city);
+        }
+        if (shareDTO.getTownId() != null) {
+            TownEntity town = townRepository.getReferenceById(shareDTO.getTownId().intValue());
+            existing.setTown(town);
+        }
+        
         ShareEntity updatedEntity = shareRepository.save(existing);
         return convertToDTO(updatedEntity);
     }
@@ -157,13 +192,47 @@ public class ShareService {
     public List<ShareDTO> getShareListAll() {
         List<ShareEntity> shareEntities = shareRepository.findAll();
         List<ShareDTO> shareDTOList = new ArrayList<>();
+
+        // 모든 share의 호스트 ID 추출 (중복 제거)
+        Set<Long> hostIds = shareEntities.stream()
+                .filter(entity -> entity.getHost() != null)
+                .map(entity -> entity.getHost().getUserId())
+                .collect(java.util.stream.Collectors.toSet());
+
+        // RatingService를 통해 평균 평점 계산
+        Map<Long, Double> avgRatingByHostId = ratingService.getAvgRatingsByHostIds(hostIds);
+
         for (ShareEntity entity : shareEntities) {
             ShareDTO dto = ShareDTO.fromEntity(entity);
-            // 게시글에 연결된 파일 목록을 조회하여 DTO에 설정
+
+            if (entity.getHost() != null) {
+                Long hostId = entity.getHost().getUserId();
+                double avgRating = avgRatingByHostId.getOrDefault(hostId, 0.0);
+
+                if (dto.getHostDTO() == null) {
+                    UserDTO hostDTO = new UserDTO();
+                    hostDTO.setUserId(hostId);
+                    hostDTO.setAvgRating(avgRating);
+                    dto.setHostDTO(hostDTO);
+                } else {
+                    dto.getHostDTO().setAvgRating(avgRating);
+                }
+            }
+
+            // 파일 목록 세팅
             List<ShareFilesDTO> files = shareFilesService.getFilesByShareId(entity.getShareId());
             dto.setFileList(files);
             shareDTOList.add(dto);
         }
         return shareDTOList;
     }
+
+	public List<RoommateDTO> findRoommate(Long shareId) {
+		List<RoommateEntity> entityList = roommateRepository.findByShare_ShareId(shareId);
+		List<RoommateDTO> dtoList = new ArrayList<>();
+		
+		entityList.forEach((entity) -> dtoList.add(RoommateDTO.toDTO(entity)));
+		
+		return dtoList;
+	}
 }

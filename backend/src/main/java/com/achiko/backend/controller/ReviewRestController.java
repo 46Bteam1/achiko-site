@@ -1,10 +1,13 @@
 package com.achiko.backend.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.service.ReviewService;
 
@@ -93,6 +97,25 @@ public class ReviewRestController {
         List<ReviewDTO> sortedReviews = reviewService.getSortedReviews(order);
         System.out.println("✅ 정렬된 리뷰 개수: " + sortedReviews.size());
         return ResponseEntity.ok(sortedReviews);
+    }
+    
+    /**
+     * 이미 리뷰를 작성한 사용자인지 확인 
+     * @param reviewedUserId
+     * @param loginUser
+     * @return
+     */
+    @GetMapping("/checkReview")
+    public ResponseEntity<Map<String, Boolean>> checkReview(
+            @RequestParam(name = "reviewedUserId") Long reviewedUserId,
+            @AuthenticationPrincipal LoginUserDetails loginUser) {
+        
+        Long loginUserId = loginUser.getUserId();
+        boolean exists = reviewService.hasUserReviewed(loginUserId, reviewedUserId);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("exists", exists);
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -7,6 +7,16 @@ $(function () {
   const shareId = $("#shareId").val();
   const now = new Date();
 
+  // main 태그가 있으면 Bootstrap을 활성화
+  if ($("main").length) {
+    $("#bootstrap-css").prop("disabled", false);
+
+    // Bootstrap JS (Popper 포함) 로드
+    $.getScript(
+      "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    );
+  }
+
   // 모달이 열릴 때 initModal(role) 실행
   $("#exampleModal").on("shown.bs.modal", function () {
     initModal(role);
@@ -47,6 +57,33 @@ $(function () {
       },
     });
   });
+
+  // Fragment가 동적으로 로드된 후 이벤트 바인딩
+  $(document).on("click", "#menuButton", function (event) {
+    event.stopPropagation();
+    const $modalMenu = $("#modalMenu");
+
+    if ($modalMenu.is(":visible")) {
+      $modalMenu.hide();
+    } else {
+      $modalMenu.show();
+    }
+  });
+
+  // 모달 바깥 클릭 시 모달 닫기
+  $(document).on("click", function (event) {
+    if (
+      !$("#modalMenu").is(event.target) &&
+      !$("#modalMenu").has(event.target).length &&
+      !$("#menuButton").is(event.target)
+    ) {
+      $("#modalMenu").hide();
+    }
+  });
+
+  // header관련
+  $("header").addClass("sticky"); // sticky가 add되면 작은 검색창 나옴
+  $("header").removeClass("sticky-reappear");
 });
 
 function initModal(role) {

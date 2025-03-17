@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +26,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.achiko.backend.dto.FavoriteDTO;
+import com.achiko.backend.dto.RoommateDTO;
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.ShareFilesDTO;
+import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.entity.RegionEntity;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.RegionRepository;
@@ -34,6 +37,7 @@ import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.service.FavoriteService;
 import com.achiko.backend.service.ShareFilesService;
 import com.achiko.backend.service.ShareService;
+import com.achiko.backend.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -54,6 +58,7 @@ public class ShareController {
     private final RegionRepository regionRepository;
     private final ShareFilesService shareFilesService;
     private final FavoriteService favoriteService;
+    private final UserService userService;
     
     @ResponseBody
     @GetMapping("/share/selectAll")
@@ -102,6 +107,11 @@ public class ShareController {
                 shareDTO.setIsFavorite(isFav);
             }
         }
+        
+        // 확정된 룸메이트 찾기
+        List<RoommateDTO> roommateList = shareService.findRoommate(shareId);
+        System.out.println(roommateList+"여긴강");
+        model.addAttribute("roommateList", roommateList);
 
         // 모델에 공유글, 파일 목록, 첫 이미지 URL, API 키 등을 추가하여 뷰에 전달
         model.addAttribute("share", shareDTO);
@@ -111,7 +121,7 @@ public class ShareController {
         model.addAttribute("kakaoJavaScriptKey", kakaoJavaScriptKey);
 
         // 작성자(Host) 정보를 별도로 조회
-        UserEntity hostUser = userRepository.findById(shareDTO.getHostId()).orElse(null);
+        UserDTO hostUser = userService.selectOneUser(shareDTO.getHostId());
         model.addAttribute("hostUser", hostUser);
 
         // 현재 로그인한 사용자 정보 확인 및 소유자 여부 체크
@@ -219,7 +229,8 @@ public class ShareController {
         shareDTO.setCreatedAt(LocalDateTime.now());
   
         ShareDTO updated = shareService.updateShare(shareDTO);
-  
+        
+        
         return "redirect:/share/selectOne?shareId=" + updated.getShareId();
     }
   

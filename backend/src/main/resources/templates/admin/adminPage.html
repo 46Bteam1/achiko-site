@@ -8,6 +8,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Achiko 관리자 페이지</title>
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script th:src="@{/js/admin/adminPage.js}"></script>
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -16,33 +19,6 @@
 
     <!-- 부트스트랩 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".delete-btn").forEach((button) => {
-          button.addEventListener("click", function () {
-            const shareId = this.getAttribute("data-share-id");
-            if (!confirm("정말로 이 게시글을 삭제하시겠습니까?")) return;
-
-            fetch(`/share/delete/${shareId}`, {
-              method: "DELETE",
-              headers: { "Content-Type": "application/json" },
-            })
-              .then((response) => {
-                if (!response.ok) throw new Error("삭제 실패");
-                return response.json();
-              })
-              .then((data) => {
-                alert(data.message);
-                location.reload(); // 삭제 후 페이지 새로고침
-              })
-              .catch((error) => {
-                alert("삭제 중 오류 발생: " + error.message);
-              });
-          });
-        });
-      });
-    </script>
-
     <style>
       body {
         padding: 20px;
@@ -108,11 +84,6 @@
             >회원 강제 탈퇴</a
           >
         </li>
-        <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="tab" href="#chat-monitoring"
-            >채팅방 전체 조회</a
-          >
-        </li>
       </ul>
 
       <!-- 탭 콘텐츠 -->
@@ -142,7 +113,7 @@
                 <td th:text="${status.count}"></td>
                 <td>
                   <a
-                    th:href="@{/share/shareDetail(shareId=${share.shareId})}"
+                    th:href="@{/share/selectOne(shareId=${share.shareId})}"
                     th:text="${share.title}"
                   ></a>
                 </td>
@@ -152,7 +123,7 @@
                 ></td>
                 <td>
                   <button
-                    class="delete-btn btn btn-danger"
+                    class="post-delete-btn btn btn-danger"
                     th:data-shareId="${share.shareId}"
                   >
                     삭제
@@ -170,6 +141,7 @@
             <thead class="table-light">
               <tr>
                 <th>No</th>
+                <th>쉐어하우스</th>
                 <th>게스트</th>
                 <th>호스트</th>
                 <th>매칭 날짜</th>
@@ -177,8 +149,29 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td colspan="5" class="text-center">성사된 매칭이 없습니다.</td>
+              <th:block th:if="${viewingList == null or viewingList.isEmpty()}">
+                <tr>
+                  <td colspan="5" class="text-center">
+                    성사된 매칭이 없습니다.
+                  </td>
+                </tr>
+              </th:block>
+              <tr th:each="viewing, status : ${viewingList}">
+                <td th:text="${status.count}"></td>
+                <td>
+                  <a
+                    th:href="@{/share/selectOne(shareId=${viewing.shareId})}"
+                    th:text="${viewing.shareTitle}"
+                  ></a>
+                </td>
+                <td th:text="${viewing.guestNickname}"></td>
+                <td th:text="${viewing.hostNickname}"></td>
+                <td
+                  th:text="${#temporals.format(viewing.scheduledDate, 'yyyy-MM-dd HH:mm')}"
+                ></td>
+                <td
+                  th:text="${viewing.isCompleted == 0 ? '뷰잉 전' : '뷰잉 완료'}"
+                ></td>
               </tr>
             </tbody>
           </table>
@@ -198,8 +191,33 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td colspan="5" class="text-center">등록된 리뷰가 없습니다.</td>
+              <th:block th:if="${reviewList == null or reviewList.isEmpty()}">
+                <tr>
+                  <td colspan="5" class="text-center">
+                    등록된 리뷰가 없습니다.
+                  </td>
+                </tr>
+              </th:block>
+              <tr th:each="review, status : ${reviewList}">
+                <td th:text="${status.count}"></td>
+                <td th:text="${review.reviewerId}"></td>
+                <td>
+                  <a
+                    th:href="@{/review/reviewPage(reviewId=${review.reviewId})}"
+                    th:text="${review.comment}"
+                  ></a>
+                </td>
+                <td
+                  th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}"
+                ></td>
+                <td>
+                  <button
+                    class="review-delete-btn btn btn-danger"
+                    th:data-reviewId="${review.reviewId}"
+                  >
+                    삭제
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -214,7 +232,7 @@
                 <th>No</th>
                 <th>신고 대상</th>
                 <th>신고 사유</th>
-                <th>신고자</th>
+                <th>신고일</th>
                 <th>삭제 처리</th>
               </tr>
             </thead>
@@ -236,14 +254,13 @@
                 <td>
                   <a th:text="${report.reason}"></a>
                 </td>
-                <td th:text="${report.reporterUserId}"></td>
                 <td
-                  th:text="${#temporals.format(share.createdAt, 'yyyy-MM-dd HH:mm')}"
+                  th:text="${#temporals.format(report.createdAt, 'yyyy-MM-dd HH:mm')}"
                 ></td>
                 <td>
                   <button
-                    class="delete-btn btn btn-danger"
-                    th:data-shareId="${report.shareId}"
+                    class="report-delete-btn btn btn-danger"
+                    th:data-shareId="${report.reportId}"
                   >
                     삭제
                   </button>
@@ -267,49 +284,9 @@
                 <th>관리</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>테스트유저</td>
-                <td>test@example.com</td>
-                <td>2025-02-20</td>
-                <td>정상</td>
-                <td><button class="btn btn-danger">강제 탈퇴</button></td>
-              </tr>
+            <tbody id="malicious-users">
               <tr>
                 <td colspan="6" class="text-center">등록된 회원이 없습니다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 채팅방 전체 조회 -->
-        <div id="chat-monitoring" class="tab-pane fade">
-          <h3>채팅방 전체 조회</h3>
-          <table class="table table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th>No</th>
-                <th>채팅방 ID</th>
-                <th>참여자</th>
-                <th>최근 메시지</th>
-                <th>생성일</th>
-                <th>관리</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>chat_123</td>
-                <td>유저A, 유저B</td>
-                <td>안녕하세요!</td>
-                <td>2025-02-22</td>
-                <td><button class="btn btn-danger">삭제</button></td>
-              </tr>
-              <tr>
-                <td colspan="6" class="text-center">
-                  등록된 채팅방이 없습니다.
-                </td>
               </tr>
             </tbody>
           </table>

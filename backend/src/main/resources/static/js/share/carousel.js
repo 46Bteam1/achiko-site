@@ -62,19 +62,21 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // 3) 썸네일 클릭 시 모달 열기
-  document.querySelectorAll(".room-photos .photo-box img").forEach((img, index) => {
-    img.addEventListener("click", () => {
-      console.log("썸네일 " + (index + 1) + " 클릭됨");
+  document
+    .querySelectorAll(".room-photos .photo-box img")
+    .forEach((img, index) => {
+      img.addEventListener("click", () => {
+        console.log("썸네일 " + (index + 1) + " 클릭됨");
 
-      updateCarouselSlides(); // Swiper 슬라이드 업데이트
-      carouselModal.style.display = "flex"; // 모달 표시
+        updateCarouselSlides(); // Swiper 슬라이드 업데이트
+        carouselModal.style.display = "flex"; // 모달 표시
 
-      setTimeout(() => {
-        // loop 모드 적용 시 slideToLoop를 사용하여 올바른 슬라이드로 이동
-        myCarousel.slideToLoop(index, 0);
-      }, 200);
+        setTimeout(() => {
+          // loop 모드 적용 시 slideToLoop를 사용하여 올바른 슬라이드로 이동
+          myCarousel.slideToLoop(index, 0);
+        }, 200);
+      });
     });
-  });
 
   // 4) 모달 닫기 이벤트
   function closeModal() {

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +26,7 @@ import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.dto.ReviewReplyDTO;
+import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.dto.ViewingDTO;
 import com.achiko.backend.service.MypageService;
@@ -129,6 +129,14 @@ public class MypageRestController {
 		return reviewReplyDTOList;
 	}
 
+	// 특정 사용자가 작성한 쉐어글 가져오기
+	@GetMapping("/getShareList/{userId}")
+	public List<ShareDTO> getShareList(@PathVariable Long userId, Model model) {
+		List<ShareDTO> myShareList = mypageService.getMyShare(userId);
+		model.addAttribute("myShareList", myShareList);
+		return myShareList;
+	}
+
 	// 게스트/호스트 전환 요청을 처리하는 메서드
 	@PostMapping("/changeAccountType")
 	public String changeAccountType(HttpSession session) {
@@ -166,8 +174,6 @@ public class MypageRestController {
 					.body(Map.of("success", false, "message", "비밀번호가 올바르지 않습니다."));
 		}
 	}
-
-	
 
 //    @PutMapping("/{userId}/switch-to-guest")
 //    public ResponseEntity<?> switchToGuest(@PathVariable Long userId) {

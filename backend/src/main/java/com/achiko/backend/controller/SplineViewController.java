@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SplineViewController {
 
-	@GetMapping("/viewSpline")
+	@GetMapping("/torii")
 	public String spline() {
 		return "spline/splinePage";
 	}

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -24,12 +25,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.achiko.backend.dto.FavoriteDTO;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.dto.ReviewReplyDTO;
+import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.dto.ViewingDTO;
 import com.achiko.backend.entity.FavoriteEntity;
 import com.achiko.backend.entity.ReviewEntity;
 import com.achiko.backend.entity.ReviewReplyEntity;
-import com.achiko.backend.entity.RoommateEntity;
 import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.entity.ViewingEntity;
@@ -95,11 +96,25 @@ public class MypageService {
 	// 특정 사용자의 활동 내역 조회
 	// 뷰잉
 	public List<ViewingDTO> getViewingList(Long userId) {
+		
+		Optional<UserEntity> temp = userRepository.findByUserId(userId);
+		UserEntity userEntity = temp.get();
+		
+		Integer accountType = userEntity.getIsHost();
+		
+		if (accountType == 1) {
+		ShareEntity sEntity = shareRepository.findByHost(userEntity);
+		List<ViewingEntity> viewingEntityList = viewingRepository.findByShare(sEntity, Sort.by(Sort.Order.asc("scheduledDate")));
+		List<ViewingDTO> viewingDTOList = new ArrayList<>();
+		viewingEntityList.forEach((entity) -> viewingDTOList.add(ViewingDTO.toDTO(entity)));
+		return viewingDTOList;
+		} else {		
 		List<ViewingEntity> viewingEntityList = viewingRepository.findByGuest_UserId(userId,
 				Sort.by(Sort.Order.asc("scheduledDate")));
 		List<ViewingDTO> viewingDTOList = new ArrayList<>();
 		viewingEntityList.forEach((entity) -> viewingDTOList.add(ViewingDTO.toDTO(entity)));
 		return viewingDTOList;
+		}
 	}
 
 	// 찜한 목록
@@ -135,6 +150,15 @@ public class MypageService {
 		List<ReviewReplyDTO> reviewReplyDTOList = new ArrayList<>();
 		reviewReplyEntityList.forEach((entity) -> reviewReplyDTOList.add(ReviewReplyDTO.toDTO(entity)));
 		return reviewReplyDTOList;
+	}
+
+	// 내가 작성한 쉐어 글 목록
+	public List<ShareDTO> getMyShare(Long userId) {
+		List<ShareEntity> shareEntityList = shareRepository.findByHost_UserId(userId);
+		log.info("====== shareEntityList 조회 결과: {}", shareEntityList);
+		 return shareEntityList.stream()
+		            .map(ShareDTO::fromEntity)
+		            .collect(Collectors.toList());
 	}
 
 	// 프로필 추가정보 입력, 수정 with 프로필 이미지
