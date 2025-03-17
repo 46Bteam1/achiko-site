@@ -8,11 +8,13 @@ footer {
 
 .footer-sections {
     display: flex;
+    justify-content: space-between;
     padding-bottom: 30px;
 }
 
 .footer-sections section {
-    flex-grow: 1;
+    flex-basis: 25%;
+    text-align: left;
 }
 
 .footer-sections h3 {

@@ -1,4 +1,28 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // header 관련
+  // Fragment가 동적으로 로드된 후 이벤트 바인딩
+  $(document).on("click", "#menuButton", function (event) {
+    event.stopPropagation();
+    const $modalMenu = $("#modalMenu");
+
+    if ($modalMenu.is(":visible")) {
+      $modalMenu.hide();
+    } else {
+      $modalMenu.show();
+    }
+  });
+
+  // 모달 바깥 클릭 시 모달 닫기
+  $(document).on("click", function (event) {
+    if (
+      !$("#modalMenu").is(event.target) &&
+      !$("#modalMenu").has(event.target).length &&
+      !$("#menuButton").is(event.target)
+    ) {
+      $("#modalMenu").hide();
+    }
+  });
+
   // (1) 구글 맵 초기화 검사
   if (typeof google === "object" && typeof google.maps === "object") {
     console.log("Google Maps API가 정상적으로 로드되었습니다.");

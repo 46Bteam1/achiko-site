@@ -1,4 +1,28 @@
 $(function () {
+  // header 관련
+  // Fragment가 동적으로 로드된 후 이벤트 바인딩
+  $(document).on("click", "#menuButton", function (event) {
+    event.stopPropagation();
+    const $modalMenu = $("#modalMenu");
+
+    if ($modalMenu.is(":visible")) {
+      $modalMenu.hide();
+    } else {
+      $modalMenu.show();
+    }
+  });
+
+  // 모달 바깥 클릭 시 모달 닫기
+  $(document).on("click", function (event) {
+    if (
+      !$("#modalMenu").is(event.target) &&
+      !$("#modalMenu").has(event.target).length &&
+      !$("#menuButton").is(event.target)
+    ) {
+      $("#modalMenu").hide();
+    }
+  });
+
   const socket = new SockJS("http://localhost:8080/ws");
   const stompClient = Stomp.over(socket);
   const chatRoomId = $("#chatroomId").val();

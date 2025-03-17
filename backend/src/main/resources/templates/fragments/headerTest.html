@@ -22,108 +22,89 @@
       </div>
       <div class="header-col header-form">
         <ul>
-          <!-- <li><a th:href="@{/testTemp/testPage}">testpage</a></li>
-          <th:block sec:authorize="isAnonymous()">
-            <li><a th:href="@{/user/regist}">회원가입</a></li>
-            <li><a th:href="@{/user/login}">로그인</a></li>
-          </th:block>
-
-          <th:block sec:authorize="isAuthenticated()">
-            <li><a th:href="@{/user/logout}">로그아웃</a></li>
-            <li><a th:href="@{/user/mypage}">개인정보 수정</a></li>
-          </th:block>
-
-          
-          <li><a th:href="@{/viewSpline}">SplinePage</a></li>
-
-          <li>
-            <a th:href="@{/share/write}">글 작성 페이지</a>
-          </li> -->
-          <!-- <li><a th:href="@{/viewSubscribe/subscribePage}">구독</a></li> -->
-
           <li>
             <a class="sticky-black" href="#"
               >あちこちの夢が集まり、ひとつの物語が生まれる</a
             >
           </li>
         </ul>
-        <div class="query-form">
+      </div>
+      <div class="query-form header-form">
+        <div class="query-date-end">
+          <div class="query-title">지방</div>
+          <select
+            id="provinceId"
+            name="provinceId"
+            class="form-control"
+            required
+            onchange="updateRegionSelect()"
+          >
+            <option value="all" selected>전체</option>
+            <option value="1">北海道</option>
+            <option value="2">東北</option>
+            <option value="3">甲信越・北陸</option>
+            <option value="4">関東</option>
+            <option value="5">中国</option>
+            <option value="6">東海</option>
+            <option value="7">九州・沖縄</option>
+            <option value="8">関西</option>
+            <option value="9">四国</option>
+          </select>
+        </div>
+        <div class="query-divide"></div>
+        <div class="query-date-end">
+          <div class="query-title">지역</div>
+          <select
+            id="regionId"
+            name="regionId"
+            class="form-control"
+            required
+            onchange="updateCitySelect()"
+          >
+            <option value="all">전체</option>
+          </select>
+        </div>
+        <div class="query-divide"></div>
+        <div class="query-date-end">
+          <div class="query-title">도시</div>
+          <select
+            id="cityId"
+            name="cityId"
+            class="form-control"
+            required
+            onchange="updateTownSelect()"
+          >
+            <option value="all">전체</option>
+          </select>
+        </div>
+        <div class="query-divide"></div>
+        <div class="query-col query-submit">
           <div class="query-date-end">
-            <div class="query-title">지방</div>
-            <select
-              id="provinceId"
-              name="provinceId"
-              class="form-control"
-              required
-              onchange="updateRegionSelect()"
-            >
-              <option value="all" selected>전체</option>
-              <option value="1">北海道</option>
-              <option value="2">東北</option>
-              <option value="3">甲信越・北陸</option>
-              <option value="4">関東</option>
-              <option value="5">中国</option>
-              <option value="6">東海</option>
-              <option value="7">九州・沖縄</option>
-              <option value="8">関西</option>
-              <option value="9">四国</option>
-            </select>
-          </div>
-          <div class="query-divide"></div>
-          <div class="query-date-end">
-            <div class="query-title">지역</div>
-            <select
-              id="regionId"
-              name="regionId"
-              class="form-control"
-              required
-              onchange="updateCitySelect()"
-            >
+            <div class="query-title">시/군/구</div>
+            <select id="townId" name="townId" class="form-control" required>
               <option value="all">전체</option>
             </select>
           </div>
-          <div class="query-divide"></div>
-          <div class="query-date-end">
-            <div class="query-title">도시</div>
-            <select
-              id="cityId"
-              name="cityId"
-              class="form-control"
-              required
-              onchange="updateTownSelect()"
-            >
-              <option value="all">전체</option>
-            </select>
-          </div>
-          <div class="query-divide"></div>
-          <div class="query-col query-submit">
-            <div class="query-date-end">
-              <div class="query-title">시/군/구</div>
-              <select id="townId" name="townId" class="form-control" required>
-                <option value="all">전체</option>
-              </select>
-            </div>
-            <div>
-              <button class="query-submit-btn">
-                <svg
-                  viewBox="0 0 32 32"
-                  style="
-                    display: block;
-                    height: 16px;
-                    width: 16px;
-                    stroke: white;
-                    stroke-width: 4;
-                    overflow: visible;
-                  "
-                >
-                  <g fill="none">
-                    <path
-                      d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
-                    ></path>
-                  </g>
-                </svg>
-              </button>
-            </div>
+          <div>
+            <button class="query-submit-btn">
+              <svg
+                viewBox="0 0 32 32"
+                style="
+                  display: block;
+                  height: 16px;
+                  width: 16px;
+                  stroke: white;
+                  stroke-width: 4;
+                  overflow: visible;
+                "
+              >
+                <g fill="none">
+                  <path
+                    d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
+                  ></path>
+                </g>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -200,26 +181,24 @@
       </div>
       <!-- 모달 (회원가입/로그인 메뉴) -->
       <div id="modalMenu" class="modal">
-        <div class="modal-content">
-          <!-- <span class="close">&times;</span> -->
-          <div class="menu-group">
-            <th:block sec:authorize="isAnonymous()">
-              <li><a th:href="@{/user/regist}">회원가입</a></li>
-              <li><a th:href="@{/user/login}">로그인</a></li>
-            </th:block>
-            <th:block sec:authorize="isAuthenticated()">
-              <li><a th:href="@{/user/logout}">로그아웃</a></li>
-              <li><a th:href="@{/mypage/mypageView}">개인정보 수정</a></li>
-            </th:block>
-          </div>
-          <div class="menu-divider"></div>
-          <div class="menu-group">
-            <li><a th:href="@{/viewSubscribe/subscribePage}">구독 page</a></li>
-            <li><a th:href="@{/viewSpline}">SplinePage</a></li>
-            <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
-             <li><a th:href="@{/find/guest-to-host}">호스트 추천</a></li>
-			<li><a th:href="@{/find/host-to-guest}">게스트 추천</a></li> 
-          </div>
+        <!-- <span class="close">&times;</span> -->
+        <div class="menu-group">
+          <th:block sec:authorize="isAnonymous()">
+            <li><a th:href="@{/user/regist}">회원가입</a></li>
+            <li><a th:href="@{/user/login}">로그인</a></li>
+          </th:block>
+          <th:block sec:authorize="isAuthenticated()">
+            <li><a th:href="@{/user/logout}">로그아웃</a></li>
+            <li><a th:href="@{/mypage/mypageView}">개인정보 수정</a></li>
+          </th:block>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-group">
+          <li><a th:href="@{/viewSubscribe/subscribePage}">구독 page</a></li>
+          <li><a th:href="@{/viewSpline}">SplinePage</a></li>
+          <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
+          <li><a th:href="@{/find/guest-to-host}">호스트 추천</a></li>
+          <li><a th:href="@{/find/host-to-guest}">게스트 추천</a></li>
         </div>
       </div>
     </header>

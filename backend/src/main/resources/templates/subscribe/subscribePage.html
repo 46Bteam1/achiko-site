@@ -1,85 +1,94 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achiko</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Achiko</title>
+    <!-- Bootpay JavaScript SDK -->
+    <script src="https://js.bootpay.co.kr/bootpay-5.1.0.min.js"></script>
 
-  <!-- Bootpay JavaScript SDK -->
-  <script src="https://js.bootpay.co.kr/bootpay-5.1.0.min.js"></script>
+    <!-- jQuery 추가 -->
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 
-  <!-- jQuery 추가 -->
-  <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <!-- JS 파일 추가 -->
+    <script th:src="@{/js/subscribe/subscribe.js}"></script>
 
-  <!-- JS 파일 추가 -->
-  <script th:src="@{/js/subscribe/subscribe.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/subscribe/subscribe.css}" />
+  </head>
+  <body>
+    <!-- 헤더 header -->
+    <header th:replace="~{fragments/header :: header}"></header>
 
-  <link rel="stylesheet" th:href="@{/css/subscribe/subscribe.css}" />
-</head>
+    <main class="subscribe-container">
+      <h2>Achiko Premium 구독 결제</h2>
+      <p class="description">
+        최고의 서비스를 누리세요! 더 다양한 호스트와 게스트를 만나보세요.
+      </p>
 
-<body>
-  <!-- 헤더 header -->
-  <header th:replace="~{fragments/header :: header}"></header>
-
-  <main class="subscribe-container">
-    <h2>Achiko Premium 구독 결제</h2>
-    <p class="description">
-      최고의 서비스를 누리세요! 더 다양한 호스트와 게스트를 만나보세요.
-    </p>
-
-    <div class="form-group">
-      <label for="pgSelect">💳 결제 수단을 선택해주세요</label>
-      <select id="pgSelect">
-        <option value="kakaopay">카카오페이</option>
-        <option value="tosspay">토스페이</option>
-        <option value="samsungpay">삼성페이</option>
-        <option value="naverpay">네이버페이</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="price">💰 결제 금액</label>
-      <input type="text" id="price" th:value="${#numbers.formatInteger(1000000000, 3, 'COMMA') + '원'}" readonly />
-    </div>
-
-    <div class="form-group">
-      <label for="userId">👤 사용자 ID</label>
-      <input type="text" id="loginId" th:value="${loginId}" readonly />
-    </div>
-
-    <input type="hidden" id="userId" th:value="${userId}" readonly />
-    <input type="hidden" id="email" th:value="${email}" readonly />
-
-    <button id="subscribeButton" th:if="${isSubscribed == null}">
-      ✨ 구독 결제하기
-    </button>
-    <button id="subscribeCancelButton" th:unless="${isSubscribed == null}">
-      🚫 구독 취소하기
-    </button>
-
-    <p class="secure-info">
-      🔒 안전한 결제를 위해 보안이 강화된 결제 시스템을 사용합니다.
-    </p>
-
-    <br /><br />
-
-    <section class="marquee-container">
-      <div class="marquee">
-        <div class="marquee-inner">
-          <th:block th:each="num : ${#numbers.sequence(1, 12)}">
-            <img th:src="@{'/images/subscribe/mark' + ${num} + '.png'}" th:alt="${num}" />
-          </th:block>
-          <th:block th:each="num : ${#numbers.sequence(1, 12)}">
-            <img th:src="@{'/images/subscribe/mark' + ${num} + '.png'}" th:alt="${num + '-dup'}" />
-          </th:block>
-        </div>
+      <div class="form-group">
+        <label for="pgSelect">💳 결제 수단을 선택해주세요</label>
+        <select id="pgSelect">
+          <option value="kakaopay">카카오페이</option>
+          <option value="tosspay">토스페이</option>
+          <option value="samsungpay">삼성페이</option>
+          <option value="naverpay">네이버페이</option>
+        </select>
       </div>
-    </section>
-  </main>
 
-  <!-- footer fragment -->
-  <div th:replace="~{fragments/footer :: footer}"></div>
-</body>
+      <div class="form-group">
+        <label for="price">💰 결제 금액</label>
+        <input
+          type="text"
+          id="price"
+          th:value="${#numbers.formatInteger(1000000000, 3, 'COMMA') + '원'}"
+          readonly
+        />
+      </div>
 
+      <div class="form-group">
+        <label for="userId">👤 사용자 ID</label>
+        <input type="text" id="loginId" th:value="${loginId}" readonly />
+      </div>
+
+      <input type="hidden" id="userId" th:value="${userId}" readonly />
+      <input type="hidden" id="email" th:value="${email}" readonly />
+
+      <button id="subscribeButton" th:if="${isSubscribed == null}">
+        ✨ 구독 결제하기
+      </button>
+      <button id="subscribeCancelButton" th:unless="${isSubscribed == null}">
+        🚫 구독 취소하기
+      </button>
+
+      <p class="secure-info">
+        🔒 안전한 결제를 위해 보안이 강화된 결제 시스템을 사용합니다.
+      </p>
+
+      <br /><br />
+
+      <section class="marquee-container">
+        <div class="marquee">
+          <div class="marquee-inner">
+            <th:block th:each="num : ${#numbers.sequence(1, 12)}">
+              <img
+                th:src="@{'/images/subscribe/mark' + ${num} + '.png'}"
+                th:alt="${num}"
+              />
+            </th:block>
+            <th:block th:each="num : ${#numbers.sequence(1, 12)}">
+              <img
+                th:src="@{'/images/subscribe/mark' + ${num} + '.png'}"
+                th:alt="${num + '-dup'}"
+              />
+            </th:block>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer th:replace="~{fragments/footerTest :: footer}"></footer>
+  </body>
 </html>

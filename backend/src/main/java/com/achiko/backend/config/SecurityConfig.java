@@ -27,8 +27,11 @@ public class SecurityConfig {
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers(
 								"/"
-								,"/api/location/**"
+								, "/api/location/**"
+								, "/share/selectAll"
+								, "/api/search/**"
 								, "/oauth2/**"
+								, "/torii/**"
 								, "/user/**"
 								, "/user/verifyAuthCode"
 								, "/user/findLoginIdResult"

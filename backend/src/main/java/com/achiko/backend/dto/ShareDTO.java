@@ -41,6 +41,8 @@ public class ShareDTO {
     private String cityName;
     private String townName;
     
+    private UserDTO hostDTO;
+    
     private List<ShareFilesDTO> fileList;
 
     private Boolean isFavorite;
@@ -71,6 +73,7 @@ public class ShareDTO {
                 .townName(entity.getTown() != null ? entity.getTown().getNameKanji() : null)
                 .isFavorite(false)
                 .favoriteCount(0L)
+                .hostDTO(UserDTO.toDTO(entity.getHost()))
                 .build();
     }
 }
