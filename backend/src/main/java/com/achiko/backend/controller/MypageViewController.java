@@ -17,8 +17,8 @@ import com.achiko.backend.dto.ReviewReplyDTO;
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.dto.ViewingDTO;
+import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.service.MypageService;
-import com.achiko.backend.service.ShareService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MypageViewController {
 
 	private final MypageService mypageService;
-	private final ShareService shareService;
 
 	// 마이페이지 화면 요청
 	@GetMapping("/mypage/mypageView")
@@ -44,21 +43,6 @@ public class MypageViewController {
 		Long userId = loginUser.getUserId();
 
 		UserDTO userDTO = mypageService.getMypage(userId);
-		model.addAttribute("userDTO", userDTO);
-
-		return "mypage/mypageView";
-	}
-
-	@GetMapping("/mypage/mypageSample")
-	public String showMypageSample(@AuthenticationPrincipal PrincipalDetails loginUser, Model model) {
-		if (loginUser == null) {
-			return "redirect:/user/login";
-		}
-		model.addAttribute("loginUser", loginUser);
-
-		Long userId = loginUser.getUserId();
-		UserDTO userDTO = mypageService.getMypage(userId);
-		model.addAttribute("userId", userId);
 		model.addAttribute("userDTO", userDTO);
 
 		List<ViewingDTO> viewingList = mypageService.getViewingList(userId);
@@ -79,8 +63,9 @@ public class MypageViewController {
 		List<ShareDTO> myShareList = mypageService.getMyShare(userId);
 		model.addAttribute("myShareList", myShareList);
 
-		return "mypage/mypageSample";
+		return "mypage/mypageView";
 	}
+
 
 	// 게스트/호스트 전환 요청을 처리하는 메서드
 	@PostMapping("/mypage/changeToGuest")
@@ -91,14 +76,15 @@ public class MypageViewController {
 		if ("MATCHING_IN_PROGRESS".equals(result)) {
 			redirectAttributes.addFlashAttribute("errorMessage",
 					"매칭이 진행 중인 쉐어하우스가 있습니다. 매칭이 완료 되었다면 진행 중인 쉐어를 종료해주세요.");
-			return "redirect:/mypage/mypageSample";
+			return "redirect:/mypage/mypageView";
 		}
 		return "redirect:/mypage/mypageView";
 	}
 
 	// 매칭이 완료 된 쉐어 글의 상태(status)를 종료(closed)
 	@PostMapping("/mypage/closeShare")
-	public String closeShare(@RequestParam("userId") Long userId, @AuthenticationPrincipal PrincipalDetails loginUser, RedirectAttributes redirectAttributes) {
+	public String closeShare(@RequestParam("userId") Long userId, @AuthenticationPrincipal PrincipalDetails loginUser,
+			RedirectAttributes redirectAttributes) {
 		boolean isClosed = mypageService.closeShare(userId, loginUser);
 
 		if (isClosed) {
