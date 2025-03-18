@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,6 @@ import com.achiko.backend.repository.ChatRoomRepository;
 import com.achiko.backend.repository.FavoriteRepository;
 import com.achiko.backend.repository.ReviewReplyRepository;
 import com.achiko.backend.repository.ReviewRepository;
-import com.achiko.backend.repository.RoommateRepository;
 import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.repository.ViewingRepository;
@@ -64,7 +64,6 @@ public class MypageService {
 	private final ReviewReplyRepository reviewReplyRepository;
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatService chatService;
-	private final RoommateRepository roommateRepository;
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -102,16 +101,16 @@ public class MypageService {
 			return "Done!";
 		}
 		return null;
-
 	}
-
+	
 	// 쉐어 종료 버튼 -> 쉐어 종료, 채팅방 삭제
 	@Transactional
-	public boolean closeShare(Long userId, PrincipalDetails loginUser) {		
+	public boolean closeShare(Long userId, @AuthenticationPrincipal PrincipalDetails loginUser) {
 		Optional<UserEntity> temp = userRepository.findById(userId);
-		
-		if(temp.isEmpty()) return false;
-		UserEntity uEntity = temp.get();	
+
+		if (temp.isEmpty())
+			return false;
+		UserEntity uEntity = temp.get();
 		ShareEntity sEntity = shareRepository.findByHost(uEntity);
 
 		// 쉐어 상태 변경
@@ -120,17 +119,18 @@ public class MypageService {
 		// 채팅방 삭제
 		Long shareId = sEntity.getShareId();
 		Optional<ChatRoomEntity> tempChat = chatRoomRepository.findById(shareId);
-		if(tempChat.isEmpty()) return false;
-		
+		if (tempChat.isEmpty())
+			return false;
+
 		ChatRoomEntity cEntity = tempChat.get();
 		Long chatRoomId = cEntity.getChatroomId();
-		
+
 		chatService.deleteRoom(chatRoomId, loginUser);
-		
+
 		// 계정 유형 변경 후 저장
 		uEntity.setIsHost(0);
 		shareRepository.saveAndFlush(sEntity);
-		
+
 		return true;
 	}
 
@@ -197,7 +197,6 @@ public class MypageService {
 	// 내가 작성한 쉐어 글 목록
 	public List<ShareDTO> getMyShare(Long userId) {
 		List<ShareEntity> shareEntityList = shareRepository.findByHost_UserId(userId);
-		log.info("====== shareEntityList 조회 결과: {}", shareEntityList);
 		return shareEntityList.stream().map(ShareDTO::fromEntity).collect(Collectors.toList());
 	}
 
@@ -210,11 +209,6 @@ public class MypageService {
 		if (userDTO != null) {
 			user.updateFromDTO(userDTO);
 		}
-
-//		if (profileImage != null && !profileImage.isEmpty()) {
-//			String savedFilePath = saveProfileImage(profileImage, userId);
-//			user.setProfileImage(savedFilePath);
-//		}
 		userRepository.save(user);
 	}
 
