@@ -248,4 +248,14 @@ public class ShareService {
 		
 		return dtoList;
 	}
+
+	/**
+	 * 작성한 share 글 중 status가 open인게 있다면 있다고 반환 
+	 * @param userId
+	 * @return
+	 */
+	public boolean checkAlreadyShare(Long userId) {
+	    return !shareRepository.existsByHost_UserIdAndStatus(userId, "open");
+	}
+
 }

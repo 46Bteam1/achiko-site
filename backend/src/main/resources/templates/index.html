@@ -85,10 +85,23 @@
               <div class="listing-info">
                 <h3 th:text="${listing.title}"></h3>
                 <div class="host-info">
-                  <img
-                    th:src="${listing.hostDTO.profileImage}"
-                    alt="hostImage"
-                  />
+                  <!-- 상태에 따라 다른 클래스 추가 -->
+                  <div
+                    class="status-label"
+                    th:text="${listing.status == 'open' ? '모집중' : (listing.status == 'living' ? '거주중' : '마감')}"
+                    th:classappend="${listing.status == 'open' ? 'status-open' :
+                        (listing.status == 'living' ? 'status-living' : 'status-closed')}"
+                  ></div>
+
+                  <!-- 호스트 이미지 -->
+                  <div class="host-image-wrapper">
+                    <img
+                      th:src="${listing.hostDTO.profileImage != null ? listing.hostDTO.profileImage : '/images/default-profile.png'}"
+                      alt="hostImage"
+                      class="host-image"
+                    />
+                  </div>
+
                   <div class="host-detail">
                     <span th:text="${listing.hostDTO.nickname}"></span>
                     <span
@@ -100,7 +113,7 @@
                   th:text="${listing.regionName + ' ' + listing.cityName + ' ' + listing.townName}"
                 ></p>
                 <p>
-                  ₩
+                  ¥
                   <span
                     th:text="${#numbers.formatInteger(listing.price, 3, 'COMMA')}"
                   ></span>
