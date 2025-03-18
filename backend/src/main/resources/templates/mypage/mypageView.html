@@ -8,14 +8,14 @@
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
     <script th:src="@{/js/mypage/profileRegist.js}"></script>
     <link rel="stylesheet" th:href="@{/css/mypage/mypageView.css}" />
-    <!-- Bootstrap CSS -->
+
+    <!-- Google Fonts: Noto Sans JP & Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- header 관련 -->
     <script th:src="@{/js/toggle.js}" defer></script>
   </head>
@@ -23,16 +23,30 @@
   <body>
     <!-- 헤더 header -->
     <header th:replace="~{fragments/header :: header}"></header>
-
+    <th:block th:if="${userDTO.isHost == 0}">
+      <div class="Banner-host">
+        <input type="hidden" name="userId" th:value="${userDTO.userId}" />
+        <span>Achiko의 호스트가 되어 더 많은 혜택을 누려보세요!</span>
+        <a th:href="@{/share/write}"
+          ><input type="button" class="hostBtn" value="호스트 되기 >" />
+        </a>
+      </div>
+    </th:block>
     <main>
       <div class="mypage-container">
         <!-- 왼쪽 섹션 -->
         <div class="left-container">
           <div class="left-section">
-            <h2>Achiko 활동내역</h2>
+            <h2 class="myProfileHeader">
+              <strong
+                th:text="${userDTO.isHost == 0 ? '[게스트]' : '[호스트]'}"
+              >
+              </strong>
+              Achiko 활동내역
+            </h2>
             <!-- 활동내역 -->
             <div class="log-container">
-              <div class="myLogHeader">
+              <!-- <div class="myLogHeader">
                 <p>
                   <strong
                     >[[${userDTO.nickname}]] ([[${userDTO.loginId}]])</strong
@@ -43,19 +57,19 @@
                   </strong>
                   활동내역입니다.
                 </p>
-              </div>
+              </div> -->
 
               <!-- 탭 -->
               <div class="tabs">
-                <div class="tab active" data-tab="viewing">나의 뷰잉 예약</div>
+                <div class="tab active" data-tab="viewing">뷰잉 예약</div>
                 <th:block th:if="${userDTO.isHost == 1}">
-                  <div class="tab" data-tab="sharehouse">나의 쉐어하우스</div>
+                  <div class="tab" data-tab="sharehouse">내 쉐어하우스</div>
                 </th:block>
-                <div class="tab" data-tab="chat">나의 채팅방</div>
+                <div class="tab" data-tab="chat">채팅 목록</div>
                 <th:block th:if="${userDTO.isHost == 0}">
-                  <div class="tab" data-tab="favorite">나의 찜 목록</div>
+                  <div class="tab" data-tab="favorite">찜 목록</div>
                 </th:block>
-                <div class="tab" data-tab="review">나의 리뷰</div>
+                <div class="tab" data-tab="review">리뷰 목록</div>
               </div>
               <div th:if="${errorMessage}" class="alert alert-danger">
                 <p th:text="${errorMessage}"></p>
@@ -282,7 +296,7 @@
                         th:if="${writtenReviewList == null or writtenReviewList.isEmpty()}"
                       >
                         <tr>
-                          <td colspan="3" class="no-data">
+                          <td colspan="4" class="no-data">
                             작성한 리뷰가 없습니다.
                           </td>
                         </tr>
@@ -295,7 +309,7 @@
                             th:href="@{/review/reviewPage(reviewId=${review.reviewId}, reviewedUserId=${userId})}"
                           >
                             <button
-                              class="btn btn-secondary"
+                              class="btn btn-outline-gray"
                               id="reviewreviewedUserId"
                             >
                               해당 리뷰 보러가기
@@ -363,7 +377,12 @@
                     <img src="" alt="추천 사용자" />
                     <p>사용자 C</p>
                     <div class="blur-overlay">
-                      <button class="btn btn-outline-success pay-btn">
+                      <a th:href="@{/viewSubscribe/subscribePage}"></a>
+                      <button
+                        type="button"
+                        class="btn btn-outline-success pay-btn"
+                        th:onclick="|location.href='/viewSubscribe/subscribePage'|"
+                      >
                         결제하기
                       </button>
                     </div>
@@ -372,7 +391,11 @@
                     <img src="" alt="추천 사용자" />
                     <p>사용자 D</p>
                     <div class="blur-overlay">
-                      <button class="btn btn-outline-success pay-btn">
+                      <button
+                        type="button"
+                        class="btn btn-outline-success pay-btn"
+                        th:onclick="|location.href='/viewSubscribe/subscribePage'|"
+                      >
                         결제하기
                       </button>
                     </div>
@@ -391,38 +414,34 @@
             <div class="myProfileHeader">
               <h2>My Profile</h2>
             </div>
-            <hr />
-            <p>
-              안녕하세요.
-              <strong>[[${userDTO.nickname}]] ([[${userDTO.loginId}]])</strong
-              >님!
-            </p>
-            <hr />
-            <hr />
-            <div class="registImage">
+            <div class="profileImageWrapper">
+              <p>
+                안녕하세요.
+                <strong>[[${userDTO.nickname}]] ([[${userDTO.loginId}]])</strong
+                >님!
+              </p>
+              <div class="profileImage">
+                <img
+                  th:src="${userDTO.profileImage != null and !#strings.isEmpty(userDTO.profileImage) ? userDTO.profileImage : '/images/default-profile.png'}"
+                  alt="프로필사진"
+                />
+              </div>
               <button class="btn btn-outline-success" id="registImage">
                 프로필 사진 등록
               </button>
             </div>
             <div class="myProfileBody">
-              <div class="profileImage">
-                <img
-                  th:src="${userDTO.profileImage != null and !#strings.isEmpty(userDTO.profileImage) ? userDTO.profileImage : '/images/default-profile.png'}"
-                  width="150"
-                  alt="프로필사진"
-                />
-              </div>
               <table class="profileTable">
                 <tr>
-                  <th>닉네임:</th>
+                  <th>닉네임</th>
                   <td>[[${userDTO.nickname}]]</td>
                 </tr>
                 <tr>
-                  <th>이메일:</th>
+                  <th>이메일</th>
                   <td>[[${userDTO.email}]]</td>
                 </tr>
                 <tr>
-                  <th>계정 유형:</th>
+                  <th>계정 유형</th>
                   <td>
                     <th:block>
                       <span th:if="${userDTO.isHost == 1}">호스트</span>
@@ -431,10 +450,10 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>소개글:</th>
+                  <th>소개글</th>
                   <td>
                     <th:block>
-                      <span style="color: brown" th:if="${userDTO.bio == null}">
+                      <span class="nothingText" th:if="${userDTO.bio == null}">
                         등록된 소개글이 없습니다.
                       </span>
                       <span th:unless="${userDTO.bio == null}"
@@ -444,7 +463,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>구사 언어:</th>
+                  <th>구사 언어</th>
                   <td>
                     <span
                       th:if="${userDTO.languages != null and not #lists.isEmpty(userDTO.languages)}"
@@ -460,7 +479,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>나이:</th>
+                  <th>나이</th>
                   <td>
                     <span th:if="${userDTO.age != null}">
                       [[${userDTO.age}]] 세
@@ -472,11 +491,28 @@
                 </tr>
 
                 <tr>
-                  <th>국적:</th>
+                  <th>국적</th>
                   <td>
-                    <span th:if="${userDTO.nationality != null}">
-                      [[${userDTO.nationality}]]
-                    </span>
+                    <span
+                      th:if="${userDTO.nationality != null and userDTO.nationality eq '한국'}"
+                      >🇰🇷</span
+                    >
+                    <span
+                      th:if="${userDTO.nationality != null and userDTO.nationality eq '영국'}"
+                      >🇬🇧</span
+                    >
+                    <span
+                      th:if="${userDTO.nationality != null and userDTO.nationality eq '미국'}"
+                      >🇺🇸</span
+                    >
+                    <span
+                      th:if="${userDTO.nationality != null and userDTO.nationality eq '중국'}"
+                      >🇨🇳</span
+                    >
+                    <span
+                      th:if="${userDTO.nationality != null and userDTO.nationality eq '일본'}"
+                      >🇯🇵</span
+                    >
                     <span
                       th:if="${userDTO.nationality == null}"
                       style="color: brown"
@@ -487,7 +523,7 @@
                 </tr>
 
                 <tr>
-                  <th>종교:</th>
+                  <th>종교</th>
                   <td>
                     <span th:if="${userDTO.religion != null}">
                       [[${userDTO.religion}]]
@@ -502,7 +538,7 @@
                 </tr>
 
                 <tr>
-                  <th>성별:</th>
+                  <th>성별</th>
                   <td>
                     <span th:if="${userDTO.gender != null}">
                       <span th:if="${userDTO.gender == 0}">남성</span>
@@ -535,19 +571,6 @@
       </div>
 
       <div class="toBeBtn">
-        <th:block th:if="${userDTO.isHost == 0}">
-          <div>
-            <input type="hidden" name="userId" th:value="${userDTO.userId}" />
-            <span>Achiko의 호스트가 되어 더 많은 혜택을 누려보세요!</span>
-            <a th:href="@{/share/write}"
-              ><input
-                type="button"
-                class="btn btn-outline-success"
-                value="호스트 되기"
-              />
-            </a>
-          </div>
-        </th:block>
         <th:block th:if="${userDTO.isHost == 1}">
           <form th:action="@{/mypage/changeToGuest}" method="post">
             <input type="hidden" name="userId" th:value="${userDTO.userId}" />
@@ -559,10 +582,10 @@
         </th:block>
         <!-- 회원 탈퇴 버튼 -->
         <div class="btn-container">
-          <span>회원 탈퇴를 원하시나요? </span>
+          <span class="nothingText">회원 탈퇴를 원하시나요? </span>
           <button
             id="openDUModal"
-            class="btn btn-outline-success"
+            class="btn btn-outline-gray"
             data-bs-toggle="modal"
             data-bs-target="#deleteUserModal"
           >
@@ -572,7 +595,7 @@
       </div>
     </main>
     <!-- footer fragment -->
-    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footerTest :: footer}"></div>
 
     <!-- 프로필 수정 모달 창 -->
     <div
@@ -613,7 +636,7 @@
 
               <table>
                 <tr>
-                  <th>프로필 이미지:</th>
+                  <th>프로필 이미지</th>
                   <td>
                     <br />
                     <img
@@ -624,7 +647,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>닉네임:</th>
+                  <th>닉네임</th>
                   <td>
                     <input
                       type="text"
@@ -636,7 +659,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>계정 유형:</th>
+                  <th>계정 유형</th>
                   <td>
                     <input
                       type="radio"
@@ -660,20 +683,19 @@
                 </tr>
 
                 <tr>
-                  <th>소개글:</th>
+                  <th>소개글</th>
                   <td>
                     <textarea
                       name="bio"
                       id="bio"
                       placeholder="자신을 소개해주세요! (ex) 사교적, 깔끔한 성격, 시간 약속 중시 등"
                       th:text="${userDTO.bio}"
-                      style="width: 300px; height: 100px"
                     ></textarea>
                     <div id="confirmBio" style="font-size: 0.8em"></div>
                   </td>
                 </tr>
                 <tr>
-                  <th>구사 언어:</th>
+                  <th>구사 언어</th>
                   <td>
                     <input
                       type="checkbox"
@@ -710,7 +732,7 @@
                   <div id="confirmLang" style="font-size: 0.8em"></div>
                 </tr>
                 <tr>
-                  <th>나이:</th>
+                  <th>나이</th>
                   <td>
                     <input
                       type="number"
@@ -722,7 +744,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>국적:</th>
+                  <th>국적</th>
                   <td>
                     <select name="nationality" id="nationality">
                       <option
@@ -760,7 +782,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>종교:</th>
+                  <th>종교</th>
                   <td>
                     <input
                       type="radio"
@@ -803,7 +825,7 @@
                 </tr>
 
                 <tr>
-                  <th>성별:</th>
+                  <th>성별</th>
                   <td>
                     <input
                       type="radio"
@@ -829,15 +851,15 @@
               </table>
 
               <div class="modal-footer">
+                <button type="reset" id="resetBtn" class="btn btn-outline-gray">
+                  초기화
+                </button>
                 <button
                   type="submit"
                   id="updateBtn"
                   class="btn btn-outline-success"
                 >
                   수정 완료
-                </button>
-                <button type="reset" id="resetBtn" class="btn btn-light">
-                  초기화
                 </button>
               </div>
             </form>
@@ -869,7 +891,7 @@
           <div class="modal-body">
             <table>
               <tr>
-                <th>프로필 이미지:</th>
+                <th>프로필 이미지</th>
                 <td>
                   <input
                     type="file"
@@ -891,8 +913,9 @@
           </div>
           <div class="modal-footer">
             <button
+              id="closeModal2"
               type="button"
-              class="btn btn-secondary"
+              class="btn btn-outline-gray"
               data-bs-dismiss="modal"
             >
               취소하기
@@ -931,7 +954,7 @@
             <p>탈퇴를 원하시는 현재 계정의 비밀번호를 한번 더 입력하세요.</p>
             <input
               type="password"
-              id="passwordInput"
+              id="signOutInput"
               class="form-control"
               placeholder="비밀번호 입력"
               required
@@ -939,8 +962,9 @@
           </div>
           <div class="modal-footer">
             <button
+              id="closeModal3"
               type="button"
-              class="btn btn-secondary"
+              class="btn btn-outline-gray"
               data-bs-dismiss="modal"
             >
               취소하기
