@@ -56,7 +56,11 @@ public class SubscribeRestController {
 		if (loginUser == null) {
 			return ResponseEntity.ok(Map.of("redirectUrl", "/user/login", "message", "로그인이 필요합니다."));
 		}
-
+		
+		Long userId = loginUser.getUserId();
+		System.out.println(receiptId+"control");
+		System.out.println(loginUser);
+		System.out.println(loginUser.getUserId());
 		try {
 			subscribeService.updateSubscriptionStatus(loginUser.getUserId(), receiptId);
 			return ResponseEntity
