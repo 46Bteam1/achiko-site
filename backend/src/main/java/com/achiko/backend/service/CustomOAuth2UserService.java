@@ -52,7 +52,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String username = oAuth2Response.getProvider()+"_"+oAuth2Response.getProviderId();
         String userNickname = oAuth2Response.getProvider()+"_"+oAuth2Response.getEmail().split("@")[0];	// provider + 이메일 주소의 @앞부분을 닉네임으로 설정
         UserEntity userEntity = userRepository.findByLoginId(username);
-        Long userId = null;
 
         String role = "user";
         boolean needsAdditionalInfo = false; // 추가 정보 입력 여부
@@ -85,9 +84,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userRepository.save(userEntity);
         }
         
-        userId = userRepository.findByLoginId(username).getUserId();
         // ✅ `CustomOAuth2User` 생성 후 PrincipalDetails로 반환
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(oAuth2Response, userEntity.getRole(), userEntity.getUserId());
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(oAuth2Response, userEntity.getRole(), userEntity);
 
         // ✅ `PrincipalDetails`에 추가 정보 입력 필요 여부를 담아 반환
         PrincipalDetails principalDetails = new PrincipalDetails(customOAuth2User);
