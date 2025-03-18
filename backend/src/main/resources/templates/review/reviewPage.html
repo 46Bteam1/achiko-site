@@ -187,7 +187,8 @@
               <div
                 class="review-card"
                 th:id="|review-${review.reviewId}|"
-                th:each="review : ${reviews}"
+                th:each="review, iterStat : ${reviews}"
+                th:classappend="${(isSubscribed == null or isSubscribed == '') and iterStat.index >= 2} ? 'blur-effect' : ''"
               >
                 <div class="review-left">
                   <!-- 프로필 이미지 -->
