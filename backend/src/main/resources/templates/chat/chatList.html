@@ -22,12 +22,14 @@
       crossorigin="anonymous"
     ></script>
 
-    <!-- sweetalert2 -->
+    <!-- SweetAlert2 스타일 & JS 추가 -->
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css"
+      th:href="@{https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css}"
     />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+    <script
+      th:src="@{https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js}"
+    ></script>
 
     <!-- 4. SockJS & Stomp.js (소켓 연결을 위해 필수) -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>

@@ -25,6 +25,7 @@ public class ChatMessageController {
     // 특정 채팅방에 메세지 보내기
     @MessageMapping("/chatSendMessage")
     public void sendMessage(ChatMessageDTO chatMessage) {
+    	
         chatService.sendMessage(chatMessage);
     }
 
@@ -32,6 +33,7 @@ public class ChatMessageController {
     // 유저 입장
     @MessageMapping("/chatEnterRoom")
     public void enterRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal PrincipalDetails loginUser) {      
+    	log.info("~~~:{}", loginUser.toString());
         // 로그인한 유저 닉네임 받아오기
         String nickname = loginUser.getNickname();   
         

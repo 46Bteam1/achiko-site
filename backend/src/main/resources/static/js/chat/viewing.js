@@ -27,7 +27,11 @@ $(function () {
     const viewingTime = $("#viewingTime").val();
 
     if (!viewingDate || !viewingTime) {
-      alert("날짜와 시간을 모두 입력하세요.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "날짜와 시간을 모두 입력해주세요.",
+      });
       return;
     }
 
@@ -36,7 +40,11 @@ $(function () {
     const scheduledDate2 = new Date(scheduledDate);
 
     if (scheduledDate2 < now) {
-      alert("입력하신 날짜는 현재보다 이전입니다.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "입력하신 날짜는 현재보다 이전입니다.",
+      });
       return;
     }
 
@@ -52,8 +60,28 @@ $(function () {
       contentType: "application/json", // Content-Type을 application/json으로 설정
       data: JSON.stringify(data),
       success: function (resp) {
-        alert(resp);
-        initModal(role);
+        if (resp.startsWith("이미 viewing 약속이 존재")) {
+          Swal.fire({
+            title: `${resp}`,
+            icon: "warning",
+            draggable: true,
+          });
+        } else if (resp.startsWith("이미 다른 share에서")) {
+          Swal.fire({
+            title: `${resp}`,
+            icon: "warning",
+            draggable: true,
+          });
+        } else {
+          Swal.fire({
+            title: "뷰잉 예약 성공!",
+            icon: "success",
+            text: `${resp}`,
+            draggable: true,
+          });
+
+          initModal(role);
+        }
       },
     });
   });
@@ -119,17 +147,17 @@ function viewingTable(resp) {
   let tag = "";
 
   if (resp.length === 0) {
-    //  데이터가 없을 경우 메시지 출력
+    // 데이터가 없을 경우 메시지 출력
     tag = `<div>viewing 약속이 없습니다.</div>`;
   } else {
-    //  데이터가 있을 경우 테이블 출력
+    // 데이터가 있을 경우 테이블 출력
     tag += `
-      table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #f9f9f9;">
-  <tr style="background-color: #4CAF50; color: white; font-weight: bold;">
-    <th style="border: 1px solid black; padding: 10px; text-align: center;">상대방</th>
-    <th style="border: 1px solid black; padding: 10px; text-align: center;">예약 날짜</th>
-    <th style="border: 1px solid black; padding: 10px; text-align: center;"></th>
-  </tr>`;
+      <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #f9f9f9;">
+      <tr style="background-color: #4CAF50; color: white; font-weight: bold;">
+        <th style="border: 1px solid black; padding: 10px; text-align: center;">상대방</th>
+        <th style="border: 1px solid black; padding: 10px; text-align: center;">예약 날짜</th>
+        <th style="border: 1px solid black; padding: 10px; text-align: center;"></th>
+      </tr>`;
 
     const nickname = $("#nickname").val();
     $.each(resp, function (index, item) {
@@ -137,41 +165,37 @@ function viewingTable(resp) {
       let displayNickname = nicknameCheck
         ? item["guestNickname"]
         : item["hostNickname"];
-
-      let scheduledDate = item["scheduledDate"] || "날짜 없음"; // 기본값 설정
-      let isCompleted = item["isCompleted"]; // 완료 여부 확인
-      let disabledAttr = isCompleted ? "disabled" : ""; // 비활성화 속성 설정
+      let scheduledDate = item["scheduledDate"] || "날짜 없음";
+      let isCompleted = item["isCompleted"];
+      let actionCellContent = isCompleted
+        ? '<span style="color: red; font-weight: bold;">이미 완료된 뷰잉입니다</span>'
+        : `
+          <input type="button" value="날짜 수정" class="updateViewingBtn" data-seq="${
+            item["viewingId"]
+          }" style="padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: #ffcc00; color: black; font-size: 14px;">
+          ${
+            nicknameCheck
+              ? `<input type="button" value="확정" class="confirmViewingBtn" data-seq="${item["viewingId"]}" style="padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: #008CBA; color: white; font-size: 14px;">`
+              : ""
+          }
+          <input type="button" value="뷰잉 삭제" class="deleteViewingBtn" data-role="${role}" data-seq="${
+            item["viewingId"]
+          }" style="padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: #f44336; color: white; font-size: 14px;">`;
 
       tag += `
-    <tr style="border: 1px solid #ddd; text-align: center; ${
-      index % 2 === 0 ? "background-color: #f2f2f2;" : ""
-    }">
-      <td style="border: 1px solid black; padding: 10px;">${displayNickname}</td>
-      <td style="border: 1px solid black; padding: 10px;">${scheduledDate}</td>
-      <td style="border: 1px solid black; padding: 10px;">
-        <input type="button" value="날짜 수정" class="updateViewingBtn" 
-        data-seq="${
-          item["viewingId"]
-        }" style="padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: #ffcc00; color: black; font-size: 14px;" ${disabledAttr}>
-        ${
-          nicknameCheck
-            ? `<input type="button" value="확정" class="confirmViewingBtn" 
-        data-seq="${item["viewingId"]}" style="padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: #008CBA; color: white; font-size: 14px;" ${disabledAttr}>`
-            : ""
-        }
-        <input type="button" value="뷰잉 삭제" class="deleteViewingBtn" data-role="${role}"
-        data-seq="${
-          item["viewingId"]
-        }" style="padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: #f44336; color: white; font-size: 14px;" ${disabledAttr}>
-      </td>
-    </tr>`;
+      <tr style="border: 1px solid #ddd; text-align: center; ${
+        index % 2 === 0 ? "background-color: #f2f2f2;" : ""
+      }">
+        <td style="border: 1px solid black; padding: 10px;">${displayNickname}</td>
+        <td style="border: 1px solid black; padding: 10px;">${scheduledDate}</td>
+        <td style="border: 1px solid black; padding: 10px;">${actionCellContent}</td>
+      </tr>`;
     });
 
     tag += `</table>`;
   }
 
   $("#existingReviews").html(tag);
-
   $(".updateViewingBtn").on("click", updateViewing);
   $(".confirmViewingBtn").on("click", confirmViewing);
   $(".deleteViewingBtn").on("click", deleteViewing);
@@ -218,7 +242,11 @@ function updateViewing() {
     let newTime = row.find(".updateViewingTime").val();
 
     if (!newDate || !newTime) {
-      alert("날짜와 시간을 모두 입력해주세요.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "날짜와 시간을 모두 입력해주세요.",
+      });
       return;
     }
 
@@ -228,7 +256,12 @@ function updateViewing() {
     let newScheduledDateObj = new Date(newScheduledDate);
     let now = new Date();
     if (newScheduledDateObj < now) {
-      alert("입력하신 날짜는 현재보다 이전입니다.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "입력하신 날짜는 현재보다 이전입니다.",
+      });
+
       return;
     }
 
@@ -248,7 +281,12 @@ function updateViewing() {
       contentType: "application/json",
       data: JSON.stringify(data),
       success: function (resp) {
-        alert(resp);
+        Swal.fire({
+          title: "날짜 수정 성공!",
+          icon: "success",
+          text: `${resp}`,
+          draggable: true,
+        });
         // 성공 시 셀의 내용을 새로운 날짜 값으로 갱신
         scheduledCell.text(newScheduledDate);
         // 버튼을 원래 "날짜 수정"으로 복원하고 updateViewing 이벤트 다시 바인딩
@@ -256,7 +294,11 @@ function updateViewing() {
         btn.off("click").on("click", updateViewing);
       },
       error: function (err) {
-        alert("수정에 실패했습니다.");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "수정에 실패했습니다.",
+        });
       },
     });
   });
@@ -273,14 +315,18 @@ function deleteViewing() {
       method: "DELETE",
       data: { viewingId: viewingId },
       success: function (resp) {
-        alert(resp);
+        Swal.fire({
+          title: "뷰잉 취소 성공!",
+          icon: "success",
+          text: `${resp}`,
+          draggable: true,
+        });
         initModal(role);
       },
     });
   }
 }
 
-// viewing 확정(host)
 function confirmViewing() {
   const $btn = $(this);
   let viewingId = $btn.attr("data-seq");
@@ -295,26 +341,40 @@ function confirmViewing() {
       method: "GET",
       data: { viewingId: viewingId },
       success: function (resp) {
-        console.log(resp);
         if (resp) {
           $.ajax({
             url: "/viewing/confirm",
             method: "PATCH",
             data: { viewingId: viewingId },
             success: function (resp) {
-              alert(resp);
-              // data-seq 값이 같은 모든 input 버튼 비활성화 처리
+              Swal.fire({
+                title: "뷰잉 확정 성공!",
+                text: `${resp}`,
+                icon: "success",
+                draggable: true,
+              });
+              // data-seq 값이 같은 모든 input 버튼을 숨기고 '이미 완료된 뷰잉입니다' 메시지 표시
               $('input[data-seq="' + viewingId + '"]')
-                .prop("disabled", true)
-                .addClass("disabled");
+                .closest("td")
+                .html(
+                  '<span style="color: red; font-weight: bold;">이미 완료된 뷰잉입니다</span>'
+                );
             },
           });
         } else {
-          alert("이미 해당 share의 인원이 다 찼습니다.");
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "이미 해당 share의 인원이 다 찼습니다.",
+          });
         }
       },
     });
   } else {
-    alert("viewing 완료 취소");
+    Swal.fire({
+      title: "수정 취소!",
+      icon: "success",
+      draggable: true,
+    });
   }
 }
