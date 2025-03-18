@@ -166,16 +166,21 @@
             hidden
           ></p>
 
-          <div
+          <!-- <div
             class="review-header d-flex justify-content-between align-items-center"
           >
             <h2>후기 <span th:text="|총 ${#lists.size(reviews)}개|"></span></h2>
-            <!-- <select id="reviewFilter" class="form-select w-auto">
+            <select id="reviewFilter" class="form-select w-auto">
               <option value="latest" selected>최신순</option>
               <option value="oldest">오래된순</option>
               <option value="rating">별점순</option>
-            </select> -->
-          </div>
+            </select>
+          </div> -->
+          <th:block th:if="${#lists.size(reviews) == 0}">
+            <div class="no-review-message">
+              <span>현재 작성된 리뷰가 없습니다.</span>
+            </div>
+          </th:block>
 
           <div class="review-list" id="reviewList">
             <div th:fragment="reviewListFragment">
