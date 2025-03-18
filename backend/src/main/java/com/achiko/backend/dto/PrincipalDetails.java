@@ -101,5 +101,9 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 	public void setNeedsAdditionalInfo(boolean needsAdditionalInfo) {
 		this.needsAdditionalInfo = needsAdditionalInfo;
 	}
+	
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
     
 }
