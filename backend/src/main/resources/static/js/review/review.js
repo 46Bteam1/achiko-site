@@ -210,29 +210,82 @@ function sortReviews() {
 
       sortedReviews.forEach((review) => {
         let formattedDate = new Date(review.createdAt).toLocaleDateString();
+
+        // ⭐ 별점 생성 함수
+        const getStars = (rating) => {
+          return (
+            "★".repeat(rating) +
+            '<span class="gray-stars">' +
+            "★".repeat(5 - rating) +
+            "</span>"
+          );
+        };
+
         let reviewHtml = `
-                    <div class="review-card d-flex justify-content-between align-items-center" id="review-${review.reviewId}">
-                        <div class="review-left d-flex align-items-start">
-                            <img class="reviewer-img" src="" alt="프로필">
-                            <div class="review-content">
-                                <p class="review-name">리뷰 작성자: <strong>${review.reviewerId}</strong></p>
-                                <p class="review-meta">${formattedDate}</p>
-                                <p class="review-text">${review.comment}</p>
-                                <div class="d-flex mt-2">
-                                    <a href="/review/reviewUpdate?reviewId=${review.reviewId}" class="btn btn-sm btn-outline-primary me-2">수정</a>
-                                    <button class="btn btn-sm btn-outline-danger delete-review" data-review-id="${review.reviewId}">삭제</button>
-                                </div>
-                            </div>
+        <div class="review-card" id="review-${review.reviewId}">
+            <div class="review-left">
+                <!-- 프로필 이미지 -->
+                <img class="reviewer-img" src="${
+                  review.reviewerDTO.profileImage
+                }" alt="프로필">
+
+                <!-- 리뷰 내용 -->
+                <div class="review-content">
+                    <div class="review-header">
+                        <p class="review-name"><strong>${
+                          review.reviewerDTO.nickname
+                        }</strong></p>
+                        <p class="review-meta">${formattedDate}</p>
+                    </div>
+
+                    <!-- 리뷰 본문 -->
+                    <p class="review-text">${review.comment}</p>
+
+                    <!-- 별점 -->
+                    <div class="review-ratings">
+                        <div class="each-ratings">
+                            <span><strong>청결도</strong></span>
+                            <div class="stars">${getStars(
+                              review.cleanlinessRating
+                            )}</div>
                         </div>
-                        <div class="review-scores text-end">
-                            <p><strong>청결도</strong> ${review.cleanlinessRating}</p>
-                            <p><strong>신뢰도</strong> ${review.trustRating}</p>
-                            <p><strong>소통</strong> ${review.communicationRating}</p>
-                            <p><strong>매너</strong> ${review.mannerRating}</p>
+                        <div class="each-ratings">
+                            <span><strong>신뢰도</strong></span>
+                            <div class="stars">${getStars(
+                              review.trustRating
+                            )}</div>
+                        </div>
+                        <div class="each-ratings">
+                            <span><strong>소통</strong></span>
+                            <div class="stars">${getStars(
+                              review.communicationRating
+                            )}</div>
+                        </div>
+                        <div class="each-ratings">
+                            <span><strong>매너</strong></span>
+                            <div class="stars">${getStars(
+                              review.mannerRating
+                            )}</div>
                         </div>
                     </div>
-                `;
-        reviewsContainer.append(reviewHtml);
+
+                    <!-- 하단 영역: 수정/삭제 버튼 (우측 정렬) -->
+                    ${
+                      loggedUserId === review.reviewerDTO.userId
+                        ? `
+                    <div class="review-actions">
+                        <a href="/review/reviewUpdate?reviewId=${review.reviewId}" class="btn btn-sm btn-outline-primary">수정</a>
+                        <button class="btn btn-sm btn-outline-danger delete-review" data-review-id="${review.reviewId}">삭제</button>
+                    </div>`
+                        : ""
+                    }
+                </div>
+            </div>
+        </div>`;
+
+        // 리뷰 목록에 추가
+        $("#reviewList").append(reviewHtml);
+        $("#reviewList").show();
       });
 
       // ✅ 정렬 후 차트 다시 로드
