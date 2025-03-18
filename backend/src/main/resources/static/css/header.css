@@ -383,9 +383,9 @@ header.sticky-reappear + main {
 /* 모달 스타일 */
 #modalMenu {
   display: none;
-  right: 1rem;
   position: fixed;
-  top: 80px;
+  top: 70px;
+  left: calc(100vw - 280px);
 
   z-index: 50;
   background-color: white;
