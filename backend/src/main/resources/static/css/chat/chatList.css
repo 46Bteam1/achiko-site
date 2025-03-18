@@ -134,11 +134,11 @@ main {
 
 .chatMessageContainer {
   display: flex;
-  align-items: flex-start; /* 상단 정렬 */
+  align-items: stretch; /* 상단 정렬 */
   gap: 10px; /* 요소 간 간격 */
   width: 100%;
   max-width: 100%;
-  margin: 15px 0;
+  margin: 7px 0;
 }
 
 .chatProfileImageContainer {
@@ -176,21 +176,25 @@ main {
   padding: 8px 12px;
   background: #f1f1f1;
   border-radius: 12px;
+  min-width: 100px;
+  max-width: 300px;
 }
 
 .chatTimeContainer {
   display: flex;
-  flex-direction: column; /* 세로 정렬 */
-  justify-content: flex-end; /* 가장 하단 배치 */
+  flex-direction: column; 
+  justify-content: flex-end; 
   align-items: center;
-  min-width: 60px; /* 최소 너비 */
+  width: 90px; 
+  min-height: 50px;
 }
 
 /* 시간 스타일 */
 .chatTime {
   font-size: 0.85rem;
   color: #888;
-  text-align: right;
+  text-align: left;
+  white-space: pre-line; 
 }
 
 /* ==========================
