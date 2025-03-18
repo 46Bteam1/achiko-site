@@ -13,13 +13,6 @@
     <link rel="stylesheet" th:href="@{/css/share/share.css}" />
     <!-- Bootstrap CSS (캐러셀만 사용하기 위해 제한적으로 적용) -->
     <style>
-      /* 기본 마진/패딩과 폰트 설정만 적용 */
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: "Noto Sans KR", "Noto Sans JP", sans-serif;
-      }
-
       /* .bootstrap-container는 기본 폰트 계승만 설정 (필요하다면) */
       .bootstrap-container {
         font-family: inherit;
@@ -206,13 +199,14 @@
               <!-- 버튼 그룹 (메시지 보내기 & 리뷰 보기) -->
               <div class="host-actions">
                 <div th:if="${!isOwner}">
-                  <!-- <button id="messageHostBtn" class="btn btn-primary">
+                  <button id="messageHostBtn" class="btn btn-primary">
                     메세지 보내기
-                  </button> -->
-                  <a
+                  </button>
+                  <!-- <a
                     th:href="@{/chatList(chatroomId=${share.hostId})}"
                     class="btn btn-primary"
-                  >메세지 보내기</a>
+                    >메세지 보내기</a
+                  > -->
                 </div>
                 <a
                   th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}"

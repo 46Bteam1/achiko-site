@@ -1,6 +1,5 @@
 $(document).ready(function () {
-  // 프로필 업데이트
-  $("#updateBtn").on("click", updateBtn);
+  tab();
 
   // 프로필 등록/수정 모달 동작
   $("#openModal").on("click", function () {
@@ -10,14 +9,26 @@ $(document).ready(function () {
   $("#closeModal").on("click", function () {
     $("#profileModal").modal("hide");
   });
-
-  // 프로필 사진 미리보기
-  $("#profileImageInput").change(previewProfileImage);
-
-  // 프로필 사진 등록 버튼 클릭 시 registImageModal
   $("#registImage").on("click", function () {
     $("#registImageModal").modal("show");
   });
+
+  // 각 입력 필드에서 포커스가 벗어날 때 유효성 검사 실행
+  $("#nickname").blur(validateNickname);
+  $("#bio").blur(validateBio);
+  $("#age").blur(validateAge);
+  $("#gender").blur(validateGender);
+  $("#religion").blur(validateReligion);
+  $("#languages").change(validateLanguages);
+  // 프로필 업데이트
+  $("#updateBtn").click(function () {
+    if (validation()) {
+      updateBtn();
+    }
+  });
+
+  // 프로필 사진 미리보기
+  $("#profileImageInput").change(previewProfileImage);
 
   // 모달창 내 등록하기 버튼 누르면 프로필 이미지 등록
   $("#registImageBtn").on("click", handleImageUpload);
@@ -27,6 +38,15 @@ $(document).ready(function () {
     window.location.reload();
   });
 
+  initChatRooms();
+
+  $(".delete-btn").on("click", deleteShare);
+
+  // 버튼 클릭 시 chatList 이동
+  $("#chatRoomsBtn").on("click", function () {
+    window.location.href = "/chatRooms";
+  });
+
   // 회원 탈퇴
   $("#confirmDeleteBtn").on("click", deleteUser);
 
@@ -34,25 +54,12 @@ $(document).ready(function () {
   $("#deleteUserModal").on("hidden.bs.modal", function () {
     $("#passwordInput").val("");
   });
-
-  // 계정 타입 변경 기능
-
-  $("#accountTypeChangeBtn").on("click", function () {
-    alert("게스트 전환 요청이 접수되었습니다.");
-  });
-
-  initChatRooms();
-
-  $(".delete-btn").on("click", deleteShare);
 });
-
-// let newProfileImage = $("#profileImageInput")[0].files[0]; // 수정
-// formData.append("profileImage", newProfileImage);
-// let profileImage = profileImageInput.files.length > 0 ? profileImageInput.files[0] : null;
 
 // 프로필 수정 버튼
 function updateBtn() {
   let userId = $("#userId").val();
+  let newBio = $("#bio").val();
   let newNickname = $("#nickname").val();
   let isHost = $("#isHost").is(":checked");
   let newLanguages = [];
@@ -71,6 +78,7 @@ function updateBtn() {
       userId: userId,
       nickname: newNickname,
       isHost: isHost,
+      bio: newBio,
       languages: newLanguages,
       age: newAge,
       nationality: newNationality,
@@ -78,10 +86,106 @@ function updateBtn() {
       gender: newGender,
     },
     success: function (response) {
-      alert("프로필 등록/수정이 완료되었습니다.");
-      window.location.href = "/mypage/mypageView";
+      Swal.fire({
+        icon: "success",
+        title: "프로필이 수정되었습니다!",
+        text: "프로필 등록/수정이 완료되었습니다.",
+        confirmButtonText: "확인",
+      }).then(() => {
+        window.location.href = "/mypage/mypageView";
+      });
     },
   });
+}
+// 닉네임 유효성 검사
+function validateNickname() {
+  let nickname = $("#nickname").val().trim();
+  if (!nickname || nickname.length === 0) {
+    $("#confirmNickname").css("color", "red").html("닉네임을 입력해주세요.");
+    return false;
+  }
+  $("#confirmNickname").html(""); // 오류 메시지 초기화
+  return true;
+}
+
+// 소개글 유효성 검사
+function validateBio() {
+  let bio = $("#bio").val().trim();
+  if (bio.length > 20) {
+    $("#confirmBio")
+      .css("color", "red")
+      .html("소개글은 최대 20자까지 입력 가능합니다.");
+    return false;
+  } else if (bio.length == 0) {
+    $("#confirmBio")
+      .css("color", "red")
+      .html("자신을 소개하는 글을 입력해주세요.");
+    return false;
+  }
+  $("#confirmBio").html("");
+  return true;
+}
+
+// 나이 유효성 검사
+function validateAge() {
+  let age = $("#age").val().trim();
+  if (!age || isNaN(age) || age <= 0) {
+    $("#confirmAge").css("color", "red").html("나이를 입력해주세요.");
+    return false;
+  }
+  $("#confirmAge").html("");
+  return true;
+}
+
+// 성별 유효성 검사
+function validateGender() {
+  let gender = $("#gender").is(":checked");
+  if (!gender) {
+    $("#confirmGender").css("color", "red").html("성별을 선택해주세요.");
+    return false;
+  }
+  $("#confirmGender").html("");
+  return true;
+}
+
+// 종교 유효성 검사
+function validateReligion() {
+  let religion = $("#religion").is(":checked");
+  if (!religion) {
+    $("#confirmReligion").css("color", "red").html("종교를 선택해주세요.");
+    return false;
+  }
+  $("#confirmReligion").html("");
+  return true;
+}
+
+// 구사 언어 유효성 검사
+function validateLanguages() {
+  let newLanguages = [];
+  $("#languages:checked").each(function () {
+    newLanguages.push($(this).val());
+  });
+  if (newLanguages.length === 0) {
+    $("#confirmLang")
+      .css("color", "red")
+      .html("최소 한 개의 구사 언어를 선택해주세요.");
+    return false;
+  }
+  $("#confirmLang").html("");
+  return true;
+}
+
+// 전체 유효성 검사 (모든 개별 검사 결과가 true일 때만 true 반환)
+function validation() {
+  return (
+    validateNickname() &&
+    validateBio() &&
+    validateAge() &&
+    validateNationality() &&
+    validateGender() &&
+    validateReligion() &&
+    validateLanguages()
+  );
 }
 
 // 프로필 이미지 미리보기
@@ -98,7 +202,7 @@ function previewProfileImage() {
   }
 }
 
-// 사진 등록 버튼 클릭 시 실행될 함수
+// 프로필 이미지 등록
 function handleImageUpload() {
   const fileInput = document.getElementById("profileImageInput");
   const file = fileInput.files[0]; // 선택한 파일
@@ -248,7 +352,7 @@ function getChatRooms(resp) {
     $.each(resp, function (index, item) {
       let profileImage = item["profileImage"]
         ? item["profileImage"]
-        : "/images/fubao.webp";
+        : "/images/default-profile.png";
       const nickname = $("#userNickname").val();
       let nicknameCheck = item["hostNickname"] === nickname;
       let displayNickname = nicknameCheck
@@ -324,10 +428,36 @@ function deleteShare() {
     data: { shareId: shareId },
     success: function (response) {
       alert("게시물이 삭제되었습니다.");
-      window.location.href = "/mypage/mypageView";
+      window.location.href = "/mypage/mypageSample";
     },
     error: function (xhr) {
       alert(xhr.responseText || "삭제에 실패했습니다.");
     },
+  });
+}
+
+window.onload = function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("alert") === "1") {
+    alert("프로필에 추가 정보를 입력해주세요.");
+    setTimeout(function () {
+      $("#openModal").click();
+    }, 100); // 100ms 지연
+  }
+};
+
+// 탭 클릭 시 내용 변경
+function tab() {
+  const tabs = document.querySelectorAll(".tab");
+  const contents = document.querySelectorAll(".tab-content");
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("active"));
+      contents.forEach((c) => c.classList.remove("active"));
+
+      tab.classList.add("active");
+      document.getElementById(tab.dataset.tab).classList.add("active");
+    });
   });
 }

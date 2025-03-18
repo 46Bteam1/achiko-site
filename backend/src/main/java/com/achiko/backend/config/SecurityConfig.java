@@ -7,20 +7,24 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.handler.LoginFailureHandler;
+import com.achiko.backend.handler.LoginSuccessHandler;
 import com.achiko.backend.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 	
 	private final LoginFailureHandler loginFailureHandler;		// 로그인 실패 처리 Handler
 	private final CustomOAuth2UserService customOAuth2UserService;
-
+	private final LoginSuccessHandler loginSuccessHandler;
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -52,6 +56,7 @@ public class SecurityConfig {
 					.passwordParameter("password")
 					.failureHandler(loginFailureHandler)		// FailureHandler가 있으면 이 코드는 없어야함
 					.defaultSuccessUrl("/", true)
+					.successHandler(loginSuccessHandler)
 					.permitAll());
 
 		// logout 설정
@@ -69,7 +74,7 @@ public class SecurityConfig {
 		// 소셜로그인 설정
 		http
 		.oauth2Login((oauth2) -> oauth2
-				.defaultSuccessUrl("/", true)
+				.successHandler(loginSuccessHandler)
 				.userInfoEndpoint((userInfoEndpointConfig) ->
 				userInfoEndpointConfig.userService(customOAuth2UserService)));
 

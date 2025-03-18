@@ -24,16 +24,18 @@ public class ChatMessageDTO {
 	private Long chatroomId;
 	private String nickname;
 	private String message;
+	private String profileImage;
 	private String fileUrl;
 	private LocalDateTime sentAt;
 	
-	public static ChatMessageDTO toDTO(ChatMessageEntity entity, Long chatroomId, String nickname) {
+	public static ChatMessageDTO toDTO(ChatMessageEntity entity, Long chatroomId, String nickname, String profileImage) {
 		return ChatMessageDTO.builder()
 				.messageId(entity.getMessageId())
 				.chatroomId(chatroomId)
 				.nickname(nickname)
 				.message(entity.getMessage())
 				.fileUrl(entity.getFileUrl())
+				.profileImage(profileImage)
 				.sentAt(entity.getSentAt())
 				.build();
 				

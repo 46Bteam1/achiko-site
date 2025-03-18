@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.achiko.backend.dto.CustomOAuth2User;
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.service.UserService;
 
@@ -96,7 +97,7 @@ public class UserController {
 	
 	@DeleteMapping("/deleteUser")
 	@ResponseBody
-    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal LoginUserDetails userDetails) {
+    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal PrincipalDetails userDetails) {
         if (userDetails != null) {
         	String loginId = userDetails.getLoginId(); // 현재 로그인된 사용자 ID 가져오기
             userService.deleteUser(loginId); // 사용자 삭제 서비스 호출

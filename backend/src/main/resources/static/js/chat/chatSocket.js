@@ -1,40 +1,15 @@
 $(function () {
-  // header 관련
-  // Fragment가 동적으로 로드된 후 이벤트 바인딩
-  $(document).on("click", "#menuButton", function (event) {
-    event.stopPropagation();
-    const $modalMenu = $("#modalMenu");
+  const socket = new SockJS("/ws");
 
-    if ($modalMenu.is(":visible")) {
-      $modalMenu.hide();
-    } else {
-      $modalMenu.show();
-    }
-  });
-
-  // 모달 바깥 클릭 시 모달 닫기
-  $(document).on("click", function (event) {
-    if (
-      !$("#modalMenu").is(event.target) &&
-      !$("#modalMenu").has(event.target).length &&
-      !$("#menuButton").is(event.target)
-    ) {
-      $("#modalMenu").hide();
-    }
-  });
-
-  // const socket = new SockJS("http://localhost:8080/ws");
-  // const socket = new SockJS("https://achiko.site/ws");
-  const socket = new SockJS("wss://achiko.site/ws");
   const stompClient = Stomp.over(socket);
   const chatRoomId = $("#chatroomId").val();
 
   const userId = $("#userId").val();
   const nickname = $("#nickname").val();
+  const profileImage = $("#profileImage").val();
 
   $("#toMyPageBtn").on("click", function () {
-    // window.location.href = `http://localhost:8080/mypage/mypageSample?userId=${userId}`;
-    window.location.href = `https://achiko.site/mypage/mypageSample?userId=${userId}`;
+    window.location.href = `/mypage/mypageView?userId=${userId}`;
   });
 
   $("#chatRoomsBtn").on("click", function () {
@@ -73,14 +48,14 @@ $(function () {
 
     // 메시지 전송 버튼 이벤트
     $("#sendMessage").on("click", function () {
-      sendChat(chatRoomId, nickname);
+      sendChat(chatRoomId, nickname, profileImage);
     });
 
     $("#message").keydown(function (event) {
       if (event.key === "Enter" && !event.shiftKey) {
         // Shift+Enter는 줄 바꿈, Enter만 누르면 전송
         event.preventDefault(); // 기본 엔터 동작(줄 바꿈) 방지
-        sendChat(chatRoomId, nickname);
+        sendChat(chatRoomId, nickname, profileImage);
       }
     });
   });
@@ -106,7 +81,7 @@ $(function () {
   });
 
   // 메세지 보내기
-  function sendChat(roomId, nickname) {
+  function sendChat(roomId, nickname, profileImage) {
     const messageContent = $("#message").val().trim();
     if (messageContent !== "") {
       stompClient.send(
@@ -116,6 +91,7 @@ $(function () {
           chatroomId: roomId, // 채팅방 ID 전달
           nickname: nickname, // 보낸 사람 정보 (이 변수는 필요하면 설정해야 함)
           message: messageContent,
+          profileImage: profileImage,
           sentAt: new Date(),
         })
       );
@@ -125,8 +101,6 @@ $(function () {
 });
 
 function showChat(data) {
-  console.log("여기는 showChat:", data);
-
   let sentAt = "시간 정보 없음";
 
   if (data["sentAt"]) {
@@ -139,18 +113,29 @@ function showChat(data) {
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
+      // second: "2-digit",
     });
   }
 
-  let tag = `
-    <tr>
-      <td class="chatNickname">${data["nickname"]}</td>
-      <td class="chatMessage">${data["message"]}</td>
-      <td class="chatTime">${sentAt}</td>
-    </tr>`;
+  let profileImage = data["profileImage"]
+    ? data["profileImage"]
+    : "/images/default-profile.png";
 
-  $("#chats table").append(tag);
+  let tag = `
+      <div class="chatMessageContainer">
+        <div class="chatProfileImageContainer">
+          <img class="chatProfileImage" src="${profileImage}" alt="프로필 이미지">
+        </div>
+        <div class="chatContent">
+          <div class="chatNickname">${data["nickname"]}</div>
+          <div class="chatMessage">${data["message"]}</div>
+        </div>
+        <div class="chatTimeContainer">
+          <div class="chatTime">${sentAt}</div>
+        </div>
+      </div>`;
+
+  $("#chats").append(tag);
 
   scrollToBottom(); // 메시지가 추가될 때마다 스크롤 이동
 }
@@ -163,7 +148,7 @@ function showAlert(data) {
 
   $("#alertTableBody").append(tag);
 
-  $("#alertBox").scrollTop($("#alertBox")[0].scrollHeight);
+  // $("#alertBox").scrollTop($("#alertBox")[0].scrollHeight);
 }
 
 function loadChats(chatRoomId) {
@@ -176,10 +161,10 @@ function loadChats(chatRoomId) {
 }
 
 function chats(resp) {
-  let tag = `<table>`;
+  let tag = ``;
 
   $.each(resp, function (index, item) {
-    let date = new Date(item["sentAt"]); // UTC 시간 기준으로 Date 객체 생성
+    let date = new Date(item["sentAt"]);
     date.setHours(date.getHours());
 
     let formattedDate = date.toLocaleString("ko-KR", {
@@ -188,23 +173,34 @@ function chats(resp) {
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
+      // second: "2-digit",
     });
 
+    // profileImage가 null 또는 빈 문자열이면 기본 이미지로 설정
+    let profileImage = item["profileImage"]
+      ? item["profileImage"]
+      : "/images/default-profile.png";
+
     tag += `
-        <tr>
-            <td class="chatNickname">${item["nickname"]}</td>
-            <td class="chatMessage">${item["message"]}</td>
-            <td class="chatTime">${formattedDate}</td>
-        </tr>
-    `;
+      <div class="chatMessageContainer">
+        <div class="chatProfileImageContainer">
+          <img class="chatProfileImage" src="${profileImage}" alt="프로필 이미지">
+        </div>
+        <div class="chatContent">
+          <div class="chatNickname">${item["nickname"]}</div>
+          <div class="chatMessage">${item["message"]}</div>
+        </div>
+        <div class="chatTimeContainer">
+          <div class="chatTime">${formattedDate}</div>
+        </div>
+      </div>`;
   });
-  tag += `</table>`;
 
   $("#chats").html(tag);
 
-  scrollToBottom(); // 채팅을 불러온 후 스크롤 이동
+  scrollToBottom();
 }
+
 // 채팅 스크롤 제일 마지막에 위치하도록
 function scrollToBottom() {
   $("#chats").scrollTop($("#chats")[0].scrollHeight);
@@ -222,11 +218,11 @@ function getRoommates(chatRoomId) {
       $.each(resp, function (index, item) {
         let profileImage = item["profileImage"]
           ? item["profileImage"]
-          : "/images/fubao.webp";
+          : "/images/default-profile.png";
 
         tag += `
         <div style="display: flex; flex-direction: column; align-items: center;">
-          <img src="${profileImage}" alt="프로필 이미지" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
+          <img src="${profileImage}" alt="프로필 이미지" width="100px" height="100px" style="border-radius: 50%; object-fit: cover;">
           <p class="isHost" style="text-align: center; margin-top: 5px; font-weight: bold; color: ${
             item["isHost"] === 0 ? "#28a745" : "#d9534f"
           };">${item["isHost"] === 0 ? "Guest" : "Host"}</p>
@@ -255,7 +251,7 @@ function shareInfo(chatRoomId) {
           : resp.description;
 
       let tag = `
-      <h5>쉐어하우스 타이틀: ${resp.title}</h5>
+      <h3>${resp.title}</h3>
       <p>${description}</p>
       `;
 

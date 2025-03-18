@@ -75,6 +75,13 @@
             th:value="${sessionId}"
           />
 
+          <input
+            type="hidden"
+            id="canRegistShare"
+            name="canRegistShare"
+            th:value="${canRegistShare}"
+          />
+
           <!-- 제목 -->
           <div class="form-group">
             <label for="title">제목</label>
@@ -277,9 +284,15 @@
             <div id="photoPreview" style="margin-top: 10px"></div>
           </div>
 
-          <button class="register-btn" form="shareForm" type="submit">
-            숙소 등록
-          </button>
+          <th:block th:if="${canRegistShare == true}">
+            <button class="register-btn" form="shareForm" type="submit">
+              숙소 등록
+            </button>
+          </th:block>
+          <th:block th:unless="${canRegistShare == true}">
+            <p>숙소 등록이 불가합니다.</p>
+            <p>이미 진행되고 있는 숙소가 있습니다.</p>
+          </th:block>
         </form>
       </section>
     </main>

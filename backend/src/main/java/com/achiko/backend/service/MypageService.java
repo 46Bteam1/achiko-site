@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,21 +24,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.achiko.backend.dto.FavoriteDTO;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.dto.ReviewReplyDTO;
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.dto.ViewingDTO;
+import com.achiko.backend.entity.ChatRoomEntity;
 import com.achiko.backend.entity.FavoriteEntity;
 import com.achiko.backend.entity.ReviewEntity;
 import com.achiko.backend.entity.ReviewReplyEntity;
 import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.entity.ViewingEntity;
+import com.achiko.backend.repository.ChatRoomRepository;
 import com.achiko.backend.repository.FavoriteRepository;
 import com.achiko.backend.repository.ReviewReplyRepository;
 import com.achiko.backend.repository.ReviewRepository;
-import com.achiko.backend.repository.RoommateRepository;
 import com.achiko.backend.repository.ShareRepository;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.repository.ViewingRepository;
@@ -59,7 +62,8 @@ public class MypageService {
 	private final FavoriteRepository favoriteRepository;
 	private final ReviewRepository reviewRepository;
 	private final ReviewReplyRepository reviewReplyRepository;
-	private final RoommateRepository roommateRepository;
+	private final ChatRoomRepository chatRoomRepository;
+	private final ChatService chatService;
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -79,41 +83,79 @@ public class MypageService {
 		return userDTO;
 	}
 
-	// 특정 사용자의 계정 타입 변경하기 (호->게 / 게->호 : /share/write 로 연결)
+	// 특정 사용자의 계정 타입 호->게 변경하기 (게->호 : /share/write 로 연결)
 	@Transactional
-	public Integer changeAccountType(Long userId) {
+	public String changeToGuest(Long userId) {
+
+		List<ShareEntity> sEntityList = shareRepository.findByHost_UserId(userId);
+		boolean hasActiveShare = sEntityList.stream().anyMatch(share -> !"closed".equals(share.getStatus()));
+		if (hasActiveShare) {
+			return "MATCHING_IN_PROGRESS";
+		}
+
 		Optional<UserEntity> temp = userRepository.findByUserId(userId);
 		if (temp.isPresent()) {
 			UserEntity user = temp.get();
-			int newHostStatus = (user.getIsHost() == 1) ? 0 : 1; // 현재 값 반전
-			user.setIsHost(newHostStatus); // 변경된 값 저장
+			user.setIsHost(0);
 			userRepository.save(user);
-			return newHostStatus;
+			return "Done!";
 		}
 		return null;
+	}
+	
+	// 쉐어 종료 버튼 -> 쉐어 종료, 채팅방 삭제
+	@Transactional
+	public boolean closeShare(Long userId, @AuthenticationPrincipal PrincipalDetails loginUser) {
+		Optional<UserEntity> temp = userRepository.findById(userId);
+
+		if (temp.isEmpty())
+			return false;
+		UserEntity uEntity = temp.get();
+		ShareEntity sEntity = shareRepository.findByHost(uEntity);
+
+		// 쉐어 상태 변경
+		sEntity.setStatus("closed");
+
+		// 채팅방 삭제
+		Long shareId = sEntity.getShareId();
+		Optional<ChatRoomEntity> tempChat = chatRoomRepository.findById(shareId);
+		if (tempChat.isEmpty())
+			return false;
+
+		ChatRoomEntity cEntity = tempChat.get();
+		Long chatRoomId = cEntity.getChatroomId();
+
+		chatService.deleteRoom(chatRoomId, loginUser);
+
+		// 계정 유형 변경 후 저장
+		uEntity.setIsHost(0);
+		shareRepository.saveAndFlush(sEntity);
+
+		return true;
 	}
 
 	// 특정 사용자의 활동 내역 조회
 	// 뷰잉
 	public List<ViewingDTO> getViewingList(Long userId) {
-		
+
 		Optional<UserEntity> temp = userRepository.findByUserId(userId);
 		UserEntity userEntity = temp.get();
-		
+
 		Integer accountType = userEntity.getIsHost();
-		
+
 		if (accountType == 1) {
-		ShareEntity sEntity = shareRepository.findByHost(userEntity);
-		List<ViewingEntity> viewingEntityList = viewingRepository.findByShare(sEntity, Sort.by(Sort.Order.asc("scheduledDate")));
-		List<ViewingDTO> viewingDTOList = new ArrayList<>();
-		viewingEntityList.forEach((entity) -> viewingDTOList.add(ViewingDTO.toDTO(entity)));
-		return viewingDTOList;
-		} else {		
-		List<ViewingEntity> viewingEntityList = viewingRepository.findByGuest_UserId(userId,
-				Sort.by(Sort.Order.asc("scheduledDate")));
-		List<ViewingDTO> viewingDTOList = new ArrayList<>();
-		viewingEntityList.forEach((entity) -> viewingDTOList.add(ViewingDTO.toDTO(entity)));
-		return viewingDTOList;
+			ShareEntity sEntity = shareRepository.findByHost(userEntity);
+			List<ViewingEntity> viewingEntityList = viewingRepository.findByShare(sEntity,
+					Sort.by(Sort.Order.asc("scheduledDate")));
+			List<ViewingDTO> viewingDTOList = new ArrayList<>();
+			viewingEntityList.forEach((entity) -> viewingDTOList.add(ViewingDTO.toDTO(entity)));
+			return viewingDTOList;
+		} else {
+			List<ViewingEntity> viewingEntityList = viewingRepository.findByGuest_UserId(userId,
+					Sort.by(Sort.Order.asc("scheduledDate")));
+			List<ViewingDTO> viewingDTOList = new ArrayList<>();
+			viewingEntityList.forEach((entity) -> viewingDTOList.add(ViewingDTO.toDTO(entity)));
+			return viewingDTOList;
 		}
 	}
 
@@ -155,10 +197,7 @@ public class MypageService {
 	// 내가 작성한 쉐어 글 목록
 	public List<ShareDTO> getMyShare(Long userId) {
 		List<ShareEntity> shareEntityList = shareRepository.findByHost_UserId(userId);
-		log.info("====== shareEntityList 조회 결과: {}", shareEntityList);
-		 return shareEntityList.stream()
-		            .map(ShareDTO::fromEntity)
-		            .collect(Collectors.toList());
+		return shareEntityList.stream().map(ShareDTO::fromEntity).collect(Collectors.toList());
 	}
 
 	// 프로필 추가정보 입력, 수정 with 프로필 이미지
@@ -170,11 +209,6 @@ public class MypageService {
 		if (userDTO != null) {
 			user.updateFromDTO(userDTO);
 		}
-
-//		if (profileImage != null && !profileImage.isEmpty()) {
-//			String savedFilePath = saveProfileImage(profileImage, userId);
-//			user.setProfileImage(savedFilePath);
-//		}
 		userRepository.save(user);
 	}
 
@@ -269,47 +303,4 @@ public class MypageService {
 
 	}
 
-	public boolean updateUserAccountType(UserDTO userDTO) {
-		Optional<UserEntity> userOptional = userRepository.findById(userDTO.getUserId());
-		if (userOptional.isPresent()) {
-			UserEntity user = userOptional.get();
-			user.setIsHost(0);
-			userRepository.save(user);
-			return true;
-		}
-		return false;
-	}
-
-//	 public boolean switchToGuest(Long userId) {
-//	        // 사용자의 쉐어 정보를 조회
-//	        List<ShareEntity> shares = shareRepository.findByHost(userId);
-//	        
-//	        // 진행 중인 쉐어가 있는지 확인
-//	        boolean hasOngoingShare = shares.stream()
-//	            .anyMatch(share -> !(share.getStatus().equals("done") || share.getStatus().equals("closed")));
-//
-//	        if (hasOngoingShare) {
-//	            return false; // 아직 진행 중인 매칭 있음
-//	        }
-//
-//	        // is_host를 0(게스트)로 변경
-//	        userRepository.updateIsHost(userId, 0);
-//	        return true;
-//	    }
-//
-//	 public boolean switchToHost(Long userId) {
-//	        // 사용자의 roommate 기록 확인
-//	        List<RoommateEntity> roommates = roommateRepository.findByUserId(userId);
-//	        
-//	        for (Roommate roommate : roommates) {
-//	            Share share = shareRepository.findById(roommate.getShareId()).orElse(null);
-//	            if (share != null && "matching".equals(share.getStatus())) {
-//	                return false; // 진행 중인 매칭 있음
-//	            }
-//	        }
-//
-//	        // is_host를 1(호스트)로 변경
-//	        userRepository.updateIsHost(userId, 1);
-//	        return true;
-//	    }
 }

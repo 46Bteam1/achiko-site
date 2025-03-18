@@ -12,6 +12,7 @@ import com.achiko.backend.dto.GoogleResponse;
 import com.achiko.backend.dto.KakaoResponse;
 import com.achiko.backend.dto.NaverResponse;
 import com.achiko.backend.dto.OAuth2Response;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.UserRepository;
 
@@ -50,31 +51,47 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         String username = oAuth2Response.getProvider()+"_"+oAuth2Response.getProviderId();
         String userNickname = oAuth2Response.getProvider()+"_"+oAuth2Response.getEmail().split("@")[0];	// provider + 이메일 주소의 @앞부분을 닉네임으로 설정
-        UserEntity existData = userRepository.findByLoginId(username);
+        UserEntity userEntity = userRepository.findByLoginId(username);
 
         String role = "user";
-        if (existData == null) {
+        boolean needsAdditionalInfo = false; // 추가 정보 입력 여부
+        if (userEntity == null) {
 
-            UserEntity userEntity = new UserEntity();
+            userEntity = new UserEntity();
             userEntity.setLoginId(username);
             userEntity.setEmail(oAuth2Response.getEmail());
             userEntity.setRole(role);
             userEntity.setNickname(userNickname);
             userEntity.setRealName(oAuth2Response.getName());
-            userEntity.setLanguages(role);
             userEntity.setProvider(oAuth2Response.getProvider());
+            
+            // ✅ `age`, `nationality`, `religion`, `gender`, `bio` 값이 없으므로 추가 정보 입력 필요
+            needsAdditionalInfo = true;
             userRepository.save(userEntity);
         }
         else {
 
-            existData.setLoginId(username);
-            existData.setEmail(oAuth2Response.getEmail());
+        	userEntity.setLoginId(username);
+        	userEntity.setEmail(oAuth2Response.getEmail());
 
-            role = existData.getRole();
-
-            userRepository.save(existData);
+            role = userEntity.getRole();
+            // ✅ 추가 정보 입력이 필요한지 확인
+            if (userEntity.getAge() == null || userEntity.getNationality() == null || 
+                userEntity.getReligion() == null || userEntity.getGender() == null || 
+                userEntity.getBio() == null) {
+                needsAdditionalInfo = true;
+            }
+            userRepository.save(userEntity);
         }
+        
+        // ✅ `CustomOAuth2User` 생성 후 PrincipalDetails로 반환
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(oAuth2Response, userEntity.getRole(), userEntity);
 
-        return new CustomOAuth2User(oAuth2Response, role);
+        // ✅ `PrincipalDetails`에 추가 정보 입력 필요 여부를 담아 반환
+        PrincipalDetails principalDetails = new PrincipalDetails(customOAuth2User);
+
+        // ✅ PrincipalDetails에 직접 needsAdditionalInfo 추가
+        principalDetails.setNeedsAdditionalInfo(needsAdditionalInfo);
+        return principalDetails;
     }
 }

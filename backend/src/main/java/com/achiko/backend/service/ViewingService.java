@@ -46,8 +46,20 @@ public class ViewingService {
 	        return "이미 viewing 약속이 존재합니다.";
 	    }
 		
+	    // roommate된 것이 있는지 확인, 있으면 그 share의 status가 living이면 못하도록 막기
+	    List<RoommateEntity> roommateEList = roommateRepository.findByUserUserId(user.getUserId());
+	    log.info("?????:{}", roommateEList);
+	    if(roommateEList != null) {
+	    	for (RoommateEntity e : roommateEList) {
+	    	    ShareEntity eShare = e.getShare();
+	    	    if (eShare.getStatus()==null||eShare.getStatus().equals("living")) {
+	    	        return "이미 다른 share에서 지내는 중입니다.";
+	    	    }
+	    	}
+	    }
+	    
 		ViewingEntity viewingEntity = ViewingEntity.toEntity(viewingDTO, share, user);
-		viewingRepository.saveAndFlush(viewingEntity);
+		viewingRepository.save(viewingEntity);
 		return "viewing 생성 성공";
 	}
 
