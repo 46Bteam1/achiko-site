@@ -32,7 +32,7 @@ $(function () {
   const nickname = $("#nickname").val();
 
   $("#toMyPageBtn").on("click", function () {
-    window.location.href = `/mypage/mypageSample?userId=${userId}`;
+    window.location.href = `/mypage/mypageView?userId=${userId}`;
   });
 
   $("#chatRoomsBtn").on("click", function () {
