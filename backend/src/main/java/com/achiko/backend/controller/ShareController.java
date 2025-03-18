@@ -132,11 +132,11 @@ public class ShareController {
         // 현재 로그인한 사용자 정보 확인 및 소유자 여부 체크
         boolean isOwner = false;
         if (principal != null) {
-            UserEntity loggedUser = userRepository.findByLoginId(principal.getName());
-            if (loggedUser != null && loggedUser.getUserId().equals(shareDTO.getHostId())) {
+        	Long loggedUserId = principal.getUserId();
+            if (loggedUserId != null && loggedUserId == shareDTO.getHostId()) {
                 isOwner = true;
             }
-            model.addAttribute("loggedUser", loggedUser);
+            model.addAttribute("loggedUser", principal);
         }
         model.addAttribute("isOwner", isOwner);
 
@@ -148,12 +148,16 @@ public class ShareController {
      * [GET] 글 작성 페이지 URL: /share/write
      */
     @GetMapping("/share/write")
-    public String writeForm(Model model) {
+    public String writeForm(
+    		@AuthenticationPrincipal PrincipalDetails loginUser,
+    		Model model) {
         model.addAttribute("googleApiKey", googleApiKey);
   
         String sessionId = UUID.randomUUID().toString();
         model.addAttribute("sessionId", sessionId);
-  
+        
+        boolean canRegistShare = shareService.checkAlreadyShare(loginUser.getUserId());
+        model.addAttribute("canRegistShare", canRegistShare);
         return "share/write";
     }
   
