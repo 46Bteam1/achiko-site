@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.service.ReviewService;
@@ -38,9 +39,9 @@ public class ReviewViewController {
 	private final UserService userService;
 
 	@Operation(summary = "리뷰페이지 조회", description = "reviewPage를 반환합니다.")
-	@GetMapping("/reviewPage")
-	public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId,
-			@AuthenticationPrincipal LoginUserDetails loginUser, Model model) {
+	   @GetMapping("/reviewPage")
+	   public String reviewPage(@RequestParam(name = "reviewedUserId") Long reviewedUserId, 
+	         @AuthenticationPrincipal PrincipalDetails loginUser, Model model) {
 
 		List<ReviewDTO> reviews = reviewService.getUserReviews(reviewedUserId);
 		UserDTO reviewedUser = userService.getUserById(reviewedUserId);
@@ -83,7 +84,7 @@ public class ReviewViewController {
 
 	// ✅ 리뷰 작성 페이지로 이동 (경로 변경: /review/regist)
 	@GetMapping("/reviewRegist")
-	public String showReviewRegistPage(@AuthenticationPrincipal LoginUserDetails loginUser,
+	public String showReviewRegistPage(@AuthenticationPrincipal PrincipalDetails loginUser,
 			@RequestParam(name = "reviewedUserId") Long reviewedUserId, Model model) {
 		UserDTO reviewedUserDTO = userService.selectOneUser(reviewedUserId);
 		UserDTO hostUserDTO = userService.selectOneUser(reviewedUserDTO.getUserId());
@@ -114,7 +115,7 @@ public class ReviewViewController {
 	@PostMapping("/regist")
 	public ResponseEntity<String> reviewRegister(@ModelAttribute ReviewDTO reviewDTO,
 			@RequestParam(name = "reviewedUserId") Long reviewedUserId,
-			@AuthenticationPrincipal LoginUserDetails loginUser) {
+			@AuthenticationPrincipal PrincipalDetails loginUser) {
 
 		String loginId = loginUser.getLoginId();
 		log.info("✅ 리뷰 등록 요청 - 리뷰어: {}, 리뷰 대상: {}", loginId, reviewedUserId);

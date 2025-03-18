@@ -23,7 +23,9 @@ $(function () {
     }
   });
 
-  const socket = new SockJS("http://localhost:8080/ws");
+  // const socket = new SockJS("http://localhost:8080/ws");
+  // const socket = new SockJS("https://achiko.site/ws");
+  const socket = new SockJS("wss://achiko.site/ws");
   const stompClient = Stomp.over(socket);
   const chatRoomId = $("#chatroomId").val();
 
@@ -31,7 +33,8 @@ $(function () {
   const nickname = $("#nickname").val();
 
   $("#toMyPageBtn").on("click", function () {
-    window.location.href = `http://localhost:8080/mypage/mypageSample?userId=${userId}`;
+    // window.location.href = `http://localhost:8080/mypage/mypageSample?userId=${userId}`;
+    window.location.href = `https://achiko.site/mypage/mypageSample?userId=${userId}`;
   });
 
   $("#chatRoomsBtn").on("click", function () {

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.service.SubscribeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,7 @@ public class SubscribeViewController {
 
 	@Operation(summary = "구독 결제 페이지 조회", description = "subscribePage를 반환합니다.")
 	@GetMapping("/subscribePage")
-	public String subscribePage(@AuthenticationPrincipal LoginUserDetails loginUser, Model model) {
+	public String subscribePage(@AuthenticationPrincipal PrincipalDetails loginUser, Model model) {
 		
 		if (loginUser != null) {
 			String updatedIsSubscribed = subscribeService.getUserSubscriptionStatus(loginUser.getUserId());

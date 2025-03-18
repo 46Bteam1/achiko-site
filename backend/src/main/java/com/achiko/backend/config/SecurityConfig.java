@@ -42,6 +42,7 @@ public class SecurityConfig {
 						.requestMatchers("/admin").hasRole("ADMIN")
 						.requestMatchers("/user/mypage").hasAnyRole("ADMIN", "USER")
 						.anyRequest().authenticated());
+						
 		// Custom Login 설정
 		http
 			.formLogin((auth) -> auth
@@ -50,6 +51,7 @@ public class SecurityConfig {
 					.usernameParameter("loginId")
 					.passwordParameter("password")
 					.failureHandler(loginFailureHandler)		// FailureHandler가 있으면 이 코드는 없어야함
+					.defaultSuccessUrl("/", true)
 					.permitAll());
 
 		// logout 설정
@@ -67,6 +69,7 @@ public class SecurityConfig {
 		// 소셜로그인 설정
 		http
 		.oauth2Login((oauth2) -> oauth2
+				.defaultSuccessUrl("/", true)
 				.userInfoEndpoint((userInfoEndpointConfig) ->
 				userInfoEndpointConfig.userService(customOAuth2UserService)));
 
