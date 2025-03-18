@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.achiko.backend.dto.FavoriteDTO;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.RoommateDTO;
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.ShareFilesDTO;
@@ -77,7 +79,7 @@ public class ShareController {
      * 글 상세 조회 페이지 URL 예: /share/selectOne?shareId=1
      */
     @GetMapping("/share/selectOne")
-    public String selectOne(@RequestParam("shareId") Long shareId, Model model, Principal principal) {
+    public String selectOne(@RequestParam("shareId") Long shareId, Model model, @AuthenticationPrincipal PrincipalDetails principal) {
         // ShareService를 통해 shareId에 해당하는 게시글 정보를 조회
         ShareDTO shareDTO = shareService.getShareById(shareId);
         if (shareDTO == null) {
@@ -88,12 +90,12 @@ public class ShareController {
         List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
 
         // 첫 번째 이미지의 절대 URL 설정 (없으면 기본 이미지)
-        // String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
-        //         ? "http://localhost:8080" + fileList.get(0).getFileUrl()
-        //         : "http://localhost:8080/images/default.webp";
         String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
-                ? "https://achiko.site" + fileList.get(0).getFileUrl()
-                : "https://achiko.site/images/default.webp";
+                ? "http://localhost:9905" + fileList.get(0).getFileUrl()
+                : "http://localhost:9905/images/default.webp";
+        // String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
+        //         ? "https://achiko.site" + fileList.get(0).getFileUrl()
+        //         : "https://achiko.site/images/default.webp";
 
         // 파일 목록을 ShareDTO에 설정 (추후 view에서 사용)
         shareDTO.setFileList(fileList);
@@ -130,11 +132,11 @@ public class ShareController {
         // 현재 로그인한 사용자 정보 확인 및 소유자 여부 체크
         boolean isOwner = false;
         if (principal != null) {
-            UserEntity loggedUser = userRepository.findByLoginId(principal.getName());
-            if (loggedUser != null && loggedUser.getUserId().equals(shareDTO.getHostId())) {
+        	Long loggedUserId = principal.getUserId();
+            if (loggedUserId != null && loggedUserId == shareDTO.getHostId()) {
                 isOwner = true;
             }
-            model.addAttribute("loggedUser", loggedUser);
+            model.addAttribute("loggedUser", principal);
         }
         model.addAttribute("isOwner", isOwner);
 
@@ -146,12 +148,16 @@ public class ShareController {
      * [GET] 글 작성 페이지 URL: /share/write
      */
     @GetMapping("/share/write")
-    public String writeForm(Model model) {
+    public String writeForm(
+    		@AuthenticationPrincipal PrincipalDetails loginUser,
+    		Model model) {
         model.addAttribute("googleApiKey", googleApiKey);
   
         String sessionId = UUID.randomUUID().toString();
         model.addAttribute("sessionId", sessionId);
-  
+        
+        boolean canRegistShare = shareService.checkAlreadyShare(loginUser.getUserId());
+        model.addAttribute("canRegistShare", canRegistShare);
         return "share/write";
     }
   

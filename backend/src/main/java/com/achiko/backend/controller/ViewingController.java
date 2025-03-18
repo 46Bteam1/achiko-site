@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ViewingDTO;
 import com.achiko.backend.service.ViewingService;
 
@@ -28,7 +29,7 @@ public class ViewingController {
 	
 	// 뷰잉 생성하기
 	@PostMapping("/setViewing")
-	public String setViewing(@RequestBody ViewingDTO viewingDTO, @AuthenticationPrincipal LoginUserDetails loginUser) {
+	public String setViewing(@RequestBody ViewingDTO viewingDTO, @AuthenticationPrincipal PrincipalDetails loginUser) {
 		// 생성하기 위한 DTO와 로그인 유저의 loginId를 넘겨줌
 		String message = viewingService.setViewing(viewingDTO, loginUser.getUsername());
 		
@@ -37,7 +38,7 @@ public class ViewingController {
 	
 	// 게스트의 뷰잉 조회하기
 	@GetMapping("/findGuests")
-	public List<ViewingDTO> findViewings1(@AuthenticationPrincipal LoginUserDetails loginUser){
+	public List<ViewingDTO> findViewings1(@AuthenticationPrincipal PrincipalDetails loginUser){
 		List<ViewingDTO> dtoList = viewingService.findViewings(loginUser.getUsername());
 		
 		return dtoList;
@@ -45,7 +46,7 @@ public class ViewingController {
 	
 	// 호스트의 뷰잉 조회하기
 	@GetMapping("/findHosts")
-	public List<ViewingDTO> findViewings2(@AuthenticationPrincipal LoginUserDetails loginUser){
+	public List<ViewingDTO> findViewings2(@AuthenticationPrincipal PrincipalDetails loginUser){
 		List<ViewingDTO> dtoList = viewingService.findHost(loginUser.getUsername());
 		
 		return dtoList;
@@ -53,7 +54,7 @@ public class ViewingController {
 	
 	// 뷰잉 날짜 수정하기
 	@PatchMapping("/changeDate")
-	public String changeDate(@RequestBody ViewingDTO viewingDTO, @AuthenticationPrincipal LoginUserDetails loginUser) {
+	public String changeDate(@RequestBody ViewingDTO viewingDTO, @AuthenticationPrincipal PrincipalDetails loginUser) {
 		Long userId = loginUser.getUserId();
 		String message = viewingService.changeDate(viewingDTO, userId);
 		return message;

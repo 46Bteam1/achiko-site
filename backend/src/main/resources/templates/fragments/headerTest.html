@@ -13,19 +13,18 @@
       <div class="header-col">
         <a th:href="@{/}">
           <img
+            id="header-logo"
             th:src="@{/images/logo-achiko.png}"
             alt="Achiko Logo"
-            width="204px"
-            height="64px"
           />
         </a>
       </div>
       <div class="header-col header-form">
         <ul>
           <li>
-            <a class="sticky-black" href="#"
-              >あちこちの夢が集まり、ひとつの物語が生まれる</a
-            >
+            <p class="sticky-black">
+              あちこちの夢が集まり、ひとつの物語が生まれる
+            </p>
           </li>
         </ul>
       </div>
@@ -78,67 +77,62 @@
           </select>
         </div>
         <div class="query-divide"></div>
-        <div class="query-col query-submit">
-          <div class="query-date-end">
-            <div class="query-title">시/군/구</div>
-            <select id="townId" name="townId" class="form-control" required>
-              <option value="all">전체</option>
-            </select>
-          </div>
-          <div>
-            <button class="query-submit-btn">
-              <svg
-                viewBox="0 0 32 32"
-                style="
-                  display: block;
-                  height: 16px;
-                  width: 16px;
-                  stroke: white;
-                  stroke-width: 4;
-                  overflow: visible;
-                "
-              >
-                <g fill="none">
-                  <path
-                    d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
-                  ></path>
-                </g>
-              </svg>
-            </button>
-          </div>
+        <!-- <div class="query-col query-submit"> -->
+        <div class="query-date-end">
+          <div class="query-title">시/군/구</div>
+          <select id="townId" name="townId" class="form-control" required>
+            <option value="all">전체</option>
+          </select>
         </div>
-      </div>
-      <div class="simple-query-form">
-        <div class="simple-query-btn-wrap">
-          <button class="simple-query-form-btn">
-            <div class="text">검색 시작하기</div>
-            <div class="query-submit-btn">
-              <svg
-                viewBox="0 0 32 32"
-                style="
-                  display: block;
-                  height: 12px;
-                  width: 12px;
-                  stroke: white;
-                  stroke-width: 4;
-                  overflow: visible;
-                "
-              >
-                <g fill="none">
-                  <path
-                    d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
-                  ></path>
-                </g>
-              </svg>
-            </div>
+        <div>
+          <button class="query-submit-btn">
+            <svg
+              viewBox="0 0 32 32"
+              style="
+                display: block;
+                height: 16px;
+                width: 16px;
+                stroke: white;
+                stroke-width: 4;
+                overflow: visible;
+              "
+            >
+              <g fill="none">
+                <path
+                  d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
+                ></path>
+              </g>
+            </svg>
           </button>
         </div>
+        <!-- </div> -->
+      </div>
+      <div class="simple-query-form">
+        <button class="simple-query-form-btn">
+          <div class="text">검색 시작하기</div>
+          <div class="query-submit-btn">
+            <svg
+              viewBox="0 0 32 32"
+              style="
+                display: block;
+                height: 12px;
+                width: 12px;
+                stroke: white;
+                stroke-width: 4;
+                overflow: visible;
+              "
+            >
+              <g fill="none">
+                <path
+                  d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
+                ></path>
+              </g>
+            </svg>
+          </div>
+        </button>
       </div>
       <div class="header-col header-nav">
-        <div class="header-nav-left">
-          <!-- <a class="sticky-black" href="#"
-            >あちこちの夢が集まり、ひとつの物語が生まれる</a
-          > -->
+        <!-- <div class="header-nav-left">
           <button>
             <svg class="sticky-black" width="16px" height="16px">
               <path
@@ -146,22 +140,11 @@
               ></path>
             </svg>
           </button>
-        </div>
+        </div> -->
         <div class="header-nav-right">
           <button id="menuButton">
             <div class="icon-list">
-              <svg
-                viewBox="0 0 32 32"
-                style="
-                  display: block;
-                  fill: none;
-                  height: 16px;
-                  width: 16px;
-                  stroke: currentcolor;
-                  stroke-width: 3;
-                  overflow: visible;
-                "
-              >
+              <svg id="hamburger" viewBox="0 0 32 32" style="">
                 <g fill="none" fill-rule="nonzero">
                   <path d="m2 16h28"></path>
                   <path d="m2 24h28"></path>

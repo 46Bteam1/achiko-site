@@ -84,7 +84,7 @@ public class ShareEntity {
     private LocalDateTime createdAt;
 
     @Column(name = "status")
-    private String status; // "open"/"closed" 등
+    private String status; // "open"/"closed"/"living"
 
     public static ShareEntity fromDTO(com.achiko.backend.dto.ShareDTO dto) {
         // if (dto == null) return null;

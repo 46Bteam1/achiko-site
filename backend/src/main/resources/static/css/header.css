@@ -1,14 +1,21 @@
 header {
+  width: 100%;
+  height: 80px;
   position: sticky;
   top: 0;
   left: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 100px;
+  padding: 0 5rem;
   z-index: 9999;
   background-color: white;
   font-family: "Noto Sans KR", "Noto Sans JP", sans-serif;
+}
+/* 헤더 로고 */
+#header-logo {
+  width: 180px;
+  height: 50px;
 }
 
 /* header animation */
@@ -27,7 +34,7 @@ header.sticky .sticky-black {
 }
 
 header.sticky .header-form {
-  animation-duration: 0.2s;
+  animation-duration: 0.1s;
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
   animation-name: slideUp;
@@ -42,23 +49,23 @@ header.sticky-reappear .header-form {
 
 @keyframes slideDown {
   from {
-    transform: scale(0.95, 0.95) translateY(-90px);
-    opacity: 0;
+    transform: scale(0.8, 0.8) translateY(-90px);
+    display: none;
   }
   to {
     transform: scale(1, 1) translateY(0px);
-    opacity: 1;
+    display: flex;
   }
 }
 
 @keyframes slideUp {
   from {
     transform: scale(1, 1) translateY(0px);
-    opacity: 1;
+    display: flex;
   }
   to {
-    transform: scale(0.95, 0.95) translateY(-90px);
-    opacity: 0;
+    transform: scale(0.8, 0.8) translateY(-90px);
+    display: none;
   }
 }
 
@@ -203,10 +210,24 @@ header.sticky-reappear .simple-query-form {
   background: white;
   border-radius: 20px;
   padding: 5px;
-  gap: 7px;
+  gap: 0.5rem;
   cursor: pointer;
 
   border: 1px solid rgb(221, 221, 221);
+}
+
+#hamburger {
+  display: block;
+  fill: none;
+  height: 16px;
+  width: 16px;
+  stroke: currentcolor;
+  stroke-width: 3;
+  overflow: visible;
+}
+
+#menuButton {
+  padding: 0.5rem;
 }
 
 .icon-list {
@@ -219,31 +240,29 @@ header.sticky-reappear .simple-query-form {
   height: 28.69px;
 }
 
-/* query form */
-/* .header-form {
-  position: relative;
-} */
-
 .header-form {
   /* 중앙 영역: 여유 공간 모두 사용 */
-  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
   text-align: center;
 }
 
 .query-form {
   position: absolute;
-  top: 90px;
-  left: calc(50% - 400px);
+  top: 80px;
   width: 800px;
-  height: 60px;
-
   border-radius: 50px;
-  background: white;
-
-  display: flex;
+  background-color: white;
+  display: grid;
+  white-space: nowrap;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr 0.5fr;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
@@ -273,14 +292,31 @@ header.sticky-reappear + main {
 }
 .query-date-start,
 .query-date-end {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  flex-direction: column;
   flex-grow: 1;
   padding: 10px 24px;
+}
+
+/* 셀렉트 스타일 */
+.form-control {
+  width: 100%;
+  -o-appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: auto;
+  border: none;
+  padding: 1px;
+  font-weight: bold;
+  text-align: center;
 }
 
 .query-submit {
   display: flex;
   align-items: center;
-  padding: 10px 0px 10px 24px;
+  /* padding: 10px 0px 10px 24px; */
   justify-content: space-between;
 }
 
@@ -289,11 +325,10 @@ header.sticky-reappear + main {
   padding: 10px;
   background: #0faf3b;
   border-style: none;
-  cursor: pointer;
 }
 
 .query-divide {
-  height: 30px;
+  height: 70%;
   width: 10px;
   border-left: 1px solid #ebebeb;
 }
@@ -316,23 +351,22 @@ header.sticky-reappear + main {
   display: flex;
   transform: translateX(-50%);
   visibility: hidden;
-}
-
-.simple-query-btn-wrap {
-  width: 300px;
   height: 50px;
+  display: grid;
+  place-content: center;
 }
 
 .simple-query-form-btn {
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
   padding: 10px 20px;
+  gap: 1rem;
   border-radius: 50px;
   border: 1px solid rgb(221, 221, 221);
-  background: white;
+  background-color: white;
   box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.5);
 }
 
@@ -349,9 +383,9 @@ header.sticky-reappear + main {
 /* 모달 스타일 */
 #modalMenu {
   display: none;
-  left: calc(100vw - 380px);
   position: fixed;
-  top: 75px;
+  top: 70px;
+  left: calc(100vw - 280px);
 
   z-index: 50;
   background-color: white;
@@ -370,11 +404,8 @@ header.sticky-reappear + main {
   text-align: center;
 }
 
-.menu-group li {
-  padding: 8px 0;
-}
-
 .menu-group li a {
+  padding: 0.7rem;
   text-decoration: none;
   color: black;
   display: block;
@@ -393,4 +424,56 @@ header.sticky-reappear + main {
 
 .modal-backdrop {
   display: none !important;
+}
+
+@media screen and (max-width: 1024px) {
+  header {
+    padding: 10px 2rem;
+  }
+
+  .simple-query-form {
+    width: 200px;
+  }
+
+  .query-form {
+    width: 600px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  header {
+    padding: 10px 1rem;
+  }
+  /* 헤더 로고 모바일 */
+  #header-logo {
+    width: 102px;
+    height: 32px;
+  }
+
+  .header-col.header-form {
+    display: none;
+  }
+
+  .simple-query-form {
+    width: 100px;
+  }
+
+  .simple-query-form-btn {
+    background-color: #0faf3b;
+    padding: 0px auto;
+  }
+
+  .text {
+    display: none;
+  }
+
+  .query-form {
+    width: auto;
+    left: 10px;
+    right: 10px;
+  }
+
+  .query-date-end {
+    padding: 10px 10px;
+  }
 }

@@ -94,10 +94,23 @@ public class ShareService {
      */
     public ShareDTO saveShare(ShareDTO shareDTO) {
         ShareEntity entity = convertToEntity(shareDTO);
+        // 글 등록 시 share의 status를 open 으로 변경
+        entity.setStatus("open");
         if (entity.getCreatedAt() == null) {
             entity.setCreatedAt(LocalDateTime.now());
         }
         ShareEntity saved = shareRepository.saveAndFlush(entity);
+        
+        Long userId = entity.getHost().getUserId();
+        Optional<UserEntity> temp = userRepository.findByUserId(userId);
+        if (temp.isPresent()) {
+        	UserEntity user = temp.get();
+        	// 계정 유형이 '게스트'이면 이때 호스트(1)로 변경
+        	if (user.getIsHost() == 0) {
+        		user.setIsHost(1);
+        		userRepository.save(user);
+        	}
+        }        
         return convertToDTO(saved);
     }
   
@@ -235,4 +248,14 @@ public class ShareService {
 		
 		return dtoList;
 	}
+
+	/**
+	 * 작성한 share 글 중 status가 open인게 있다면 있다고 반환 
+	 * @param userId
+	 * @return
+	 */
+	public boolean checkAlreadyShare(Long userId) {
+	    return !shareRepository.existsByHost_UserIdAndStatus(userId, "open");
+	}
+
 }

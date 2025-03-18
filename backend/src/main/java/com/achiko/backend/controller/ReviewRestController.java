@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.service.ReviewService;
 
@@ -108,7 +108,7 @@ public class ReviewRestController {
     @GetMapping("/checkReview")
     public ResponseEntity<Map<String, Boolean>> checkReview(
             @RequestParam(name = "reviewedUserId") Long reviewedUserId,
-            @AuthenticationPrincipal LoginUserDetails loginUser) {
+            @AuthenticationPrincipal PrincipalDetails loginUser) {
         
         Long loginUserId = loginUser.getUserId();
         boolean exists = reviewService.hasUserReviewed(loginUserId, reviewedUserId);

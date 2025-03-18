@@ -12,6 +12,12 @@
     />
     <link rel="stylesheet" th:href="@{/css/review/reviewPage.css}" />
 
+    <!-- Font Awesome CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+
     <!-- 필요한 라이브러리 (jQuery, Bootstrap JS 등) -->
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
     <!-- Bootstrap JS를 review.js보다 먼저 로드 -->
@@ -32,6 +38,10 @@
         <!-- 사용자 카드 영역 -->
         <aside class="user-container">
           <div class="user-card">
+            <div
+              class="user-role-badge"
+              th:text="${reviewedUser.isHost == 0 ? '게스트' : (reviewedUser.isHost == 1 ? '호스트' : '관리자')}"
+            ></div>
             <img
               th:src="${reviewedUser.profileImage} ?: '/images/default-profile.png'"
               alt="Profile Image"
@@ -40,45 +50,78 @@
             <h3 th:text="${reviewedUser.nickname}"></h3>
             <p th:text="${reviewedUser.bio}"></p>
             <div class="user-info">
-              <span
-                th:text="${reviewedUser.isHost == 0 ? '게스트' : (reviewedUser.isHost == 1 ? '호스트' : '관리자')}"
-              ></span>
-              · <span th:text="${reviewedUser.nationality}"></span> ·
-              <span
-                th:text="${reviewedUser.gender == 0 ? '남성' : (reviewedUser.gender == 1 ? '여성' : '기타')}"
-              ></span>
-              · <span th:text="${reviewedUser.languages}"></span> ·
-              <span th:text="${reviewedUser.religion}"></span>
+              <div class="user-info-item">
+                <i class="fas fa-globe"></i>
+                <span class="label">국적</span>
+                <span
+                  class="value"
+                  th:text="${reviewedUser.nationality}"
+                ></span>
+              </div>
+
+              <div class="user-info-item">
+                <i class="fas fa-user"></i>
+                <span class="label">성별</span>
+                <span
+                  class="value"
+                  th:text="${reviewedUser.gender == 0 ? '남성' : (reviewedUser.gender == 1 ? '여성' : '기타')}"
+                ></span>
+              </div>
+
+              <div class="user-info-item">
+                <i class="fas fa-language"></i>
+                <span class="label">사용 언어</span>
+                <div class="languages-container">
+                  <th:block th:each="lang : ${languageList}">
+                    <img
+                      th:src="${lang.flag}"
+                      class="flag-icon"
+                      th:alt="${lang.name}"
+                    />
+                  </th:block>
+                </div>
+              </div>
+
+              <div class="user-info-item">
+                <i class="fas fa-praying-hands"></i>
+                <span class="label">종교</span>
+                <span class="value" th:text="${reviewedUser.religion}"></span>
+              </div>
             </div>
 
             <div class="rating-box">
-              <div>
-                <p>청결도</p>
-                <p
-                  th:text="${#numbers.formatDecimal(averageCleanliness, 1, 2)}"
-                ></p>
+              <div class="rating-item">
+                <i class="fas fa-broom"></i>
+                <span>청결도:</span>
+                <span
+                  th:text="|${averageCleanliness == 0 ? 0 : #numbers.formatDecimal(averageCleanliness, 1, 2)}점|"
+                ></span>
               </div>
-              <div>
-                <p>신뢰도</p>
-                <p th:text="${#numbers.formatDecimal(averageTrust, 1, 2)}"></p>
+              <div class="rating-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>신뢰도:</span>
+                <span
+                  th:text="|${averageTrust == 0 ? 0 : #numbers.formatDecimal(averageTrust, 1, 2)}점|"
+                ></span>
               </div>
-              <div>
-                <p>소통 능력</p>
-                <p
-                  th:text="${#numbers.formatDecimal(averageCommunication, 1, 2)}"
-                ></p>
+              <div class="rating-item">
+                <i class="fas fa-comments"></i>
+                <span>소통:</span>
+                <span
+                  th:text="|${averageCommunication == 0 ? 0 : #numbers.formatDecimal(averageCommunication, 1, 2)}점|"
+                ></span>
               </div>
-              <div>
-                <p>매너</p>
-                <p th:text="${#numbers.formatDecimal(averageManner, 1, 2)}"></p>
+              <div class="rating-item">
+                <i class="fas fa-handshake"></i>
+                <span>매너:</span>
+                <span
+                  th:text="|${averageManner == 0 ? 0 : #numbers.formatDecimal(averageManner, 1, 2)}점|"
+                ></span>
               </div>
             </div>
           </div>
 
           <div class="user-actions mt-3">
-            <button id="shareButton" class="btn btn-outline-secondary">
-              공유하기
-            </button>
             <button
               class="write-review-btn"
               id="writeReviewBtn"
@@ -87,6 +130,14 @@
               th:data-login-user-id="${loginUserId}"
             >
               ✍ 리뷰 작성
+            </button>
+            <button id="shareButton" class="btn-kakao">
+              <img
+                src="/images/kakaotalk_share.png"
+                alt="카카오톡 공유"
+                class="kakao-icon"
+              />
+              공유하기
             </button>
           </div>
         </aside>
@@ -115,16 +166,21 @@
             hidden
           ></p>
 
-          <div
+          <!-- <div
             class="review-header d-flex justify-content-between align-items-center"
           >
-            <h4>후기 <span th:text="|총 ${#lists.size(reviews)}개|"></span></h4>
+            <h2>후기 <span th:text="|총 ${#lists.size(reviews)}개|"></span></h2>
             <select id="reviewFilter" class="form-select w-auto">
               <option value="latest" selected>최신순</option>
               <option value="oldest">오래된순</option>
               <option value="rating">별점순</option>
             </select>
-          </div>
+          </div> -->
+          <th:block th:if="${#lists.size(reviews) == 0}">
+            <div class="no-review-message">
+              <span>현재 작성된 리뷰가 없습니다.</span>
+            </div>
+          </th:block>
 
           <div class="review-list" id="reviewList">
             <div th:fragment="reviewListFragment">
@@ -133,40 +189,107 @@
                 th:id="|review-${review.reviewId}|"
                 th:each="review : ${reviews}"
               >
-                <!-- 리뷰 정보 -->
                 <div class="review-left">
+                  <!-- 프로필 이미지 -->
                   <img
                     class="reviewer-img"
-                    th:src="@{/images/default-profile.png}"
+                    th:src="${review.reviewerDTO.profileImage}"
                     alt="프로필"
                   />
+
+                  <!-- 리뷰 내용 -->
                   <div class="review-content">
-                    <p class="review-name">
-                      리뷰 작성자: <span th:text="${review.reviewerId}"></span>
-                    </p>
-                    <p class="review-meta">
-                      <span
-                        th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}"
-                      ></span>
-                    </p>
-                    <p class="review-text" th:text="${review.comment}"></p>
-                    <div class="mt-2">
-                      <a
-                        th:href="@{/review/reviewUpdate(reviewId=${review.reviewId})}"
-                        class="btn btn-sm btn-outline-primary me-2"
-                        >수정</a
-                      >
-                      <button
-                        class="btn btn-sm btn-outline-danger delete-review"
-                        th:data-review-id="${review.reviewId}"
-                      >
-                        삭제
-                      </button>
+                    <!-- 상단 영역: 작성자 + 날짜 (우측 정렬) -->
+                    <div class="review-header">
+                      <p class="review-name">
+                        <span th:text="${review.reviewerDTO.nickname}"></span>
+                      </p>
+                      <p class="review-meta">
+                        <span
+                          th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}"
+                        ></span>
+                      </p>
                     </div>
+
+                    <!-- 리뷰 본문 -->
+                    <p class="review-text" th:text="${review.comment}"></p>
+
+                    <!-- 별점 -->
+                    <div class="review-ratings">
+                      <div class="each-ratings">
+                        <span><strong>청결도</strong></span>
+                        <div class="stars">
+                          <span
+                            th:utext="${'★'.repeat(review.cleanlinessRating)}"
+                          ></span>
+                          <span
+                            class="gray-stars"
+                            th:utext="${'★'.repeat(5 - review.cleanlinessRating)}"
+                          ></span>
+                        </div>
+                      </div>
+
+                      <div class="each-ratings">
+                        <span><strong>신뢰도</strong></span>
+                        <div class="stars">
+                          <span
+                            th:utext="${'★'.repeat(review.trustRating)}"
+                          ></span>
+                          <span
+                            class="gray-stars"
+                            th:utext="${'★'.repeat(5 - review.trustRating)}"
+                          ></span>
+                        </div>
+                      </div>
+
+                      <div class="each-ratings">
+                        <span><strong>소통</strong></span>
+                        <div class="stars">
+                          <span
+                            th:utext="${'★'.repeat(review.communicationRating)}"
+                          ></span>
+                          <span
+                            class="gray-stars"
+                            th:utext="${'★'.repeat(5 - review.communicationRating)}"
+                          ></span>
+                        </div>
+                      </div>
+
+                      <div class="each-ratings">
+                        <span><strong>매너</strong></span>
+                        <div class="stars">
+                          <span
+                            th:utext="${'★'.repeat(review.mannerRating)}"
+                          ></span>
+                          <span
+                            class="gray-stars"
+                            th:utext="${'★'.repeat(5 - review.mannerRating)}"
+                          ></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 하단 영역: 수정/삭제 버튼 (우측 정렬) -->
+                    <th:block
+                      th:if="${loggedUserId == review.reviewerDTO.userId}"
+                    >
+                      <div class="review-actions">
+                        <a
+                          th:href="@{/review/reviewUpdate(reviewId=${review.reviewId})}"
+                          class="btn btn-sm btn-outline-primary"
+                          >수정</a
+                        >
+                        <button
+                          class="btn btn-sm btn-outline-danger delete-review"
+                          th:data-review-id="${review.reviewId}"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </th:block>
                   </div>
                 </div>
               </div>
-              <!-- //.review-card -->
             </div>
           </div>
         </section>

@@ -35,13 +35,15 @@ public class RoommateService {
 				UserEntity user = userRepository.findByLoginId(loginId);
 				if(user == null) return;
 				
-		// 2. shareEntity 가져오기
+		// 2. shareEntity 가져오기 + share status를 living 으로 변경
 				Optional<ShareEntity> shareTemp = shareRepository.findById(roommateDTO.getShareId());
 				if(shareTemp.isEmpty()) return;
 				ShareEntity share = shareTemp.get();
+				share.setStatus("living");
+				ShareEntity updatedShare = shareRepository.save(share);
 				
 		// 3. roommateEntity 생성
-				RoommateEntity roommateEntity = RoommateEntity.toEntity(roommateDTO,user, share);
+				RoommateEntity roommateEntity = RoommateEntity.toEntity(roommateDTO, user, updatedShare);
 				
 		// 4. DB에 저장
 				roommateRepository.save(roommateEntity);	
