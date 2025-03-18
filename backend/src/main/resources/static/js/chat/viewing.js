@@ -309,7 +309,15 @@ function deleteViewing() {
   let viewingId = $(this).attr("data-seq");
   let role = $(this).attr("data-role");
 
-  if (confirm("viewing을 취소하시겠습니까? 취소 이후 번복할 수 없습니다.")) {
+  Swal.fire({
+    title: "Viewing Cancel",
+    text: "viewing을 취소하시겠습니까? 취소 이후 번복할 수 없습니다.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Viewing 취소",
+  }).then((result) => {
     $.ajax({
       url: "/viewing/cancel",
       method: "DELETE",
@@ -324,7 +332,7 @@ function deleteViewing() {
         initModal(role);
       },
     });
-  }
+  });
 }
 
 function confirmViewing() {

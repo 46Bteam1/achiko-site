@@ -148,7 +148,6 @@ public class MypageRestController {
 		}
 
 		Long userId = loginUser.getUserId();
-		System.out.println("============== 회원 탈퇴 userId: " + userId);
 
 		String password = request.get("password");
 

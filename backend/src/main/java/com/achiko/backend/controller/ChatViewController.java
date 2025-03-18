@@ -26,6 +26,7 @@ public class ChatViewController {
 		Long userId = userService.getUserId(loginUser.getLoginId());
 		String nickname = userService.getUserName(loginUser.getUserId());
 		String role = userService.getIsGuest(userId);
+		String profileImage = userService.getImage(userId);
 		Long shareId = chatService.getShareId(chatroomId);
 		
 		model.addAttribute("chatroomId", chatroomId);
@@ -33,6 +34,7 @@ public class ChatViewController {
 		model.addAttribute("nickname", nickname);
 		model.addAttribute("role", role);
 		model.addAttribute("shareId", shareId);
+		model.addAttribute("profileImage", profileImage);
 		return "chat/chatList";
 	}
 	
