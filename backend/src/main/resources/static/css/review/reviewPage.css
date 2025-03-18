@@ -297,6 +297,10 @@ main {
   margin-bottom: 15px;
 }
 
+.review-header h2 {
+  font-size: 20px;
+}
+
 .review-list {
   flex-grow: 1;
   overflow-y: auto;
