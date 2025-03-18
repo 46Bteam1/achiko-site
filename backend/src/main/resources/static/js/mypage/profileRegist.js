@@ -247,7 +247,7 @@ function getChatRooms(resp) {
     $.each(resp, function (index, item) {
       let profileImage = item["profileImage"]
         ? item["profileImage"]
-        : "/images/fubao.webp";
+        : "/images/default-profile.png";
       const nickname = $("#userNickname").val();
       let nicknameCheck = item["hostNickname"] === nickname;
       let displayNickname = nicknameCheck
@@ -330,3 +330,15 @@ function deleteShare() {
     },
   });
 }
+
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('alert') === '1') {
+		alert("프로필에 추가 정보를 입력해주세요.");
+		setTimeout(function() {
+			$("#openModal").click();
+        }, 100); // 100ms 지연
+    }
+}
+
+

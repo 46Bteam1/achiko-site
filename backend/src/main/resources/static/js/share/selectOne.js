@@ -305,47 +305,53 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ★ 게스트 조회 모달 관련
-  const guestModal = document.getElementById("guestModal");
-  const confirmedGuestButton = document.getElementById("confirmedGuest");
-  const guestModalClose = document.getElementById("guestModalClose");
-  confirmedGuestButton.addEventListener("click", function () {
-    guestModal.style.display = "block";
-    document.body.classList.add("modal-open");
-  });
-  guestModalClose.addEventListener("click", function () {
-    guestModal.style.display = "none";
-    document.body.classList.remove("modal-open");
-  });
-  window.addEventListener("click", function (event) {
-    if (event.target === guestModal) {
-      guestModal.style.display = "none";
-      document.body.classList.remove("modal-open");
-    }
-  });
+  // const guestModal = document.getElementById("guestModal");
+  // const confirmedGuestButton = document.getElementById("confirmedGuest");
+  // const guestModalClose = document.getElementById("guestModalClose");
+  // confirmedGuestButton.addEventListener("click", function () {
+  //   guestModal.style.display = "block";
+  //   document.body.classList.add("modal-open");
+  // });
+  // guestModalClose.addEventListener("click", function () {
+  //   guestModal.style.display = "none";
+  //   document.body.classList.remove("modal-open");
+  // });
+  // window.addEventListener("click", function (event) {
+  //   if (event.target === guestModal) {
+  //     guestModal.style.display = "none";
+  //     document.body.classList.remove("modal-open");
+  //   }
+  // });
 
   // ★ 메시지 보내기 모달 관련
   const messageModal = document.getElementById("messageModal");
   const messageHostBtn = document.getElementById("messageHostBtn");
   const messageModalClose = document.getElementById("messageModalClose");
   const noMessageBtn = document.getElementById("noMessageBtn");
-  messageHostBtn.addEventListener("click", function () {
-    messageModal.style.display = "block";
-    document.body.classList.add("modal-open");
-  });
-  messageModalClose.addEventListener("click", function () {
-    messageModal.style.display = "none";
-    document.body.classList.remove("modal-open");
-  });
-  noMessageBtn.addEventListener("click", function () {
-    messageModal.style.display = "none";
-    document.body.classList.remove("modal-open");
-  });
-  window.addEventListener("click", function (event) {
-    if (event.target === messageModal) {
+  if (messageHostBtn && messageModal) {
+    messageHostBtn.addEventListener("click", function (event) {
+      event.preventDefault(); // 버튼의 기본 동작 방지
+      messageModal.style.display = "block";
+      document.body.classList.add("modal-open");
+    });
+
+    messageModalClose.addEventListener("click", function () {
       messageModal.style.display = "none";
       document.body.classList.remove("modal-open");
-    }
-  });
+    });
+
+    noMessageBtn.addEventListener("click", function () {
+      messageModal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    });
+
+    window.addEventListener("click", function (event) {
+      if (event.target === messageModal) {
+        messageModal.style.display = "none";
+        document.body.classList.remove("modal-open");
+      }
+    });
+  }
 });
 
 // 카카오 공유 버튼 이벤트 (window.onload 사용)

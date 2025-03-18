@@ -1,12 +1,13 @@
 package com.achiko.backend.controller;
 
+import java.security.Principal;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.service.ChatService;
 import com.achiko.backend.service.UserService;
@@ -23,7 +24,7 @@ public class ChatViewController {
 	public String chatList(@RequestParam(name="chatroomId") Long chatroomId, Model model,
 			@AuthenticationPrincipal PrincipalDetails loginUser) {
 		Long userId = userService.getUserId(loginUser.getLoginId());
-		String nickname = loginUser.getNickname();
+		String nickname = userService.getUserName(loginUser.getUserId());
 		String role = userService.getIsGuest(userId);
 		Long shareId = chatService.getShareId(chatroomId);
 		
@@ -38,7 +39,6 @@ public class ChatViewController {
 	@GetMapping("/chatRooms")
 	public String chatRoom(Model model,
 			@AuthenticationPrincipal PrincipalDetails loginUser) {
-		
 		model.addAttribute("user", loginUser);
 		return "chat/chatRooms";
 	}
