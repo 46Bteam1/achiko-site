@@ -70,6 +70,7 @@ public class ReviewViewController {
 		DoubleSummaryStatistics mannerStats = reviews.stream().mapToDouble(ReviewDTO::getMannerRating)
 				.summaryStatistics();
 
+		model.addAttribute("isSubscribed", loginUser.getReceiptId());
 		model.addAttribute("averageCleanliness", cleanlinessStats.getAverage());
 		model.addAttribute("averageTrust", trustStats.getAverage());
 		model.addAttribute("averageCommunication", communicationStats.getAverage());

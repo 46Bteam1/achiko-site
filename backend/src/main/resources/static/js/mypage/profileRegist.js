@@ -3,14 +3,24 @@ $(document).ready(function () {
 
   // 프로필 등록/수정 모달 동작
   $("#openModal").on("click", function () {
-    $("#profileModal").modal("show");
+    $("#profileModal").addClass("show").css("display", "block");
+    $("#profileModal").addClass("modal-open");
+    $("body").addClass("modalopen").css("overflow-y", "hidden");
+  });
+  // 모달 닫기
+  $("#closeModal").on("click", function () {
+    $("#profileModal").removeClass("show").css("display", "none");
+    $("#profileModal").removeClass("modal-open");
+    $("body").removeClass("modalopen").css("overflow-y", "auto");
   });
 
-  $("#closeModal").on("click", function () {
-    $("#profileModal").modal("hide");
-  });
-  $("#registImage").on("click", function () {
-    $("#registImageModal").modal("show");
+  // 모달 바깥을 클릭하면 닫기
+  $("#profileModal").on("click", function (event) {
+    if ($(event.target).is("#profileModal")) {
+      $("#profileModal").removeClass("show").css("display", "none");
+      $("#profileModal").removeClass("modal-open");
+      $("body").removeClass("modalopen").css("overflow-y", "auto");
+    }
   });
 
   // 각 입력 필드에서 포커스가 벗어날 때 유효성 검사 실행
@@ -29,6 +39,51 @@ $(document).ready(function () {
 
   // 프로필 사진 미리보기
   $("#profileImageInput").change(previewProfileImage);
+  // 프로필 사진 등록 버튼 클릭 시 registImageModal
+  $("#registImage").on("click", function () {
+    $("#registImageModal").addClass("show").css("display", "block");
+    $("#registImageModal").addClass("modal-open");
+    $("body").addClass("modalopen").css("overflow-y", "hidden");
+  });
+
+  // 모달 닫기
+  $("#closeModal2").on("click", function () {
+    $("#registImageModal").removeClass("show").css("display", "none");
+    $("#registImageModal").removeClass("modal-open");
+    $("body").removeClass("modalopen").css("overflow-y", "auto");
+  });
+
+  // 모달 바깥을 클릭하면 닫기
+  $("#registImageModal").on("click", function (event) {
+    if ($(event.target).is("#registImageModal")) {
+      $("#registImageModal").removeClass("show").css("display", "none");
+      $("#registImageModal").removeClass("modal-open");
+      $("body").removeClass("modalopen").css("overflow-y", "auto");
+    }
+  });
+
+  // 회원 탈퇴 버튼 클릭 시 openDUModal
+  $("#openDUModal").on("click", function () {
+    $("#deleteUserModal").addClass("show").css("display", "block");
+    $("#deleteUserModal").addClass("modal-open");
+    $("body").addClass("modalopen").css("overflow-y", "hidden");
+  });
+
+  // 모달 닫기
+  $("#closeModal3").on("click", function () {
+    $("#deleteUserModal").removeClass("show").css("display", "none");
+    $("#deleteUserModal").removeClass("modal-open");
+    $("body").removeClass("modalopen").css("overflow-y", "auto");
+  });
+
+  // 모달 바깥을 클릭하면 닫기
+  $("#deleteUserModal").on("click", function (event) {
+    if ($(event.target).is("#deleteUserModal")) {
+      $("#deleteUserModal").removeClass("show").css("display", "none");
+      $("#deleteUserModal").removeClass("modal-open");
+      $("body").removeClass("modalopen").css("overflow-y", "auto");
+    }
+  });
 
   // 모달창 내 등록하기 버튼 누르면 프로필 이미지 등록
   $("#registImageBtn").on("click", handleImageUpload);
@@ -273,11 +328,16 @@ function saveImageToServer(webpImage) {
     success: function (response) {
       alert("이미지 업로드 성공!");
       console.log(response);
-      $("#registImageModal").modal("hide");
+      $("#registImageModal").removeClass("show").css("display", "none");
+      $("#registImageModal").removeClass("modal-open");
+      $("body").removeClass("modalopen").css("overflow-y", "auto");
     },
     error: function (error) {
       alert("이미지 업로드 실패!");
       console.log(error);
+      $("#registImageModal").removeClass("show").css("display", "none");
+      $("#registImageModal").removeClass("modal-open");
+      $("body").removeClass("modalopen").css("overflow-y", "auto");
     },
   });
 }
@@ -295,7 +355,8 @@ function deleteUser() {
     }),
     success: function (response) {
       if (response.success) {
-        $("#deleteUserModal").modal("hide");
+        $("#deleteUserModal").removeClass("show").css("display", "none");
+        $("#profileModal").removeClass("modal-open");
         alert("회원 탈퇴 접수가 완료되었습니다.");
         window.location.href = "/index";
       } else {
@@ -345,7 +406,7 @@ function getChatRooms(resp) {
   if (!resp || resp.length === 0) {
     tag += `
         <tr>
-            <td colspan="3" style="text-align:center; color:grey">활성화 된 채팅이 없습니다.</td>
+            <td colspan="4" class="no-data">활성화 된 채팅이 없습니다.</td>
         </tr>
     `;
   } else {

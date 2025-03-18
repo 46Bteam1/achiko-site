@@ -42,7 +42,11 @@
     <main>
       <article class="near-trip">
         <section id="listings-container" class="listings-grid">
-          <div th:each="listing : ${shareList}" class="listing-card">
+          <div
+            class="listing-card"
+            th:each="listing, iterStat : ${shareList}"
+            th:classappend="${(isSubscribed == null or isSubscribed == '') and iterStat.index >= 5} ? 'blur-effect' : ''"
+          >
             <a
               th:href="@{/share/selectOne(shareId=${listing.shareId})}"
               class="listing-link"

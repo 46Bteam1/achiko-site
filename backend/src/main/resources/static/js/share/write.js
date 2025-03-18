@@ -255,15 +255,23 @@ function fetchEnglishAddress(lat, lng) {
 // 미리보기 영역을 업데이트하는 함수
 function renderPhotoPreview() {
   const previewContainer = document.getElementById("photoPreview");
-  previewContainer.innerHTML = "";
+
+  const existingLabel = document.querySelector(".photo-upload-button");
+  const photoInput = document.getElementById("photos");
+  previewContainer.innerHTML = ""; // 모든 내용을 지우고
+
+  // 업로드 버튼(label)이 사라지지 않도록 다시 추가
+  if (existingLabel) {
+    previewContainer.appendChild(existingLabel);
+    previewContainer.appendChild(photoInput);
+  }
   previewContainer.style.display = "flex";
   previewContainer.style.flexWrap = "wrap";
-  previewContainer.style.justifyContent = "center";
   previewContainer.style.gap = "10px";
 
   selectedFiles.forEach((item, idx) => {
     const container = document.createElement("div");
-    container.style.textAlign = "center";
+    container.className = "previewImgContainer";
 
     // 이미지 미리보기
     const img = document.createElement("img");
@@ -273,31 +281,29 @@ function renderPhotoPreview() {
       img.src = e.target.result;
     };
     reader.readAsDataURL(item.file);
-    img.style.width = "150px";
-    img.style.display = "block";
-    img.style.marginBottom = "5px";
+    img.className = "previewImg";
+
     container.appendChild(img);
 
     // 순번 표시
     const fileNumberDiv = document.createElement("div");
     fileNumberDiv.textContent = `${idx + 1}`;
-    fileNumberDiv.style.fontSize = "0.9em";
-    fileNumberDiv.style.color = "#555";
+    fileNumberDiv.className = "previewImgNum";
     container.appendChild(fileNumberDiv);
 
     // "수정" 버튼
     const modifyBtn = document.createElement("button");
     modifyBtn.type = "button";
     modifyBtn.textContent = "수정";
-    modifyBtn.style.marginRight = "5px";
     modifyBtn.onclick = () => modifyFile(idx);
+    modifyBtn.className = "previewImgModifyBtn";
     container.appendChild(modifyBtn);
 
     // "삭제" 버튼
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
-    deleteBtn.textContent = "삭제";
     deleteBtn.onclick = () => deleteFile(idx);
+    deleteBtn.className = "previewImgDeleteBtn";
     container.appendChild(deleteBtn);
 
     previewContainer.appendChild(container);
