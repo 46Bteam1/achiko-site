@@ -4,7 +4,7 @@ $(function () {
   const userId = $("#userId").val();
 
   $("#toMyPageBtn").on("click", function () {
-    window.location.href = `/mypage/mypageSample?userId=${userId}`;
+    window.location.href = `/mypage/mypageV?userId=${userId}`;
   });
 });
 
