@@ -101,6 +101,8 @@
       th:src="@{/js/share/selectOne.js}"
       defer
     ></script>
+
+    <script th:src="@{/js/toggle.js}" defer></script>
   </head>
 
   <body>
@@ -404,7 +406,11 @@
       </section>
 
       <section class="roommate-section">
-        <h2>확정된 하우스메이트 정보</h2>
+        <th:block
+          th:if="${roommateList != null and #lists.size(roommateList) > 0}"
+        >
+          <h2>확정된 하우스메이트 정보</h2>
+        </th:block>
         <div class="roommate-container">
           <div class="roommate-card" th:each="roommate : ${roommateList}">
             <div class="roommate-image">
@@ -503,22 +509,9 @@
       <div id="messageModal" class="modal">
         <div class="modal-content">
           <span class="close" id="messageModalClose">&times;</span>
-          <h2>SEND A MESSAGE TO HOST</h2>
+          <h2>호스트에게 메세지 보내기</h2>
           <br />
           <h2 th:text="${share.title}" style="color: slategrey">게시글 제목</h2>
-          <div class="host-first-image">
-            <th:block th:if="${fileList != null and #lists.size(fileList) > 0}">
-              <img
-                th:src="${fileList[0].fileUrl}"
-                alt="첫번째 방 사진"
-                width="500px"
-                length="300px"
-              />
-            </th:block>
-            <th:block th:if="${fileList == null or #lists.size(fileList) == 0}">
-              <p>No file available.</p>
-            </th:block>
-          </div>
           <div>
             <img
               th:src="${hostUser.profileImage != null and !#strings.isEmpty(hostUser.profileImage) ? hostUser.profileImage : '/images/default-profile.webp'}"
@@ -535,8 +528,10 @@
             >
           </div>
           <br />호스트에게 메시지를 보내겠습니까?<br /><br />
-          <button id="yesMessageBtn">YES</button>
-          <button id="noMessageBtn">NO</button>
+          <div class="messageHostBtn">
+            <button id="yesMessageBtn">YES</button>
+            <button id="noMessageBtn">NO</button>
+          </div>
         </div>
       </div>
     </main>

@@ -534,3 +534,9 @@ body.modal-open {
     display: block;
   }
 }
+
+.blur-effect {
+  filter: blur(3px); /* 블러 정도 조절 가능 */
+  pointer-events: none; /* 클릭 비활성화 */
+  user-select: none; /* 선택 비활성화 */
+}
