@@ -6,6 +6,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.achiko.backend.dto.FavoriteDTO;
 import com.achiko.backend.dto.LoginUserDetails;
@@ -80,4 +83,31 @@ public class MypageViewController {
 		return "mypage/mypageSample";
 	}
 
+	// 게스트/호스트 전환 요청을 처리하는 메서드
+	@PostMapping("/mypage/changeToGuest")
+	public String changeToGuest(@RequestParam("userId") Long userId, RedirectAttributes redirectAttributes) {
+
+		String result = mypageService.changeToGuest(userId);
+
+		if ("MATCHING_IN_PROGRESS".equals(result)) {
+			redirectAttributes.addFlashAttribute("errorMessage",
+					"매칭이 진행 중인 쉐어하우스가 있습니다. 매칭이 완료 되었다면 진행 중인 쉐어를 종료해주세요.");
+			return "redirect:/mypage/mypageSample";
+		}
+		return "redirect:/mypage/mypageView";
+	}
+
+	// 매칭이 완료 된 쉐어 글의 상태(status)를 종료(closed)
+	@PostMapping("/mypage/closeShare")
+	public String closeShare(@RequestParam("userId") Long userId, @AuthenticationPrincipal LoginUserDetails loginUser, RedirectAttributes redirectAttributes) {
+		boolean isClosed = mypageService.closeShare(userId, loginUser);
+
+		if (isClosed) {
+			redirectAttributes.addFlashAttribute("successMessage", "쉐어하우스 매칭이 종료되었습니다.");
+		} else {
+			redirectAttributes.addFlashAttribute("errorMessage", "종료할 쉐어하우스가 없습니다.");
+		}
+
+		return "redirect:/mypage/mypageView";
+	}
 }
