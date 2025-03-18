@@ -88,13 +88,12 @@ let passwordCheck = false;
 			success: function(resp) { // resp=true : 중복X / resp=false : 중복O
 				if(resp){
 					emailDuplicateChk = true;
-					
+					alert("인증메일이 전송되었습니다.");
 					$.ajax({
 						url: '/user/sendEmail',
 						method: 'POST',
 						data: { "email" : email },
-						success: function (resp) {
-							alert("인증메일이 전송되었습니다.");	
+						success: function (resp) {	
 						},
 						complete: function() {
 	                        // 3초 후 다시 이벤트 핸들러 추가 (사용자가 재시도 가능하도록)
