@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.achiko.backend.dto.FavoriteDTO;
-import com.achiko.backend.dto.LoginUserDetails;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.dto.ReviewReplyDTO;
 import com.achiko.backend.dto.ShareDTO;
@@ -107,7 +107,7 @@ public class MypageService {
 
 	// 쉐어 종료 버튼 -> 쉐어 종료, 채팅방 삭제
 	@Transactional
-	public boolean closeShare(Long userId, LoginUserDetails loginUser) {		
+	public boolean closeShare(Long userId, PrincipalDetails loginUser) {		
 		Optional<UserEntity> temp = userRepository.findById(userId);
 		
 		if(temp.isEmpty()) return false;

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.achiko.backend.dto.FavoriteDTO;
-import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ReviewDTO;
 import com.achiko.backend.dto.ReviewReplyDTO;
@@ -99,7 +98,7 @@ public class MypageViewController {
 
 	// 매칭이 완료 된 쉐어 글의 상태(status)를 종료(closed)
 	@PostMapping("/mypage/closeShare")
-	public String closeShare(@RequestParam("userId") Long userId, @AuthenticationPrincipal LoginUserDetails loginUser, RedirectAttributes redirectAttributes) {
+	public String closeShare(@RequestParam("userId") Long userId, @AuthenticationPrincipal PrincipalDetails loginUser, RedirectAttributes redirectAttributes) {
 		boolean isClosed = mypageService.closeShare(userId, loginUser);
 
 		if (isClosed) {
