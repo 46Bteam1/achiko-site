@@ -84,11 +84,10 @@
           </div>
         </aside>
 
-        <div class="right-section">
+        <section class="review-update-container">
           <div class="review-header">
             <span th:text="${reviewedUserName}"></span>님의 후기 수정
           </div>
-          <div class="review-description">수정 후 다시 제출해주세요.</div>
 
           <form th:action="@{/review/update}" method="post">
             <input
@@ -102,184 +101,190 @@
               th:value="${review.reviewedUserId}"
             />
 
-            <!-- ✅ 청결도 -->
-            <div class="rating-box">
-              <p>
-                <strong>청결도</strong>
-              </p>
-              <div class="stars">
-                <input
-                  type="radio"
-                  name="cleanlinessRating"
-                  value="5"
-                  id="cleanliness-5"
-                  th:checked="${review.cleanlinessRating == 5}"
-                /><label for="cleanliness-5">★</label>
-                <input
-                  type="radio"
-                  name="cleanlinessRating"
-                  value="4"
-                  id="cleanliness-4"
-                  th:checked="${review.cleanlinessRating == 4}"
-                /><label for="cleanliness-4">★</label>
-                <input
-                  type="radio"
-                  name="cleanlinessRating"
-                  value="3"
-                  id="cleanliness-3"
-                  th:checked="${review.cleanlinessRating == 3}"
-                /><label for="cleanliness-3">★</label>
-                <input
-                  type="radio"
-                  name="cleanlinessRating"
-                  value="2"
-                  id="cleanliness-2"
-                  th:checked="${review.cleanlinessRating == 2}"
-                /><label for="cleanliness-2">★</label>
-                <input
-                  type="radio"
-                  name="cleanlinessRating"
-                  value="1"
-                  id="cleanliness-1"
-                  th:checked="${review.cleanlinessRating == 1}"
-                /><label for="cleanliness-1">★</label>
+            <div class="rating-container">
+              <!-- ✅ 청결도 -->
+              <div class="rating-box">
+                <p>
+                  <strong>청결도</strong>
+                </p>
+                <p>룸메이트는 회원님이 예상한 것만큼 청결했나요?</p>
+                <div class="stars">
+                  <input
+                    type="radio"
+                    name="cleanlinessRating"
+                    value="5"
+                    id="cleanliness-5"
+                    th:checked="${review.cleanlinessRating == 5}"
+                  /><label for="cleanliness-5">★</label>
+                  <input
+                    type="radio"
+                    name="cleanlinessRating"
+                    value="4"
+                    id="cleanliness-4"
+                    th:checked="${review.cleanlinessRating == 4}"
+                  /><label for="cleanliness-4">★</label>
+                  <input
+                    type="radio"
+                    name="cleanlinessRating"
+                    value="3"
+                    id="cleanliness-3"
+                    th:checked="${review.cleanlinessRating == 3}"
+                  /><label for="cleanliness-3">★</label>
+                  <input
+                    type="radio"
+                    name="cleanlinessRating"
+                    value="2"
+                    id="cleanliness-2"
+                    th:checked="${review.cleanlinessRating == 2}"
+                  /><label for="cleanliness-2">★</label>
+                  <input
+                    type="radio"
+                    name="cleanlinessRating"
+                    value="1"
+                    id="cleanliness-1"
+                    th:checked="${review.cleanlinessRating == 1}"
+                  /><label for="cleanliness-1">★</label>
+                </div>
               </div>
-            </div>
 
-            <!-- ✅ 신뢰도 -->
-            <div class="rating-box">
-              <p>
-                <strong>신뢰도</strong>
-              </p>
-              <div class="stars">
-                <input
-                  type="radio"
-                  name="trustRating"
-                  value="5"
-                  id="trust-5"
-                  th:checked="${review.trustRating == 5}"
-                /><label for="trust-5">★</label>
-                <input
-                  type="radio"
-                  name="trustRating"
-                  value="4"
-                  id="trust-4"
-                  th:checked="${review.trustRating == 4}"
-                /><label for="trust-4">★</label>
-                <input
-                  type="radio"
-                  name="trustRating"
-                  value="3"
-                  id="trust-3"
-                  th:checked="${review.trustRating == 3}"
-                /><label for="trust-3">★</label>
-                <input
-                  type="radio"
-                  name="trustRating"
-                  value="2"
-                  id="trust-2"
-                  th:checked="${review.trustRating == 2}"
-                /><label for="trust-2">★</label>
-                <input
-                  type="radio"
-                  name="trustRating"
-                  value="1"
-                  id="trust-1"
-                  th:checked="${review.trustRating == 1}"
-                /><label for="trust-1">★</label>
+              <!-- ✅ 신뢰도 -->
+              <div class="rating-box">
+                <p>
+                  <strong>신뢰도</strong>
+                </p>
+                <p>룸메이트는 신뢰할 수 있었나요?</p>
+                <div class="stars">
+                  <input
+                    type="radio"
+                    name="trustRating"
+                    value="5"
+                    id="trust-5"
+                    th:checked="${review.trustRating == 5}"
+                  /><label for="trust-5">★</label>
+                  <input
+                    type="radio"
+                    name="trustRating"
+                    value="4"
+                    id="trust-4"
+                    th:checked="${review.trustRating == 4}"
+                  /><label for="trust-4">★</label>
+                  <input
+                    type="radio"
+                    name="trustRating"
+                    value="3"
+                    id="trust-3"
+                    th:checked="${review.trustRating == 3}"
+                  /><label for="trust-3">★</label>
+                  <input
+                    type="radio"
+                    name="trustRating"
+                    value="2"
+                    id="trust-2"
+                    th:checked="${review.trustRating == 2}"
+                  /><label for="trust-2">★</label>
+                  <input
+                    type="radio"
+                    name="trustRating"
+                    value="1"
+                    id="trust-1"
+                    th:checked="${review.trustRating == 1}"
+                  /><label for="trust-1">★</label>
+                </div>
               </div>
-            </div>
 
-            <!-- ✅ 소통능력 -->
-            <div class="rating-box">
-              <p>
-                <strong>소통능력</strong>
-              </p>
-              <div class="stars">
-                <input
-                  type="radio"
-                  name="communicationRating"
-                  value="5"
-                  id="communication-5"
-                  th:checked="${review.communicationRating == 5}"
-                /><label for="communication-5">★</label>
-                <input
-                  type="radio"
-                  name="communicationRating"
-                  value="4"
-                  id="communication-4"
-                  th:checked="${review.communicationRating == 4}"
-                /><label for="communication-4">★</label>
-                <input
-                  type="radio"
-                  name="communicationRating"
-                  value="3"
-                  id="communication-3"
-                  th:checked="${review.communicationRating == 3}"
-                /><label for="communication-3">★</label>
-                <input
-                  type="radio"
-                  name="communicationRating"
-                  value="2"
-                  id="communication-2"
-                  th:checked="${review.communicationRating == 2}"
-                /><label for="communication-2">★</label>
-                <input
-                  type="radio"
-                  name="communicationRating"
-                  value="1"
-                  id="communication-1"
-                  th:checked="${review.communicationRating == 1}"
-                /><label for="communication-1">★</label>
+              <!-- ✅ 소통능력 -->
+              <div class="rating-box">
+                <p>
+                  <strong>소통능력</strong>
+                </p>
+                <p>룸메이트와의 의사소통은 원활했나요?</p>
+                <div class="stars">
+                  <input
+                    type="radio"
+                    name="communicationRating"
+                    value="5"
+                    id="communication-5"
+                    th:checked="${review.communicationRating == 5}"
+                  /><label for="communication-5">★</label>
+                  <input
+                    type="radio"
+                    name="communicationRating"
+                    value="4"
+                    id="communication-4"
+                    th:checked="${review.communicationRating == 4}"
+                  /><label for="communication-4">★</label>
+                  <input
+                    type="radio"
+                    name="communicationRating"
+                    value="3"
+                    id="communication-3"
+                    th:checked="${review.communicationRating == 3}"
+                  /><label for="communication-3">★</label>
+                  <input
+                    type="radio"
+                    name="communicationRating"
+                    value="2"
+                    id="communication-2"
+                    th:checked="${review.communicationRating == 2}"
+                  /><label for="communication-2">★</label>
+                  <input
+                    type="radio"
+                    name="communicationRating"
+                    value="1"
+                    id="communication-1"
+                    th:checked="${review.communicationRating == 1}"
+                  /><label for="communication-1">★</label>
+                </div>
               </div>
-            </div>
-            <!-- ✅ 매너 -->
-            <div class="rating-box">
-              <p>
-                <strong>매너</strong>
-              </p>
-              <p>숙소 제공자는 친절하고 매너가 좋았나요?</p>
-              <div class="stars">
-                <input
-                  type="radio"
-                  name="mannerRating"
-                  value="5"
-                  id="manner-5"
-                  th:checked="${review.mannerRating == 5}"
-                />
-                <label for="manner-5">★</label>
-                <input
-                  type="radio"
-                  name="mannerRating"
-                  value="4"
-                  id="manner-4"
-                  th:checked="${review.mannerRating == 4}"
-                />
-                <label for="manner-4">★</label>
-                <input
-                  type="radio"
-                  name="mannerRating"
-                  value="3"
-                  id="manner-3"
-                  th:checked="${review.mannerRating == 3}"
-                />
-                <label for="manner-3">★</label>
-                <input
-                  type="radio"
-                  name="mannerRating"
-                  value="2"
-                  id="manner-2"
-                  th:checked="${review.mannerRating == 2}"
-                />
-                <label for="manner-2">★</label>
-                <input
-                  type="radio"
-                  name="mannerRating"
-                  value="1"
-                  id="manner-1"
-                  th:checked="${review.mannerRating == 1}"
-                />
-                <label for="manner-1">★</label>
+
+              <!-- ✅ 매너 -->
+              <div class="rating-box">
+                <p>
+                  <strong>매너</strong>
+                </p>
+                <p>숙소 제공자는 친절하고 매너가 좋았나요?</p>
+                <div class="stars">
+                  <input
+                    type="radio"
+                    name="mannerRating"
+                    value="5"
+                    id="manner-5"
+                    th:checked="${review.mannerRating == 5}"
+                  />
+                  <label for="manner-5">★</label>
+                  <input
+                    type="radio"
+                    name="mannerRating"
+                    value="4"
+                    id="manner-4"
+                    th:checked="${review.mannerRating == 4}"
+                  />
+                  <label for="manner-4">★</label>
+                  <input
+                    type="radio"
+                    name="mannerRating"
+                    value="3"
+                    id="manner-3"
+                    th:checked="${review.mannerRating == 3}"
+                  />
+                  <label for="manner-3">★</label>
+                  <input
+                    type="radio"
+                    name="mannerRating"
+                    value="2"
+                    id="manner-2"
+                    th:checked="${review.mannerRating == 2}"
+                  />
+                  <label for="manner-2">★</label>
+                  <input
+                    type="radio"
+                    name="mannerRating"
+                    value="1"
+                    id="manner-1"
+                    th:checked="${review.mannerRating == 1}"
+                  />
+                  <label for="manner-1">★</label>
+                </div>
               </div>
             </div>
 
@@ -299,7 +304,7 @@
             <!-- ✅ 제출 버튼 -->
             <button type="submit" class="submit-btn">리뷰 수정</button>
           </form>
-        </div>
+        </section>
       </div>
     </main>
 

@@ -38,7 +38,7 @@ main {
 /*----------------------------------------------------  
   리뷰 등록 컨테이너 스타일  
 ----------------------------------------------------*/
-.review-regist-container {
+.review-update-container {
   flex: 1; /* 남은 공간 차지 */
   position: relative;
   /* z-index: 2;  */
@@ -300,7 +300,7 @@ main {
 
 /* 반응형: 화면이 좁을 때 한 줄로 정렬 */
 @media (max-width: 768px) {
-  .regist-container {
+  .update-container {
     flex-direction: column; /* 세로 정렬 */
   }
 

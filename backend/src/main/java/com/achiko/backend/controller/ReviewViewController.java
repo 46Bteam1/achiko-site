@@ -178,6 +178,21 @@ public class ReviewViewController {
 
 		model.addAttribute("ratingCategories", ratingCategories);
 		model.addAttribute("ratingFields", ratingFields);
+		
+		if (reviewedUserDTO.getLanguages() != null) {
+			List<Map<String, String>> languageList = Arrays.stream(reviewedUserDTO.getLanguages().split(","))
+					.map(String::trim).map(lang -> {
+						Map<String, String> langMap = new HashMap<>();
+						langMap.put("name", lang);
+						langMap.put("flag", getFlagImagePath(lang)); // 국기 이미지 경로 매핑
+						return langMap;
+					}).collect(Collectors.toList());
+
+			model.addAttribute("languageList", languageList);
+		} else {
+			model.addAttribute("languageList", Collections.emptyList());
+		}
+
 
 		return "review/reviewUpdate"; // templates/review/reviewUpdate.html과 연결
 	}
