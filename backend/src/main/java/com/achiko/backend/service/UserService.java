@@ -166,4 +166,14 @@ public class UserService {
 
 	}
 
+	public String getImage(Long userId) {
+		Optional<UserEntity> user = userRepository.findById(userId);
+		if (user.isEmpty())
+			return null;
+		UserEntity userEntity = user.get();
+		
+		String profileImage = userRepository.findProfileImageById(userEntity.getUserId());
+		return profileImage;
+	}
+
 }
