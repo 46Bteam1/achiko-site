@@ -331,14 +331,12 @@ function deleteShare() {
   });
 }
 
-window.onload = function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('alert') === '1') {
-		alert("프로필에 추가 정보를 입력해주세요.");
-		setTimeout(function() {
-			$("#openModal").click();
-        }, 100); // 100ms 지연
-    }
-}
-
-
+window.onload = function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("alert") === "1") {
+    alert("프로필에 추가 정보를 입력해주세요.");
+    setTimeout(function () {
+      $("#openModal").click();
+    }, 100); // 100ms 지연
+  }
+};

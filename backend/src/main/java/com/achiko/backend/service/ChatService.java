@@ -96,7 +96,7 @@ public class ChatService {
 		List<ChatMessageDTO> list = new ArrayList<>();
 		
 		entityList.forEach((e)->{
-			list.add(ChatMessageDTO.toDTO(e, e.getChatroom().getChatroomId(), e.getSender().getNickname()));
+			list.add(ChatMessageDTO.toDTO(e, e.getChatroom().getChatroomId(), e.getSender().getNickname(), e.getSender().getProfileImage()));
 			
 		});
 		
