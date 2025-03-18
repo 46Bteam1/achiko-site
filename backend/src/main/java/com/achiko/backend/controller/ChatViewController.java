@@ -24,7 +24,7 @@ public class ChatViewController {
 	public String chatList(@RequestParam(name="chatroomId") Long chatroomId, Model model,
 			@AuthenticationPrincipal PrincipalDetails loginUser) {
 		Long userId = userService.getUserId(loginUser.getLoginId());
-		String nickname = loginUser.getNickname();
+		String nickname = userService.getUserName(loginUser.getUserId());
 		String role = userService.getIsGuest(userId);
 		Long shareId = chatService.getShareId(chatroomId);
 		

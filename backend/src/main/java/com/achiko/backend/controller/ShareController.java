@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.achiko.backend.dto.FavoriteDTO;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.RoommateDTO;
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.ShareFilesDTO;
@@ -77,7 +79,7 @@ public class ShareController {
      * 글 상세 조회 페이지 URL 예: /share/selectOne?shareId=1
      */
     @GetMapping("/share/selectOne")
-    public String selectOne(@RequestParam("shareId") Long shareId, Model model, Principal principal) {
+    public String selectOne(@RequestParam("shareId") Long shareId, Model model, @AuthenticationPrincipal PrincipalDetails principal) {
         // ShareService를 통해 shareId에 해당하는 게시글 정보를 조회
         ShareDTO shareDTO = shareService.getShareById(shareId);
         if (shareDTO == null) {

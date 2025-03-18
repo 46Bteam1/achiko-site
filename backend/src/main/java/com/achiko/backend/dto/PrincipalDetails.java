@@ -24,6 +24,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     private String role;
     private String provider;
     private String providerId;
+    private boolean needsAdditionalInfo; // ✅ 추가 정보 입력 필요 여부
     private Map<String, Object> attributes; // OAuth2 사용자 정보
 
     // ✅ 일반 로그인 (LoginUserDetails) 생성자
@@ -96,4 +97,9 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     public String getName() {
         return provider + "_" + providerId; // OAuth2에서 사용하는 고유 식별자
     }
+
+	public void setNeedsAdditionalInfo(boolean needsAdditionalInfo) {
+		this.needsAdditionalInfo = needsAdditionalInfo;
+	}
+    
 }
