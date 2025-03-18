@@ -6,9 +6,10 @@ $(function () {
 
   const userId = $("#userId").val();
   const nickname = $("#nickname").val();
+  const profileImage = $("#profileImage").val();
 
   $("#toMyPageBtn").on("click", function () {
-    window.location.href = `/mypage/mypageSample?userId=${userId}`;
+    window.location.href = `/mypage/mypageView?userId=${userId}`;
   });
 
   $("#chatRoomsBtn").on("click", function () {
@@ -47,14 +48,14 @@ $(function () {
 
     // 메시지 전송 버튼 이벤트
     $("#sendMessage").on("click", function () {
-      sendChat(chatRoomId, nickname);
+      sendChat(chatRoomId, nickname, profileImage);
     });
 
     $("#message").keydown(function (event) {
       if (event.key === "Enter" && !event.shiftKey) {
         // Shift+Enter는 줄 바꿈, Enter만 누르면 전송
         event.preventDefault(); // 기본 엔터 동작(줄 바꿈) 방지
-        sendChat(chatRoomId, nickname);
+        sendChat(chatRoomId, nickname, profileImage);
       }
     });
   });
@@ -80,7 +81,7 @@ $(function () {
   });
 
   // 메세지 보내기
-  function sendChat(roomId, nickname) {
+  function sendChat(roomId, nickname, profileImage) {
     const messageContent = $("#message").val().trim();
     if (messageContent !== "") {
       stompClient.send(
@@ -90,6 +91,7 @@ $(function () {
           chatroomId: roomId, // 채팅방 ID 전달
           nickname: nickname, // 보낸 사람 정보 (이 변수는 필요하면 설정해야 함)
           message: messageContent,
+          profileImage: profileImage,
           sentAt: new Date(),
         })
       );
@@ -117,8 +119,13 @@ function showChat(data) {
     });
   }
 
+  let profileImage = data["profileImage"]
+    ? data["profileImage"]
+    : "/images/default-profile.png";
+
   let tag = `
     <tr>
+      <td class="chatProfileImage"><img src="${profileImage}" alt="프로필 이미지" width="40" height="40" style="border-radius: 50%; object-fit: cover;"></td>
       <td class="chatNickname">${data["nickname"]}</td>
       <td class="chatMessage">${data["message"]}</td>
       <td class="chatTime">${sentAt}</td>
@@ -153,7 +160,7 @@ function chats(resp) {
   let tag = `<table>`;
 
   $.each(resp, function (index, item) {
-    let date = new Date(item["sentAt"]); // UTC 시간 기준으로 Date 객체 생성
+    let date = new Date(item["sentAt"]);
     date.setHours(date.getHours());
 
     let formattedDate = date.toLocaleString("ko-KR", {
@@ -165,8 +172,14 @@ function chats(resp) {
       second: "2-digit",
     });
 
+    // profileImage가 null 또는 빈 문자열이면 기본 이미지로 설정
+    let profileImage = item["profileImage"]
+      ? item["profileImage"]
+      : "/images/default-profile.png";
+
     tag += `
         <tr>
+            <td class="profileImage"><img src="${profileImage}" alt="프로필 이미지" width="40" height="40" style="border-radius: 50%; object-fit: cover;"></td>
             <td class="chatNickname">${item["nickname"]}</td>
             <td class="chatMessage">${item["message"]}</td>
             <td class="chatTime">${formattedDate}</td>
@@ -177,8 +190,9 @@ function chats(resp) {
 
   $("#chats").html(tag);
 
-  scrollToBottom(); // 채팅을 불러온 후 스크롤 이동
+  scrollToBottom();
 }
+
 // 채팅 스크롤 제일 마지막에 위치하도록
 function scrollToBottom() {
   $("#chats").scrollTop($("#chats")[0].scrollHeight);

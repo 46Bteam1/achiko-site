@@ -34,6 +34,7 @@ public class ChatViewController {
 		Long userId = userService.getUserId(loginUser.getLoginId());
 		String nickname = userService.getUserName(loginUser.getUserId());
 		String role = userService.getIsGuest(userId);
+		String profileImage = userService.getImage(userId);
 		Long shareId = chatService.getShareId(chatroomId);
 		ShareDTO shareInfo = chatService.shareInfoByRoomId(chatroomId);
 		
@@ -48,6 +49,7 @@ public class ChatViewController {
 		model.addAttribute("share", shareInfo);
 		model.addAttribute("fileList", fileList);
 		model.addAttribute("googleApiKey", googleApiKey);
+		model.addAttribute("profileImage", profileImage);
 		
 		return "chat/chatList";
 	}
