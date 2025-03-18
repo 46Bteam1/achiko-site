@@ -1,259 +1,214 @@
 @import "../reset.css";
 @import "../main.css";
+@import "../header.css";
 @import "../footer.css";
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    height: 200vh;
-    font-family: 'Airbnb Cereal App', sans-serif;
-}
-
-
-header {
-    position: static;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 150px;
-    z-index: 100;
-    border-bottom: 1px solid #dddddd;
-}
-
-/* header animation */
-header.sticky {
-    background: white;
-    color: black;
-}
-
-header.sticky .sticky-pink {
-    fill: rgb(255, 56, 92);
-}
-
-header.sticky .sticky-black {
-    color: black;
-    fill: black;
-}
-
-header.sticky .header-form {
-    animation-duration: 0.2s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
-    animation-name: slideUp;
-}
-
-@keyframes slideDown {
-    from {
-        transform: scale(0.3, 0.75) translateY(-80px);
-    }
-
-    to {
-        transform: scale(1, 1) translateY(0px);
-    }
-}
-
-@keyframes slideUp {
-    from {
-        transform: scale(1, 1) translateY(0px);
-        opacity: 0.5;
-    }
-
-    to {
-        transform: scale(0.3, 0.75) translateY(-80px);
-        opacity: 0;
-        visibility: hidden;
-    }
-}
-
-@keyframes showEffect {
-    from {
-        visibility: hidden;
-    }
-
-    to {
-        visibility: visible;
-    }
-}
-
-/* -------------- */
-
-
-
-.header-col {
-    flex: 1 1 33%;
-}
-
-.header-col .airbnbIcon {
-    fill: white;
-}
-
-.header-col ul {
-    display: flex;
-    justify-content: center;
-}
-
-.header-col ul li {
-    list-style: none;
-    color: black;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 15px 20px;
-}
-
-.header-col ul li:hover {
-    opacity: 0.5;
-}
-
-.header-col ul li:first-child span {
-    padding: 10px 0;
-    border-bottom: 1px solid white;
-}
-
-.header-col ul li:hover {
-    cursor: pointer;
-}
-
-.header-col ul li:hover span,
-.header-col ul li:hover a {
-    padding: 10px 0;
-    border-bottom: 1px solid white;
-}
-
-.header-nav {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    color: grey;
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.header-nav-left {
-    flex-grow: 1;
-
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin: 0 15px;
-}
-
-.header-nav-left a {
-    margin: 0 15px;
-}
-
-.header-nav-left button {
-    display: flex;
-    background: none;
-    border: none;
-    fill: grey;
-}
-
-.header-nav-right {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 77px;
-    height: 42px;
-}
-
-.header-nav-right button {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    background: white;
-    border-radius: 20px;
-    padding: 5px 5px 5px 12px;
-
-    border: 1px solid rgb(221, 221, 221);
-}
-
-.icon-list {
-    margin-left: 3px;
-}
-
-.icon-user-circle {
-    fill: gray;
-    width: 28.69px;
-    height: 28.69px;
+  background-color: white;
+  font-family: "Airbnb Cereal App", sans-serif;
 }
 
 .link-container {
-    text-align: center;
-    font-size: 15px;
-    color: #666;
+  text-align: center;
+  font-size: 15px;
+  color: #666;
 }
 
 .link-container a {
-    text-decoration: none;
-    color: #666;
-    margin: 0 8px;
+  text-decoration: none;
+  color: #666;
+  margin: 0 8px;
 }
 
 .link-container a:hover {
-    color: #333;
+  color: #333;
 }
 
 .link-container span {
-    color: #bbb;
-}
-
-body {
-    background-color: #f7f7f7;
+  color: #bbb;
 }
 
 .signup-container {
-    max-width: 400px;
-    margin: 50px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    border: 1px solid #DDDDDD;
+  max-width: 400px;
+  margin: 50px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border: 1px solid #dddddd;
 }
 
 .signup-container h3 {
-    color: #2db400;
-    font-weight: bold;
+  color: #2db400;
+  font-weight: bold;
 }
 
 .form-group {
-    margin-bottom: 15px;
-    text-align: left;
+  margin-bottom: 15px;
+  text-align: left;
 }
 
 .btn-primary {
-    background-color: #2db400;
-    border: none;
+  background-color: #2db400;
+  border: none;
 }
 
 .btn-primary:hover {
-    background-color: #249a00;
+  background-color: #249a00;
 }
 
 .select-container {
-    position: relative;
+  position: relative;
 }
 
 .select-container select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 100%;
-    padding-right: 30px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  padding-right: 30px;
 }
 
 .select-container .fa-chevron-down {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-}   
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-group > .form-control {
+  position: relative;
+  flex: 1 1 auto;
+  width: 1%;
+  min-width: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  margin-bottom: 0;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: center;
+  white-space: nowrap;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+#chkDuplicationBtn,
+#authBtn,
+#chkAuthCodeBtn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  appearance: none;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  color: #212529;
+  background-color: #fff;
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.375rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-success {
+  color: #fff;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.btn-success:hover {
+  background-color: #157347;
+  border-color: #146c43;
+}
+
+.button-box {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.btn-secondary {
+  color: #fff; /* 글자색: 흰색 */
+  background-color: #6c757d; /* 배경색: 중간 회색 */
+  border-color: #6c757d; /* 테두리 색상: 중간 회색 */
+}
+
+.btn-secondary:hover {
+  color: #fff;
+  background-color: #5c636a; /* 호버 시 좀 더 어두운 회색 */
+  border-color: #565e64;
+}
+
+.btn-secondary:focus,
+.btn-secondary:active {
+  color: #fff;
+  background-color: #5c636a;
+  border-color: #565e64;
+  box-shadow: 0 0 0 0.25rem rgba(130, 138, 145, 0.5); /* 포커스 시 테두리 강조 */
+}
+
+.btn-secondary:disabled,
+.btn-secondary.disabled {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  opacity: 0.65; /* 비활성화 시 투명도 낮춤 */
+  cursor: not-allowed;
+}

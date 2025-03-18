@@ -1,4 +1,9 @@
 $(document).ready(function () {
+  // 버튼 클릭 시 chatList 이동
+  $("#chatRoomsBtn").on("click", function () {
+    window.location.href = "/chatRooms";
+  });
+
   // 프로필 업데이트
   $("#updateBtn").on("click", updateBtn);
 
@@ -33,12 +38,6 @@ $(document).ready(function () {
   // 회원 탈퇴 기능 - 모달 닫을 때 입력된 비밀번호 초기화
   $("#deleteUserModal").on("hidden.bs.modal", function () {
     $("#passwordInput").val("");
-  });
-
-  // 계정 타입 변경 기능
-
-  $("#accountTypeChangeBtn").on("click", function () {
-    alert("게스트 전환 요청이 접수되었습니다.");
   });
 
   initChatRooms();
@@ -248,7 +247,7 @@ function getChatRooms(resp) {
     $.each(resp, function (index, item) {
       let profileImage = item["profileImage"]
         ? item["profileImage"]
-        : "/images/fubao.webp";
+        : "/images/default-profile.png";
       const nickname = $("#userNickname").val();
       let nicknameCheck = item["hostNickname"] === nickname;
       let displayNickname = nicknameCheck
@@ -324,7 +323,7 @@ function deleteShare() {
     data: { shareId: shareId },
     success: function (response) {
       alert("게시물이 삭제되었습니다.");
-      window.location.href = "/mypage/mypageView";
+      window.location.href = "/mypage/mypageSample";
     },
     error: function (xhr) {
       alert(xhr.responseText || "삭제에 실패했습니다.");

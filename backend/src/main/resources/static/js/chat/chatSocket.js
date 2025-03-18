@@ -23,9 +23,8 @@ $(function () {
     }
   });
 
-  // const socket = new SockJS("http://localhost:8080/ws");
-  // const socket = new SockJS("https://achiko.site/ws");
-  const socket = new SockJS("wss://achiko.site/ws");
+  const socket = new SockJS("/ws");
+
   const stompClient = Stomp.over(socket);
   const chatRoomId = $("#chatroomId").val();
 
@@ -33,8 +32,7 @@ $(function () {
   const nickname = $("#nickname").val();
 
   $("#toMyPageBtn").on("click", function () {
-    // window.location.href = `http://localhost:8080/mypage/mypageSample?userId=${userId}`;
-    window.location.href = `https://achiko.site/mypage/mypageSample?userId=${userId}`;
+    window.location.href = `/mypage/mypageSample?userId=${userId}`;
   });
 
   $("#chatRoomsBtn").on("click", function () {
@@ -222,7 +220,7 @@ function getRoommates(chatRoomId) {
       $.each(resp, function (index, item) {
         let profileImage = item["profileImage"]
           ? item["profileImage"]
-          : "/images/fubao.webp";
+          : "/images/default-profile.png";
 
         tag += `
         <div style="display: flex; flex-direction: column; align-items: center;">
@@ -255,7 +253,7 @@ function shareInfo(chatRoomId) {
           : resp.description;
 
       let tag = `
-      <h5>쉐어하우스 타이틀: ${resp.title}</h5>
+      <h3>${resp.title}</h3>
       <p>${description}</p>
       `;
 

@@ -1,5 +1,6 @@
 package com.achiko.backend.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,8 @@ import com.achiko.backend.dto.ChatRoomDTO;
 import com.achiko.backend.dto.LoginUserDetails;
 import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ShareDTO;
+import com.achiko.backend.entity.UserEntity;
+import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.service.ChatService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,12 +32,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ChatController {
 	private final ChatService chatService;
+	private final UserRepository userRepository;
 	
 	// 채팅방 생성 메서드
 	@PostMapping("/create")
 	@Operation(summary = "채팅방 생성 메서드", description = "채팅방을 생성합니다.")
 	public Long createRoom(@RequestBody ChatRoomDTO chatRoomDTO,@RequestParam("shareId") Long shareId, @AuthenticationPrincipal PrincipalDetails loginUser) {
-		
 		Long chatroomId = chatService.createRoom(chatRoomDTO, shareId, loginUser.getUserId());
 		
 		return chatroomId;
@@ -46,7 +49,7 @@ public class ChatController {
 	@Operation(summary = "채팅방들 조회 메서드", description = "내가 속한 채팅방들을 조회합니다.")
 	public List<ChatParticipantDTO> selectRooms(@AuthenticationPrincipal PrincipalDetails loginUser) {
 		
-		List<ChatParticipantDTO> list = chatService.selectRooms(loginUser.getUsername());
+		List<ChatParticipantDTO> list = chatService.selectRooms(loginUser.getLoginId());
 		return list;
 	}
 	

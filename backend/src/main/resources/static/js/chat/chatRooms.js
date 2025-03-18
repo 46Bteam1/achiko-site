@@ -4,8 +4,7 @@ $(function () {
   const userId = $("#userId").val();
 
   $("#toMyPageBtn").on("click", function () {
-    // window.location.href = `http://localhost:8080/mypage/mypageSample?userId=${userId}`;
-    window.location.href = `https://achiko.site/mypage/mypageSample?userId=${userId}`;
+    window.location.href = `/mypage/mypageSample?userId=${userId}`;
   });
 });
 
@@ -25,7 +24,7 @@ function output(resp) {
   $.each(resp, function (index, item) {
     let profileImage = item["profileImage"]
       ? item["profileImage"]
-      : "/images/fubao.webp";
+      : "/images/default-profile.png";
 
     let nicknameCheck = item["hostNickname"] === nickname;
     let displayNickname = nicknameCheck
