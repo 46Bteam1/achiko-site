@@ -1,28 +1,4 @@
 $(function () {
-  // header 관련
-  // Fragment가 동적으로 로드된 후 이벤트 바인딩
-  $(document).on("click", "#menuButton", function (event) {
-    event.stopPropagation();
-    const $modalMenu = $("#modalMenu");
-
-    if ($modalMenu.is(":visible")) {
-      $modalMenu.hide();
-    } else {
-      $modalMenu.show();
-    }
-  });
-
-  // 모달 바깥 클릭 시 모달 닫기
-  $(document).on("click", function (event) {
-    if (
-      !$("#modalMenu").is(event.target) &&
-      !$("#modalMenu").has(event.target).length &&
-      !$("#menuButton").is(event.target)
-    ) {
-      $("#modalMenu").hide();
-    }
-  });
-
   const socket = new SockJS("/ws");
 
   const stompClient = Stomp.over(socket);
@@ -224,7 +200,7 @@ function getRoommates(chatRoomId) {
 
         tag += `
         <div style="display: flex; flex-direction: column; align-items: center;">
-          <img src="${profileImage}" alt="프로필 이미지" width="150px" height="150px" style="border-radius: 50%; object-fit: cover;">
+          <img src="${profileImage}" alt="프로필 이미지" width="100px" height="100px" style="border-radius: 50%; object-fit: cover;">
           <p class="isHost" style="text-align: center; margin-top: 5px; font-weight: bold; color: ${
             item["isHost"] === 0 ? "#28a745" : "#d9534f"
           };">${item["isHost"] === 0 ? "Guest" : "Host"}</p>
