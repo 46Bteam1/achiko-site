@@ -103,6 +103,34 @@ main {
   margin: 0;
 }
 
+/* 상태 라벨 스타일 */
+.status-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-weight: 500;
+  color: white;
+  font-size: 14px;
+  border: 1.5px solid white;
+}
+
+/* 모집중 - 초록색 */
+.status-open {
+  background-color: #28a745;
+}
+
+/* 거주중 - 노란색 */
+.status-living {
+  background-color: #ffc107;
+}
+
+/* 마감 - 빨간색 */
+.status-closed {
+  background-color: #dc3545;
+}
+
 .host-info {
   display: flex;
   align-items: center;
@@ -110,7 +138,12 @@ main {
   margin: 2px 0;
 }
 
-.host-info img {
+.host-image-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.host-image {
   width: 48px;
   height: 48px;
   object-fit: cover;
