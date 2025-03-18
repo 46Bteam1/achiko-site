@@ -98,6 +98,7 @@ public class ChatService {
 		entityList.forEach((e) -> {
 			list.add(ChatMessageDTO.toDTO(e, e.getChatroom().getChatroomId(), e.getSender().getNickname(),
 					e.getSender().getProfileImage()));
+
 		});
 
 		// 3. DTO list로 내보내기
