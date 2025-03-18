@@ -48,6 +48,7 @@ public class ChatController {
 	@GetMapping("/selectRooms")
 	@Operation(summary = "채팅방들 조회 메서드", description = "내가 속한 채팅방들을 조회합니다.")
 	public List<ChatParticipantDTO> selectRooms(@AuthenticationPrincipal PrincipalDetails loginUser) {
+		
 		List<ChatParticipantDTO> list = chatService.selectRooms(loginUser.getLoginId());
 		return list;
 	}

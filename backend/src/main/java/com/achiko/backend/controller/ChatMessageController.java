@@ -32,8 +32,8 @@ public class ChatMessageController {
     // 클라이언트가 "/app/chatEnterRoom"으로 메시지를 보내면 실행됨
     // 유저 입장
     @MessageMapping("/chatEnterRoom")
-    public void enterRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal PrincipalDetails loginUser) {      
-    	log.info("~~~:{}", loginUser.toString());
+    public void enterRoom(ChatMessageDTO chatMessage, @AuthenticationPrincipal PrincipalDetails loginUser) {    
+    	
         // 로그인한 유저 닉네임 받아오기
         String nickname = loginUser.getNickname();   
         
