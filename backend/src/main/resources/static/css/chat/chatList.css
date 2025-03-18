@@ -131,56 +131,66 @@ main {
   max-height: 300px;
   border-bottom: 1px solid #ddd;
 }
-/* 개별 메시지 스타일 */
+
 .chatMessageContainer {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding: 10px;
-  background: white;
-  border-radius: 8px;
-  justify-content: space-between;
+  align-items: flex-start; /* 상단 정렬 */
+  gap: 10px; /* 요소 간 간격 */
+  width: 100%;
+  max-width: 100%;
+  margin: 15px 0;
 }
 
-/* 프로필 이미지 */
-.chatProfileImg {
+.chatProfileImageContainer {
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  align-items: center; /* 가운데 정렬 */
+}
+
+.chatProfileImage {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-/* 채팅 내용 영역 */
 .chatContent {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  max-width: 70%;
+  flex-direction: column; /* 닉네임 → 메시지 순서로 세로 정렬 */
+  max-width: 70%; /* 너무 길어지지 않도록 제한 */
 }
 
 /* 닉네임 스타일 */
 .chatNickname {
+  font-size: 0.8rem; /* 작게 표시 */
   font-weight: bold;
-  color: green;
-  font-size: 0.9rem;
+  color: #007bff;
+  margin-bottom: 2px; /* 닉네임과 메시지 간격 */
 }
 
 /* 채팅 메시지 스타일 */
 .chatMessage {
-  background: #f1f1f1;
-  padding: 8px 12px;
-  border-radius: 12px;
   color: #333;
+  font-size: 1rem;
   word-wrap: break-word;
+  padding: 8px 12px;
+  background: #f1f1f1;
+  border-radius: 12px;
 }
 
-/* 채팅 시간 */
+.chatTimeContainer {
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  justify-content: flex-end; /* 가장 하단 배치 */
+  align-items: center;
+  min-width: 60px; /* 최소 너비 */
+}
+
+/* 시간 스타일 */
 .chatTime {
   font-size: 0.85rem;
   color: #888;
-  white-space: nowrap;
-  align-self: flex-end;
+  text-align: right;
 }
 
 /* ==========================
@@ -188,25 +198,20 @@ main {
 ========================== */
 @media (max-width: 768px) {
   .chatMessageContainer {
-    flex-direction: row;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 
-  .chatProfileImg {
-    width: 35px;
-    height: 35px;
-  }
-
-  .chatContent {
-    max-width: 65%;
+  .chatNickname {
+    max-width: 30%;
   }
 
   .chatMessage {
-    font-size: 0.9rem;
+    max-width: 100%;
   }
 
   .chatTime {
-    font-size: 0.8rem;
+    max-width: 15%;
   }
 }
 

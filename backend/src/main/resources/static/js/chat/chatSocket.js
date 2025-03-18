@@ -101,8 +101,6 @@ $(function () {
 });
 
 function showChat(data) {
-  console.log("여기는 showChat:", data);
-
   let sentAt = "시간 정보 없음";
 
   if (data["sentAt"]) {
@@ -115,7 +113,7 @@ function showChat(data) {
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
+      // second: "2-digit",
     });
   }
 
@@ -124,14 +122,20 @@ function showChat(data) {
     : "/images/default-profile.png";
 
   let tag = `
-    <tr>
-      <td class="chatProfileImage"><img src="${profileImage}" alt="프로필 이미지" width="40" height="40" style="border-radius: 50%; object-fit: cover;"></td>
-      <td class="chatNickname">${data["nickname"]}</td>
-      <td class="chatMessage">${data["message"]}</td>
-      <td class="chatTime">${sentAt}</td>
-    </tr>`;
+      <div class="chatMessageContainer">
+        <div class="chatProfileImageContainer">
+          <img class="chatProfileImage" src="${profileImage}" alt="프로필 이미지">
+        </div>
+        <div class="chatContent">
+          <div class="chatNickname">${data["nickname"]}</div>
+          <div class="chatMessage">${data["message"]}</div>
+        </div>
+        <div class="chatTimeContainer">
+          <div class="chatTime">${sentAt}</div>
+        </div>
+      </div>`;
 
-  $("#chats table").append(tag);
+  $("#chats").append(tag);
 
   scrollToBottom(); // 메시지가 추가될 때마다 스크롤 이동
 }
@@ -144,7 +148,7 @@ function showAlert(data) {
 
   $("#alertTableBody").append(tag);
 
-  $("#alertBox").scrollTop($("#alertBox")[0].scrollHeight);
+  // $("#alertBox").scrollTop($("#alertBox")[0].scrollHeight);
 }
 
 function loadChats(chatRoomId) {
@@ -157,7 +161,7 @@ function loadChats(chatRoomId) {
 }
 
 function chats(resp) {
-  let tag = `<table>`;
+  let tag = ``;
 
   $.each(resp, function (index, item) {
     let date = new Date(item["sentAt"]);
@@ -169,7 +173,7 @@ function chats(resp) {
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
+      // second: "2-digit",
     });
 
     // profileImage가 null 또는 빈 문자열이면 기본 이미지로 설정
@@ -178,15 +182,19 @@ function chats(resp) {
       : "/images/default-profile.png";
 
     tag += `
-        <tr>
-            <td class="profileImage"><img src="${profileImage}" alt="프로필 이미지" width="40" height="40" style="border-radius: 50%; object-fit: cover;"></td>
-            <td class="chatNickname">${item["nickname"]}</td>
-            <td class="chatMessage">${item["message"]}</td>
-            <td class="chatTime">${formattedDate}</td>
-        </tr>
-    `;
+      <div class="chatMessageContainer">
+        <div class="chatProfileImageContainer">
+          <img class="chatProfileImage" src="${profileImage}" alt="프로필 이미지">
+        </div>
+        <div class="chatContent">
+          <div class="chatNickname">${item["nickname"]}</div>
+          <div class="chatMessage">${item["message"]}</div>
+        </div>
+        <div class="chatTimeContainer">
+          <div class="chatTime">${formattedDate}</div>
+        </div>
+      </div>`;
   });
-  tag += `</table>`;
 
   $("#chats").html(tag);
 
