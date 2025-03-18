@@ -110,36 +110,31 @@ header.sticky-reappear .simple-query-form {
   flex: 0 0 auto;
 }
 
-.header-col .airbnbIcon {
-  fill: white;
-}
-
-.header-col ul {
+/* .header-col ul {
   display: flex;
   justify-content: center;
-}
+}  */
 
 .header-col ul li {
   list-style: none;
-  /* color: white; */
   color: black;
   font-size: 14px;
   font-weight: bold;
   padding: 15px 20px;
 }
 
-.header-col ul li:hover {
+/* .header-col ul li:hover {
   opacity: 0.5;
-}
+} */
 
-.header-col ul li:first-child span {
+/* .header-col ul li:first-child span {
   padding: 10px 0;
   border-bottom: 1px solid white;
-}
+} */
 
-.header-col ul li:hover {
+/* .header-col ul li:hover {
   cursor: pointer;
-}
+} */
 
 .header-col ul li:hover span,
 .header-col ul li:hover a {

@@ -87,4 +87,8 @@ public class CustomOAuth2User implements OAuth2User {
     	
     	return userEntity.getUserId();
     }
+
+	public String getReceiptId() {
+		return userEntity.getReceiptId();
+	}
 }

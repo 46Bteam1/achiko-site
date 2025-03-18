@@ -42,17 +42,18 @@
         <input
           type="text"
           id="price"
-          th:value="${#numbers.formatInteger(1000000000, 3, 'COMMA') + '원'}"
+          th:value="${#numbers.formatInteger(12900, 3, 'COMMA') + '원'}"
           readonly
         />
       </div>
 
       <div class="form-group">
-        <label for="userId">👤 사용자 ID</label>
-        <input type="text" id="loginId" th:value="${loginId}" readonly />
+        <label for="userId">👤 사용자 닉네임</label>
+        <input type="text" id="nickname" th:value="${nickname}" readonly />
       </div>
 
       <input type="hidden" id="userId" th:value="${userId}" readonly />
+      <input type="hidden" id="loginId" th:value="${loginId}" readonly />
       <input type="hidden" id="email" th:value="${email}" readonly />
 
       <button id="subscribeButton" th:if="${isSubscribed == null}">

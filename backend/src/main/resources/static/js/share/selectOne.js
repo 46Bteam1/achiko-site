@@ -25,29 +25,6 @@ let facilityMarkers = [];
 // };
 
 document.addEventListener("DOMContentLoaded", function () {
-  // header 부분
-  $(document).on("click", "#menuButton", function (event) {
-    event.stopPropagation();
-    const $modalMenu = $("#modalMenu");
-
-    if ($modalMenu.is(":visible")) {
-      $modalMenu.hide();
-    } else {
-      $modalMenu.show();
-    }
-  });
-
-  // 모달 바깥 클릭 시 모달 닫기
-  $(document).on("click", function (event) {
-    if (
-      !$("#modalMenu").is(event.target) &&
-      !$("#modalMenu").has(event.target).length &&
-      !$("#menuButton").is(event.target)
-    ) {
-      $("#modalMenu").hide();
-    }
-  });
-
   // Thymeleaf로 전달받은 URL을 LINE 버튼에 설정 (공식 LINE 버튼을 사용하지 않는 경우 생략 가능)
   // (참고: 이미지 버튼 방식 사용 시 window.shareUrl 변수를 활용할 수 있습니다.)
 
