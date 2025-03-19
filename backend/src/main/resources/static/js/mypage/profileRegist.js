@@ -426,7 +426,7 @@ function getChatRooms(resp) {
             <td>${displayNickname}</td>
             <td class="btns">
                 <input type="button" value="입장" 
-                class="enterBtn btn btn-secondary"
+                class="enterBtn btn btn-outline-success"
                 data-seq="${item["chatroomId"]}">
                 <input type="button" value="삭제"
                 class="deleteBtn btn btn-danger"
