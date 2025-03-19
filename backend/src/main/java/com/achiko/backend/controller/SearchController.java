@@ -1,21 +1,22 @@
 package com.achiko.backend.controller;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.achiko.backend.dto.CustomOAuth2User;
+import com.achiko.backend.dto.PrincipalDetails;
 import com.achiko.backend.dto.ShareFilesDTO;
 import com.achiko.backend.entity.ShareEntity;
-import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.service.FavoriteService;
 import com.achiko.backend.service.RatingService;
@@ -32,7 +33,7 @@ public class SearchController {
     private final SearchService searchService;
     private final ShareFilesService shareFilesService;
     private final FavoriteService favoriteService;
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
     private final RatingService ratingService; // RatingService 주입
 
     @ResponseBody
@@ -42,15 +43,9 @@ public class SearchController {
             @RequestParam(name = "regionId", required = false) Integer regionId,
             @RequestParam(name = "cityId", required = false) Integer cityId,
             @RequestParam(name = "townId", required = false) Integer townId,
-            Principal principal
+            @AuthenticationPrincipal PrincipalDetails loginUser
     ) {
-        final Long userIdFinal;
-        if (principal != null) {
-            UserEntity loggedUser = userRepository.findByLoginId(principal.getName());
-            userIdFinal = (loggedUser != null) ? loggedUser.getUserId() : null;
-        } else {
-            userIdFinal = null;
-        }
+    	final Long userIdFinal = (loginUser != null) ? loginUser.getUserId() : null;
         
         List<ShareEntity> shares = searchService.searchShares(provinceId, regionId, cityId, townId);
 
@@ -84,6 +79,10 @@ public class SearchController {
                 isFav = favoriteService.isFavorite(share.getShareId(), userIdFinal);
             }
             result.put("isFavorite", isFav);
+            
+            long favCount = favoriteService.countFavorites(share.getShareId());
+            result.put("favoriteCount", favCount);
+            
             
             result.put("nickname", share.getHost().getNickname());
             result.put("profileImage", share.getHost().getProfileImage());

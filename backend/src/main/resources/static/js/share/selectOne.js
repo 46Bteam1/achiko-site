@@ -281,6 +281,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+
   // ★ 게스트 조회 모달 관련
   // const guestModal = document.getElementById("guestModal");
   // const confirmedGuestButton = document.getElementById("confirmedGuest");

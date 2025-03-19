@@ -235,27 +235,19 @@
       <section class="action-buttons">
         <div class="action-container">
           <!-- ★ 찜하기 버튼: 데이터 속성에 share.isFavorite 및 share.favoriteCount를 사용하여 초기 상태 설정 -->
-          <div
-            id="favoriteContainer"
-            class="favorite-container"
-            th:attr="data-share-id=${share.shareId}, data-is-favorite=${share.isFavorite}"
-          >
-            <button
-              id="favoriteBtn"
-              class="favorite-btn"
-              th:attr="data-is-favorite=${share.isFavorite}"
-            >
-              <i
-                th:class="${share.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"
-              ></i>
-            </button>
-            <span class="favorite-count">
-              <b th:text="${share.favoriteCount}"></b>
-              <span
-                th:text="${share.favoriteCount > 1} ? ' LIKES' : ' LIKE'"
-              ></span>
-            </span>
-          </div>
+          <div id="favoriteContainer"
+     		class="favorite-container"
+     		th:attr="data-share-id=${share.shareId}, data-is-favorite=${(share.isFavorite == true) ? 'true' : 'false'}"> <!-- ★ 수정: data-is-favorite 문자열화 -->
+  		 <button id="favoriteBtn"
+          class="favorite-btn"
+          th:attr="data-is-favorite=${(share.isFavorite == true) ? 'true' : 'false'}"> <!-- ★ 수정: data-is-favorite 문자열화 -->
+    	<i th:class="${(share.isFavorite == true) ? 'fas fa-heart' : 'far fa-heart'}"></i> <!-- ★ 수정: 명시적 비교 -->
+  		</button>
+  		<span class="favorite-count">
+    		<b th:text="${share.favoriteCount}"></b>
+    	<span th:text="${(share.favoriteCount > 1) ? ' LIKES' : ' LIKE'}"></span>
+  		</span>
+		</div>
           <br />
           <button id="shareButton" class="action-btn share-btn">
             공유하기
