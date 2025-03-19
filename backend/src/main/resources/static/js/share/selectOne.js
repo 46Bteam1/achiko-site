@@ -2,28 +2,6 @@
 let mapObj = null;
 let facilityMarkers = [];
 
-// Google Maps API 콜백 함수 (전역에 정의)
-// window.initMap = function () {
-//   console.log("Google Maps API가 정상적으로 로드되었습니다.");
-//   var geocoder = new google.maps.Geocoder();
-//   mapObj = new google.maps.Map(document.getElementById("map"), {
-//     zoom: 15,
-//     center: { lat: 35.6895, lng: 139.6917 },
-//   });
-//   geocoder.geocode({ address: window.fullAddress }, function (results, status) {
-//     if (status === "OK" && results.length > 0) {
-//       mapObj.setCenter(results[0].geometry.location);
-//       new google.maps.Marker({
-//         map: mapObj,
-//         position: results[0].geometry.location,
-//         title: "셰어하우스 위치",
-//       });
-//     } else {
-//       console.error("Geocode 실패: " + status);
-//     }
-//   });
-// };
-
 document.addEventListener("DOMContentLoaded", function () {
   // Thymeleaf로 전달받은 URL을 LINE 버튼에 설정 (공식 LINE 버튼을 사용하지 않는 경우 생략 가능)
   // (참고: 이미지 버튼 방식 사용 시 window.shareUrl 변수를 활용할 수 있습니다.)
