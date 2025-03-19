@@ -21,6 +21,6 @@ public interface UsersRepository extends JpaRepository<UsersEntity, Long> {
     String findNicknameByLoginId(@Param("loginId") String loginId);
     @Query("SELECT u.nickname, u.languages, u.age, u.nationality, u.religion, u.gender, u.profileImage FROM UsersEntity u WHERE u.nickname IN :nicknames")
     List<Object[]> findUserDetailsByNicknames(@Param("nicknames") List<String> nicknames);
-    @Query("SELECT COALESCE(u.isHost, 0) FROM UsersEntity u WHERE u.loginId = :loginId")
+    @Query("SELECT u.isHost FROM UsersEntity u WHERE u.loginId = :loginId")
     Integer findIsHostByLoginId(@Param("loginId") String loginId);
 }
