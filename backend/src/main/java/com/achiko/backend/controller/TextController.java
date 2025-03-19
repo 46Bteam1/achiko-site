@@ -26,107 +26,63 @@ public class TextController {
 
     @Autowired
     private UsersRepository userRepository;
-
+    
     @GetMapping("/find/guest-to-host")
     public String showGuestToHost(Model model) {
         String loginId = getCurrentUserLoginId();
+        System.out.println("DEBUG: Retrieved loginId = " + loginId);
         if (loginId == null) {
-            return "redirect:/";  // Redirect to home if user is not logged in
+            System.out.println("DEBUG: No logged-in user found.");
+            return "redirect:/";  // Redirect if not logged in
         }
 
         Integer isHost = userRepository.findIsHostByLoginId(loginId);
-        if (Boolean.TRUE.equals(isHost)) {  // Prevent NullPointerException
-            return "redirect:/"; 
-        }
-    	String userBio = getCurrentUserBio();
-        model.addAttribute("currentUserBio", userBio);
-        model.addAttribute("baseTexts", List.of(userBio));
-        return "find/guest-to-host";
-    }
-
-    @GetMapping("/find/host-to-guest")
-    public String showHostToGuest(Model model) {
-    	String loginId = getCurrentUserLoginId();
-        Integer isHost = userRepository.findIsHostByLoginId(loginId);
-        if (isHost == 0) { 
+        System.out.println("DEBUG: Retrieved isHost = " + isHost);
+        if (isHost == null) {
+            System.out.println("DEBUG: isHost is NULL for user " + loginId);
             return "redirect:/";
         }
-    	
+
+        if (isHost == 1) {  // Hosts should NOT access guest-to-host recommendation
+            System.out.println("DEBUG: User is a host, redirecting from 'guest-to-host'.");
+            return "redirect:/";
+        }
+
         String userBio = getCurrentUserBio();
         model.addAttribute("currentUserBio", userBio);
-        model.addAttribute("baseTexts", List.of(userBio));
-        return "find/host-to-guest";
+        return "find/guest-to-host";  // Return the correct page
     }
-    /*
-    @PostMapping("/calculateSimilarity/guest-to-host")
-    public String calculateGuestToHostSimilarity(@RequestParam("baseText") String baseText, Model model) {
-        return calculateSimilarityHelper(baseText, model, 1);
-    }
+    @GetMapping("/find/host-to-guest")
+    public String showHostToGuest(Model model) {
+        String loginId = getCurrentUserLoginId();
 
-    @PostMapping("/calculateSimilarity/host-to-guest")
-    public String calculateHostToGuestSimilarity(@RequestParam("baseText") String baseText, Model model) {
-        return calculateSimilarityHelper(baseText, model, 0);
-    }
-    
-    private String getCurrentUserLoginId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            String username = ((UserDetails) authentication.getPrincipal()).getUsername();
-            return userRepository.findBioByLoginId(username);
-        } else if (authentication != null && authentication.getPrincipal() instanceof CustomOAuth2User) {
-        	String username = ((CustomOAuth2User) authentication.getPrincipal()).getUsername();
-            return userRepository.findBioByLoginId(username);
-        }
-        return null;
-    }
-    
-    private String calculateSimilarityHelper(String baseText, Model model, int compareWithHost) {
-        String currentUserLoginId = getCurrentUserLoginId();
-        String currentUserNickname = userRepository.findNicknameByLoginId(currentUserLoginId);
-
-        Map<String, List<String>> userReputations = textService.getAllUserReputations(compareWithHost);
-        Map<String, Double> averageSimilarities = new HashMap<>();
-
-        for (Map.Entry<String, List<String>> entry : userReputations.entrySet()) {
-            String userNickname = entry.getKey();
-            if (userNickname.equals(currentUserNickname)) continue;
-
-            List<String> reputationComments = entry.getValue();
-            double totalSimilarity = 0;
-            int count = 0;
-
-            for (String comment : reputationComments) {
-                double similarityScore = RestClient.sendPostRequest(baseText, comment);
-                totalSimilarity += similarityScore;
-                count++;
-            }
-
-            double avgSimilarity = (count > 0) ? (totalSimilarity / count) * 100 : 0.0;
-            averageSimilarities.put(userNickname, avgSimilarity);
+        if (loginId == null) {
+            System.out.println("DEBUG: No logged-in user found.");
+            return "redirect:/";  // Redirect if not logged in
         }
 
-        // Fetch additional user details
-        List<String> userNicknames = new ArrayList<>(averageSimilarities.keySet());
-        Map<String, Map<String, Object>> userDetails = textService.getAllUserDetails(userNicknames);
+        Integer isHost = userRepository.findIsHostByLoginId(loginId);
 
-        LinkedHashMap<String, Double> sortedSimilarities = averageSimilarities.entrySet()
-                .stream()
-                .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
-                .collect(LinkedHashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), Map::putAll);
+        if (isHost == null) {
+            System.out.println("DEBUG: isHost is NULL for user " + loginId);
+            return "redirect:/";
+        }
 
-        model.addAttribute("selectedBio", baseText);
-        model.addAttribute("similarityResults", sortedSimilarities);
-        model.addAttribute("userDetails", userDetails);
-        model.addAttribute("selectedMode", compareWithHost == 1 ? "guest-to-host" : "host-to-guest");
+        if (isHost == 0) {  // Guests should NOT access host-to-guest recommendation
+            System.out.println("DEBUG: User is a guest, redirecting from 'host-to-guest'.");
+            return "redirect:/";
+        }
 
-        return "find/result";
-    }*/
+        String userBio = getCurrentUserBio();
+        model.addAttribute("currentUserBio", userBio);
+        return "find/host-to-guest";  // Return the correct page
+    }
+    
     @PostMapping("/calculateSimilarity/guest-to-host")
     @ResponseBody
     public Map<String, Object> calculateGuestToHostSimilarity(@RequestParam("baseText") String baseText) {
         return calculateSimilarityHelper(baseText, 1);
     }
-
     @PostMapping("/calculateSimilarity/host-to-guest")
     @ResponseBody
     public Map<String, Object> calculateHostToGuestSimilarity(@RequestParam("baseText") String baseText) {
@@ -136,10 +92,12 @@ public class TextController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             String username = ((UserDetails) authentication.getPrincipal()).getUsername();
-            return userRepository.findBioByLoginId(username);
+            /*return userRepository.findBioByLoginId(username);*/
+            return username;
         } else if (authentication != null && authentication.getPrincipal() instanceof CustomOAuth2User) {
         	String username = ((CustomOAuth2User) authentication.getPrincipal()).getUsername();
-            return userRepository.findBioByLoginId(username);
+            /*return userRepository.findBioByLoginId(username);*/
+        	return username;
         }
         return null;
     }

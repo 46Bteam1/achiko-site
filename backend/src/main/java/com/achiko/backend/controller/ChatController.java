@@ -2,7 +2,10 @@ package com.achiko.backend.controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +37,7 @@ public class ChatController {
 	private final ChatService chatService;
 	private final UserRepository userRepository;
 	
+
 	// 채팅방 생성 메서드
 	@PostMapping("/create")
 	@Operation(summary = "채팅방 생성 메서드", description = "채팅방을 생성합니다.")
