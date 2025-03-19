@@ -79,8 +79,9 @@ public class ShareController {
      * 글 상세 조회 페이지 URL 예: /share/selectOne?shareId=1
      */
     @GetMapping("/share/selectOne")
-    public String selectOne(@RequestParam("shareId") Long shareId, Model model, @AuthenticationPrincipal PrincipalDetails principal) {
-        // ShareService를 통해 shareId에 해당하는 게시글 정보를 조회
+    public String selectOne(@RequestParam("shareId") Long shareId, Model model,
+                            @AuthenticationPrincipal PrincipalDetails principal) {
+        // ★ ShareService를 통해 shareId에 해당하는 게시글 정보를 조회
         ShareDTO shareDTO = shareService.getShareById(shareId);
         if (shareDTO == null) {
             return "redirect:/";
@@ -90,12 +91,9 @@ public class ShareController {
         List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
 
         // 첫 번째 이미지의 절대 URL 설정 (없으면 기본 이미지)
-        String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
+        String firstImageUrl = (fileList != null && !fileList.isEmpty())
                 ? "http://localhost:9905" + fileList.get(0).getFileUrl()
                 : "http://localhost:9905/images/default.webp";
-        // String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
-        //         ? "https://achiko.site" + fileList.get(0).getFileUrl()
-        //         : "https://achiko.site/images/default.webp";
 
         // 파일 목록을 ShareDTO에 설정 (추후 view에서 사용)
         shareDTO.setFileList(fileList);
@@ -104,18 +102,17 @@ public class ShareController {
         long count = favoriteService.countFavorites(shareId);
         shareDTO.setFavoriteCount(count);
 
-        // 로그인한 경우, 현재 사용자가 해당 게시글을 찜했는지 확인하여 isFavorite 설정
+        // ★ 로그인한 경우, 현재 사용자가 해당 게시글을 찜했는지 확인 (직접 principal에서 userId 사용)
         if (principal != null) {
-            UserEntity loggedUser = userRepository.findByLoginId(principal.getName());
-            if (loggedUser != null) {
-                boolean isFav = favoriteService.isFavorite(shareId, loggedUser.getUserId());
-                shareDTO.setIsFavorite(isFav);
-            }
+            // ★ 기존 방식: UserEntity loggedUser = userRepository.findByLoginId(principal.getName());
+            // ★ 수정: PrincipalDetails에서 바로 userId 추출
+            boolean isFav = favoriteService.isFavorite(shareId, principal.getUserId());
+            shareDTO.setIsFavorite(isFav);
         }
         
         // 확정된 룸메이트 찾기
         List<RoommateDTO> roommateList = shareService.findRoommate(shareId);
-        System.out.println(roommateList+"여긴강");
+        System.out.println(roommateList + "여긴강");
         model.addAttribute("roommateList", roommateList);
 
         // 모델에 공유글, 파일 목록, 첫 이미지 URL, API 키 등을 추가하여 뷰에 전달
@@ -132,8 +129,8 @@ public class ShareController {
         // 현재 로그인한 사용자 정보 확인 및 소유자 여부 체크
         boolean isOwner = false;
         if (principal != null) {
-        	Long loggedUserId = principal.getUserId();
-            if (loggedUserId != null && loggedUserId == shareDTO.getHostId()) {
+            Long loggedUserId = principal.getUserId(); // ★ 수정: principal에서 직접 userId 사용
+            if (loggedUserId != null && loggedUserId.equals(shareDTO.getHostId())) {
                 isOwner = true;
             }
             model.addAttribute("loggedUser", principal);
@@ -142,6 +139,7 @@ public class ShareController {
 
         return "share/selectOne";
     }
+
 
   
     /**
