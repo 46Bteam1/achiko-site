@@ -541,11 +541,11 @@ function validatePrice() {
 // 폼 제출 전 전체 유효성 검사: 제목, 본문, 주소, 사진
 // --------------------------------------------------------------------
 function validateForm() {
-  const canRegistShare = document.getElementById("canRegistShare");
-  if (!canRegistShare) {
-    alert("이미 진행 중인 숙소가 등록되어있습니다.");
-    return false;
-  }
+  // const canRegistShare = document.getElementById("canRegistShare");
+  // if (!canRegistShare) {
+  //   alert("이미 진행 중인 숙소가 등록되어있습니다.");
+  //   return false;
+  // }
 
   const titleInput = document.getElementById("title");
   const descriptionInput = document.getElementById("description");
