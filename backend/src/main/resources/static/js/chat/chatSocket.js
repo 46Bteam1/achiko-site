@@ -105,7 +105,7 @@ function showChat(data) {
 
   if (data["sentAt"]) {
     let date = new Date(data["sentAt"]); // UTC 기준 Date 객체 생성
-    date.setHours(date.getHours()+9);
+    date.setHours(date.getHours() + 9);
 
     sentAt = date.toLocaleString("ko-KR", {
       year: "numeric",
@@ -113,7 +113,6 @@ function showChat(data) {
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      // second: "2-digit",
     });
   }
 
@@ -121,14 +120,23 @@ function showChat(data) {
     ? data["profileImage"]
     : "/images/default-profile.png";
 
+  const currentNickname = $("#nickname").val();
+
+  let myMessage =
+    currentNickname == data["nickname"] ? "myMessage" : "otherMessage";
+  let chatContent =
+    currentNickname == data["nickname"] ? "chatContent" : "otherChatContent";
+  let mychatMessage =
+    currentNickname == data["nickname"] ? "myChatMessage" : "otherChatMessage";
+
   let tag = `
-      <div class="chatMessageContainer">
+      <div class="chatMessageContainer ${myMessage}">
         <div class="chatProfileImageContainer">
           <img class="chatProfileImage" src="${profileImage}" alt="프로필 이미지">
         </div>
-        <div class="chatContent">
+        <div class="${chatContent}">
           <div class="chatNickname">${data["nickname"]}</div>
-          <div class="chatMessage">${data["message"]}</div>
+          <div class="chatMessage ${mychatMessage}">${data["message"]}</div>
         </div>
         <div class="chatTimeContainer">
           <div class="chatTime">${sentAt}</div>
@@ -176,19 +184,30 @@ function chats(resp) {
       // second: "2-digit",
     });
 
+    const currentNickname = $("#nickname").val();
+
+    let myMessage =
+      currentNickname == item["nickname"] ? "myMessage" : "otherMessage";
+    let chatContent =
+      currentNickname == item["nickname"] ? "chatContent" : "otherChatContent";
+    let mychatMessage =
+      currentNickname == item["nickname"]
+        ? "myChatMessage"
+        : "otherChatMessage";
+
     // profileImage가 null 또는 빈 문자열이면 기본 이미지로 설정
     let profileImage = item["profileImage"]
       ? item["profileImage"]
       : "/images/default-profile.png";
 
     tag += `
-      <div class="chatMessageContainer">
+      <div class="chatMessageContainer ${myMessage}">
         <div class="chatProfileImageContainer">
           <img class="chatProfileImage" src="${profileImage}" alt="프로필 이미지">
         </div>
-        <div class="chatContent">
+        <div class="${chatContent}">
           <div class="chatNickname">${item["nickname"]}</div>
-          <div class="chatMessage">${item["message"]}</div>
+          <div class="chatMessage ${mychatMessage}">${item["message"]}</div>
         </div>
         <div class="chatTimeContainer">
           <div class="chatTime">${formattedDate}</div>
@@ -221,19 +240,17 @@ function getRoommates(chatRoomId) {
           : "/images/default-profile.png";
 
         tag += `
-        <div style="display: flex; flex-direction: column; align-items: center;">
-          <img src="${profileImage}" alt="프로필 이미지" width="100px" height="100px" style="border-radius: 50%; object-fit: cover;">
-          <p class="isHost" style="text-align: center; margin-top: 5px; font-weight: bold; color: ${
+        <div class="userProfileContainer">
+          <img src="${profileImage}" alt="프로필 이미지" class="profileImg">
+          <p class="isHost" style=" color: ${
             item["isHost"] === 0 ? "#28a745" : "#d9534f"
           };">${item["isHost"] === 0 ? "Guest" : "Host"}</p>
-          <p class="guestNickname" style="text-align: center; margin-top: 5px;">${
-            item["nickname"]
-          }</p>
+          <p class="guestNickname" >${item["nickname"]}</p>
         </div>
         `;
       });
 
-      // $("#guestBox").html(tag);
+      $("#guestBox").html(tag);
     },
   });
 }
@@ -245,6 +262,11 @@ function shareInfo(chatRoomId) {
     method: "GET",
     data: { chatRoomId: chatRoomId },
     success: function (resp) {
+      let title = resp.title || "제목 없음";
+      let maxGuests = resp.maxGuests || "?";
+      let currentGuests = resp.currentGuests || "?";
+      let townName = resp.townName || "?";
+      let price = resp.price || "?";
       let description =
         resp.description.length > 20
           ? resp.description.substring(0, 20) + "..."
@@ -254,7 +276,11 @@ function shareInfo(chatRoomId) {
       <h3>${resp.title}</h3>
       <p>${description}</p>
       `;
-
+      $("#chattingroomTitle").text(title);
+      $("#maxGuests").text(maxGuests);
+      $("#currentGuests").text(currentGuests);
+      $("#chattingTownName").text(townName);
+      $("#monthlyRent").text(price);
       $("#shareBox").html(tag);
     },
   });
