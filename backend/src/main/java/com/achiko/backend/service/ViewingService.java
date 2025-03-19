@@ -185,7 +185,8 @@ public class ViewingService {
 		ShareEntity share = temp2.get();
 		UserEntity user = userRepository.findById(userId).get();
 		if(userId.equals(guestId) || userId.equals(hostId)) {
-			ViewingEntity entity = ViewingEntity.toEntity(viewingDTO, share, user);
+			UserEntity guest = userRepository.findById(guestId).get();
+			ViewingEntity entity = ViewingEntity.toEntity(viewingDTO, share, guest);
 			entity.setIsCompleted(false);
 			viewingRepository.save(entity);
 			return "날짜 수정 완료";
