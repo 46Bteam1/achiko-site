@@ -203,27 +203,22 @@ function viewingTable(resp) {
 
 // viewing 날짜 수정
 function updateViewing() {
-  // 현재 버튼이 속한 행(row)을 선택
   let row = $(this).closest("tr");
-  // 두 번째 셀(예약 날짜 셀)을 선택 (0부터 시작하므로 eq(1))
   let scheduledCell = row.find("td:eq(1)");
   let currentDate = scheduledCell.text().trim();
 
-  // 기존 날짜 문자열을 날짜와 시간으로 분리 (예: "2025-03-07T15:30:00")
   let dateValue = "";
   let timeValue = "";
   if (currentDate && currentDate !== "날짜 없음") {
     if (currentDate.indexOf("T") > -1) {
       var parts = currentDate.split("T");
       dateValue = parts[0];
-      // 시간은 HH:MM 형식으로 사용 (초는 생략)
       timeValue = parts[1].substring(0, 5);
     } else {
       dateValue = currentDate;
     }
   }
 
-  // 예약 날짜 셀을 날짜와 시간 입력창으로 교체
   scheduledCell.html(
     '<input type="date" class="updateViewingDate" value="' +
       dateValue +
@@ -233,11 +228,20 @@ function updateViewing() {
       '" />'
   );
 
-  // 버튼의 텍스트를 "저장"으로 변경하고, 기존 이벤트 핸들러 제거
+  // 기존 버튼들 숨기기 (확정 & 삭제 버튼)
+  row.find(".confirmViewingBtn, .deleteViewingBtn").hide();
+
+  // 날짜 수정 버튼을 저장 버튼으로 변경하고 취소 버튼 추가
   let btn = $(this);
   btn.val("저장");
+
+  // 취소 버튼 추가
+  let cancelBtn = $(
+    '<input type="button" value="취소" class="cancelUpdateBtn" style="margin-left: 5px; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: gray; color: white; font-size: 14px;">'
+  );
+  btn.after(cancelBtn);
+
   btn.off("click").on("click", function () {
-    // 입력된 날짜와 시간 값을 가져옴
     let newDate = row.find(".updateViewingDate").val();
     let newTime = row.find(".updateViewingTime").val();
 
@@ -250,9 +254,7 @@ function updateViewing() {
       return;
     }
 
-    // 새로운 예약 날짜를 ISO 형식(예: "2025-03-07T15:30:00")으로 생성
     let newScheduledDate = newDate + "T" + newTime + ":00";
-    // 새로운 날짜를 Date 객체로 변환하여 현재 날짜와 비교
     let newScheduledDateObj = new Date(newScheduledDate);
     let now = new Date();
     if (newScheduledDateObj < now) {
@@ -261,20 +263,16 @@ function updateViewing() {
         title: "Oops...",
         text: "입력하신 날짜는 현재보다 이전입니다.",
       });
-
       return;
     }
 
     let viewingId = btn.attr("data-seq");
-
-    // 서버로 보낼 데이터 구성 (필요한 값에 맞게 수정)
     let data = {
       viewingId: viewingId,
       scheduledDate: newScheduledDate,
       shareId: $("#shareId").val(),
     };
 
-    // PATCH 요청으로 서버의 changeDate API 호출
     $.ajax({
       url: "/viewing/changeDate",
       method: "PATCH",
@@ -285,15 +283,16 @@ function updateViewing() {
           title: "날짜 수정 성공!",
           icon: "success",
           text: `${resp}`,
-          draggable: true,
         });
-        // 성공 시 셀의 내용을 새로운 날짜 값으로 갱신
         scheduledCell.text(newScheduledDate);
-        // 버튼을 원래 "날짜 수정"으로 복원하고 updateViewing 이벤트 다시 바인딩
+
+        // 버튼 복원
         btn.val("날짜 수정");
+        cancelBtn.remove();
         btn.off("click").on("click", updateViewing);
+        row.find(".confirmViewingBtn, .deleteViewingBtn").show();
       },
-      error: function (err) {
+      error: function () {
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -301,6 +300,16 @@ function updateViewing() {
         });
       },
     });
+  });
+
+  // 취소 버튼 동작
+  cancelBtn.on("click", function () {
+    // 셀 내용을 원래 날짜로 복원
+    scheduledCell.text(currentDate);
+    btn.val("날짜 수정");
+    btn.off("click").on("click", updateViewing);
+    cancelBtn.remove();
+    row.find(".confirmViewingBtn, .deleteViewingBtn").show();
   });
 }
 
@@ -339,50 +348,113 @@ function confirmViewing() {
   const $btn = $(this);
   let viewingId = $btn.attr("data-seq");
 
-  if (
-    confirm(
-      "viewing을 완료하시겠습니까? viewing은 확정된 이후 되돌릴 수 없습니다."
-    )
-  ) {
-    $.ajax({
-      url: "/viewing/check",
-      method: "GET",
-      data: { viewingId: viewingId },
-      success: function (resp) {
-        if (resp) {
-          $.ajax({
-            url: "/viewing/confirm",
-            method: "PATCH",
-            data: { viewingId: viewingId },
-            success: function (resp) {
-              Swal.fire({
-                title: "뷰잉 확정 성공!",
-                text: `${resp}`,
-                icon: "success",
-                draggable: true,
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
+    },
+    buttonsStyling: false,
+  });
+  swalWithBootstrapButtons
+    .fire({
+      title: "viewing을 완료하시겠습니까?",
+      text: "viewing은 확정된 이후 되돌릴 수 없습니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "확정!",
+      cancelButtonText: "확정 안함!",
+      reverseButtons: true,
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        // Ajax 호출
+        $.ajax({
+          url: "/viewing/check",
+          method: "GET",
+          data: { viewingId: viewingId },
+          success: function (resp) {
+            if (resp) {
+              $.ajax({
+                url: "/viewing/confirm",
+                method: "PATCH",
+                data: { viewingId: viewingId },
+                success: function (resp) {
+                  if (resp.startsWith("viewing을 완료하고")) {
+                    swalWithBootstrapButtons
+                      .fire({
+                        title: "확정 완료!",
+                        text: "새로운 쉐어 메이트가 생겼네요!",
+                        icon: "success",
+                      })
+                      .then(() => {
+                        // 모달 닫기
+                        $("#exampleModal").modal("hide");
+
+                        // 부드러운 새로고침
+                        $("body").fadeOut(300, function () {
+                          location.reload();
+                        });
+                      });
+                  } else if (resp.startsWith("이미 모집 인원이 다")) {
+                    swalWithBootstrapButtons.fire({
+                      title: `${resp}`,
+                      icon: "warning",
+                      draggable: true,
+                    });
+                  } else if (resp.startsWith("이미 다른 share에서")) {
+                    swalWithBootstrapButtons.fire({
+                      title: `${resp}`,
+                      icon: "warning",
+                      draggable: true,
+                    });
+                  }
+
+                  // swalWithBootstrapButtons
+                  //   .fire({
+                  //     title: "확정 완료!",
+                  //     text: "새로운 쉐어 메이트가 생겼네요!",
+                  //     icon: "success",
+                  //   })
+                  //   .then(() => {
+                  //     // 모달 닫기
+                  //     $("#exampleModal").modal("hide");
+
+                  //     // 부드러운 새로고침
+                  //     $("body").fadeOut(300, function () {
+                  //       location.reload();
+                  //     });
+                  //   });
+                },
+                error: function () {
+                  swalWithBootstrapButtons.fire({
+                    icon: "error",
+                    title: "에러",
+                    text: "확정 중 문제가 발생했습니다.",
+                  });
+                },
               });
-              // data-seq 값이 같은 모든 input 버튼을 숨기고 '이미 완료된 뷰잉입니다' 메시지 표시
-              $('input[data-seq="' + viewingId + '"]')
-                .closest("td")
-                .html(
-                  '<span style="color: red; font-weight: bold;">이미 완료된 뷰잉입니다</span>'
-                );
-            },
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "이미 해당 share의 인원이 다 찼습니다.",
-          });
-        }
-      },
+            } else {
+              swalWithBootstrapButtons.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "이미 해당 share의 인원이 다 찼습니다.",
+              });
+            }
+          },
+          error: function () {
+            swalWithBootstrapButtons.fire({
+              icon: "error",
+              title: "에러",
+              text: "확인 중 문제가 발생했습니다.",
+            });
+          },
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        swalWithBootstrapButtons.fire({
+          title: "확정 취소",
+          text: "아직 확정하지 않았습니다.",
+          icon: "error",
+        });
+      }
     });
-  } else {
-    Swal.fire({
-      title: "수정 취소!",
-      icon: "success",
-      draggable: true,
-    });
-  }
 }

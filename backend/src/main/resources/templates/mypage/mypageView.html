@@ -27,9 +27,25 @@
       <div class="Banner-host">
         <input type="hidden" name="userId" th:value="${userDTO.userId}" />
         <span>Achiko의 호스트가 되어 더 많은 혜택을 누려보세요!</span>
-        <a th:href="@{/share/write}"
+        <div class="banner-btns">
+          <a th:href="@{/share/write}"
           ><input type="button" class="hostBtn" value="호스트 되기 >" />
-        </a>
+          </a>
+          <a th:href="@{/viewSubscribe}"
+          ><input type="button" class="hostBtn" value="구독 결제하기 >" />
+          </a>
+        </div>
+      </div>
+    </th:block>
+    <th:block th:if="${userDTO.isHost == 1}">
+      <div class="Banner-host">
+        <input type="hidden" name="userId" th:value="${userDTO.userId}" />
+        <span>Achiko 프리미엄을 통해 더 많은 혜택을 누려보세요!</span>
+        <div class="banner-btns">
+          <a th:href="@{/viewSubscribe}"
+          ><input type="button" class="hostBtn" value="구독 결제하기 >" />
+          </a>
+        </div>
       </div>
     </th:block>
     <main>
@@ -63,7 +79,7 @@
               <div class="tabs">
                 <div class="tab active" data-tab="viewing">뷰잉 예약</div>
                 <th:block th:if="${userDTO.isHost == 1}">
-                  <div class="tab" data-tab="sharehouse">내 쉐어하우스</div>
+                  <div class="tab" data-tab="sharehouse">쉐어하우스</div>
                 </th:block>
                 <div class="tab" data-tab="chat">채팅 목록</div>
                 <th:block th:if="${userDTO.isHost == 0}">
@@ -77,7 +93,20 @@
 
               <!-- 뷰잉 -->
               <div class="section tab-content active" id="viewing">
-                <h3>나의 뷰잉 예약</h3>
+                <div class="flexBox">
+                  <h3>나의 뷰잉 예약</h3>
+                  <div:block th:if="${userDTO.isHost == 1}">
+                    <div class="chatRoomsBtn">
+                      <input
+                        type="button"
+                        id="chatRoomsBtn"
+                        class="btn btn-outline-success"
+                        value="뷰잉 확정하러 가기"
+                        />
+                    </div>
+                  </div:block>
+                </div>
+                <hr class="border-color">
                 <input type="hidden" th:value="${userDTO.userId}" id="userId" />
                 <div class="table-container">
                   <table>
@@ -122,16 +151,7 @@
                           <td
                             th:text="${viewing.isCompleted == 0 ? '확정 전' : '확정 완료'}"
                           ></td>
-                          <th:block th:if="${userDTO.isHost == 1}">
-                            <div class="chatRoomsBtn">
-                              <input
-                                type="button"
-                                id="chatRoomsBtn"
-                                class="btn btn-outline-success"
-                                value="뷰잉 확정하러 가기"
-                              />
-                            </div>
-                          </th:block>
+                          
                         </tr>
                       </th:block>
                     </tbody>
@@ -142,7 +162,18 @@
               <!-- 작성한 쉐어 글 목록 (for host) -->
               <th:block th:if="${userDTO.isHost == 1}">
                 <div class="section tab-content" id="sharehouse">
-                  <h3>나의 쉐어하우스</h3>
+                  <div class="flexBox">
+                    <h3>나의 쉐어하우스 목록</h3>
+                    <th:block th:if="${userDTO.isHost == 1}">
+                      <form th:action="@{/mypage/changeToGuest}" method="post">
+                        <input type="hidden" name="userId" th:value="${userDTO.userId}" />
+                          <button type="submit" class="btn btn-outline-success">
+                           게스트 전환하기
+                          </button>
+                      </form>
+                    </th:block>
+                  </div>
+                  <hr class="border-color">
                   <div class="table-container">
                     <table id="myShareTable">
                       <thead>
@@ -219,7 +250,10 @@
 
               <!-- 채팅방 목록 -->
               <div class="section tab-content" id="chat">
-                <h3>나의 채팅 목록</h3>
+                <div class="flexBox">
+                  <h3>나의 채팅 목록</h3>
+                </div>
+                <hr class="border-color">
                 <input
                   type="hidden"
                   th:value="${userDTO.nickname}"
@@ -243,7 +277,10 @@
               <!-- 찜목록 (for guest) -->
               <th:block th:if="${userDTO.isHost == 0}">
                 <div class="section tab-content" id="favorite">
-                  <h3>나의 찜 목록</h3>
+                  <div class="flexBox">
+                    <h3>나의 찜 목록</h3>
+                  </div>
+                  <hr class="border-color">
                   <div class="table-container">
                     <table id="favoriteTable">
                       <thead>
@@ -279,7 +316,11 @@
 
               <!-- 리뷰 -->
               <div class="section tab-content" id="review">
-                <h3>나의 리뷰</h3>
+                <div class="flexBox">
+                  <h3>나의 리뷰 목록</h3>
+                  
+                </div>
+                <hr class="border-color">
                 <div class="table-container">
                   <table id="writtenReviewTable" class="reviewTable">
                     <thead>
@@ -355,7 +396,7 @@
               </div>
             </div>
             <!-- 추천 사용자 -->
-            <div class="recommendations">
+            <!-- <div class="recommendations">
               <div class="recommend-frame">
                 <button class="recommend-btn left">◀</button>
                 <div class="recommend-slider">
@@ -403,7 +444,7 @@
                 </div>
                 <button class="recommend-btn right">▶</button>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -571,15 +612,7 @@
       </div>
 
       <div class="toBeBtn">
-        <th:block th:if="${userDTO.isHost == 1}">
-          <form th:action="@{/mypage/changeToGuest}" method="post">
-            <input type="hidden" name="userId" th:value="${userDTO.userId}" />
-            <span>호스팅을 종료하시겠습니까?</span>
-            <button type="submit" class="btn btn-outline-success">
-              게스트 전환하기
-            </button>
-          </form>
-        </th:block>
+        
         <!-- 회원 탈퇴 버튼 -->
         <div class="btn-container">
           <span class="nothingText">회원 탈퇴를 원하시나요? </span>
