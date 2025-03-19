@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/review")
 @RequiredArgsConstructor
 public class ReviewViewController {
+
+	@Value("${kakao.javascript.key}")
+	private String kakaoJavaScriptKey;
 
 	private final ReviewService reviewService;
 	private final UserService userService;
@@ -93,6 +97,8 @@ public class ReviewViewController {
 		} else {
 			model.addAttribute("languageList", Collections.emptyList());
 		}
+		
+        model.addAttribute("kakaoJavaScriptKey", kakaoJavaScriptKey);
 
 		return "review/reviewPage"; // Thymeleaf 파일명 (확장자 제외)
 	}
@@ -179,7 +185,7 @@ public class ReviewViewController {
 
 		model.addAttribute("ratingCategories", ratingCategories);
 		model.addAttribute("ratingFields", ratingFields);
-		
+
 		if (reviewedUserDTO.getLanguages() != null) {
 			List<Map<String, String>> languageList = Arrays.stream(reviewedUserDTO.getLanguages().split(","))
 					.map(String::trim).map(lang -> {
@@ -193,7 +199,6 @@ public class ReviewViewController {
 		} else {
 			model.addAttribute("languageList", Collections.emptyList());
 		}
-
 
 		return "review/reviewUpdate"; // templates/review/reviewUpdate.html과 연결
 	}

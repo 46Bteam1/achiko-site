@@ -51,12 +51,17 @@ public class MainController {
             }
             
             isSubscribed = loggedUser.getReceiptId();
+            boolean isHost = loggedUser.getIsHost() == 1 ? true : false;
+            model.addAttribute("isHost", loggedUser != null && isHost); 
+        } else {
+            model.addAttribute("isHost", false);  
         }
 
         model.addAttribute("isSubscribed", isSubscribed);
         model.addAttribute("isLoggedIn", isLoggedIn);
         model.addAttribute("shareList", shareList); 
         model.addAttribute("googleApiKey", googleApiKey);
+        
         return "index"; 
     }
 }

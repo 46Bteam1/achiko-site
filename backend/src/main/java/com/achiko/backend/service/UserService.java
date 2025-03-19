@@ -179,4 +179,11 @@ public class UserService {
 		return profileImage;
 	}
 
+	public Long findUserId(String nickname) {
+		Optional<UserEntity> temp = userRepository.findByNickname(nickname);
+		UserEntity entity = temp.get();
+		Long userId = entity.getUserId();
+		return userId;
+	}
+
 }

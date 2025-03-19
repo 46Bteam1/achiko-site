@@ -320,6 +320,7 @@ header.sticky-reappear + main {
   padding: 10px;
   background: #0faf3b;
   border-style: none;
+  cursor: pointer;
 }
 
 .query-divide {
