@@ -105,7 +105,7 @@ function showChat(data) {
 
   if (data["sentAt"]) {
     let date = new Date(data["sentAt"]); // UTC 기준 Date 객체 생성
-    date.setHours(date.getHours() + 9);
+    date.setHours(date.getHours()+9);
 
     sentAt = date.toLocaleString("ko-KR", {
       year: "numeric",
