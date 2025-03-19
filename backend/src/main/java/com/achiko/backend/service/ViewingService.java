@@ -59,6 +59,7 @@ public class ViewingService {
 	    }
 	    
 		ViewingEntity viewingEntity = ViewingEntity.toEntity(viewingDTO, share, user);
+		viewingEntity.setIsCompleted(false);
 		viewingRepository.save(viewingEntity);
 		return "viewing 생성 성공";
 	}
@@ -112,6 +113,20 @@ public class ViewingService {
 	        Optional<ShareEntity> temp2 = shareRepository.findById(shareId);
 	        if(temp2.isEmpty()) return "존재하지 않는 share입니다";
 	        
+	        Long guestId2 = vEntity.getGuest().getUserId();     
+	        
+	        // 다른 곳에 living 중인지 확인
+	        List<RoommateEntity> roommateEList = roommateRepository.findByUserUserId(guestId2);
+		    
+		    if(roommateEList != null) {
+		    	for (RoommateEntity e : roommateEList) {
+		    	    ShareEntity eShare = e.getShare();
+		    	    if (eShare.getStatus()==null||eShare.getStatus().equals("living")) {
+		    	        return "이미 다른 share에서 지내는 중입니다.";
+		    	    }
+		    	}
+		    }
+	        
 	        ShareEntity shareEntity = temp2.get();
 	        int maxGuests = shareEntity.getMaxGuests();
 	        int currentGuests = shareEntity.getCurrentGuests();
@@ -120,6 +135,7 @@ public class ViewingService {
 			if(currentGuests == maxGuests) return "이미 모집 인원이 다 찼습니다.";
 			
 			shareEntity.setCurrentGuests(currentGuests+1);
+			shareEntity.setStatus("living");
 			shareRepository.save(shareEntity);
 			
 			// viewing 확정으로 수정
@@ -170,6 +186,7 @@ public class ViewingService {
 		UserEntity user = userRepository.findById(userId).get();
 		if(userId.equals(guestId) || userId.equals(hostId)) {
 			ViewingEntity entity = ViewingEntity.toEntity(viewingDTO, share, user);
+			entity.setIsCompleted(false);
 			viewingRepository.save(entity);
 			return "날짜 수정 완료";
 		}
