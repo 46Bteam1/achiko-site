@@ -113,15 +113,19 @@ public class ViewingService {
 	        Optional<ShareEntity> temp2 = shareRepository.findById(shareId);
 	        if(temp2.isEmpty()) return "존재하지 않는 share입니다";
 	        
-	        Long guestId2 = vEntity.getGuest().getUserId();
+	        Long guestId2 = vEntity.getGuest().getUserId();     
 	        
 	        // 다른 곳에 living 중인지 확인
-	        List<ShareEntity> shareList = viewingRepository.findShareByGuestId(guestId2);
-	        for(ShareEntity s:shareList) {
-	        	if(s.getStatus().equals("living")) {
-	        		return "이미 다른 share에서 지내고 있습니다.";
-	        	}
-	        }
+	        List<RoommateEntity> roommateEList = roommateRepository.findByUserUserId(guestId2);
+		    
+		    if(roommateEList != null) {
+		    	for (RoommateEntity e : roommateEList) {
+		    	    ShareEntity eShare = e.getShare();
+		    	    if (eShare.getStatus()==null||eShare.getStatus().equals("living")) {
+		    	        return "이미 다른 share에서 지내는 중입니다.";
+		    	    }
+		    	}
+		    }
 	        
 	        ShareEntity shareEntity = temp2.get();
 	        int maxGuests = shareEntity.getMaxGuests();
