@@ -258,4 +258,18 @@ public class ShareService {
 	    return !shareRepository.existsByHost_UserIdAndStatus(userId, "open");
 	}
 
+	public Long findShareId(String loginId) {
+	    Long userId = userRepository.findByLoginId(loginId).getUserId();
+
+	    return shareRepository.findFirstByHostUserIdAndStatus(userId, "open")
+	                          .map(ShareEntity::getShareId)
+	                          .orElse(null);
+	}
+
+	public Long findOpenShareId(Long userId) {
+	    return shareRepository.findFirstByHostUserIdAndStatus(userId, "open")
+	                          .map(ShareEntity::getShareId)
+	                          .orElse(null);
+	}
+
 }

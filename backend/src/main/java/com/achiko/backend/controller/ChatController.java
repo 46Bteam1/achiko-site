@@ -47,6 +47,15 @@ public class ChatController {
 		return chatroomId;
 	}
 	
+	// 호스트가 게스트에게 거는 채팅방 생성 메서드
+	@PostMapping("/createHostToGuest")
+	@Operation(summary = "채팅방 생성 메서드", description = "채팅방을 생성합니다.")
+	public Long createRoom(@RequestBody ChatRoomDTO chatRoomDTO,@RequestParam("shareId") Long shareId, @RequestParam("guestId") Long guestId) {
+		Long chatroomId = chatService.createRoom(chatRoomDTO, shareId, guestId);
+		
+		return chatroomId;
+	}
+	
 	// 채팅방들 조회 메서드
 	// 상대방들의 닉네임들 전해주기
 	@GetMapping("/selectRooms")
