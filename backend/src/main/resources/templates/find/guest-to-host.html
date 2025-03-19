@@ -1,56 +1,42 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Achiko</title>
-    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
-
+    <title>호스트 추천</title>
     <link rel="stylesheet" th:href="@{/css/find.css}" />
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
-    <script th:src="@{/js/toggle.js}" defer></script>
   </head>
   <body>
-    <!-- 헤더 header -->
-    <header th:replace="~{fragments/header :: header}"></header>
+    <header>
+      <img src="/images/achiko-logo3.png" alt="Achiko Logo" class="logo" />
+    </header>
 
-    <main class="main-container">
-      <h1 class="main-title">추천을 받아보세요</h1>
+    <h1>추천을 받아보세요</h1>
 
-      <form id="recommendationForm" class="recommendation-form">
-        <label for="baseText" class="form-label"
-          >자기소개를 작성해보세요 :</label
-        >
-        <input
-          type="text"
-          id="baseText"
-          name="baseText"
-          th:value="${currentUserBio}"
-          class="form-input"
-          size="50"
-          required
-        />
-        <br />
-        <button type="submit" id="compare-btn" class="submit-btn">
-          <span id="button-text">추천 받기</span>
-        </button>
-      </form>
+    <form id="recommendationForm">
+      <label for="baseText">자기소개를 작성해보세요 :</label>
+      <input
+        type="text"
+        id="baseText"
+        name="baseText"
+        th:value="${currentUserBio}"
+        size="50"
+        required
+      />
+      <br />
+      <button type="submit" id="compare-btn">
+        <span id="button-text">추천 받기</span>
+      </button>
+    </form>
 
-      <!-- Loading animation -->
-      <div id="loading-screen" class="loading-container" style="display: none">
-        <div class="loading-spinner"></div>
-      </div>
+    <div id="loading-screen" class="loading-wrap" style="display: none">
+      <div class="spinner"></div>
+    </div>
 
-      <!-- Results section (dynamically updated) -->
-      <div id="results-container" class="results-container"></div>
+    <div id="results-container"></div>
 
-      <div class="back-buttons">
-        <a th:href="@{/}" class="back-link">메인으로 돌아가기</a>
-      </div>
-    </main>
-
-    <!-- 푸터 -->
-    <footer th:replace="~{fragments/footerTest :: footer}"></footer>
+    <div class="back-buttons">
+      <a th:href="@{/}">메인으로 돌아가기</a>
+    </div>
 
     <script>
       $(document).ready(function () {
@@ -94,6 +80,8 @@
           let html = `<h2>추천 결과</h2><div class="user-grid">`;
           for (let key in data.similarityResults) {
             let user = data.userDetails[key];
+            let chatroomId = Math.floor(Math.random() * 1000) + 1;
+
             html += `
                         <div class="user-card">
                             <img src="${
@@ -136,10 +124,40 @@
                             <p><strong>평균 매너:</strong> ${
                               user.avgManner ? user.avgManner.toFixed(2) : "N/A"
                             }</p>
-                        </div>`;
+                            <button class="chat-btn" data-chatroom-id="${chatroomId}" data-user-nickname="${key}">채팅</button>
+                           </div>`;
           }
           html += `</div>`;
           container.append(html);
+
+          $(".chat-btn").click(function () {
+            let chatroomId = $(this).data("chatroom-id");
+            let nickname = $(this).data("user-nickname");
+
+            createChatroom(nickname, chatroomId);
+          });
+        }
+        function createChatroom(nickname, chatroomId) {
+          let requestData = {
+            chatroomId: null, // Let the backend generate the ID
+            shareId: 1, // Set the appropriate shareId here
+            createdAt: null, // If your DTO needs it, otherwise remove it
+          };
+
+          $.ajax({
+            type: "POST",
+            url: "/chat/create?shareId=1", // Append shareId in the URL
+            data: JSON.stringify(requestData),
+            contentType: "application/json",
+            success: function (response) {
+              window.location.href = "/chatList?chatroomId=" + response;
+            },
+            error: function (xhr, status, error) {
+              console.error("❌ Chatroom Creation Error:", status, error);
+              console.error("❌ Response Text:", xhr.responseText); // Logs server response
+              alert("채팅창을 생성하는데 실패했습니다.");
+            },
+          });
         }
       });
     </script>

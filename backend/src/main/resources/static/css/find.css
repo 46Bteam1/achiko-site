@@ -1,129 +1,20 @@
-@import "./reset.css";
-@import "./header.css";
-@import "./footer.css";
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Noto Sans KR", "Noto Sans JP", sans-serif;
-  background-color: #f9f9f9;
-}
-/* 메인 컨테이너 */
-.main-container {
-  width: 80%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.main-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-/* 추천 폼 */
-.recommendation-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.form-label {
-  font-size: 16px;
-  font-weight: bold;
-  color: #555;
-}
-
-.form-input {
-  width: 100%;
-  max-width: 500px;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  outline: none;
-}
-
-.submit-btn {
-  background: #ff7b54;
-  color: #fff;
-  font-size: 16px;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s ease-in-out;
-}
-
-.submit-btn:hover {
-  background: #ff5733;
-}
-
-/* 로딩 애니메이션 */
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top: 20px;
-}
-
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #ff7b54;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* 추천 결과 */
-.results-container {
-  margin-top: 30px;
-}
-
-.results-title {
-  font-size: 20px;
-  color: #444;
-  margin-bottom: 15px;
-}
-
-/* 추천된 사용자 목록 */
+@charset "UTF-8";
 .user-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  gap: 20px;
+  padding: 20px;
 }
 
-/* 개별 사용자 카드 */
 .user-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
   text-align: center;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.user-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .profile-img {
@@ -134,19 +25,78 @@ body {
   margin-bottom: 10px;
 }
 
-.user-card-title {
-  font-size: 18px;
+.user-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.user-card h3 {
   margin: 10px 0;
   color: #333;
 }
 
-.user-card-text {
+.user-card p {
   font-size: 14px;
-  color: #666;
   margin: 5px 0;
+  color: #666;
 }
 
-/* 뒤로 가기 버튼 */
+@media (max-width: 768px) {
+  .user-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+header {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.logo {
+  width: 180px;
+  height: auto;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
+table {
+  margin: 20px auto;
+  border-collapse: collapse;
+  width: 80%;
+}
+
+th,
+td {
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
 .back-buttons {
   position: fixed;
   bottom: 20px;
@@ -156,33 +106,32 @@ body {
   gap: 10px;
 }
 
-.back-link {
-  font-size: 14px;
-  color: #007bff;
-  text-decoration: none;
-  transition: color 0.3s ease-in-out;
+.loading-wrap {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
 }
 
-.back-link:hover {
-  color: #0056b3;
+.spinner {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  border: 8px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #007bff;
+  animation: spin 1s linear infinite;
 }
 
-/* 반응형 스타일 */
-@media (max-width: 600px) {
-  .main-container {
-    width: 95%;
-    padding: 20px;
-  }
-
-  .form-input {
-    width: 100%;
-  }
-
-  .submit-btn {
-    width: 100%;
-  }
-
-  .user-grid {
-    grid-template-columns: 1fr;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

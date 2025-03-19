@@ -23,8 +23,8 @@ public class UsersEntity {
     @Column(columnDefinition = "TEXT")
     private String bio;
     
-    @Column(name = "is_host")
-    private int isHost;
+    @Column(name = "is_host", nullable = false)
+    private Integer isHost;
     
     @Column(name = "languages")
     private String languages;
