@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Achiko</title>
     <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
 
@@ -33,14 +34,6 @@
       href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
       integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
       crossorigin="anonymous"
-    />
-
-    <!-- Noto Sans Korean & Japanese 폰트 추가 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap"
-      rel="stylesheet"
     />
 
     <!-- ★ 전역 변수 및 메인 지도 초기화 함수 정의 -->
@@ -235,27 +228,19 @@
       <section class="action-buttons">
         <div class="action-container">
           <!-- ★ 찜하기 버튼: 데이터 속성에 share.isFavorite 및 share.favoriteCount를 사용하여 초기 상태 설정 -->
-          <div
-            id="favoriteContainer"
-            class="favorite-container"
-            th:attr="data-share-id=${share.shareId}, data-is-favorite=${share.isFavorite}"
-          >
-            <button
-              id="favoriteBtn"
-              class="favorite-btn"
-              th:attr="data-is-favorite=${share.isFavorite}"
-            >
-              <i
-                th:class="${share.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"
-              ></i>
-            </button>
-            <span class="favorite-count">
-              <b th:text="${share.favoriteCount}"></b>
-              <span
-                th:text="${share.favoriteCount > 1} ? ' LIKES' : ' LIKE'"
-              ></span>
-            </span>
-          </div>
+          <div id="favoriteContainer"
+     		class="favorite-container"
+     		th:attr="data-share-id=${share.shareId}, data-is-favorite=${(share.isFavorite == true) ? 'true' : 'false'}"> <!-- ★ 수정: data-is-favorite 문자열화 -->
+  		 <button id="favoriteBtn"
+          class="favorite-btn"
+          th:attr="data-is-favorite=${(share.isFavorite == true) ? 'true' : 'false'}"> <!-- ★ 수정: data-is-favorite 문자열화 -->
+    	<i th:class="${(share.isFavorite == true) ? 'fas fa-heart' : 'far fa-heart'}"></i> <!-- ★ 수정: 명시적 비교 -->
+  		</button>
+  		<span class="favorite-count">
+    		<b th:text="${share.favoriteCount}"></b>
+    	<span th:text="${(share.favoriteCount > 1) ? ' LIKES' : ' LIKE'}"></span>
+  		</span>
+		</div>
           <br />
           <button id="shareButton" class="action-btn share-btn">
             공유하기

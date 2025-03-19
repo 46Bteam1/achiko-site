@@ -29,6 +29,7 @@ public class ChatRoomDTO {
     public static ChatRoomDTO toDTO(ChatRoomEntity roomEntity, Long shareId) {
     	return ChatRoomDTO.builder()
     			.chatroomId(roomEntity.getChatroomId())
+    			.shareId(shareId)
     			.createdAt(roomEntity.getCreatedAt())
     			.build();
     }

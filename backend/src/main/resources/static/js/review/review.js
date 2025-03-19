@@ -1,29 +1,4 @@
 $(document).ready(function () {
-  // header 관련
-  // Fragment가 동적으로 로드된 후 이벤트 바인딩
-  $(document).on("click", "#menuButton", function (event) {
-    event.stopPropagation();
-    const $modalMenu = $("#modalMenu");
-
-    if ($modalMenu.is(":visible")) {
-      $modalMenu.hide();
-    } else {
-      $modalMenu.show();
-    }
-  });
-
-  // 모달 바깥 클릭 시 모달 닫기
-  $(document).on("click", function (event) {
-    if (
-      !$("#modalMenu").is(event.target) &&
-      !$("#modalMenu").has(event.target).length &&
-      !$("#menuButton").is(event.target)
-    ) {
-      $("#modalMenu").hide();
-    }
-  });
-
-  console.log("📢 페이지 로드 완료, 차트 실행");
   // loadChart(); //  페이지 로드 시 차트 실행
 
   //  정렬 이벤트 발생 시 차트 다시 로드
@@ -42,59 +17,77 @@ $(document).ready(function () {
   $("#reviewFilter").on("change", sortReviews);
 
   // ✅ 카카오 공유 초기화
-  Kakao.init("85ca9d17a9851b6fed154a7b6a161304");
+  // Kakao.init("85ca9d17a9851b6fed154a7b6a161304");
 
-  // ✅ 공유 버튼 클릭 시 모달창 열기
-  const shareModal = new bootstrap.Modal(
-    document.getElementById("shareModal"),
-    {
-      backdrop: false, // 백드롭 비활성화
-    }
-  );
-  $("#shareButton").on("click", function () {
-    console.log("📢 공유 버튼 클릭됨");
+  // // ✅ 공유 버튼 클릭 시 모달창 열기
+  // const shareModal = new bootstrap.Modal(
+  //   document.getElementById("shareModal"),
+  //   {
+  //     backdrop: false, // 백드롭 비활성화
+  //   }
+  // );
+  // $("#shareButton").on("click", function () {
+  //   console.log("📢 공유 버튼 클릭됨");
+  //   $("#shareUrl").val(window.location.href);
+  //   shareModal.show();
+  //   document.body.classList.add("modal-open");
+  // });
+
+  const shareModal = document.getElementById("shareModal");
+  const closeShareModalBtn = document.getElementById("closeShareModalBtn");
+
+  // 공유하기 버튼 클릭 시 공유 모달 열기
+  shareButton.addEventListener("click", function () {
     $("#shareUrl").val(window.location.href);
-    shareModal.show();
+    shareModal.style.display = "block";
     document.body.classList.add("modal-open");
   });
 
-  // ✅ 카카오톡 공유 버튼 이벤트 등록
-  $("#kakaoShareButton").on("click", function () {
-    console.log("📢 카카오 공유 버튼 클릭됨");
-
-    Kakao.Share.sendDefault({
-      objectType: "feed",
-      content: {
-        title: "리뷰 공유",
-        description: "이 리뷰를 확인해보세요!",
-        imageUrl: "https://your-site.com/image.jpg",
-        link: {
-          mobileWebUrl: window.location.href,
-          webUrl: window.location.href,
-        },
-      },
-      buttons: [
-        {
-          title: "웹으로 보기",
-          link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href,
-          },
-        },
-      ],
-    });
-
-    // 공유 완료 후 모달창 닫기
-    $("#shareModal").fadeOut();
+  // 공유 모달 닫기 버튼 클릭 시 모달 닫기
+  closeShareModalBtn.addEventListener("click", function () {
+    shareModal.style.display = "none";
     document.body.classList.remove("modal-open");
   });
 
-  // ✅ 모달 닫기 버튼 이벤트
-  $("#closeShareModalBtn").on("click", function () {
-    console.log("📢 모달 닫기 버튼 클릭됨");
-    shareModal.hide();
-    document.body.classList.remove("modal-open");
+  // 모달 외부 클릭 시 모달 닫기 (공유 모달)
+  window.addEventListener("click", function (event) {
+    if (event.target === shareModal) {
+      shareModal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }
   });
+
+  // // ✅ 카카오톡 공유 버튼 이벤트 등록
+  // $("#kakaoShareButton").on("click", function () {
+  //   console.log("📢 카카오 공유 버튼 클릭됨");
+
+  //   Kakao.Link.createDefaultButton({
+  //     container: "#kakao-link-btn",
+  //     objectType: "feed",
+  //     content: {
+  //       title: "하우스메이트 공유",
+  //       description: "하우스메이트의 리뷰를 확인해보세요!",
+  //       imageUrl: window.profileImageUrl,
+  //       link: {
+  //         mobileWebUrl: window.location.href,
+  //         webUrl: window.location.href,
+  //       },
+  //     },
+  //     buttons: [
+  //       {
+  //         title: "웹으로 보기",
+  //         link: {
+  //           mobileWebUrl: window.location.href,
+  //           webUrl: window.location.href,
+  //         },
+  //       },
+  //     ],
+  //   });
+
+  //   // 공유 완료 후 모달창 닫기
+  //   $("#shareModal").fadeOut();
+  //   document.body.classList.remove("modal-open");
+  // });
 
   // ✅ URL 복사 기능
   $("#copyUrlButton").on("click", function () {
@@ -103,6 +96,43 @@ $(document).ready(function () {
     document.execCommand("copy");
     alert("URL이 복사되었습니다! 📋");
   });
+});
+
+// ✅ 카카오톡 공유 버튼 이벤트 등록
+window.addEventListener("load", function () {
+  const reviewedUserId = new URL(window.location.href).searchParams.get(
+    "reviewedUserId"
+  );
+  const shareUrl =
+    window.location.origin +
+    `/review/reviewPage?reviewedUserId=${reviewedUserId}`;
+
+  Kakao.Link.createDefaultButton({
+    container: "#kakaoShareButton",
+    objectType: "feed",
+    content: {
+      title: "하우스메이트 공유",
+      description: "하우스메이트의 리뷰를 확인해보세요!",
+      imageUrl: window.profileImageUrl,
+      link: {
+        mobileWebUrl: shareUrl,
+        webUrl: shareUrl,
+      },
+    },
+    buttons: [
+      {
+        title: "웹으로 보기",
+        link: {
+          mobileWebUrl: shareUrl,
+          webUrl: shareUrl,
+        },
+      },
+    ],
+  });
+
+  // 공유 완료 후 모달창 닫기
+  $("#shareModal").fadeOut();
+  document.body.classList.remove("modal-open");
 });
 
 // ✅ 차트를 생성하는 함수 (전역에서 선언)

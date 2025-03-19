@@ -1,145 +1,271 @@
-<!-- <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Host to Guest</title>
-    <link rel="stylesheet" th:href="@{/css/find.css}">
-    
-</head>
-<body>
-	<header>
-    	<img src="/images/achiko-logo3.png" alt="Achiko Logo" class="logo">
-	</header>
-    <h1>게스트를 추천해드립니다</h1>
-
-    <form action="#" th:action="@{/calculateSimilarity/host-to-guest}" method="post" onsubmit="return disableButton(this);">
-    	<label for="baseText">자기소개를 작성해보세요 :</label>
-    	<input type="text" id="baseText" name="baseText" th:value="${currentUserBio}" size="50"/>
-    	<br>
-    	<button type="submit" id="compare-btn">
-        	<span id="button-text">게스트 추천</span>
-    	</button>
-	</form>
-
-
-    <br>
-    <div class="back-buttons">
-    	<a th:href="@{/}">메인으로 돌아가기</a>
-    </div>
-    <script>
-		function disableButton(form) {
-
-    	// Show full-screen loading overlay
-    	let loadingScreen = document.getElementById("loading-screen");
-    	if (loadingScreen) {
-        	loadingScreen.style.display = "flex";
-    	} else {
-        	console.error("Error: #loading-screen not found!");
-    	}
-
-    	return true; // Allow form submission
-	}
-	</script>
-
-	<div id="loading-screen" class="loading-wrap">
-    	<div class="spinner"></div>
-	</div>
-	
-</body>
-</html> -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>게스트 추천</title>
-    <link rel="stylesheet" th:href="@{/css/find.css}">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achiko</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
+
+    <link rel="stylesheet" th:href="@{/css/find.css}" />
+
+    <!-- Font Awesome CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
-</head>
-<body>
-    <header>
-        <img src="/images/achiko-logo3.png" alt="Achiko Logo" class="logo">
-    </header>
 
-    <h1>추천을 받아보세요</h1>
+    <script th:src="@{/js/toggle.js}" defer></script>
+  </head>
+  <body>
+    <!-- 헤더 header -->
+    <header th:replace="~{fragments/header :: header}"></header>
 
-    <form id="recommendationForm">
-        <label for="baseText">자기소개를 작성해보세요 :</label>
-        <input type="text" id="baseText" name="baseText" th:value="${currentUserBio}" size="50" required />
-        <br>
-        <button type="submit" id="compare-btn">
-            <span id="button-text">추천 받기</span>
+    <main class="recommendation-container">
+      <h1 class="recommendation-title">게스트 추천을 받아보세요</h1>
+
+      <form id="recommendationForm" class="recommendation-form">
+        <input
+          type="hidden"
+          name="shareId"
+          id="shareId"
+          th:value="${shareId}"
+        />
+        <label for="baseText" class="form-label"
+          >자기소개를 작성해보세요 :</label
+        >
+        <input
+          type="text"
+          id="baseText"
+          name="baseText"
+          th:value="${currentUserBio}"
+          size="50"
+          required
+          class="form-input"
+        />
+        <br />
+        <button type="submit" id="compare-btn" class="form-submit-btn">
+          <span id="button-text">추천 받기</span>
         </button>
-    </form>
+      </form>
 
-    <!-- Loading animation -->
-    <div id="loading-screen" class="loading-wrap" style="display:none;">
+      <!-- 로딩 화면 -->
+      <div id="loading-screen" class="loading-wrap" style="display: none">
         <div class="spinner"></div>
-    </div>
+      </div>
 
-    <!-- Results section (dynamically updated) -->
-    <div id="results-container"></div>
+      <!-- 결과 영역 -->
+      <div id="results-container" class="results-container">
+        <h2>호스트 추천 결과</h2>
+        <img
+          th:src="@{/images/ai-print.webp}"
+          alt="ai-print"
+          class="before-result-img"
+        />
+      </div>
+    </main>
 
-    <div class="back-buttons">
-        <a th:href="@{/}">메인으로 돌아가기</a>
-    </div>
+    <!-- 푸터 -->
+    <footer th:replace="~{fragments/footerTest :: footer}"></footer>
 
     <script>
-        $(document).ready(function() {
-            $("#recommendationForm").submit(function(event) {
-                event.preventDefault();  // Prevent normal form submission
+      $(document).ready(function () {
+        $("#recommendationForm").submit(function (event) {
+          event.preventDefault(); // Prevent normal form submission
 
-                let baseText = $("#baseText").val();
-                let apiUrl = window.location.pathname.includes("host-to-guest") 
-                    ? "/calculateSimilarity/host-to-guest" 
-                    : "/calculateSimilarity/guest-to-host";
+          let baseText = $("#baseText").val();
+          let apiUrl = window.location.pathname.includes("host-to-guest")
+            ? "/calculateSimilarity/host-to-guest"
+            : "/calculateSimilarity/guest-to-host";
 
-                $("#loading-screen").show(); // Show loading animation
+          $("#loading-screen").show(); // Show loading animation
 
-                $.ajax({
-                    type: "POST",
-                    url: apiUrl,
-                    data: { baseText: baseText },
-                    success: function(response) {
-                        $("#loading-screen").hide();  // Hide loading animation
-                        displayResults(response);
-                    },
-                    error: function() {
-                        $("#loading-screen").hide();
-                        alert("추천을 가져오는 데 실패했습니다.");
-                    }
-                });
-            });
-
-            function displayResults(data) {
-                let container = $("#results-container");
-                container.empty(); // Clear previous results
-
-                if (!data.similarityResults || Object.keys(data.similarityResults).length === 0) {
-                    container.append("<p>추천 결과가 없습니다.</p>");
-                    return;
-                }
-
-                let html = `<h2>추천 결과</h2><div class="user-grid">`;
-                for (let key in data.similarityResults) {
-                    let user = data.userDetails[key];
-                    html += `
-                        <div class="user-card">
-                            <img src="${user.profileImage}" alt="Profile Image" class="profile-img">
-                            <h3>${key}</h3>
-                            <p><strong>추천 점수:</strong> ${data.similarityResults[key].toFixed(2)}%</p>
-                            <p><strong>언어:</strong> ${user.languages || 'N/A'}</p>
-                            <p><strong>나이:</strong> ${user.age || 'N/A'}</p>
-                            <p><strong>국적:</strong> ${user.nationality || 'N/A'}</p>
-                            <p><strong>종교:</strong> ${user.religion || 'N/A'}</p>
-                            <p><strong>성별:</strong> ${user.gender == 0 ? 'Male' : (user.gender == 1 ? 'Female' : 'Other')}</p>
-                            <p><strong>평균 청결도:</strong> ${user.avgCleanliness ? user.avgCleanliness.toFixed(2) : 'N/A'}</p>
-                            <p><strong>평균 신뢰도:</strong> ${user.avgTrust ? user.avgTrust.toFixed(2) : 'N/A'}</p>
-                            <p><strong>평균 의사소통:</strong> ${user.avgCommunication ? user.avgCommunication.toFixed(2) : 'N/A'}</p>
-                            <p><strong>평균 매너:</strong> ${user.avgManner ? user.avgManner.toFixed(2) : 'N/A'}</p>
-                        </div>`;
-                }
-                html += `</div>`;
-                container.append(html);
-            }
+          $.ajax({
+            type: "POST",
+            url: apiUrl,
+            data: { baseText: baseText },
+            success: function (response) {
+              $("#loading-screen").hide(); // Hide loading animation
+              displayResults(response);
+            },
+            error: function () {
+              $("#loading-screen").hide();
+              alert("추천을 가져오는 데 실패했습니다.");
+            },
+          });
         });
+
+        function getLanguageFlags(languages) {
+          if (!languages) return "<span class='value'>N/A</span>";
+
+          const languageFlags = {
+            한국어: "/images/flags/korea.png",
+            영어: "/images/flags/america.png",
+            일본어: "/images/flags/japan.png",
+            중국어: "/images/flags/china.png",
+          };
+
+          const languageList = languages.split(",").map((lang) => lang.trim());
+
+          let flagHtml = `<div class="languages-container">`;
+          languageList.forEach((lang) => {
+            if (languageFlags[lang]) {
+              flagHtml += `<img src="${languageFlags[lang]}" class="flag-icon" alt="${lang}">`;
+            }
+          });
+          flagHtml += `</div>`;
+
+          return flagHtml;
+        }
+
+        function displayResults(data) {
+          let container = $("#results-container");
+          container.empty(); // Clear previous results
+
+          if (
+            !data.similarityResults ||
+            Object.keys(data.similarityResults).length === 0
+          ) {
+            container.append("<p>추천 결과가 없습니다.</p>");
+            return;
+          }
+
+          let html = `<div class="user-grid">`;
+          for (let key in data.similarityResults) {
+            let user = data.userDetails[key];
+            let chatroomId = Math.floor(Math.random() * 1000) + 1;
+
+            let genderText =
+              user.gender === 0 ? "남성" : user.gender === 1 ? "여성" : "기타";
+            let profileImg = user.profileImage
+              ? user.profileImage
+              : "/images/default-profile.png";
+
+            html += `
+                        <div class="user-card">
+                            <div class="user-header">
+                              <img src="${
+                                user.profileImage
+                              }" alt="Profile Image" class="profile-img">
+                                <h3>${key}</h3>
+                            </div>
+                            <div class="user-info">
+                              <div class="user-info-item">
+                                <i class="fas fa-globe"></i>
+                                <span class="label">국적</span>
+                                <span class="value">${
+                                  user.nationality || "N/A"
+                                }</span>
+                              </div>
+                              <div class="user-info-item">
+                                <i class="fas fa-user"></i>
+                                <span class="label">성별나이</span>
+                                <span class="value">${
+                                  user.gender == 0
+                                    ? "남성"
+                                    : user.gender == 1
+                                    ? "여성"
+                                    : "비밀"
+                                } ${user.age || "N/A"}세</span>
+                              </div>
+                              <div class="user-info-item">
+    <i class="fas fa-language"></i>
+    <span class="label">사용언어</span>
+    ${getLanguageFlags(user.languages)}
+</div>
+
+                              <div class="user-info-item">
+                                <i class="fas fa-praying-hands"></i>
+                                <span class="label">종교</span>
+                                <span class="value">${
+                                  user.religion || "N/A"
+                                }</span>
+                              </div>
+                            </div>
+
+                            <div class="rating-box">
+                              <div class="rating-item">
+                                <i class="fas fa-broom"></i>
+                                <span>청결도:</span>
+                                <span>${
+                                  user.avgCleanliness
+                                    ? user.avgCleanliness.toFixed(2)
+                                    : "0"
+                                }</span>
+                              </div>
+                              <div class="rating-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>신뢰도:</span>
+                                <span>${
+                                  user.avgTrust ? user.avgTrust.toFixed(2) : "0"
+                                }</span>
+                              </div>
+                              <div class="rating-item">
+                                <i class="fas fa-comments"></i>
+                                <span>소통:</span>
+                                <span>${
+                                  user.avgCommunication
+                                    ? user.avgCommunication.toFixed(2)
+                                    : "0"
+                                }</span>
+                              </div>
+                              <div class="rating-item">
+                                <i class="fas fa-handshake"></i>
+                                <span>매너:</span>
+                                <span>${
+                                  user.avgManner
+                                    ? user.avgManner.toFixed(2)
+                                    : "0"
+                                }</span>
+                              </div>
+                            </div>
+
+                            <button class="chat-btn" data-user-id="${
+                              user.userId
+                            }" data-user-nickname="${key}">메세지 보내기</button>
+                           </div>`;
+          }
+          html += `</div>`;
+          container.append(html);
+
+          $(".chat-btn").click(function () {
+            let shareId = $("#shareId").val();
+            let nickname = $(this).data("user-nickname");
+            let guestId = $(this).data("user-id");
+
+            createChatroom(guestId, shareId);
+          });
+        }
+
+        function createChatroom(guestId, shareId) {
+          let requestData = {
+            shareId: shareId,
+            guestId: guestId,
+          };
+
+          fetch(
+            `/chat/createHostToGuest?shareId=${shareId}&guestId=${guestId}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(requestData),
+            }
+          )
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("네트워크 응답에 문제가 있습니다.");
+              }
+              return response.text();
+            })
+            .then((result) => {
+              window.location.href = `/chatList?chatroomId=${result}`;
+            })
+            .catch((error) => {
+              console.error("Fetch 호출 중 에러 발생:", error);
+            });
+        }
+      });
     </script>
-</body>
+  </body>
 </html>

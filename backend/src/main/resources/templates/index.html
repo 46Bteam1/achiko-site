@@ -77,12 +77,20 @@
               <th:block
                 th:if="${listing.fileList != null and listing.fileList.size() > 0}"
               >
-                <img th:src="${listing.fileList[0].fileUrl}" alt="이미지" />
+                <img
+                  th:src="${listing.fileList[0].fileUrl}"
+                  class="roomImg"
+                  alt="이미지"
+                />
               </th:block>
               <th:block
                 th:unless="${listing.fileList != null and listing.fileList.size() > 0}"
               >
-                <img src="/images/default-profile.png" alt="기본 이미지" />
+                <img
+                  src="/images/default-profile.png"
+                  class="roomImg"
+                  alt="기본 이미지"
+                />
               </th:block>
 
               <!-- 방 정보 영역 -->
@@ -113,19 +121,29 @@
                     ></span>
                   </div>
                 </div>
-                <p
-                  th:text="${listing.regionName + ' ' + listing.cityName + ' ' + listing.townName}"
-                ></p>
-                <p>
-                  ¥
-                  <span
-                    th:text="${#numbers.formatInteger(listing.price, 3, 'COMMA')}"
-                  ></span>
-                  / 월
-                </p>
-                <p
-                  th:text="'인원: ' + ${listing.currentGuests} + ' / ' + ${listing.maxGuests} + '명'"
-                ></p>
+                <div class="detail-wrapper">
+                  <i class="fas fa-map-marker-alt icon-gray"></i>
+                  <p
+                    class="text-ellipsis"
+                    th:text="${listing.regionName + ' ' + listing.cityName + ' ' + listing.townName}"
+                  ></p>
+                </div>
+                <div class="detail-wrapper">
+                  <i class="fas fa-yen-sign icon-gray"></i>
+                  <p class="text-ellipsis">
+                    <span
+                      th:text="${#numbers.formatInteger(listing.price, 3, 'COMMA')}"
+                    ></span>
+                    / 월
+                  </p>
+                </div>
+                <div class="detail-wrapper">
+                  <i class="fas fa-user icon-gray"></i>
+                  <p
+                    class="text-ellipsis"
+                    th:text="'인원: ' + ${listing.currentGuests} + ' / ' + ${listing.maxGuests} + '명'"
+                  ></p>
+                </div>
               </div>
             </a>
           </div>
