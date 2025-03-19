@@ -233,7 +233,7 @@ function getRoommates(chatRoomId) {
         `;
       });
 
-      $("#guestBox").html(tag);
+      // $("#guestBox").html(tag);
     },
   });
 }

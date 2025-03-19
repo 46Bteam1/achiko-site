@@ -164,7 +164,6 @@
       </div>
       <!-- 모달 (회원가입/로그인 메뉴) -->
       <div id="modalMenu" class="modal">
-        <!-- <span class="close">&times;</span> -->
         <div class="menu-group">
           <th:block sec:authorize="isAnonymous()">
             <li><a th:href="@{/user/regist}">회원가입</a></li>
@@ -179,12 +178,13 @@
         <div class="menu-group">
           <li><a th:href="@{/viewSubscribe/subscribePage}">구독 page</a></li>
           <li><a th:href="@{/torii}">토리이 보러가기</a></li>
-          <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
           <th:block sec:authorize="isAuthenticated()">
             <th:block th:if="${isHost}">
+              <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
               <li><a th:href="@{/find/host-to-guest}">게스트 추천</a></li>
             </th:block>
             <th:block th:if="${isHost != null and !isHost}">
+              <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
               <li><a th:href="@{/find/guest-to-host}">호스트 추천</a></li>
             </th:block>
           </th:block>
