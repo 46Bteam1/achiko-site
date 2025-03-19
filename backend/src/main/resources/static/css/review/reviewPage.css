@@ -297,6 +297,18 @@ main {
   margin-bottom: 15px;
 }
 
+/* 리뷰가 없을 때 표시되는 메시지 스타일 */
+.no-review-message {
+  text-align: center;
+  font-size: 16px;
+  color: #888;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  border: 1px solid #ddd;
+}
+
 .review-header h2 {
   font-size: 20px;
 }
@@ -521,4 +533,10 @@ body.modal-open {
     min-height: 400px;
     display: block;
   }
+}
+
+.blur-effect {
+  filter: blur(3px); /* 블러 정도 조절 가능 */
+  pointer-events: none; /* 클릭 비활성화 */
+  user-select: none; /* 선택 비활성화 */
 }

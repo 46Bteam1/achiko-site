@@ -48,7 +48,7 @@ public class ViewingService {
 		
 	    // roommate된 것이 있는지 확인, 있으면 그 share의 status가 living이면 못하도록 막기
 	    List<RoommateEntity> roommateEList = roommateRepository.findByUserUserId(user.getUserId());
-	    log.info("?????:{}", roommateEList);
+	    
 	    if(roommateEList != null) {
 	    	for (RoommateEntity e : roommateEList) {
 	    	    ShareEntity eShare = e.getShare();
@@ -58,8 +58,8 @@ public class ViewingService {
 	    	}
 	    }
 	    
-//		ViewingEntity viewingEntity = ViewingEntity.toEntity(viewingDTO, share, user);
-//		viewingRepository.saveAndFlush(viewingEntity);
+		ViewingEntity viewingEntity = ViewingEntity.toEntity(viewingDTO, share, user);
+		viewingRepository.save(viewingEntity);
 		return "viewing 생성 성공";
 	}
 

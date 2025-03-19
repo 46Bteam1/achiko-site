@@ -13,24 +13,23 @@
       <div class="header-col">
         <a th:href="@{/}">
           <img
+            id="header-logo"
             th:src="@{/images/logo-achiko.png}"
             alt="Achiko Logo"
-            width="204px"
-            height="64px"
           />
         </a>
       </div>
       <div class="header-col header-form">
         <ul>
           <li>
-            <a class="sticky-black" href="#"
-              >あちこちの夢が集まり、ひとつの物語が生まれる</a
-            >
+            <p class="sticky-black">
+              あちこちの夢が集まり、ひとつの物語が生まれる
+            </p>
           </li>
         </ul>
       </div>
       <div class="header-col header-nav">
-        <div class="header-nav-left">
+        <!-- <div class="header-nav-left">
           <button>
             <svg class="sticky-black" width="16px" height="16px">
               <path
@@ -38,7 +37,7 @@
               ></path>
             </svg>
           </button>
-        </div>
+        </div> -->
         <div class="header-nav-right">
           <button id="menuButton">
             <div class="icon-list">
@@ -88,7 +87,7 @@
         <div class="menu-divider"></div>
         <div class="menu-group">
           <li><a th:href="@{/viewSubscribe/subscribePage}">구독 page</a></li>
-          <li><a th:href="@{/torii}">SplinePage</a></li>
+          <li><a th:href="@{/torii}">토리이 보러가기</a></li>
           <li><a th:href="@{/share/write}">글 작성 페이지</a></li>
         </div>
         <!-- </div> -->

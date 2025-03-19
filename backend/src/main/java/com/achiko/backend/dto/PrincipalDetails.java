@@ -8,11 +8,19 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private Long userId;
@@ -24,7 +32,9 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     private String role;
     private String provider;
     private String providerId;
+    private boolean needsAdditionalInfo; // ✅ 추가 정보 입력 필요 여부
     private Map<String, Object> attributes; // OAuth2 사용자 정보
+    private String receiptId;
 
     // ✅ 일반 로그인 (LoginUserDetails) 생성자
     public PrincipalDetails(LoginUserDetails user) {
@@ -35,6 +45,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         this.realName = user.getRealName();
         this.email = user.getEmail();
         this.role = user.getRole();
+        this.receiptId = user.getReceiptId();
         this.provider = null;
     }
 
@@ -49,6 +60,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         this.provider = oAuth2User.getProvider();
         this.providerId = oAuth2User.getName();
         this.attributes = oAuth2User.getAttributes();
+        this.receiptId = oAuth2User.getReceiptId();
     }
 
     // ✅ 공통 메서드 (Spring Security에서 사용)
@@ -86,6 +98,10 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     public boolean isEnabled() {
         return true;
     }
+    
+	public String getReceiptId() {
+		return this.receiptId;
+	}
 
     // ✅ OAuth2 관련 메서드
     @Override
@@ -96,4 +112,13 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     public String getName() {
         return provider + "_" + providerId; // OAuth2에서 사용하는 고유 식별자
     }
+
+	public void setNeedsAdditionalInfo(boolean needsAdditionalInfo) {
+		this.needsAdditionalInfo = needsAdditionalInfo;
+	}
+	
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+    
 }

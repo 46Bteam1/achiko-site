@@ -6,77 +6,99 @@
   box-sizing: border-box;
 }
 
-/* 전체 레이아웃 설정 */
+/*----------------------------------------------------
+  Global Styles
+----------------------------------------------------*/
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
-  margin: 0;
-  padding: 0;
+  font-family: "Noto Sans KR", "Noto Sans JP", sans-serif;
+  background-color: #f9f9f9;
 }
 
-/* 로고 영역 스타일 */
-#logos {
+main {
+  max-width: 90%;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: row; /* 기본적으로 가로 배치 */
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  height: calc(100vh - 80px);
+}
+
+/* 왼쪽 콘텐츠 (shareComponents) */
+#shareComponents {
+  width: 40%; /* 전체 화면의 40% 차지 */
+  max-width: 300px; /* 최대 너비 제한 */
+}
+
+/* 오른쪽 콘텐츠 (chatComponents) */
+#chatComponents {
+  width: 55%;
+  max-width: 800px;
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 반응형 (작은 화면: 768px 이하) */
+@media (max-width: 768px) {
+  #chatLists {
+    flex-direction: column; /* 세로 배치로 변경 */
+    align-items: center; /* 가운데 정렬 */
+  }
+
+  #chatComponents {
+    width: 100%; /* 전체 너비 차지 */
+    order: 1; /* chatComponents가 위로 오도록 설정 */
+  }
+
+  #shareComponents {
+    max-width: 500px;
+    width: 100%; /* 전체 너비 차지 */
+    order: 2; /* shareComponents가 아래로 오도록 설정 */
+  }
+}
+
+/* =========================================================
+   채팅 영역  스타일
+   ========================================================= */
+
+/* 사용자 목록 섹션 */
+#users {
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.users-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
 }
 
-#logos h3 {
-  margin: 0;
+#users h3 {
   font-size: 1.2rem;
   color: #333;
+  margin-bottom: 10px;
 }
 
-#logo img {
-  height: 50px;
-}
-
-/* 버튼 스타일 */
-#logos input[type="button"] {
-  margin-left: 10px;
-}
-
-/* 채팅 리스트 컨테이너 */
-#chatLists {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* 사용자 정보 박스 */
 #userBox {
   display: flex;
   gap: 10px;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f1f1f1;
-}
-
-/* 카드 스타일 */
-.card {
-  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* 상세 정보 박스 */
 #detailBoxs {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-#descriptionBox {
-  background-color: #f9f9f9;
-  padding: 15px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
 }
 
 /* 알림 박스 스타일 */
@@ -88,83 +110,142 @@ body {
   border-radius: 5px;
 }
 
+/* =====================
+  채팅 박스 스타일
+===================== */
 /* 채팅 박스 */
 #chatBox {
   display: flex;
   flex-direction: column;
+  height: 350px; /* 고정 높이 설정 */
+  overflow: hidden;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 10px;
+  border-radius: 10px;
   background-color: #fff;
 }
 
 #chats {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  border-collapse: collapse;
-  font-family: Arial, sans-serif;
-}
-#chats table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-#chats tr {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 10px;
+  max-height: 300px;
   border-bottom: 1px solid #ddd;
 }
 
-#chats td {
-  padding: 10px;
-  text-align: left;
+.chatMessageContainer {
+  display: flex;
+  align-items: stretch; /* 상단 정렬 */
+  gap: 10px; /* 요소 간 간격 */
+  width: 100%;
+  max-width: 100%;
+  margin: 7px 0;
 }
 
+.chatProfileImageContainer {
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  align-items: center; /* 가운데 정렬 */
+}
+
+.chatProfileImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chatContent {
+  display: flex;
+  flex-direction: column; /* 닉네임 → 메시지 순서로 세로 정렬 */
+  max-width: 70%; /* 너무 길어지지 않도록 제한 */
+}
+
+/* 닉네임 스타일 */
 .chatNickname {
+  font-size: 0.8rem; /* 작게 표시 */
   font-weight: bold;
-  width: 20%;
-  white-space: nowrap;
+  color: #007bff;
+  margin-bottom: 2px; /* 닉네임과 메시지 간격 */
 }
 
+/* 채팅 메시지 스타일 */
 .chatMessage {
-  width: 60%;
-  word-wrap: break-word;
   color: #333;
+  font-size: 1rem;
+  word-wrap: break-word;
+  padding: 8px 12px;
+  background: #f1f1f1;
+  border-radius: 12px;
+  min-width: 100px;
+  max-width: 300px;
 }
 
+.chatTimeContainer {
+  display: flex;
+  flex-direction: column; 
+  justify-content: flex-end; 
+  align-items: center;
+  width: 90px; 
+  min-height: 50px;
+}
+
+/* 시간 스타일 */
 .chatTime {
-  width: 20%;
-  font-size: 0.9em;
+  font-size: 0.85rem;
   color: #888;
-  text-align: right;
-  white-space: nowrap;
+  text-align: left;
+  white-space: pre-line; 
 }
 
-/* 호버 시 효과 */
-#chats tr:hover {
-  background-color: #f1f1f1;
+/* ==========================
+   🟢 반응형 디자인 (768px 이하)
+========================== */
+@media (max-width: 768px) {
+  .chatMessageContainer {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .chatNickname {
+    max-width: 30%;
+  }
+
+  .chatMessage {
+    max-width: 100%;
+  }
+
+  .chatTime {
+    max-width: 15%;
+  }
 }
 
-/* 메시지 입력 박스 */
+/* =====================
+   🟢 채팅 입력창 스타일
+===================== */
 #writeBox {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-top: 1px solid #ddd;
 }
 
 #message {
   flex-grow: 1;
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 8px;
+  font-size: 1rem;
 }
 
 #sendMessage {
-  padding: 8px 15px;
+  padding: 10px 15px;
   border: none;
   background-color: #28a745;
   color: white;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
 #sendMessage:hover {
@@ -199,4 +280,81 @@ body {
 
 #scheduleBtn:hover {
   background-color: #0056b3;
+}
+
+/* =========================================================
+   사진 영역 기본 스타일
+   ========================================================= */
+.room-photos {
+  /* width: 300px; */
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 12px;
+  display: block;
+}
+
+.room-photos .carousel-inner {
+  width: 100%;
+  height: 100%;
+}
+
+.room-photos .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+  background-color: black;
+}
+
+/* 캐러셀 인디케이터 스타일 */
+.carousel-indicators button {
+  border: 1px solid black;
+  background-color: black;
+}
+
+.carousel-indicators button.active {
+  background-color: #0c5f24;
+  opacity: 1;
+}
+
+/* 네비게이션 버튼 컨테이너 스타일 */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  padding: 10px;
+  background-color: rgb(53, 224, 18);
+  border: 5px solid rgb(53, 224, 18);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  box-sizing: content-box; /* 기본값이 content-box라면 명시적으로 추가 */
+}
+
+/* =========================================================
+   구글 지도 google map
+   ========================================================= */
+.map-container {
+  margin: 15px 0;
+  width: 100%;
+  height: 300px;
+}
+
+#map {
+  border-radius: 12px;
+  width: 100%;
+  height: 100%; /* 부모 요소의 높이를 따라가도록 설정 */
+}
+
+.gm-control-active {
+  transform-origin: bottom right; /* 기준점을 오른쪽 아래로 설정 */
+}
+
+.gmnoprint {
+  transform: scale(0.7); /* 70% 크기로 줄이기 */
+}
+
+.gm-fullscreen-control {
+  width: 30px !important; /* 기본보다 작게 */
+  height: 30px !important;
 }

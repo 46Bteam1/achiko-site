@@ -58,11 +58,12 @@ public class MypageRestController {
 	@PostMapping("/profileUpdate")
 	public ResponseEntity<?> updateProfile(@RequestParam(name = "userId") Long userId,
 //			@RequestParam(name = "profileImage", required = false) MultipartFile profileImage,
-			@ModelAttribute UserDTO userDTO) {
+			@ModelAttribute UserDTO userDTO, @AuthenticationPrincipal PrincipalDetails loginUser) {
 //		System.out.println("===== profileImage ======" + profileImage);
 		System.out.println("===== controller에서 받은 데이터 ======" + userDTO.toString());
 		try {
 			mypageService.updateUserProfile(userId, userDTO);
+			loginUser.setNickname(userDTO.getNickname());
 			return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/mypage/mypageView")).build();
 
 		} catch (Exception e) {
@@ -147,7 +148,6 @@ public class MypageRestController {
 		}
 
 		Long userId = loginUser.getUserId();
-		System.out.println("============== 회원 탈퇴 userId: " + userId);
 
 		String password = request.get("password");
 

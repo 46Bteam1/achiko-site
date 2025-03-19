@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Guest to Host</title>
@@ -45,4 +45,103 @@
 	</div>
 	
 </body>
+</html>-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>호스트 추천</title>
+    <link rel="stylesheet" th:href="@{/css/find.css}">
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+    <header>
+        <img src="/images/achiko-logo3.png" alt="Achiko Logo" class="logo">
+    </header>
+
+    <h1>추천을 받아보세요</h1>
+
+    <form id="recommendationForm">
+        <label for="baseText">자기소개를 작성해보세요 :</label>
+        <input type="text" id="baseText" name="baseText" th:value="${currentUserBio}" size="50" required />
+        <br>
+        <button type="submit" id="compare-btn">
+            <span id="button-text">추천 받기</span>
+        </button>
+    </form>
+
+    <!-- Loading animation -->
+    <div id="loading-screen" class="loading-wrap" style="display:none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Results section (dynamically updated) -->
+    <div id="results-container"></div>
+
+    <div class="back-buttons">
+        <a th:href="@{/}">메인으로 돌아가기</a>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#recommendationForm").submit(function(event) {
+                event.preventDefault();  // Prevent normal form submission
+
+                let baseText = $("#baseText").val();
+                let apiUrl = window.location.pathname.includes("guest-to-host") 
+                    ? "/calculateSimilarity/guest-to-host" 
+                    : "/calculateSimilarity/host-to-guest";
+
+                $("#loading-screen").show(); // Show loading animation
+
+                $.ajax({
+                    type: "POST",
+                    url: apiUrl,
+                    data: { baseText: baseText },
+                    success: function(response) {
+                        $("#loading-screen").hide();  // Hide loading animation
+                        displayResults(response);
+                    },
+                    error: function() {
+                        $("#loading-screen").hide();
+                        alert("추천을 가져오는 데 실패했습니다.");
+                    }
+                });
+            });
+
+            function displayResults(data) {
+                let container = $("#results-container");
+                container.empty(); // Clear previous results
+
+                if (!data.similarityResults || Object.keys(data.similarityResults).length === 0) {
+                    container.append("<p>추천 결과가 없습니다.</p>");
+                    return;
+                }
+
+                let html = `<h2>추천 결과</h2><div class="user-grid">`;
+                for (let key in data.similarityResults) {
+                    let user = data.userDetails[key];
+                    html += `
+                        <div class="user-card">
+                            <img src="${user.profileImage}" alt="Profile Image" class="profile-img">
+                            <h3>${key}</h3>
+                            <p><strong>추천 점수:</strong> ${data.similarityResults[key].toFixed(2)}%</p>
+                            <p><strong>언어:</strong> ${user.languages || 'N/A'}</p>
+                            <p><strong>나이:</strong> ${user.age || 'N/A'}</p>
+                            <p><strong>국적:</strong> ${user.nationality || 'N/A'}</p>
+                            <p><strong>종교:</strong> ${user.religion || 'N/A'}</p>
+                            <p><strong>성별:</strong> ${user.gender == 0 ? 'Male' : (user.gender == 1 ? 'Female' : 'Other')}</p>
+                            <p><strong>평균 청결도:</strong> ${user.avgCleanliness ? user.avgCleanliness.toFixed(2) : 'N/A'}</p>
+                            <p><strong>평균 신뢰도:</strong> ${user.avgTrust ? user.avgTrust.toFixed(2) : 'N/A'}</p>
+                            <p><strong>평균 의사소통:</strong> ${user.avgCommunication ? user.avgCommunication.toFixed(2) : 'N/A'}</p>
+                            <p><strong>평균 매너:</strong> ${user.avgManner ? user.avgManner.toFixed(2) : 'N/A'}</p>
+                        </div>`;
+                }
+                html += `</div>`;
+                container.append(html);
+            }
+        });
+    </script>
+</body>
 </html>
+

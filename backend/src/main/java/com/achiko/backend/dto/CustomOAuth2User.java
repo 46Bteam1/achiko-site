@@ -17,14 +17,14 @@ import lombok.RequiredArgsConstructor;
 public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2Response oAuth2Response;
+    private final UserEntity userEntity;
     private final String role;
-    private final Long userId;
 
-    public CustomOAuth2User(OAuth2Response oAuth2Response, String role, Long userId) {
+    public CustomOAuth2User(OAuth2Response oAuth2Response, String role, UserEntity userEntity) {
 
         this.oAuth2Response = oAuth2Response;
+		this.userEntity = userEntity;
         this.role = role;
-        this.userId = userId;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class CustomOAuth2User implements OAuth2User {
     }
     
     public String getNickname() {
-    	return oAuth2Response.getProvider()+"_"+oAuth2Response.getEmail().split("@")[0];
+    	return userEntity.getNickname();
     }
 
     public String getUsername() {
@@ -85,6 +85,10 @@ public class CustomOAuth2User implements OAuth2User {
     
     public Long getUserId() {
     	
-    	return userId;
+    	return userEntity.getUserId();
     }
+
+	public String getReceiptId() {
+		return userEntity.getReceiptId();
+	}
 }

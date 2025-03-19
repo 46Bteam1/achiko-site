@@ -43,47 +43,151 @@
 
     <!-- 7. CSS (마지막에 로드) -->
     <link rel="stylesheet" th:href="@{/css/chat/chatList.css}" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+      crossorigin="anonymous"
+    />
+
+    <!-- 8. header toggle js -->
+    <script th:src="@{/js/toggle.js}"></script>
+
+    <!-- Bootstrap CSS (캐러셀만 사용하기 위해 제한적으로 적용) -->
+    <style>
+      /* .bootstrap-container는 기본 폰트 계승만 설정 (필요하다면) */
+      .bootstrap-container {
+        font-family: inherit;
+      }
+    </style>
+
+    <!-- ★ 전역 변수 및 메인 지도 초기화 함수 정의 -->
+    <script th:inline="javascript">
+      // Thymeleaf로부터 API Key와 주소 정보를 주입
+      window.googleApiKeyFromServer = /*[[${googleApiKey}]]*/ "";
+      window.shareAddress = /*[[${share.address}]]*/ "";
+      window.shareDetail = /*[[${share.detailAddress}]]*/ "";
+      // ★ fullAddress: 주소와 상세주소를 쉼표로 구분하여 결합 (예: "주소, 상세주소")
+      window.fullAddress = window.shareAddress + ", " + window.shareDetail;
+
+      window.firstImageUrl = /*[[${firstImageUrl}]]*/ "";
+
+      // 메인 지도 초기화 함수 (Google Maps API의 콜백 함수)
+      window.initMap = function () {
+        console.log("Google Maps API가 정상적으로 로드되었습니다.");
+        var geocoder = new google.maps.Geocoder();
+        window.mapObj = new google.maps.Map(document.getElementById("map"), {
+          zoom: 13,
+          center: { lat: 35.6895, lng: 139.6917 }, // 기본값: 도쿄
+        });
+        geocoder.geocode(
+          { address: window.fullAddress },
+          function (results, status) {
+            if (status === "OK" && results.length > 0) {
+              window.mapObj.setCenter(results[0].geometry.location);
+              new google.maps.Marker({
+                map: window.mapObj,
+                position: results[0].geometry.location,
+                icon: {
+                  url: "/images/map-marker.png",
+                  scaledSize: new google.maps.Size(40, 40),
+                },
+              });
+            } else {
+              console.error("Geocode 실패: " + status);
+            }
+          }
+        );
+      };
+    </script>
   </head>
   <body>
     <!-- 헤더 header -->
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <div id="chatLists">
-      <div>
-        <input
-          type="button"
-          id="toMyPageBtn"
-          class="btn btn-outline-success"
-          value="My Page"
-        />
-        <input
-          type="button"
-          id="chatRoomsBtn"
-          class="btn btn-outline-success"
-          value="Chat Rooms"
-        />
+    <main id="chatLists">
+      <!-- 왼쪽 share 내용 -->
+      <div id="shareComponents">
+        <!-- share 캐러셀 사진 -->
+        <div
+          id="roomCarousel"
+          class="carousel slide room-photos"
+          data-bs-ride="carousel"
+        >
+          <!-- Indicators 추가 -->
+          <div class="carousel-indicators">
+            <th:block th:each="img, iterStat : ${fileList}">
+              <button
+                type="button"
+                data-bs-target="#roomCarousel"
+                th:attr="data-bs-slide-to=${iterStat.index}, aria-current=${iterStat.index == 0} ? 'true' : null, aria-label='Slide ' + (${iterStat.index} + 1)"
+                th:classappend="${iterStat.index == 0} ? ' active'"
+              ></button>
+            </th:block>
+          </div>
+          <div class="carousel-inner">
+            <div
+              th:each="img, iterStat : ${fileList}"
+              class="carousel-item"
+              th:classappend="${iterStat.index == 0} ? ' active'"
+            >
+              <img
+                th:src="${img.fileUrl}"
+                class="d-block w-100"
+                alt="방 사진"
+              />
+            </div>
+          </div>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#roomCarousel"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#roomCarousel"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+
+        <!-- share 위치 지도 -->
+        <div class="map-container">
+          <!-- 지도 영역 -->
+          <div id="map" class="map-display"></div>
+        </div>
       </div>
+
+      <!-- 오른쪽 chat 내용 -->
       <div id="chatComponents">
         <div id="users">
-          <h3>현재 확정 지은 이용자들</h3>
+          <div class="users-header">
+            <h3>현재 확정 지은 이용자들</h3>
+            <!-- viewing modal -->
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              Viewing 예약하기
+            </button>
+          </div>
           <div id="userBox" style="display: flex; gap: 10px">
             <div id="guestBox" style="display: flex; gap: 10px"></div>
           </div>
         </div>
         <div>
-          <div class="card text-center mb-3" style="width: 18rem">
+          <!-- <div class="card text-center mb-3" style="width: 18rem">
             <div id="shareBox" class="card-body"></div>
-          </div>
+          </div> -->
 
-          <!-- Button trigger modal -->
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-          >
-            viewing 관리
-          </button>
           <div id="detailBoxs">
             <div id="descriptionBox">
               <input type="hidden" th:value="${chatroomId}" id="chatroomId" />
@@ -91,11 +195,17 @@
               <input type="hidden" th:value="${nickname}" id="nickname" />
               <input type="hidden" th:value="${role}" id="role" />
               <input type="hidden" th:value="${shareId}" id="shareId" />
+              <input
+                type="hidden"
+                th:value="${profileImage}"
+                id="profileImage"
+              />
+              <!-- <div id="alertBox">
               <div id="alertBox">
                 <table>
                   <tbody id="alertTableBody"></tbody>
                 </table>
-              </div>
+              </div> -->
             </div>
 
             <div id="chatBox">
@@ -149,9 +259,19 @@
           </div>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- 푸터 -->
     <footer th:replace="~{fragments/footerTest :: footer}"></footer>
+
+    <!-- Bootstrap JS 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Google Maps API 스크립트 로드 (async defer 적용, 콜백은 initMap) -->
+    <script
+      async
+      defer
+      th:src="@{|https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&callback=initMap&language=ja|}"
+    ></script>
   </body>
 </html>

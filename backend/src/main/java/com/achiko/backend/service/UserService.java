@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.achiko.backend.dto.UserDTO;
@@ -20,11 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
+	
     // 회원가입
     public void regist(UserDTO userDTO) {
-
+    	
         userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+		
 
         userRepository.save(UserEntity.toEntity(userDTO));
     }
@@ -66,6 +68,7 @@ public class UserService {
 			return "잘못된 입력정보입니다.";
 		}
 		String tempPw = generateTempPassword();
+		
 		findedEntity.setPassword(bCryptPasswordEncoder.encode(tempPw));
 		return "임시 비밀번호는 " + tempPw + " 입니다.";
 	}
@@ -164,6 +167,16 @@ public class UserService {
 			return "Guest";
 		}
 
+	}
+
+	public String getImage(Long userId) {
+		Optional<UserEntity> user = userRepository.findById(userId);
+		if (user.isEmpty())
+			return null;
+		UserEntity userEntity = user.get();
+		
+		String profileImage = userRepository.findProfileImageById(userEntity.getUserId());
+		return profileImage;
 	}
 
 }

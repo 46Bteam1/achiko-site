@@ -30,7 +30,7 @@ $(document).ready(function () {
 
     const selectedPG = $("#pgSelect").val(); // 사용자가 선택한 PG
     // const price = $("#price").val(); // 결제 금액
-    const price = 1000000000; // 결제 금액
+    const price = 12900; // 결제 금액
     const userId = $("#userId").val(); // 사용자 ID(DB의 user_id)
     const loginId = $("#loginId").val();
     const email = $("#email").val();

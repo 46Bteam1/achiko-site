@@ -309,7 +309,15 @@ function deleteViewing() {
   let viewingId = $(this).attr("data-seq");
   let role = $(this).attr("data-role");
 
-  if (confirm("viewing을 취소하시겠습니까? 취소 이후 번복할 수 없습니다.")) {
+  Swal.fire({
+    title: "Viewing Cancel",
+    text: "viewing을 취소하시겠습니까? 취소 이후 번복할 수 없습니다.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Viewing 취소",
+  }).then((result) => {
     $.ajax({
       url: "/viewing/cancel",
       method: "DELETE",
@@ -324,57 +332,133 @@ function deleteViewing() {
         initModal(role);
       },
     });
-  }
+  });
 }
 
 function confirmViewing() {
   const $btn = $(this);
   let viewingId = $btn.attr("data-seq");
 
-  if (
-    confirm(
-      "viewing을 완료하시겠습니까? viewing은 확정된 이후 되돌릴 수 없습니다."
-    )
-  ) {
-    $.ajax({
-      url: "/viewing/check",
-      method: "GET",
-      data: { viewingId: viewingId },
-      success: function (resp) {
-        if (resp) {
-          $.ajax({
-            url: "/viewing/confirm",
-            method: "PATCH",
-            data: { viewingId: viewingId },
-            success: function (resp) {
-              Swal.fire({
-                title: "뷰잉 확정 성공!",
-                text: `${resp}`,
-                icon: "success",
-                draggable: true,
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
+    },
+    buttonsStyling: false,
+  });
+  swalWithBootstrapButtons
+    .fire({
+      title: "viewing을 완료하시겠습니까?",
+      text: "viewing은 확정된 이후 되돌릴 수 없습니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "확정!",
+      cancelButtonText: "확정 안함!",
+      reverseButtons: true,
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        // Ajax 호출
+        $.ajax({
+          url: "/viewing/check",
+          method: "GET",
+          data: { viewingId: viewingId },
+          success: function (resp) {
+            if (resp) {
+              $.ajax({
+                url: "/viewing/confirm",
+                method: "PATCH",
+                data: { viewingId: viewingId },
+                success: function (resp) {
+                  swalWithBootstrapButtons.fire({
+                    title: "확정 완료!",
+                    text: "새로운 쉐어 메이트가 생겼네요!",
+                    icon: "success",
+                  });
+                  // 완료 표시
+                  $('input[data-seq="' + viewingId + '"]')
+                    .closest("td")
+                    .html(
+                      '<span style="color: red; font-weight: bold;">이미 완료된 뷰잉입니다</span>'
+                    );
+                },
+                error: function () {
+                  swalWithBootstrapButtons.fire({
+                    icon: "error",
+                    title: "에러",
+                    text: "확정 중 문제가 발생했습니다.",
+                  });
+                },
               });
-              // data-seq 값이 같은 모든 input 버튼을 숨기고 '이미 완료된 뷰잉입니다' 메시지 표시
-              $('input[data-seq="' + viewingId + '"]')
-                .closest("td")
-                .html(
-                  '<span style="color: red; font-weight: bold;">이미 완료된 뷰잉입니다</span>'
-                );
-            },
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "이미 해당 share의 인원이 다 찼습니다.",
-          });
-        }
-      },
+            } else {
+              swalWithBootstrapButtons.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "이미 해당 share의 인원이 다 찼습니다.",
+              });
+            }
+          },
+          error: function () {
+            swalWithBootstrapButtons.fire({
+              icon: "error",
+              title: "에러",
+              text: "확인 중 문제가 발생했습니다.",
+            });
+          },
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        swalWithBootstrapButtons.fire({
+          title: "확정 취소",
+          text: "아직 확정하지 않았습니다.",
+          icon: "error",
+        });
+      }
     });
-  } else {
-    Swal.fire({
-      title: "수정 취소!",
-      icon: "success",
-      draggable: true,
-    });
-  }
+
+  // if (
+  //   confirm(
+  //     "viewing을 완료하시겠습니까? viewing은 확정된 이후 되돌릴 수 없습니다."
+  //   )
+  // ) {
+  //   $.ajax({
+  //     url: "/viewing/check",
+  //     method: "GET",
+  //     data: { viewingId: viewingId },
+  //     success: function (resp) {
+  //       if (resp) {
+  //         $.ajax({
+  //           url: "/viewing/confirm",
+  //           method: "PATCH",
+  //           data: { viewingId: viewingId },
+  //           success: function (resp) {
+  //             Swal.fire({
+  //               title: "뷰잉 확정 성공!",
+  //               text: `${resp}`,
+  //               icon: "success",
+  //               draggable: true,
+  //             });
+  //             // data-seq 값이 같은 모든 input 버튼을 숨기고 '이미 완료된 뷰잉입니다' 메시지 표시
+  //             $('input[data-seq="' + viewingId + '"]')
+  //               .closest("td")
+  //               .html(
+  //                 '<span style="color: red; font-weight: bold;">이미 완료된 뷰잉입니다</span>'
+  //               );
+  //           },
+  //         });
+  //       } else {
+  //         Swal.fire({
+  //           icon: "error",
+  //           title: "Oops...",
+  //           text: "이미 해당 share의 인원이 다 찼습니다.",
+  //         });
+  //       }
+  //     },
+  //   });
+  // } else {
+  //   Swal.fire({
+  //     title: "수정 취소!",
+  //     icon: "success",
+  //     draggable: true,
+  //   });
+  // }
 }

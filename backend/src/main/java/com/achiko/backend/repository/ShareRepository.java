@@ -31,4 +31,6 @@ public interface ShareRepository extends JpaRepository<ShareEntity, Long> {
     Long findHostIdByShareId(@Param("shareId") Long shareId);
 
 	List<ShareEntity> findByHost_UserId(Long userId);
+
+	boolean existsByHost_UserIdAndStatus(Long userId, String status);
 }

@@ -29,6 +29,7 @@ public class SubscribeViewController {
 		if (loginUser != null) {
 			String updatedIsSubscribed = subscribeService.getUserSubscriptionStatus(loginUser.getUserId());
 			model.addAttribute("loginId", loginUser.getUsername());
+			model.addAttribute("nickname", loginUser.getNickname());
 			model.addAttribute("userId", loginUser.getUserId());
 			model.addAttribute("email", loginUser.getEmail());
 			model.addAttribute("isSubscribed", updatedIsSubscribed);
