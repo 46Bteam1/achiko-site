@@ -214,7 +214,7 @@ $(document).ready(function () {
   }
 
   // 검색 결과 업데이트 함수
-  function updateListings(shares) {
+  function updateListings(shares, isLoggedIn) {
     const listingsContainer = document.getElementById("listings-container");
     listingsContainer.innerHTML = ""; // 기존 목록 초기화
 
@@ -229,46 +229,74 @@ $(document).ready(function () {
       const favClass = listing.isFavorite ? "active" : "";
       const iconClass = listing.isFavorite ? "fas fa-heart" : "far fa-heart";
 
-      // (3) 별점 표시 로직: avgRating이 0.0이면 "아직 리뷰가 없는 호스트입니다"로 표시
-      let ratingText = "";
-      console.log(listing.avgRating);
-      console.log(listing.profileImage);
-      if (listing.avgRating !== undefined) {
-        ratingText =
-          listing.avgRating === 0.0
-            ? "⭐ 아직 리뷰가 없는 호스트입니다"
-            : "⭐" + listing.avgRating;
-      }
-
-      // (4) 가격 표시 (Thymeleaf의 #numbers.formatInteger 대신 Intl.NumberFormat 사용)
-      const formattedPrice = new Intl.NumberFormat().format(listing.price);
-
-      // (5) 링크 주소 (Thymeleaf의 th:href="@{/share/selectOne(shareId=${...})}" 대신 쿼리 파라미터 사용)
-      const detailLink = `/share/selectOne?shareId=${listing.id}`;
-
-      card.innerHTML = `
-      <a href="${detailLink}" class="listing-link">
+      // (3) 로그인 여부에 따른 찜 버튼
+      let favoriteButton;
+      if (isLoggedIn) {
+        favoriteButton = `
         <button class="favorite-btn ${favClass}" data-id="${listing.id}">
           <i class="${iconClass}"></i>
         </button>
-        <img src="${listing.firstImage}" alt="이미지" />
+      `;
+      } else {
+        favoriteButton = `
+        <button class="favorite-btn disabled" title="로그인 후 이용 가능합니다." disabled>
+          <i class="far fa-heart"></i>
+        </button>
+      `;
+      }
+
+      // (4) 상태 표시 (모집중, 거주중, 마감)
+      let statusLabel = "마감"; // 기본값
+      let statusClass = "status-closed";
+      if (listing.status == "open") {
+        statusLabel = "모집중";
+        statusClass = "status-open";
+      } else if (listing.status == "living") {
+        statusLabel = "거주중";
+        statusClass = "status-living";
+      }
+
+      // (5) 별점 표시 로직
+      let ratingText =
+        listing.avgRating === 0.0
+          ? "⭐ 아직 리뷰가 없는 호스트입니다"
+          : `⭐ ${listing.avgRating}`;
+
+      // (6) 가격 포맷팅
+      const formattedPrice = new Intl.NumberFormat().format(listing.price);
+
+      // (7) 링크 주소
+      const detailLink = `/share/selectOne?shareId=${listing.id}`;
+
+      // (8) 카드 HTML 추가
+      card.innerHTML = `
+      <a href="${detailLink}" class="listing-link">
+        ${favoriteButton}
+        <img src="${imageUrl}" alt="이미지" />
         <div class="listing-info">
           <h3>${listing.title || ""}</h3>
+          
           <div class="host-info">
-            <img src="${
-              listing.profileImage || "/images/default-profile.png"
-            }" alt="hostImage"/>
+            <div class="status-label ${statusClass}">
+              ${statusLabel}
+            </div>
+
+            <div class="host-image-wrapper">
+              <img src="${
+                listing.profileImage || "/images/default-profile.png"
+              }" alt="hostImage" class="host-image" />
+            </div>
+
             <div class="host-detail">
               <span>${listing.nickname || ""}</span>
               <span>${ratingText}</span>
             </div>
           </div>
+
           <p>${listing.regionName || ""} ${listing.cityName || ""} ${
         listing.townName || ""
       }</p>
-          <p>
-            ₩ <span>${formattedPrice}</span> / 월
-          </p>
+          <p>¥ <span>${formattedPrice}</span> / 월</p>
           <p>인원: ${listing.currentGuests || 0} / ${
         listing.maxGuests || 0
       }명</p>
@@ -442,4 +470,3 @@ function updateTownSelect() {
       .catch((error) => console.error("Error fetching towns:", error));
   }
 }
-
