@@ -214,7 +214,7 @@ $(document).ready(function () {
   }
 
   // 검색 결과 업데이트 함수
-  function updateListings(shares, isLoggedIn) {
+  function updateListings(shares) {
     const listingsContainer = document.getElementById("listings-container");
     listingsContainer.innerHTML = ""; // 기존 목록 초기화
 
@@ -229,62 +229,67 @@ $(document).ready(function () {
       const favClass = listing.isFavorite ? "active" : "";
       const iconClass = listing.isFavorite ? "fas fa-heart" : "far fa-heart";
 
-      // (3) 로그인 여부에 따른 찜 버튼
-      let favoriteButton;
-      if (isLoggedIn) {
-        favoriteButton = `
-        <button class="favorite-btn ${favClass}" data-id="${listing.id}">
-          <i class="${iconClass}"></i>
-        </button>
-      `;
-      } else {
-        favoriteButton = `
-        <button class="favorite-btn disabled" title="로그인 후 이용 가능합니다." disabled>
-          <i class="far fa-heart"></i>
-        </button>
-      `;
-      }
+      // (3) 상태별 라벨 텍스트 및 클래스 설정
+      const statusText =
+        listing.status === "open"
+          ? "모집중"
+          : listing.status === "living"
+          ? "거주중"
+          : "마감";
+      const statusClass =
+        listing.status === "open"
+          ? "status-open"
+          : listing.status === "living"
+          ? "status-living"
+          : "status-closed";
 
-      // (4) 상태 표시 (모집중, 거주중, 마감)
-      let statusLabel = "마감"; // 기본값
-      let statusClass = "status-closed";
-      if (listing.status == "open") {
-        statusLabel = "모집중";
-        statusClass = "status-open";
-      } else if (listing.status == "living") {
-        statusLabel = "거주중";
-        statusClass = "status-living";
-      }
+      // (4) 별점 표시 로직
+      const ratingText =
+        listing.avgRating !== undefined
+          ? listing.avgRating === 0.0
+            ? "⭐ 아직 리뷰가 없는 호스트입니다"
+            : "⭐ " + listing.avgRating
+          : "";
 
-      // (5) 별점 표시 로직
-      let ratingText =
-        listing.avgRating === 0.0
-          ? "⭐ 아직 리뷰가 없는 호스트입니다"
-          : `⭐ ${listing.avgRating}`;
-
-      // (6) 가격 포맷팅
+      // (5) 가격 포맷
       const formattedPrice = new Intl.NumberFormat().format(listing.price);
 
-      // (7) 링크 주소
-      const detailLink = `/share/selectOne?shareId=${listing.id}`;
+      // (6) 상세 페이지 링크
+      const detailLink = `/share/selectOne?shareId=${listing.shareId}`;
 
-      // (8) 카드 HTML 추가
       card.innerHTML = `
       <a href="${detailLink}" class="listing-link">
-        ${favoriteButton}
-        <img src="${imageUrl}" alt="이미지" />
+        <!-- 찜 버튼 -->
+        ${
+          listing.isLoggedIn
+            ? `
+              <button class="favorite-btn ${favClass}" data-id="${listing.shareId}">
+                <i class="${iconClass}"></i>
+              </button>
+            `
+            : `
+              <button class="favorite-btn disabled" title="로그인 후 이용 가능합니다." disabled>
+                <i class="far fa-heart"></i>
+              </button>
+            `
+        }
+
+        <!-- 이미지 -->
+        <img src="${imageUrl}" class="roomImg" alt="이미지"/>
+
+        <!-- 방 정보 -->
         <div class="listing-info">
           <h3>${listing.title || ""}</h3>
           
           <div class="host-info">
-            <div class="status-label ${statusClass}">
-              ${statusLabel}
-            </div>
+            <!-- 상태 라벨 -->
+            <div class="status-label ${statusClass}">${statusText}</div>
 
+            <!-- 호스트 프로필 -->
             <div class="host-image-wrapper">
               <img src="${
                 listing.profileImage || "/images/default-profile.png"
-              }" alt="hostImage" class="host-image" />
+              }" class="host-image" alt="hostImage"/>
             </div>
 
             <div class="host-detail">
@@ -293,13 +298,31 @@ $(document).ready(function () {
             </div>
           </div>
 
-          <p>${listing.regionName || ""} ${listing.cityName || ""} ${
+          <!-- 지역 -->
+          <div class="detail-wrapper">
+            <i class="fas fa-map-marker-alt icon-gray"></i>
+            <p class="text-ellipsis">
+              ${listing.regionName || ""} ${listing.cityName || ""} ${
         listing.townName || ""
-      }</p>
-          <p>¥ <span>${formattedPrice}</span> / 월</p>
-          <p>인원: ${listing.currentGuests || 0} / ${
-        listing.maxGuests || 0
-      }명</p>
+      }
+            </p>
+          </div>
+
+          <!-- 가격 -->
+          <div class="detail-wrapper">
+            <i class="fas fa-yen-sign icon-gray"></i>
+            <p class="text-ellipsis">
+              <span>${formattedPrice}</span> / 월
+            </p>
+          </div>
+
+          <!-- 인원 -->
+          <div class="detail-wrapper">
+            <i class="fas fa-user icon-gray"></i>
+            <p class="text-ellipsis">
+              인원: ${listing.currentGuests || 0} / ${listing.maxGuests || 0}명
+            </p>
+          </div>
         </div>
       </a>
     `;
