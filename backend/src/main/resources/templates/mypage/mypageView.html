@@ -37,6 +37,17 @@
         </div>
       </div>
     </th:block>
+    <th:block th:if="${userDTO.isHost == 1}">
+      <div class="Banner-host">
+        <input type="hidden" name="userId" th:value="${userDTO.userId}" />
+        <span>Achiko 프리미엄을 통해 더 많은 혜택을 누려보세요!</span>
+        <div class="banner-btns">
+          <a th:href="@{/viewSubscribe}"
+          ><input type="button" class="hostBtn" value="구독 결제하기 >" />
+          </a>
+        </div>
+      </div>
+    </th:block>
     <main>
       <div class="mypage-container">
         <!-- 왼쪽 섹션 -->
