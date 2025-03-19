@@ -166,58 +166,66 @@
 
       <!-- 오른쪽 chat 내용 -->
       <div id="chatComponents">
-        <div id="users">
-          <div class="users-header">
-            <!-- <h3>현재 확정 지은 이용자들</h3> -->
-            <!-- viewing modal -->
-            <button>
-              셰어하우스 상세보기 
-            </button>
+        <div id="chatInfoBox">
+          <div id="chattingroomTitle"></div>
+          <div class="shortInfoNav">
+            <div class="shortInfoBox">
+              <div class="minimalInfoBox">
+                <i class="fas fa-map-marker-alt icon-gray"></i>
+                <div id="chattingTownName"></div>
+              </div>
+              <div class="minimalInfoBox">
+                <i class="fas fa-yen-sign icon-gray"></i>
+                <div id="monthlyRent"></div>
+                <p>/ M</p>
+              </div>
+              <div class="minimalInfoBox">
+                <i class="fas fa-user icon-gray"></i>
+                <p id="currentGuests"></p>
+                <p>/</p>
+                <p id="maxGuests"></p>
+              </div>
+            </div>
             <button
               type="button"
-              class="btn btn-primary"
+              class="viewingBtn"
               data-bs-toggle="modal"
               data-bs-target="#exampleModal"
             >
-              Viewing 관리
+              뷰잉 관리
             </button>
           </div>
-          <!-- <div id="userBox" style="display: flex; gap: 10px">
-            <div id="guestBox" style="display: flex; gap: 10px"></div>
-          </div> -->
         </div>
-        <div>
-          <!-- <div class="card text-center mb-3" style="width: 18rem">
-            <div id="shareBox" class="card-body"></div>
-          </div> -->
-
-          <div id="detailBoxs">
-            <div id="descriptionBox">
-              <input type="hidden" th:value="${chatroomId}" id="chatroomId" />
-              <input type="hidden" th:value="${userId}" id="userId" />
-              <input type="hidden" th:value="${nickname}" id="nickname" />
-              <input type="hidden" th:value="${role}" id="role" />
-              <input type="hidden" th:value="${shareId}" id="shareId" />
-              <input
-                type="hidden"
-                th:value="${profileImage}"
-                id="profileImage"
-              />
-              <!-- <div id="alertBox">
+        <div id="users">
+          <div class="users-header">
+            <h3>현재 확정 지은 이용자들</h3>
+          </div>
+          <div id="userBox">
+            <div id="guestBox"></div>
+          </div>
+        </div>
+        <div id="detailBoxs">
+          <div id="descriptionBox">
+            <input type="hidden" th:value="${chatroomId}" id="chatroomId" />
+            <input type="hidden" th:value="${userId}" id="userId" />
+            <input type="hidden" th:value="${nickname}" id="nickname" />
+            <input type="hidden" th:value="${role}" id="role" />
+            <input type="hidden" th:value="${shareId}" id="shareId" />
+            <input type="hidden" th:value="${profileImage}" id="profileImage" />
+            <!-- <div id="alertBox">
               <div id="alertBox">
                 <table>
                   <tbody id="alertTableBody"></tbody>
                 </table>
               </div> -->
-            </div>
+          </div>
 
-            <div id="chatBox">
-              <div id="chats"></div>
+          <div id="chatBox">
+            <div id="chats"></div>
 
-              <div id="writeBox">
-                <input type="text" id="message" />
-                <input type="button" id="sendMessage" value="전송" />
-              </div>
+            <div id="writeBox">
+              <input type="text" id="message" />
+              <input type="button" id="sendMessage" value="전송" />
             </div>
           </div>
         </div>
