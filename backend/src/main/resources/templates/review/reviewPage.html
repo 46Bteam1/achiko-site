@@ -9,14 +9,15 @@
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    />
+      />
     <link rel="stylesheet" th:href="@{/css/review/reviewPage.css}" />
 
     <!-- Font Awesome CDN -->
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     />
+
 
     <!-- 필요한 라이브러리 (jQuery, Bootstrap JS 등) -->
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
@@ -27,6 +28,13 @@
     <!-- review.js는 defer 속성으로 로드 -->
     <script th:src="@{/js/review/review.js}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:src="@{/js/toggle.js}"></script>
+    <script th:inline="javascript">
+      var kakaoJavaScriptKey = /*[[${kakaoJavaScriptKey}]]*/ "";
+      Kakao.init(kakaoJavaScriptKey);
+      console.log("Kakao SDK 초기화 상태: " + Kakao.isInitialized());
+      window.profileImageUrl = /*[[${reviewedUser.profileImage}]]*/ "";
+    </script>
   </head>
 
   <body>
@@ -295,43 +303,42 @@
           </div>
         </section>
       </div>
-    </main>
 
-    <!-- 공유하기 모달 -->
-    <div id="shareModal" class="modal">
-      <div class="modal-content">
-        <span id="closeShareModalBtn" class="close">&times;</span>
-        <h4>
-          <img
-            th:src="@{/images/review/kakaotalk.png}"
-            alt="카카오톡 로고"
-            width="26"
-            height="26"
-            style="
-              vertical-align: middle;
-              margin-right: 8px;
-              border-radius: 5px;
-            "
-          />
-          공유하기
-        </h4>
+      <!-- 공유하기 모달 -->
+      <div id="shareModal" class="modal">
+        <div class="modal-content">
+          <span id="closeShareModalBtn" class="close">&times;</span>
+          <h4>
+            <img
+              src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
+              alt="카카오톡"
+              width="40px"
+              height="40px"
+              style="
+                vertical-align: middle;
+                margin-right: 8px;
+                border-radius: 5px;
+              "
+            />
+          </h4>
 
-        <p style="font-size: 14px; color: gray">
-          이 페이지의 URL을 복사하거나 SNS로 공유하세요.
-        </p>
+          <p style="font-size: 14px; color: gray">
+            이 페이지의 URL을 복사하거나 SNS로 공유하세요.
+          </p>
 
-        <!-- URL 복사 입력창 -->
-        <div class="copy-container">
-          <input type="text" id="shareUrl" readonly />
-          <button id="copyUrlButton">📋 복사</button>
+          <!-- URL 복사 입력창 -->
+          <div class="copy-container">
+            <input type="text" id="shareUrl" readonly />
+            <button id="copyUrlButton">📋 복사</button>
+          </div>
+
+          <!-- 카카오 공유 버튼 -->
+          <button id="kakaoShareButton" class="btn-kakao">
+            📢 카카오톡 공유
+          </button>
         </div>
-
-        <!-- 카카오 공유 버튼 -->
-        <button id="kakaoShareButton" class="btn-kakao">
-          📢 카카오톡 공유
-        </button>
       </div>
-    </div>
+    </main>
 
     <!-- 푸터 -->
     <footer th:replace="~{fragments/footerTest :: footer}"></footer>
