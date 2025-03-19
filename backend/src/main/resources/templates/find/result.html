@@ -29,6 +29,18 @@
             	<span th:text="${userDetails[entry.key].gender == 0 ? 'Male' : 
                            (userDetails[entry.key].gender == 1 ? 'Female' : 'Other')} ?: 'N/A'"></span>
         	</p>
+        	<p><strong>평균 청결도:</strong> 
+   				<span th:text="${#numbers.formatDecimal(userDetails[entry.key].avgCleanliness, 1, 2)} ?: 'N/A'"></span>
+			</p>
+			<p><strong>평균 신뢰도:</strong> 
+   				<span th:text="${#numbers.formatDecimal(userDetails[entry.key].avgTrust, 1, 2)} ?: 'N/A'"></span>
+			</p>
+			<p><strong>평균 의사소통:</strong> 
+   				<span th:text="${#numbers.formatDecimal(userDetails[entry.key].avgCommunication, 1, 2)} ?: 'N/A'"></span>
+			</p>
+			<p><strong>평균 매너:</strong> 
+   				<span th:text="${#numbers.formatDecimal(userDetails[entry.key].avgManner, 1, 2)} ?: 'N/A'"></span>
+			</p>
     	</div>
 	</div>
 	
