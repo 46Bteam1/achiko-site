@@ -203,7 +203,8 @@ public class ShareService {
     }
     
     public List<ShareDTO> getShareListAll() {
-        List<ShareEntity> shareEntities = shareRepository.findAll();
+        // List<ShareEntity> shareEntities = shareRepository.findAll();
+        List<ShareEntity> shareEntities = shareRepository.findAllByOrderByCreatedAtDesc();
         List<ShareDTO> shareDTOList = new ArrayList<>();
 
         // 모든 share의 호스트 ID 추출 (중복 제거)

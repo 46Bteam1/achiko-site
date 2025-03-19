@@ -31,7 +31,7 @@
           <a th:href="@{/share/write}"
           ><input type="button" class="hostBtn" value="호스트 되기 >" />
           </a>
-          <a th:href="@{/viewSubscribe}"
+          <a th:href="@{/viewSubscribe/subscribePage}"
           ><input type="button" class="hostBtn" value="구독 결제하기 >" />
           </a>
         </div>
@@ -42,7 +42,7 @@
         <input type="hidden" name="userId" th:value="${userDTO.userId}" />
         <span>Achiko 프리미엄을 통해 더 많은 혜택을 누려보세요!</span>
         <div class="banner-btns">
-          <a th:href="@{/viewSubscribe}"
+          <a th:href="@{/viewSubscribe/subscribePage}"
           ><input type="button" class="hostBtn" value="구독 결제하기 >" />
           </a>
         </div>
