@@ -44,9 +44,11 @@ public class TextService {
 
         return userReputationMap;
     }
-
+    
     public Map<String, Map<String, Object>> getAllUserDetails(List<String> nicknames) {
         List<Object[]> userDetails = userRepository.findUserDetailsByNicknames(nicknames);
+        List<Object[]> avgRatings = userReviewRepository.findAverageRatingsForUsers();
+
         Map<String, Map<String, Object>> userInfoMap = new HashMap<>();
 
         for (Object[] row : userDetails) {
@@ -60,6 +62,18 @@ public class TextService {
 
             userInfoMap.put((String) row[0], userInfo); // Nickname as key
         }
+
+        // Add ratings to the user details map
+        for (Object[] ratingRow : avgRatings) {
+            String userNickname = (String) ratingRow[0];
+            if (userInfoMap.containsKey(userNickname)) {
+                userInfoMap.get(userNickname).put("avgCleanliness", ratingRow[1] != null ? ratingRow[1] : 0.0);
+                userInfoMap.get(userNickname).put("avgTrust", ratingRow[2] != null ? ratingRow[2] : 0.0);
+                userInfoMap.get(userNickname).put("avgCommunication", ratingRow[3] != null ? ratingRow[3] : 0.0);
+                userInfoMap.get(userNickname).put("avgManner", ratingRow[4] != null ? ratingRow[4] : 0.0);
+            }
+        }
+
         return userInfoMap;
     }
 
