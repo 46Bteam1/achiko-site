@@ -32,4 +32,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 	
     @Query(value="SELECT u.profile_image FROM users u WHERE u.user_id = :userId", nativeQuery = true)
     String findProfileImageById(@Param("userId") Long userId);
+
 }

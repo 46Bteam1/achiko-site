@@ -23,5 +23,4 @@ public interface UsersRepository extends JpaRepository<UsersEntity, Long> {
     List<Object[]> findUserDetailsByNicknames(@Param("nicknames") List<String> nicknames);
     @Query("SELECT u.isHost FROM UsersEntity u WHERE u.loginId = :loginId")
     Integer findIsHostByLoginId(@Param("loginId") String loginId);
-
 }

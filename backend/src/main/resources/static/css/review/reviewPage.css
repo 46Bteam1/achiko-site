@@ -427,7 +427,9 @@ main {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 body.modal-open {
@@ -435,22 +437,25 @@ body.modal-open {
 }
 
 .modal-content {
-  background-color: #fefefe;
+  background-color: #fff;
   margin: 10% auto;
   padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  width: 40%;
+  max-width: 500px;
   text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* 닫기 버튼 */
 .close {
-  color: #aaa;
-  float: right;
+  position: absolute;
+  top: 15px;
+  right: 20px;
   font-size: 28px;
   font-weight: bold;
   cursor: pointer;
+  color: #666;
+  transition: color 0.2s ease-in-out;
 }
 
 /* URL 복사 영역 */
@@ -475,7 +480,7 @@ body.modal-open {
 }
 
 .copy-container button {
-  background: var(--primary-color);
+  background: green;
   color: #fff;
   border: none;
   padding: 8px 18px;
@@ -487,7 +492,7 @@ body.modal-open {
 }
 
 .copy-container button:hover {
-  background-color: var(--primary-hover);
+  background-color: rgb(5, 87, 5);
 }
 
 /* 카카오 공유 버튼 */
@@ -509,6 +514,31 @@ body.modal-open {
 
 .btn-kakao:hover {
   background: #fdd835;
+}
+@media (max-width: 768px) {
+  .modal-content {
+    width: 85%; /* 모바일에서는 조금 작게 */
+    max-width: 90vw; /* 뷰포트 너비의 90%까지 허용 */
+    padding: 15px;
+  }
+
+  #reportModal .modal-content,
+  #messageModal .modal-content,
+  #shareModal .modal-content {
+    width: 85%;
+    top: 50%;
+    left: 42%;
+    transform: translate(-50%, -50%);
+  }
+
+  .share-buttons {
+    flex-direction: column;
+  }
+
+  .share-buttons img {
+    width: 50px;
+    height: 50px;
+  }
 }
 
 /*----------------------------------------------------
