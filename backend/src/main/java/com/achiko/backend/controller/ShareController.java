@@ -91,12 +91,12 @@ public class ShareController {
         List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
 
         // 첫 번째 이미지의 절대 URL 설정 (없으면 기본 이미지)
-        // String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
-        //         ? "http://localhost:9905" + fileList.get(0).getFileUrl()
-        //         : "http://localhost:9905/images/default.webp";
         String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
-                ? "https://achiko.site" + fileList.get(0).getFileUrl()
-                : "https://achiko.site/images/default.webp";
+                ? "http://localhost:9905" + fileList.get(0).getFileUrl()
+                : "http://localhost:9905/images/default.webp";
+        // String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
+        //         ? "https://achiko.site" + fileList.get(0).getFileUrl()
+        //         : "https://achiko.site/images/default.webp";
 
         // 파일 목록을 ShareDTO에 설정 (추후 view에서 사용)
         shareDTO.setFileList(fileList);

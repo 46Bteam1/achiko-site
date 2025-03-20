@@ -61,7 +61,7 @@ $(document).ready(function () {
     }
   });
 
-  // 지역 검색 버튼 클릭 시 쉐어하우스 검색 실행
+  // 지역 검색 버튼 클릭 시 셰어하우스 검색 실행
   $(".query-submit-btn").on("click", function (event) {
     event.preventDefault(); // 폼 제출 방지
     searchShares();
