@@ -17,8 +17,8 @@ import com.achiko.backend.dto.ReviewReplyDTO;
 import com.achiko.backend.dto.ShareDTO;
 import com.achiko.backend.dto.UserDTO;
 import com.achiko.backend.dto.ViewingDTO;
-import com.achiko.backend.entity.ShareEntity;
 import com.achiko.backend.service.MypageService;
+import com.achiko.backend.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MypageViewController {
 
 	private final MypageService mypageService;
+	private final UserService userService;
 
 	// 마이페이지 화면 요청
 	@GetMapping("/mypage/mypageView")
@@ -62,6 +63,9 @@ public class MypageViewController {
 
 		List<ShareDTO> myShareList = mypageService.getMyShare(userId);
 		model.addAttribute("myShareList", myShareList);
+		
+		boolean isHost = userService.getUserById(userId).getIsHost() == 1 ? true : false;
+		model.addAttribute("isHost", loginUser != null && isHost); 
 
 		return "mypage/mypageView";
 	}
@@ -75,7 +79,7 @@ public class MypageViewController {
 
 		if ("MATCHING_IN_PROGRESS".equals(result)) {
 			redirectAttributes.addFlashAttribute("errorMessage",
-					"매칭이 진행 중인 쉐어하우스가 있습니다. 매칭이 완료 되었다면 진행 중인 쉐어를 종료해주세요.");
+					"매칭이 진행 중인 셰어하우스가 있습니다. 매칭이 완료 되었다면 진행 중인 쉐어를 종료해주세요.");
 			return "redirect:/mypage/mypageView";
 		}
 		return "redirect:/mypage/mypageView";
@@ -88,9 +92,9 @@ public class MypageViewController {
 		boolean isClosed = mypageService.closeShare(userId, loginUser);
 
 		if (isClosed) {
-			redirectAttributes.addFlashAttribute("successMessage", "쉐어하우스 매칭이 종료되었습니다.");
+			redirectAttributes.addFlashAttribute("successMessage", "셰어하우스 매칭이 종료되었습니다.");
 		} else {
-			redirectAttributes.addFlashAttribute("errorMessage", "종료할 쉐어하우스가 없습니다.");
+			redirectAttributes.addFlashAttribute("errorMessage", "종료할 셰어하우스가 없습니다.");
 		}
 
 		return "redirect:/mypage/mypageView";

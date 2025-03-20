@@ -70,6 +70,7 @@ public class SearchController {
             result.put("currentGuests", share.getCurrentGuests());
             result.put("address", share.getAddress());
             result.put("detailAddress", share.getDetailAddress());
+            result.put("status", share.getStatus());
             
             List<ShareFilesDTO> files = shareFilesService.getFilesByShareId(share.getShareId());
             result.put("firstImage", !files.isEmpty() ? files.get(0).getFileUrl() : "/images/default-profile.png");

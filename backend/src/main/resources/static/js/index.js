@@ -61,7 +61,7 @@ $(document).ready(function () {
     }
   });
 
-  // 지역 검색 버튼 클릭 시 쉐어하우스 검색 실행
+  // 지역 검색 버튼 클릭 시 셰어하우스 검색 실행
   $(".query-submit-btn").on("click", function (event) {
     event.preventDefault(); // 폼 제출 방지
     searchShares();
@@ -229,49 +229,100 @@ $(document).ready(function () {
       const favClass = listing.isFavorite ? "active" : "";
       const iconClass = listing.isFavorite ? "fas fa-heart" : "far fa-heart";
 
-      // (3) 별점 표시 로직: avgRating이 0.0이면 "아직 리뷰가 없는 호스트입니다"로 표시
-      let ratingText = "";
-      console.log(listing.avgRating);
-      console.log(listing.profileImage);
-      if (listing.avgRating !== undefined) {
-        ratingText =
-          listing.avgRating === 0.0
-            ? "⭐ 아직 리뷰가 없는 호스트입니다"
-            : "⭐" + listing.avgRating;
-      }
+      // (3) 상태별 라벨 텍스트 및 클래스 설정
+      const statusText =
+        listing.status === "open"
+          ? "모집중"
+          : listing.status === "living"
+          ? "거주중"
+          : "마감";
+      const statusClass =
+        listing.status === "open"
+          ? "status-open"
+          : listing.status === "living"
+          ? "status-living"
+          : "status-closed";
 
-      // (4) 가격 표시 (Thymeleaf의 #numbers.formatInteger 대신 Intl.NumberFormat 사용)
+      // (4) 별점 표시 로직
+      const ratingText =
+        listing.avgRating !== undefined
+          ? listing.avgRating === 0.0
+            ? "⭐ 아직 리뷰가 없는 호스트입니다"
+            : "⭐ " + listing.avgRating
+          : "";
+
+      // (5) 가격 포맷
       const formattedPrice = new Intl.NumberFormat().format(listing.price);
 
-      // (5) 링크 주소 (Thymeleaf의 th:href="@{/share/selectOne(shareId=${...})}" 대신 쿼리 파라미터 사용)
-      const detailLink = `/share/selectOne?shareId=${listing.id}`;
+      // (6) 상세 페이지 링크
+      const detailLink = `/share/selectOne?shareId=${listing.shareId}`;
 
       card.innerHTML = `
       <a href="${detailLink}" class="listing-link">
-        <button class="favorite-btn ${favClass}" data-id="${listing.id}">
-          <i class="${iconClass}"></i>
-        </button>
-        <img src="${listing.firstImage}" alt="이미지" />
+        <!-- 찜 버튼 -->
+        ${
+          listing.isLoggedIn
+            ? `
+              <button class="favorite-btn ${favClass}" data-id="${listing.shareId}">
+                <i class="${iconClass}"></i>
+              </button>
+            `
+            : `
+              <button class="favorite-btn disabled" title="로그인 후 이용 가능합니다." disabled>
+                <i class="far fa-heart"></i>
+              </button>
+            `
+        }
+
+        <!-- 이미지 -->
+        <img src="${imageUrl}" class="roomImg" alt="이미지"/>
+
+        <!-- 방 정보 -->
         <div class="listing-info">
           <h3>${listing.title || ""}</h3>
+          
           <div class="host-info">
-            <img src="${
-              listing.profileImage || "/images/default-profile.png"
-            }" alt="hostImage"/>
+            <!-- 상태 라벨 -->
+            <div class="status-label ${statusClass}">${statusText}</div>
+
+            <!-- 호스트 프로필 -->
+            <div class="host-image-wrapper">
+              <img src="${
+                listing.profileImage || "/images/default-profile.png"
+              }" class="host-image" alt="hostImage"/>
+            </div>
+
             <div class="host-detail">
               <span>${listing.nickname || ""}</span>
               <span>${ratingText}</span>
             </div>
           </div>
-          <p>${listing.regionName || ""} ${listing.cityName || ""} ${
+
+          <!-- 지역 -->
+          <div class="detail-wrapper">
+            <i class="fas fa-map-marker-alt icon-gray"></i>
+            <p class="text-ellipsis">
+              ${listing.regionName || ""} ${listing.cityName || ""} ${
         listing.townName || ""
-      }</p>
-          <p>
-            ₩ <span>${formattedPrice}</span> / 월
-          </p>
-          <p>인원: ${listing.currentGuests || 0} / ${
-        listing.maxGuests || 0
-      }명</p>
+      }
+            </p>
+          </div>
+
+          <!-- 가격 -->
+          <div class="detail-wrapper">
+            <i class="fas fa-yen-sign icon-gray"></i>
+            <p class="text-ellipsis">
+              <span>${formattedPrice}</span> / 월
+            </p>
+          </div>
+
+          <!-- 인원 -->
+          <div class="detail-wrapper">
+            <i class="fas fa-user icon-gray"></i>
+            <p class="text-ellipsis">
+              인원: ${listing.currentGuests || 0} / ${listing.maxGuests || 0}명
+            </p>
+          </div>
         </div>
       </a>
     `;
@@ -442,4 +493,3 @@ function updateTownSelect() {
       .catch((error) => console.error("Error fetching towns:", error));
   }
 }
-

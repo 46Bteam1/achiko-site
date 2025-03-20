@@ -542,14 +542,12 @@ function validatePrice() {
 // --------------------------------------------------------------------
 
 function validateForm() {
-/*  	
-	const canRegistShare = document.getElementById("canRegistShare");
-  if (!canRegistShare) {
-    alert("이미 진행 중인 숙소가 등록되어있습니다.");
-    return false;
-	
-  }
-*/
+  // const canRegistShare = document.getElementById("canRegistShare");
+  // if (!canRegistShare) {
+  //   alert("이미 진행 중인 숙소가 등록되어있습니다.");
+  //   return false;
+  // 
+}
   const titleInput = document.getElementById("title");
   const descriptionInput = document.getElementById("description");
 

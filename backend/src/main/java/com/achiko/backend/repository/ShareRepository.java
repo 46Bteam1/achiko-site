@@ -1,6 +1,7 @@
 package com.achiko.backend.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +34,8 @@ public interface ShareRepository extends JpaRepository<ShareEntity, Long> {
 	List<ShareEntity> findByHost_UserId(Long userId);
 
 	boolean existsByHost_UserIdAndStatus(Long userId, String status);
+
+	Optional<ShareEntity> findFirstByHostUserIdAndStatus(Long userId, String string);
+
+	List<ShareEntity> findAllByOrderByCreatedAtDesc();
 }

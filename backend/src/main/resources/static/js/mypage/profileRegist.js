@@ -426,7 +426,7 @@ function getChatRooms(resp) {
             <td>${displayNickname}</td>
             <td class="btns">
                 <input type="button" value="입장" 
-                class="enterBtn btn btn-secondary"
+                class="enterBtn btn btn-outline-success"
                 data-seq="${item["chatroomId"]}">
                 <input type="button" value="삭제"
                 class="deleteBtn btn btn-danger"
@@ -489,7 +489,7 @@ function deleteShare() {
     data: { shareId: shareId },
     success: function (response) {
       alert("게시물이 삭제되었습니다.");
-      window.location.href = "/mypage/mypageSample";
+      window.location.href = "/mypage/mypageView";
     },
     error: function (xhr) {
       alert(xhr.responseText || "삭제에 실패했습니다.");
