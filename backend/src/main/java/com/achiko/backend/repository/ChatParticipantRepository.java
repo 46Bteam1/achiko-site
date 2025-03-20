@@ -33,4 +33,8 @@ Long findHostIdByChatRoomId(@Param("chatRoomId") Long chatRoomId);
             "WHERE cp.chatroom_id = :chatRoomId", 
     nativeQuery = true)
 Long findGuestIdByChatRoomId(@Param("chatRoomId") Long chatRoomId);
+
+@Query(value = "SELECT * FROM chat_participant " +
+        "WHERE host_id = :userId OR guest_id = :userId", nativeQuery = true)
+List<ChatParticipantEntity> findByUserIdInHostOrGuest(@Param("userId") Long userId);
 }
