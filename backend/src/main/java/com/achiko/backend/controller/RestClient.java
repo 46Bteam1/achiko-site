@@ -14,8 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RestClient {
 
     public static double sendPostRequest(String sentence1, String sentence2) {
-        // String url = "http://localhost:8000/similarity";
-        String url = "https://achiko.site/similarity";
+        String url = "http://localhost:8000/similarity";
+        // String url = "https://achiko.site/similarity";
         RestTemplate restTemplate = new RestTemplate();
         Sentences sentences = new Sentences(sentence1, sentence2);
 
