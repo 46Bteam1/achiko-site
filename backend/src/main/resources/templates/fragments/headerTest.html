@@ -179,6 +179,7 @@
           <li><a th:href="@{/viewSubscribe/subscribePage}">구독</a></li>
           <th:block sec:authorize="isAuthenticated()">
             <th:block th:if="${isHost}">
+              <li><a th:href="@{/share/write}">셰어하우스 글 작성</a></li>
               <li><a th:href="@{/find/host-to-guest}">게스트 추천</a></li>
             </th:block>
             <th:block th:if="${isHost != null and !isHost}">
