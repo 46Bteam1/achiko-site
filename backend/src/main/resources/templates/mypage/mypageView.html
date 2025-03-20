@@ -29,10 +29,10 @@
         <span>Achiko의 호스트가 되어 더 많은 혜택을 누려보세요!</span>
         <div class="banner-btns">
           <a th:href="@{/share/write}"
-          ><input type="button" class="hostBtn" value="호스트 되기 >" />
+            ><input type="button" class="hostBtn" value="호스트 되기 >" />
           </a>
           <a th:href="@{/viewSubscribe/subscribePage}"
-          ><input type="button" class="hostBtn" value="구독 결제하기 >" />
+            ><input type="button" class="hostBtn" value="구독 결제하기 >" />
           </a>
         </div>
       </div>
@@ -43,7 +43,7 @@
         <span>Achiko 프리미엄을 통해 더 많은 혜택을 누려보세요!</span>
         <div class="banner-btns">
           <a th:href="@{/viewSubscribe/subscribePage}"
-          ><input type="button" class="hostBtn" value="구독 결제하기 >" />
+            ><input type="button" class="hostBtn" value="구독 결제하기 >" />
           </a>
         </div>
       </div>
@@ -102,11 +102,11 @@
                         id="chatRoomsBtn"
                         class="btn btn-outline-success"
                         value="뷰잉 확정하러 가기"
-                        />
+                      />
                     </div>
                   </div:block>
                 </div>
-                <hr class="border-color">
+                <hr class="border-color" />
                 <input type="hidden" th:value="${userDTO.userId}" id="userId" />
                 <div class="table-container">
                   <table>
@@ -149,9 +149,8 @@
                             th:text="${#temporals.format(viewing.scheduledDate, 'yyyy-MM-dd HH:mm')}"
                           ></td>
                           <td
-                            th:text="${viewing.isCompleted == 0} ? '확정 전' : '확정 완료'"
+                            th:text="${viewing.isCompleted != null and viewing.isCompleted ? '확정 완료' : '확정 전'}"
                           ></td>
-                          
                         </tr>
                       </th:block>
                     </tbody>
@@ -166,14 +165,18 @@
                     <h3>나의 셰어하우스 목록</h3>
                     <th:block th:if="${userDTO.isHost == 1}">
                       <form th:action="@{/mypage/changeToGuest}" method="post">
-                        <input type="hidden" name="userId" th:value="${userDTO.userId}" />
-                          <button type="submit" class="btn btn-outline-success">
-                           게스트 전환하기
-                          </button>
+                        <input
+                          type="hidden"
+                          name="userId"
+                          th:value="${userDTO.userId}"
+                        />
+                        <button type="submit" class="btn btn-outline-success">
+                          게스트 전환하기
+                        </button>
                       </form>
                     </th:block>
                   </div>
-                  <hr class="border-color">
+                  <hr class="border-color" />
                   <div class="table-container">
                     <table id="myShareTable">
                       <thead>
@@ -253,7 +256,7 @@
                 <div class="flexBox">
                   <h3>나의 채팅 목록</h3>
                 </div>
-                <hr class="border-color">
+                <hr class="border-color" />
                 <input
                   type="hidden"
                   th:value="${userDTO.nickname}"
@@ -280,7 +283,7 @@
                   <div class="flexBox">
                     <h3>나의 찜 목록</h3>
                   </div>
-                  <hr class="border-color">
+                  <hr class="border-color" />
                   <div class="table-container">
                     <table id="favoriteTable">
                       <thead>
@@ -318,9 +321,8 @@
               <div class="section tab-content" id="review">
                 <div class="flexBox">
                   <h3>나의 리뷰 목록</h3>
-                  
                 </div>
-                <hr class="border-color">
+                <hr class="border-color" />
                 <div class="table-container">
                   <table id="writtenReviewTable" class="reviewTable">
                     <thead>
@@ -612,7 +614,6 @@
       </div>
 
       <div class="toBeBtn">
-        
         <!-- 회원 탈퇴 버튼 -->
         <div class="btn-container">
           <span class="nothingText">회원 탈퇴를 원하시나요? </span>
