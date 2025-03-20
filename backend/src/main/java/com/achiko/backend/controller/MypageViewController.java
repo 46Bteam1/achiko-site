@@ -79,7 +79,7 @@ public class MypageViewController {
 
 		if ("MATCHING_IN_PROGRESS".equals(result)) {
 			redirectAttributes.addFlashAttribute("errorMessage",
-					"매칭이 진행 중인 쉐어하우스가 있습니다. 매칭이 완료 되었다면 진행 중인 쉐어를 종료해주세요.");
+					"매칭이 진행 중인 셰어하우스가 있습니다. 매칭이 완료 되었다면 진행 중인 쉐어를 종료해주세요.");
 			return "redirect:/mypage/mypageView";
 		}
 		return "redirect:/mypage/mypageView";
@@ -92,9 +92,9 @@ public class MypageViewController {
 		boolean isClosed = mypageService.closeShare(userId, loginUser);
 
 		if (isClosed) {
-			redirectAttributes.addFlashAttribute("successMessage", "쉐어하우스 매칭이 종료되었습니다.");
+			redirectAttributes.addFlashAttribute("successMessage", "셰어하우스 매칭이 종료되었습니다.");
 		} else {
-			redirectAttributes.addFlashAttribute("errorMessage", "종료할 쉐어하우스가 없습니다.");
+			redirectAttributes.addFlashAttribute("errorMessage", "종료할 셰어하우스가 없습니다.");
 		}
 
 		return "redirect:/mypage/mypageView";
