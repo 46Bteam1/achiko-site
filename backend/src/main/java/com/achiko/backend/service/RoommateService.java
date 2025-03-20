@@ -28,7 +28,7 @@ public class RoommateService {
 	private final UserRepository userRepository;
 	private final ShareRepository shareRepository;
 	private final ChatRoomRepository roomRepository;
-
+	
 	// roommate 생성하기
 	public void registRoommate(RoommateDTO roommateDTO, String loginId) {
 		// 1. userId로 UserEntity 가져오기
