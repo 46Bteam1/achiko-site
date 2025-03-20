@@ -61,7 +61,7 @@ create table users (
 				nickname varchar(100) not null unique,
 				profile_image char(255) default null,
 				real_name varchar(100) not null,
-				email varchar(255) not null unique,
+				email varchar(255) not null,
 				password varchar(255),            
  				is_host tinyint default 0 check (is_host in (0,1,2)),  
 				role varchar(30) default 'user' check (role in ('user','admin')),

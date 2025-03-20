@@ -149,7 +149,7 @@
                             th:text="${#temporals.format(viewing.scheduledDate, 'yyyy-MM-dd HH:mm')}"
                           ></td>
                           <td
-                            th:text="${viewing.isCompleted == 0 ? '확정 전' : '확정 완료'}"
+                            th:text="${viewing.isCompleted == 0} ? '확정 전' : '확정 완료'"
                           ></td>
                           
                         </tr>
