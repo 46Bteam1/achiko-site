@@ -70,6 +70,19 @@
             th:value="${sessionId}"
           />
 
+          <!-- 제목 -->
+          <div class="form-group">
+            <label for="title">제목</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              class="form-control"
+              placeholder="제목을 입력하세요"
+              required
+            />
+          </div>
+
           <!-- 사진 등록 -->
           <div class="photo-upload-box">
             <h3>사진 등록</h3>
@@ -84,19 +97,6 @@
                 onchange="handlePhotoUpload(event)"
               />
             </div>
-          </div>
-
-          <!-- 제목 -->
-          <div class="form-group">
-            <label for="title">제목</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              class="form-control"
-              placeholder="제목을 입력하세요"
-              required
-            />
           </div>
 
           <!-- 개요/소개 -->
