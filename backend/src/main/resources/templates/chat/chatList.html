@@ -167,7 +167,16 @@
       <!-- 오른쪽 chat 내용 -->
       <div id="chatComponents">
         <div id="chatInfoBox">
-          <div id="chattingroomTitle"></div>
+          <div class="chatInfoHeader">
+            <div id="chattingroomTitle"></div>
+            <button
+              type="button"
+              class="shareDetailBtn"
+              th:data-share-id="${shareId}"
+            >
+              상세보기
+            </button>
+          </div>
           <div class="shortInfoNav">
             <div class="shortInfoBox">
               <div class="minimalInfoBox">

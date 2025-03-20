@@ -68,6 +68,13 @@ main {
   display: flex;
   gap: 0.5rem;
   overflow-x: auto;
+  overflow-y: hidden;
+}
+
+#guestBox {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
 }
 
 .userProfileContainer {
@@ -160,6 +167,11 @@ main {
   color: #888;
 }
 
+.chatInfoHeader{
+  display: flex;
+  justify-content: space-between;
+}
+
 .viewingBtn {
   font-size: 12px;
   padding: 0.5rem;
@@ -171,6 +183,24 @@ main {
   transition: all 0.3s ease;
   text-align: center;
   white-space: nowrap;
+}
+
+.shareDetailBtn {
+  font-size: 12px;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: none;
+  color: #3858e4;
+  border: 1px solid #3858e4;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.shareDetailBtn:hover {
+  background-color: #3858e4;
+  color: white;
 }
 
 .viewingBtn:hover {

@@ -37,6 +37,7 @@ import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.RegionRepository;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.service.FavoriteService;
+import com.achiko.backend.service.RoommateService;
 import com.achiko.backend.service.ShareFilesService;
 import com.achiko.backend.service.ShareService;
 import com.achiko.backend.service.UserService;
@@ -61,6 +62,7 @@ public class ShareController {
     private final ShareFilesService shareFilesService;
     private final FavoriteService favoriteService;
     private final UserService userService;
+    private final RoommateService roommateService;
     
     @ResponseBody
     @GetMapping("/share/selectAll")
@@ -79,7 +81,7 @@ public class ShareController {
      * 글 상세 조회 페이지 URL 예: /share/selectOne?shareId=1
      */
     @GetMapping("/share/selectOne")
-    public String selectOne(@RequestParam("shareId") Long shareId, Model model,
+    public String selectOne(@RequestParam(name = "shareId") Long shareId, Model model,
                             @AuthenticationPrincipal PrincipalDetails principal) {
         // ★ ShareService를 통해 shareId에 해당하는 게시글 정보를 조회
         ShareDTO shareDTO = shareService.getShareById(shareId);
@@ -177,7 +179,7 @@ public class ShareController {
         shareDTO.setHostId(user.getUserId());
   
         ShareDTO saved = shareService.saveShare(shareDTO);
-  
+        
         if (sessionId != null && !sessionId.isEmpty()) {
             shareFilesService.bindFilesToShare(sessionId, saved.getShareId());
         }

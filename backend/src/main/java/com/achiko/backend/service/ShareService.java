@@ -101,6 +101,11 @@ public class ShareService {
         }
         ShareEntity saved = shareRepository.saveAndFlush(entity);
         
+        Optional<UserEntity> tempEntity = userRepository.findById(shareDTO.getHostId());
+        UserEntity userEntity = tempEntity.get();
+        RoommateEntity roommateEntity = RoommateEntity.toEntity(new RoommateDTO(), userEntity, entity);
+        roommateRepository.save(roommateEntity);
+        
         Long userId = entity.getHost().getUserId();
         Optional<UserEntity> temp = userRepository.findByUserId(userId);
         if (temp.isPresent()) {

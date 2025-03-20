@@ -8,6 +8,15 @@ $(function () {
   const nickname = $("#nickname").val();
   const profileImage = $("#profileImage").val();
 
+  $(document).on("click", ".shareDetailBtn", function () {
+    let shareId = $(this).data("share-id");
+    if (shareId) {
+      window.location.href = `/share/selectOne?shareId=${shareId}`;
+    } else {
+      alert("Share ID가 없습니다.");
+    }
+  });
+
   $("#toMyPageBtn").on("click", function () {
     window.location.href = `/mypage/mypageView?userId=${userId}`;
   });

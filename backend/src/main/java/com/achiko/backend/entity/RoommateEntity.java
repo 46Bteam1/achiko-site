@@ -47,4 +47,5 @@ public class RoommateEntity {
                 .share(shareEntity)
                 .build();
     }
+    
 }

@@ -20,6 +20,11 @@ public class RoommateDTO {
 
     private String nickname;
     private String profileImage;
+    
+    public RoommateDTO(Long userId, Long shareId) {
+        this.userId = userId;
+        this.shareId = shareId;
+    }
 
     public static RoommateDTO toDTO(RoommateEntity entity) {
         return RoommateDTO.builder()
@@ -30,4 +35,5 @@ public class RoommateDTO {
                 .profileImage(entity.getUser().getProfileImage())
                 .build();
     }
+
 }
