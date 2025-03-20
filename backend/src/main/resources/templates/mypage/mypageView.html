@@ -79,7 +79,7 @@
               <div class="tabs">
                 <div class="tab active" data-tab="viewing">뷰잉 예약</div>
                 <th:block th:if="${userDTO.isHost == 1}">
-                  <div class="tab" data-tab="sharehouse">쉐어하우스</div>
+                  <div class="tab" data-tab="sharehouse">셰어하우스</div>
                 </th:block>
                 <div class="tab" data-tab="chat">채팅 목록</div>
                 <th:block th:if="${userDTO.isHost == 0}">
@@ -114,7 +114,7 @@
                       <tr>
                         <th class="no">No.</th>
                         <th
-                          th:text="${userDTO.isHost == 0 ? '쉐어하우스' : '게스트'}"
+                          th:text="${userDTO.isHost == 0 ? '셰어하우스' : '게스트'}"
                         ></th>
                         <th class="create_date">뷰잉 예정일</th>
                         <th>진행 상태</th>
@@ -163,7 +163,7 @@
               <th:block th:if="${userDTO.isHost == 1}">
                 <div class="section tab-content" id="sharehouse">
                   <div class="flexBox">
-                    <h3>나의 쉐어하우스 목록</h3>
+                    <h3>나의 셰어하우스 목록</h3>
                     <th:block th:if="${userDTO.isHost == 1}">
                       <form th:action="@{/mypage/changeToGuest}" method="post">
                         <input type="hidden" name="userId" th:value="${userDTO.userId}" />
@@ -179,7 +179,7 @@
                       <thead>
                         <tr>
                           <th class="no">No.</th>
-                          <th class="title">쉐어하우스</th>
+                          <th class="title">셰어하우스</th>
                           <th>진행 상태</th>
                           <th>관리</th>
                         </tr>
@@ -286,7 +286,7 @@
                       <thead>
                         <tr>
                           <th class="no">No.</th>
-                          <th class="title">쉐어하우스</th>
+                          <th class="title">셰어하우스</th>
                         </tr>
                       </thead>
                       <tbody>

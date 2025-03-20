@@ -70,13 +70,6 @@
             th:value="${sessionId}"
           />
 
-          <!-- (추가) sessionId를 전달하기 위한 hidden input -->
-          <input
-            type="hidden"
-            id="sessionId"
-            name="sessionId"
-            th:value="${sessionId}"
-          />
 
           <!-- 제목 -->
           <div class="form-group">
@@ -89,6 +82,22 @@
               placeholder="제목을 입력하세요"
               required
             />
+          </div>
+
+          <!-- 사진 등록 -->
+          <div class="photo-upload-box">
+            <h3>사진 등록</h3>
+            <div id="photoPreview" style="margin-top: 10px">
+              <label for="photos" class="photo-upload-button">+</label>
+              <input
+                type="file"
+                id="photos"
+                name="photos"
+                multiple
+                form="shareForm"
+                onchange="handlePhotoUpload(event)"
+              />
+            </div>
           </div>
 
           <!-- 개요/소개 -->
@@ -264,22 +273,6 @@
                 overflow: hidden;
               "
             ></div>
-          </div>
-
-          <!-- 사진 등록 -->
-          <div class="photo-upload-box">
-            <h3>사진 등록</h3>
-            <div id="photoPreview" style="margin-top: 10px">
-              <label for="photos" class="photo-upload-button">+</label>
-              <input
-                type="file"
-                id="photos"
-                name="photos"
-                multiple
-                form="shareForm"
-                onchange="handlePhotoUpload(event)"
-              />
-            </div>
           </div>
 
           <th:block th:if="${canRegistShare == true}">

@@ -36,4 +36,6 @@ public interface ShareRepository extends JpaRepository<ShareEntity, Long> {
 	boolean existsByHost_UserIdAndStatus(Long userId, String status);
 
 	Optional<ShareEntity> findFirstByHostUserIdAndStatus(Long userId, String string);
+
+	List<ShareEntity> findAllByOrderByCreatedAtDesc();
 }
