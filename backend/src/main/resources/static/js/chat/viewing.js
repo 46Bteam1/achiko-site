@@ -146,11 +146,22 @@ function viewingTable(resp) {
   const role = $("#role").val();
   let tag = "";
 
+  // 날짜 변환 함수
+  function formatLocalDateTime(dateString) {
+    if (!dateString) return "날짜 없음";
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hour = String(date.getHours()).padStart(2, "0");
+    const minute = String(date.getMinutes()).padStart(2, "0");
+    const second = String(date.getSeconds()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  }
+
   if (resp.length === 0) {
-    // 데이터가 없을 경우 메시지 출력
     tag = `<div>viewing 약속이 없습니다.</div>`;
   } else {
-    // 데이터가 있을 경우 테이블 출력
     tag += `
       <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #f9f9f9;">
       <tr style="background-color: #4CAF50; color: white; font-weight: bold;">
@@ -165,8 +176,12 @@ function viewingTable(resp) {
       let displayNickname = nicknameCheck
         ? item["guestNickname"]
         : item["hostNickname"];
-      let scheduledDate = item["scheduledDate"] || "날짜 없음";
+
+      // 날짜 변환 적용
+      let scheduledDate = formatLocalDateTime(item["scheduledDate"]);
+
       let isCompleted = item["isCompleted"];
+
       let actionCellContent = isCompleted
         ? '<span style="color: red; font-weight: bold;">이미 완료된 뷰잉입니다</span>'
         : `
@@ -210,7 +225,13 @@ function updateViewing() {
   let dateValue = "";
   let timeValue = "";
   if (currentDate && currentDate !== "날짜 없음") {
-    if (currentDate.indexOf("T") > -1) {
+    if (currentDate.indexOf(" ") > -1) {
+      // 이미 yyyy-MM-dd HH:mm:ss 형태라면
+      var parts = currentDate.split(" ");
+      dateValue = parts[0];
+      timeValue = parts[1].substring(0, 5);
+    } else if (currentDate.indexOf("T") > -1) {
+      // 혹시 T 형식이 들어올 경우도 커버
       var parts = currentDate.split("T");
       dateValue = parts[0];
       timeValue = parts[1].substring(0, 5);
@@ -228,18 +249,28 @@ function updateViewing() {
       '" />'
   );
 
-  // 기존 버튼들 숨기기 (확정 & 삭제 버튼)
   row.find(".confirmViewingBtn, .deleteViewingBtn").hide();
 
-  // 날짜 수정 버튼을 저장 버튼으로 변경하고 취소 버튼 추가
   let btn = $(this);
   btn.val("저장");
 
-  // 취소 버튼 추가
-  let cancelBtn = $(
-    '<input type="button" value="취소" class="cancelUpdateBtn" style="margin-left: 5px; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: gray; color: white; font-size: 14px;">'
-  );
+  let cancelBtn = $(`
+    <input type="button" value="취소" class="cancelUpdateBtn" 
+      style="margin-left: 5px; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background-color: gray; color: white; font-size: 14px;">
+  `);
   btn.after(cancelBtn);
+
+  // 날짜 포맷 함수
+  function formatLocalDateTime(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hour = String(date.getHours()).padStart(2, "0");
+    const minute = String(date.getMinutes()).padStart(2, "0");
+    const second = String(date.getSeconds()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  }
 
   btn.off("click").on("click", function () {
     let newDate = row.find(".updateViewingDate").val();
@@ -284,9 +315,10 @@ function updateViewing() {
           icon: "success",
           text: `${resp}`,
         });
-        scheduledCell.text(newScheduledDate);
 
-        // 버튼 복원
+        // 변환된 형식으로 셀에 표시
+        scheduledCell.text(formatLocalDateTime(newScheduledDate));
+
         btn.val("날짜 수정");
         cancelBtn.remove();
         btn.off("click").on("click", updateViewing);
@@ -302,9 +334,7 @@ function updateViewing() {
     });
   });
 
-  // 취소 버튼 동작
   cancelBtn.on("click", function () {
-    // 셀 내용을 원래 날짜로 복원
     scheduledCell.text(currentDate);
     btn.val("날짜 수정");
     btn.off("click").on("click", updateViewing);
@@ -408,22 +438,6 @@ function confirmViewing() {
                       draggable: true,
                     });
                   }
-
-                  // swalWithBootstrapButtons
-                  //   .fire({
-                  //     title: "확정 완료!",
-                  //     text: "새로운 쉐어 메이트가 생겼네요!",
-                  //     icon: "success",
-                  //   })
-                  //   .then(() => {
-                  //     // 모달 닫기
-                  //     $("#exampleModal").modal("hide");
-
-                  //     // 부드러운 새로고침
-                  //     $("body").fadeOut(300, function () {
-                  //       location.reload();
-                  //     });
-                  //   });
                 },
                 error: function () {
                   swalWithBootstrapButtons.fire({

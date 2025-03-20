@@ -256,7 +256,9 @@ public class ShareService {
 	 * @return
 	 */
 	public boolean checkAlreadyShare(Long userId) {
-	    return !shareRepository.existsByHost_UserIdAndStatus(userId, "open");
+		boolean result = shareRepository.existsByHost_UserIdAndStatus(userId, "open");
+		System.out.println("현재글 잇어?"+result);
+	    return !result;
 	}
 
 	public Long findShareId(String loginId) {
