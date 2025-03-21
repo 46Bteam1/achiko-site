@@ -10,7 +10,7 @@
     <title>Achiko</title>
     <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
 
-	 <!-- Google Fonts 추가 (CORS 설정 추가) -->
+    <!-- Google Fonts 추가 (CORS 설정 추가) -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap"
@@ -124,7 +124,7 @@
                   <div class="host-detail">
                     <span th:text="${listing.hostDTO.nickname}"></span>
                     <span
-                      th:text="${listing.hostDTO.avgRating == 0.0 ? '⭐ 아직 리뷰가 없는 호스트입니다':'⭐'+listing.hostDTO.avgRating}"
+                      th:text="${listing.hostDTO.avgRating == 0.0 ? '⭐ 아직 리뷰가 없는 호스트입니다' : '⭐ ' + #numbers.formatDecimal(listing.hostDTO.avgRating, 1, 2)}"
                     ></span>
                   </div>
                 </div>

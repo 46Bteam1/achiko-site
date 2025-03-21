@@ -103,209 +103,196 @@
     <header th:replace="~{fragments/header :: header}"></header>
 
     <!-- 메인 컨테이너 -->
-    <main>
+    <main class="room-detail-container">
       <!-- 글 제목 영역 -->
+      <div
+        class="selectone-datetime"
+        th:text="${#temporals.format(share.createdAt, 'yyyy-MM-dd HH:mm')}"
+      ></div>
       <section class="share-title-section">
         <h2 class="share-title" th:text="${share.title}"></h2>
+        <!-- 공유하기, 찜하기, 신고 버튼 영역 -->
+        <section class="action-buttons">
+          <div class="host-actions">
+            <!-- ★ 찜하기 버튼: 데이터 속성에 share.isFavorite 및 share.favoriteCount를 사용하여 초기 상태 설정 -->
+            <div
+              id="favoriteContainer"
+              class="favorite-container"
+              th:attr="data-share-id=${share.shareId}, data-is-favorite=${(share.isFavorite == true) ? 'true' : 'false'}"
+            >
+              <!-- ★ 수정: data-is-favorite 문자열화 -->
+              <span class="favorite-count">
+                <b th:text="${share.favoriteCount}"></b>
+                <span
+                  th:text="${(share.favoriteCount > 1) ? ' LIKES' : ' LIKE'}"
+                  class="mobileDisappear"
+                ></span>
+              </span>
+              <button
+                id="favoriteBtn"
+                class="favorite-btn"
+                th:attr="data-is-favorite=${(share.isFavorite == true) ? 'true' : 'false'}"
+              >
+                <!-- ★ 수정: data-is-favorite 문자열화 -->
+                <i
+                  th:class="${(share.isFavorite == true) ? 'fas fa-heart selectoneicons' : 'icons far fa-heart selectoneicons'}"
+                ></i>
+                <!-- ★ 수정: 명시적 비교 -->
+              </button>
+            </div>
+            <button id="shareButton" class="btn action-btn share-btn">
+              <i class="fas fa-share-square selectoneicons"></i>
+              <p class="mobileDisappear">공유</p>
+            </button>
+            <button
+              id="reportButton"
+              th:unless="${isOwner}"
+              class="btn action-btn report-btn"
+            >
+              <i class="fas fa-flag selectoneicons"></i>
+              <p class="mobileDisappear">신고</p>
+            </button>
+            <button
+              class="btn action-btn btn-warning"
+              th:if="${isOwner}"
+              th:onclick="|location.href='/share/update?shareId=${share.shareId}'|"
+            >
+              <i class="fas fa-pen selectoneicons"></i>
+              <p class="mobileDisappear">수정</p>
+            </button>
+
+            <button
+              class="btn action-btn btn-danger"
+              th:if="${isOwner}"
+              th:onclick="|location.href='/share/delete?shareId=${share.shareId}'|"
+            >
+              <i class="fas fa-trash-alt selectoneicons"></i>
+              <p class="mobileDisappear">삭제</p>
+            </button>
+          </div>
+        </section>
       </section>
 
       <!-- 방 사진 캐러셀 영역 -->
-      <div class="row mb-4">
-        <div class="col-md-9">
-          <div
-            id="roomCarousel"
-            class="carousel slide room-photos"
-            data-bs-ride="carousel"
-          >
-            <!-- Indicators 추가 -->
-            <div class="carousel-indicators">
-              <th:block th:each="img, iterStat : ${fileList}">
-                <button
-                  type="button"
-                  data-bs-target="#roomCarousel"
-                  th:attr="data-bs-slide-to=${iterStat.index}, aria-current=${iterStat.index == 0} ? 'true' : null, aria-label='Slide ' + (${iterStat.index} + 1)"
-                  th:classappend="${iterStat.index == 0} ? ' active'"
-                ></button>
-              </th:block>
-            </div>
-            <div class="carousel-inner">
-              <div
-                th:each="img, iterStat : ${fileList}"
-                class="carousel-item"
+      <section class="room-host-section">
+        <div
+          id="roomCarousel"
+          class="carousel slide room-photos"
+          data-bs-ride="carousel"
+        >
+          <!-- Indicators 추가 -->
+          <div class="carousel-indicators">
+            <th:block th:each="img, iterStat : ${fileList}">
+              <button
+                type="button"
+                data-bs-target="#roomCarousel"
+                th:attr="data-bs-slide-to=${iterStat.index}, aria-current=${iterStat.index == 0} ? 'true' : null, aria-label='Slide ' + (${iterStat.index} + 1)"
                 th:classappend="${iterStat.index == 0} ? ' active'"
-              >
-                <img
-                  th:src="${img.fileUrl}"
-                  class="d-block w-100"
-                  alt="방 사진"
-                />
-              </div>
-            </div>
-            <button
-              class="carousel-control-prev"
-              type="button"
-              data-bs-target="#roomCarousel"
-              data-bs-slide="prev"
-            >
-              <span
-                class="carousel-control-prev-icon"
-                aria-hidden="true"
-              ></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button
-              class="carousel-control-next"
-              type="button"
-              data-bs-target="#roomCarousel"
-              data-bs-slide="next"
-            >
-              <span
-                class="carousel-control-next-icon"
-                aria-hidden="true"
-              ></span>
-              <span class="visually-hidden">Next</span>
-            </button>
+              ></button>
+            </th:block>
           </div>
-        </div>
-        <div class="col-md-3">
-          <section class="host-intro">
-            <h2 class="host-title">호스트 소개</h2>
-            <div class="host-card">
-              <div class="host-image">
-                <img
-                  th:src="${hostUser.profileImage != null and !#strings.isEmpty(hostUser.profileImage) ? hostUser.profileImage : '/images/default-profile.webp'}"
-                  alt="호스트 이미지"
-                  class="rounded-circle"
-                  width="150"
-                  height="150"
-                />
-              </div>
-
-              <!-- 호스트 정보 (닉네임 & 평점) -->
-              <div class="host-info">
-                <span class="host-name" th:text="${hostUser.nickname}"></span>
-                <span
-                  class="host-rating"
-                  th:text="${hostUser.avgRating == 0.0 ? '⭐ 리뷰 0개':'⭐'+hostUser.avgRating}"
-                >
-                </span>
-              </div>
-
-              <!-- 버튼 그룹 (메시지 보내기 & 리뷰 보기) -->
-              <div class="host-actions">
-                <div th:if="${!isOwner}">
-                  <button id="messageHostBtn" class="btn btn-primary">
-                    메세지 보내기
-                  </button>
-                  <!-- <a
-                    th:href="@{/chatList(chatroomId=${share.hostId})}"
-                    class="btn btn-primary"
-                    >메세지 보내기</a
-                  > -->
-                </div>
-                <a
-                  th:href="@{/review/reviewPage(reviewedUserId=${share.hostId})}"
-                  class="btn btn-secondary"
-                >
-                  호스트 리뷰 보기
-                </a>
-              </div>
+          <div class="carousel-inner">
+            <div
+              th:each="img, iterStat : ${fileList}"
+              class="carousel-item"
+              th:classappend="${iterStat.index == 0} ? ' active'"
+            >
+              <img
+                th:src="${img.fileUrl}"
+                class="d-block w-100"
+                alt="방 사진"
+              />
             </div>
-          </section>
-          <!--  게시물 관리 섹션 (호스트 소개 아래로 이동) -->
-          <section class="review-section" th:if="${isOwner}">
-            <a th:href="@{/share/update(shareId=${share.shareId})}">
-              <button class="btn btn-warning">글 수정</button>
-            </a>
-            <a th:href="@{/share/delete(shareId=${share.shareId})}">
-              <button class="btn btn-danger">글 삭제</button>
-            </a>
-          </section>
-        </div>
-      </div>
-
-      <!-- 공유하기, 찜하기, 신고 버튼 영역 (버튼은 인라인 배치) -->
-      <section class="action-buttons">
-        <div class="action-container">
-          <!-- ★ 찜하기 버튼: 데이터 속성에 share.isFavorite 및 share.favoriteCount를 사용하여 초기 상태 설정 -->
-          <div id="favoriteContainer"
-     		class="favorite-container"
-     		th:attr="data-share-id=${share.shareId}, data-is-favorite=${(share.isFavorite == true) ? 'true' : 'false'}"> <!-- ★ 수정: data-is-favorite 문자열화 -->
-  		 <button id="favoriteBtn"
-          class="favorite-btn"
-          th:attr="data-is-favorite=${(share.isFavorite == true) ? 'true' : 'false'}"> <!-- ★ 수정: data-is-favorite 문자열화 -->
-    	<i th:class="${(share.isFavorite == true) ? 'fas fa-heart' : 'far fa-heart'}"></i> <!-- ★ 수정: 명시적 비교 -->
-  		</button>
-  		<span class="favorite-count">
-    		<b th:text="${share.favoriteCount}"></b>
-    	<span th:text="${(share.favoriteCount > 1) ? ' LIKES' : ' LIKE'}"></span>
-  		</span>
-		</div>
-          <br />
-          <button id="shareButton" class="action-btn share-btn">
-            공유하기
+          </div>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#roomCarousel"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
           </button>
-          <button id="reportButton" class="action-btn report-btn">신고</button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#roomCarousel"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+        <!-- <div class="host-intro"> -->
+        <div class="host-card">
+          <div class="host-image-container">
+            <img
+              th:src="${hostUser.profileImage != null and !#strings.isEmpty(hostUser.profileImage) ? hostUser.profileImage : '/images/default-profile.png'}"
+              alt="호스트 이미지"
+              class="host-image"
+            />
+            <span
+              class="mobileDisappear host-name"
+              th:text="${hostUser.nickname}"
+            ></span>
+            <span
+              class="mobileDisappear host-rating"
+              th:text="${reviewCnt == 0 ? '⭐ 리뷰 0 개':'⭐ 리뷰 '+reviewCnt + ' 개'}"
+            >
+            </span>
+          </div>
+          <div class="host-info">
+            <span
+              class="mobileAppear host-name"
+              th:text="${hostUser.nickname}"
+            ></span>
+            <span
+              class="mobileAppear host-rating"
+              th:text="${reviewCnt == 0 ? '⭐ 리뷰 0 개':'⭐ 리뷰 '+reviewCnt + ' 개'}"
+            >
+            </span>
+            <!-- 버튼 그룹 (메시지 보내기 & 리뷰 보기) -->
+            <div class="host-actions">
+              <div th:if="${!isOwner}">
+                <button id="messageHostBtn" class="btn btn-primary">
+                  메세지 보내기
+                </button>
+              </div>
+              <button
+                class="btn btn-secondary"
+                th:onclick="|location.href='/review/reviewPage?reviewedUserId=${share.hostId}'|"
+              >
+                호스트 리뷰 보기
+              </button>
+            </div>
+          </div>
+          <div id="selectoneShareInfoDesktopPosition"></div>
+          <!-- </div> -->
         </div>
       </section>
 
       <!-- 공유 글의 세부 정보 출력 -->
       <section class="share-info">
-        <div class="share-info-container">
-          <h2 class="share-info-title">셰어하우스 정보</h2>
-          <input type="hidden" th:value="${share.shareId}" id="shareId" />
-          <div class="share-info-table">
-            <div class="info-row">
-              <div class="info-label">작성일</div>
-              <div
-                class="info-value"
-                th:text="${#temporals.format(share.createdAt, 'yyyy-MM-dd HH:mm')}"
-              ></div>
+        <h2 class="share-info-title">쉐어하우스 설명</h2>
+        <input type="hidden" th:value="${share.shareId}" id="shareId" />
+        <div class="room-explain">
+          <p th:text="${share.description}"></p>
+        </div>
+        <div id="selectoneShareInfoMobilePosition"></div>
+        <div id="selectoneShareInfo" class="share-info-table">
+          <div class="info-row">
+            <div class="info-value">
+              현재 인원 <span th:text="${share.currentGuests}"></span> /
+              <span th:text="${share.maxGuests}"></span>명
             </div>
-            <div class="info-row">
-              <div class="info-label">상세 설명</div>
-              <div class="info-value" th:text="${share.description}"></div>
-            </div>
-            <div class="info-row">
-              <div class="info-label">최대 인원</div>
-              <div class="info-value">
-                <span th:text="${share.maxGuests}"></span> 명
-              </div>
-            </div>
-            <div class="info-row">
-              <div class="info-label">현재 인원</div>
-              <div class="info-value">
-                <span th:text="${share.currentGuests}"></span> 명
-              </div>
-            </div>
-            <div class="info-row">
-              <div class="info-label">지역</div>
-              <div class="info-value">
-                <span th:text="${share.regionName}"></span>,
-                <span th:text="${share.cityName}"></span>,
-                <span th:text="${share.townName}"></span>
-              </div>
-            </div>
-            <div class="info-row">
-              <div class="info-label">주소</div>
-              <div class="info-value">
-                <span th:text="${share.address}"></span>
-                <span th:text="${share.detailAddress}"></span>
-              </div>
-            </div>
-            <div class="info-row">
-              <div class="info-label">우편번호</div>
-              <div class="info-value" th:text="${share.postalCode}"></div>
-            </div>
-            <div class="info-row price-row">
-              <div class="info-label">요금</div>
-              <div class="info-value price-value">
-                ¥
-                <span
-                  th:text="${#numbers.formatDecimal(share.price, 0, 0)}"
-                ></span>
-                / 월
-              </div>
+          </div>
+          <div class="info-row price-row">
+            <div class="info-value price-value">
+              ¥
+              <span
+                th:text="${#numbers.formatDecimal(share.price, 0, 'COMMA', 0, 'POINT')}"
+              ></span>
+              / 월
             </div>
           </div>
         </div>
@@ -313,8 +300,18 @@
 
       <section class="map-area">
         <!-- 편의시설 검색 버튼 그룹 (지도 위에 위치) -->
-        <h2>위치 및 편의시설 검색</h2>
-        <div class="facility-btns text-center mb-3">
+        <h2 class="share-info-title">위치 및 편의시설 검색</h2>
+        <!-- 지도와 결과 패널을 나란히 배치 -->
+        <div class="selectOne-location">
+          <span th:text="${share.regionName}"></span>,
+          <span th:text="${share.cityName}"></span>
+          <span th:text="${share.townName}"></span>
+          <br />
+          <span th:text="${share.address}"></span>
+          <span th:text="${share.detailAddress}"></span>
+        </div>
+        <div id="buttonGroupDesktopPosition"></div>
+        <div id="buttonGroup" class="facility-btns text-center">
           <button
             id="searchConvenienceBtn"
             class="btn btn-outline-secondary facility-btn"
@@ -376,16 +373,19 @@
             コメダ珈琲店
           </button>
         </div>
-        <!-- 지도와 결과 패널을 나란히 배치 -->
-        <div class="map-container d-flex">
+        <div class="map-container">
           <!-- 지도 영역 -->
           <div id="map" class="map-display"></div>
+          <div id="buttonGroupMobilePosition"></div>
+
           <!-- 편의시설 결과 목록 패널 -->
           <div id="facility-list-container" class="facility-list-container">
             <ul>
               편의시설 목록
             </ul>
-            <ul id="place-list" class="list-group"></ul>
+            <ul id="place-list" class="list-group">
+              <span class="nothing">검색 된 장소가 없어요.</span>
+            </ul>
           </div>
         </div>
       </section>
@@ -394,13 +394,13 @@
         <th:block
           th:if="${roommateList != null and #lists.size(roommateList) > 0}"
         >
-          <h2>확정된 하우스메이트 정보</h2>
+          <h2 class="share-info-title">확정된 하우스메이트 정보</h2>
         </th:block>
         <div class="roommate-container">
           <div class="roommate-card" th:each="roommate : ${roommateList}">
             <div class="roommate-image">
               <img
-                th:src="${roommate.profileImage != null ? roommate.profileImage : '/images/default-profile.webp'}"
+                th:src="${roommate.profileImage != null ? roommate.profileImage : '/images/default-profile.png'}"
                 alt="프로필 이미지"
               />
             </div>
@@ -451,11 +451,7 @@
               id="lineShareBtn"
               style="border: none; background: none; cursor: pointer"
             >
-              <img
-                th:src="@{/images/line_logo.png}"
-                alt="LINE 공유하기 버튼"
-                style="width: 68px; height: 69px"
-              />
+              <img th:src="@{/images/line_logo.png}" alt="LINE 공유하기 버튼" />
             </button>
           </div>
         </div>
@@ -499,7 +495,7 @@
           <h2 th:text="${share.title}" style="color: slategrey">게시글 제목</h2>
           <div>
             <img
-              th:src="${hostUser.profileImage != null and !#strings.isEmpty(hostUser.profileImage) ? hostUser.profileImage : '/images/default-profile.webp'}"
+              th:src="${hostUser.profileImage != null and !#strings.isEmpty(hostUser.profileImage) ? hostUser.profileImage : '/images/default-profile.png'}"
               alt="호스트 이미지"
               width="150px"
               height="150px"
