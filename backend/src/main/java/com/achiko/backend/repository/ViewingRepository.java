@@ -37,7 +37,7 @@ String findGuestNicknameByViewingId(@Param("viewingId") Long viewingId);
 
 	@Query(value = "SELECT u.user_id " +
             "FROM viewing v " +
-            "JOIN Users u ON v.guest_id = u.user_id " +
+            "JOIN users u ON v.guest_id = u.user_id " +
             "WHERE v.viewing_id = :viewingId", 
     nativeQuery = true)
 Long findGuestIdByViewingId(@Param("viewingId") Long viewingId);
@@ -45,7 +45,7 @@ Long findGuestIdByViewingId(@Param("viewingId") Long viewingId);
 @Query(value = "SELECT u.user_id " +
             "FROM viewing v " +
             "JOIN share s ON v.share_id = s.share_id " +
-            "JOIN Users u ON s.host_id = u.user_id " +
+            "JOIN users u ON s.host_id = u.user_id " +
             "WHERE v.viewing_id = :viewingId", 
     nativeQuery = true)
 Long findHostIdByViewingId(@Param("viewingId") Long viewingId);

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +36,7 @@ import com.achiko.backend.entity.UserEntity;
 import com.achiko.backend.repository.RegionRepository;
 import com.achiko.backend.repository.UserRepository;
 import com.achiko.backend.service.FavoriteService;
+import com.achiko.backend.service.ReviewService;
 import com.achiko.backend.service.RoommateService;
 import com.achiko.backend.service.ShareFilesService;
 import com.achiko.backend.service.ShareService;
@@ -63,6 +63,7 @@ public class ShareController {
     private final FavoriteService favoriteService;
     private final UserService userService;
     private final RoommateService roommateService;
+    private final ReviewService reviewService;
     
     @ResponseBody
     @GetMapping("/share/selectAll")
@@ -93,12 +94,12 @@ public class ShareController {
         List<ShareFilesDTO> fileList = shareFilesService.getFilesByShareId(shareId);
 
         // 첫 번째 이미지의 절대 URL 설정 (없으면 기본 이미지)
-        // String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
-        //         ? "http://localhost:9905" + fileList.get(0).getFileUrl()
-        //         : "http://localhost:9905/images/default.webp";
         String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
-                ? "https://achiko.site" + fileList.get(0).getFileUrl()
-                : "https://achiko.site/images/default.webp";
+                ? "http://localhost:9905" + fileList.get(0).getFileUrl()
+                : "http://localhost:9905/images/default.webp";
+        // String firstImageUrl = (fileList != null && !fileList.isEmpty()) 
+        //         ? "https://achiko.site" + fileList.get(0).getFileUrl()
+        //         : "https://achiko.site/images/default.webp";
 
         // 파일 목록을 ShareDTO에 설정 (추후 view에서 사용)
         shareDTO.setFileList(fileList);
@@ -141,6 +142,9 @@ public class ShareController {
             model.addAttribute("loggedUser", principal);
         }
         model.addAttribute("isOwner", isOwner);
+        
+        Long reviewCnt = reviewService.countReview(shareDTO.getHostId());
+        model.addAttribute("reviewCnt", reviewCnt);
 
         return "share/selectOne";
     }

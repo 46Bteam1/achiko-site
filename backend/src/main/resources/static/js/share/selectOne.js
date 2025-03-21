@@ -259,7 +259,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-
   // ★ 게스트 조회 모달 관련
   // const guestModal = document.getElementById("guestModal");
   // const confirmedGuestButton = document.getElementById("confirmedGuest");
@@ -309,6 +308,44 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+function moveButtons() {
+  const selectoneShareInfo = document.getElementById("selectoneShareInfo");
+  const selectoneShareInfoDesktopPosition = document.getElementById(
+    "selectoneShareInfoDesktopPosition"
+  );
+  const selectoneShareInfoMobilePosition = document.getElementById(
+    "selectoneShareInfoMobilePosition"
+  );
+
+  const buttonGroup = document.getElementById("buttonGroup");
+  const desktopPosition = document.getElementById("buttonGroupDesktopPosition");
+  const mobilePosition = document.getElementById("buttonGroupMobilePosition");
+
+  if (window.innerWidth <= 768) {
+    // 모바일 화면일 때
+    if (!mobilePosition.contains(buttonGroup)) {
+      mobilePosition.appendChild(buttonGroup);
+    }
+    if (!selectoneShareInfoMobilePosition.contains(selectoneShareInfo)) {
+      selectoneShareInfoMobilePosition.appendChild(selectoneShareInfo);
+    }
+  } else {
+    // 데스크탑 화면일 때
+    if (!desktopPosition.contains(buttonGroup)) {
+      desktopPosition.appendChild(buttonGroup);
+    }
+    if (!selectoneShareInfoDesktopPosition.contains(selectoneShareInfo)) {
+      selectoneShareInfoDesktopPosition.appendChild(selectoneShareInfo);
+    }
+  }
+}
+
+// 페이지 로드 시 실행
+moveButtons();
+
+// 창 크기가 변경될 때마다 실행
+window.addEventListener("resize", moveButtons);
 
 // 카카오 공유 버튼 이벤트 (window.onload 사용)
 window.addEventListener("load", function () {
@@ -406,7 +443,7 @@ function searchNearbyPlaces(keyword) {
         });
         facilityMarkers.push(marker);
         // 편의시설 목록 생성
-        let nameSpanStyle = "font-size:1.2em; font-weight: bold;";
+        let nameSpanStyle = "font-size:14px; font-weight: bold;";
         let storeColor = "";
         if (place.name.indexOf("ローソン") !== -1) {
           storeColor = "blue";
@@ -433,7 +470,7 @@ function searchNearbyPlaces(keyword) {
             );
           }
         });
-        let vicinitySpanStyle = "font-size:0.8em; color: gray;";
+        let vicinitySpanStyle = "font-size:12px; color: gray;";
         var listItem = document.createElement("li");
         listItem.classList.add("list-group-item");
         listItem.innerHTML = `<span style="${nameSpanStyle}">${formattedName}</span><br><span style="${vicinitySpanStyle}">${place.vicinity}</span>`;

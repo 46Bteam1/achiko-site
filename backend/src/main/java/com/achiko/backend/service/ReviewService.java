@@ -171,4 +171,8 @@ public class ReviewService {
 		return reviewRepository.existsByReviewerIdAndReviewedUserId(loginUserId, reviewedUserId);
 	}
 
+	public Long countReview(Long hostId) {
+		return reviewRepository.countByReviewedUserId(hostId);
+	}
+
 }

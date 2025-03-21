@@ -8,30 +8,40 @@
 
 body {
   font-family: "Noto Sans KR", "Noto Sans JP", sans-serif;
-  background-color: #f9f9f9;
-}
-
-h2 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #2c3e50; /* 어두운 슬레이트 색상 */
+  background-color: #f8f9fa;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
 }
 
 /* 메인 컨테이너 */
-main {
-  width: 80%;
+.room-detail-container {
+  padding: 2rem;
   margin: 0 auto;
-  padding: 20px 0;
+  max-width: 1200px;
 }
 
 /* 글 제목 */
 .share-title-section {
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  width: 100%;
 }
 .share-title {
-  font-size: 24px;
+  max-width: 80%;
+  word-break: break-word;
+  white-space: normal;
+  font-size: 18px;
   font-weight: bold;
+}
+
+.selectone-datetime {
+  font-size: 12px;
+  text-align: end;
+  margin: 0 0.5rem;
+  color: #666;
 }
 
 /* =========================================================
@@ -88,52 +98,42 @@ main {
   justify-content: center;
   align-items: center;
   border-radius: 100%;
-  box-sizing: content-box; /* 기본값이 content-box라면 명시적으로 추가 */
 }
 
 /* =========================================================
   좋아요 버튼, 신고 모달, 공유하기 모달 
    ========================================================= */
 /*  한 줄 정렬을 위한 컨테이너 */
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-/*  버튼들을 가로 정렬 */
-.action-container {
-  display: flex;
-  align-items: center;
-  gap: 15px; /* 버튼 간격 */
-}
 
 /*  찜하기 버튼 스타일 유지 */
 .favorite-container {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 8px;
+  position: relative;
 }
 
 .favorite-btn {
-  display: inline-flex;
+  width: 50px;
+  height: 50px;
   background: rgba(255, 255, 255, 0.8);
   border: none;
   font-size: 24px;
   cursor: pointer;
   color: #ff5a5f;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .favorite-btn i {
   transition: color 0.2s;
-  font-size: 24px;
+}
+
+.selectoneicons {
+  font-size: 12px;
 }
 
 .favorite-btn:hover i {
@@ -157,8 +157,10 @@ main {
 
 /*  공유 & 신고 버튼 공통 스타일 */
 .action-btn {
-  padding: 10px 15px;
-  font-size: 1.1em;
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-content: center;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -191,30 +193,28 @@ main {
 /* 셰어하우스 정보 섹션 */
 .share-info {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 30px;
+  flex-direction: column;
+  gap: 0.5rem;
   background-color: #f8f9fa; /* 연한 회색 배경 */
-  border-radius: 10px;
-}
-
-/* 내부 컨테이너 */
-.share-info-container {
-  width: 100%;
-  max-width: 650px;
-  padding: 20px;
-  background: white;
-  border-radius: 10px;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  margin: 0.5rem;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* 제목 스타일 */
 .share-info-title {
-  font-size: 1.8em;
   font-weight: bold;
   color: #333;
   text-align: center;
-  margin-bottom: 20px;
+}
+
+.room-explain {
+  text-align: left;
+}
+
+#selectoneShareInfoDesktopPosition {
+  width: 100%;
 }
 
 /* 정보 테이블 스타일 */
@@ -229,7 +229,7 @@ main {
 /* 각 행 스타일 */
 .info-row {
   display: flex;
-  padding: 12px 15px;
+  padding: 0.5rem;
   border-bottom: 1px solid #ddd;
   background: white;
 }
@@ -239,23 +239,12 @@ main {
   border-bottom: none;
 }
 
-/* 라벨 스타일 */
-.info-label {
-  flex: 1;
-  font-weight: bold;
-  color: #555;
-  background: #f1f3f5;
-  padding: 10px;
-  text-align: center;
-  border-right: 1px solid #ddd;
-  white-space: nowrap;
-}
-
 /* 값 스타일 */
 .info-value {
   flex: 2;
   padding: 10px;
   color: #333;
+  text-align: center;
 }
 
 /* 가격 정보 스타일 */
@@ -356,7 +345,7 @@ main {
 
 #reportReason,
 #reportDescription {
-  width: 90%;
+  width: 100%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;
@@ -406,16 +395,6 @@ main {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.host-info {
-  margin-top: 10px;
-}
-
-.host-info span {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #555;
-}
-
 /* YES, NO 버튼 */
 #yesMessageBtn,
 #noMessageBtn {
@@ -451,122 +430,97 @@ main {
   background-color: #545b62;
 }
 
-/* ================================
-   반응형 스타일 조정 (모바일 최적화)
-   ================================ */
-@media (max-width: 768px) {
-  .modal-content {
-    width: 85%; /* 모바일에서는 조금 작게 */
-    max-width: 90vw; /* 뷰포트 너비의 90%까지 허용 */
-    padding: 15px;
-  }
-
-  #reportModal .modal-content,
-  #messageModal .modal-content,
-  #shareModal .modal-content {
-    width: 85%;
-    top: 50%;
-    left: 42%;
-    transform: translate(-50%, -50%);
-  }
-
-  .share-buttons {
-    flex-direction: column;
-  }
-
-  .share-buttons img {
-    width: 50px;
-    height: 50px;
-  }
-}
-
 /* =========================================================
   호스트 소개 
    ========================================================= */
+
+.room-host-section {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
 /*  호스트 소개 섹션 */
 .host-intro {
   text-align: center;
-  padding: 20px;
   background: #f9f9f9;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /*  카드 스타일 */
 .host-card {
   display: flex;
-  flex-direction: column;
+  min-width: 250px;
+  justify-content: center;
   align-items: center;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-  text-align: center;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: none;
+  box-shadow: none;
+}
+
+.host-image-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /*  호스트 이미지 */
-.host-image img {
-  border-radius: 50%;
+.host-image {
+  border-radius: 100%;
+  width: 100px;
+  height: 100px;
+  min-width: 100px;
+  min-height: 100px;
   object-fit: cover;
-  border: 3px solid #ddd;
+  border: 1px solid #ddd;
 }
 
 /*  호스트 정보 (닉네임 & 평점) */
 .host-info {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   width: 100%;
-  margin-top: 10px;
-  font-size: 1.1em;
-  font-weight: bold;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
   color: #333;
-  text-align: center;
 }
 
 /* 닉네임 */
 .host-name {
-  text-align: center;
-  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  text-overflow: ellipsis;
 }
 
 /*  평점 */
 .host-rating {
-  text-align: center;
-  color: #ff9800;
+  font-size: 10px;
+  color: #295e0e;
 }
 
 /* 버튼 그룹 */
 .host-actions {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 250px; /* 버튼 그룹 전체의 최대 너비 */
-  margin-top: 15px;
-  text-align: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  flex-wrap: nowrap;
 }
 
 /* 버튼 스타일 */
 .host-actions .btn {
-  width: 100%;
-  padding: 10px 12px;
-  font-size: 1em;
-  border-radius: 8px;
+  /* width: 50px; */
+  /* height: 50px; */
+  font-size: clamp(12px, 1vw, 14px);
+  border-radius: 50px;
+  color: white;
   text-align: center;
   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-  display: inline-block;
-}
-
-/* a 태그만 max-width: 150px 적용 */
-.host-actions a {
-  max-width: 150px;
-  width: 100%; /* 내부 컨텐츠 크기에 맞게 */
-  display: inline-block;
-  text-align: center;
 }
 
 .host-actions .btn-primary {
@@ -589,28 +543,23 @@ main {
   background-color: #545b62;
 }
 
-/* 게시물 관리 섹션 스타일 */
-.review-section {
-  margin-top: 10px;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
 /* =========================================================
   위치 및 편의시설 검색 - Google Map 
    ========================================================= */
 /* 메인 지도 영역 */
 .map-area {
-  margin-bottom: 40px; /* 하단과의 여백 추가 */
-  padding: 20px 0; /* 내부 여백 */
+  width: 100%;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.map-area h2 {
-  margin-top: 30px;
-  margin-bottom: 30px;
+/* 위치 */
+.selectOne-location {
+  font-size: clamp(12px, 1.5vw, 14px);
+  word-break: keep-all;
+  text-align: center;
 }
 
 /* 편의시설 버튼 그룹 */
@@ -618,8 +567,7 @@ main {
   display: flex;
   overflow-x: auto;
   white-space: nowrap;
-  gap: 8px;
-  padding: 0 10px;
+  gap: 0.5rem;
 }
 
 .facility-btns .facility-btn {
@@ -629,41 +577,48 @@ main {
 /* 지도와 편의시설 목록을 나란히 배치하는 컨테이너 */
 .map-container {
   display: flex;
-  gap: 15px;
+  gap: 0.5rem;
 }
 
 /* 지도 영역 스타일 */
 .map-display {
-  flex: 1;
+  width: 100%;
   height: 450px;
-  border-radius: 30px;
-  overflow: hidden;
+  border-radius: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .facility-list-container > ul:first-of-type {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 12px;
   margin-bottom: 0.5rem;
   color: #34495e;
 }
 
 /* 편의시설 목록 패널 스타일 */
 .facility-list-container {
-  width: 25%; /* 원하는 너비 */
-  height: 450px; /* 지도와 동일한 높이 */
+  width: 40%; /* 원하는 너비 */
+  max-height: 450px;
   overflow-y: auto;
   border: 1px solid #ddd;
-  border-radius: 15px;
-  background: #fff;
+  border-radius: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  box-sizing: border-box;
+  padding: 0.5rem;
+  position: relative;
 }
 
 .review-section button {
   padding: 8px 12px;
   cursor: pointer;
+}
+
+.nothing {
+  font-size: 12px;
+  color: #777;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* 추가: 모달이 열렸을 때 배경 스크롤 막기 */
@@ -675,8 +630,8 @@ body.modal-open {
    확정된 하우스 메이트 
    ========================================================= */
 /* 섹션 스타일 */
-.roommate-section {
-  padding: 20px;
+.share-info {
+  padding: 1rem;
 }
 
 /* 가로 스크롤 가능한 컨테이너 */
@@ -684,7 +639,7 @@ body.modal-open {
   display: flex;
   overflow-x: auto; /* 가로 스크롤 */
   gap: 15px;
-  padding: 15px;
+  padding: 0.5rem;
   justify-content: flex-start;
   white-space: nowrap;
 }
@@ -741,4 +696,109 @@ body.modal-open {
 .roommate-review-btn:hover {
   background-color: #1e8b41;
   color: white;
+}
+
+.mobileAppear {
+  display: none;
+}
+
+/* ================================
+   반응형 스타일 조정 (모바일 최적화)
+   ================================ */
+@media (max-width: 768px) {
+  .room-detail-container {
+    padding: 0.5rem;
+  }
+
+  .share-title {
+    max-width: none;
+  }
+
+  .share-title-section {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .action-buttons {
+    margin-left: auto;
+  }
+
+  .modal-content {
+    width: 85%; /* 모바일에서는 조금 작게 */
+    max-width: 90vw; /* 뷰포트 너비의 90%까지 허용 */
+    padding: 15px;
+  }
+
+  #reportModal .modal-content,
+  #messageModal .modal-content,
+  #shareModal .modal-content {
+    width: 85%;
+    top: 50%;
+    left: 42%;
+    transform: translate(-50%, -50%);
+  }
+  .room-host-section {
+    flex-direction: column;
+  }
+
+  .host-image {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+  }
+
+  .host-card {
+    flex-direction: row;
+    justify-content: flex-start;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .host-info {
+    align-items: flex-start;
+  }
+
+  .mobileAppear {
+    display: flex;
+  }
+
+  .mobileDisappear {
+    display: none;
+  }
+
+  .share-buttons img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .map-area {
+    text-align: center;
+  }
+
+  .map-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .facility-list-container {
+    width: 100%; /* 원하는 너비 */
+    height: 100%;
+    min-height: 100px;
+    max-height: 300px;
+  }
+
+  .favorite-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .action-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .favorite-count {
+    position: absolute;
+    bottom: 5px;
+    font-size: 10px;
+  }
 }

@@ -349,13 +349,13 @@
                         <td th:text="${review.comment}"></td>
                         <td>
                           <a
-                            th:href="@{/review/reviewPage(reviewId=${review.reviewId}, reviewedUserId=${userId})}"
+                            th:href="@{/review/reviewPage(reviewedUserId=${review.reviewedUserId})}"
                           >
                             <button
                               class="btn btn-outline-gray"
                               id="reviewreviewedUserId"
                             >
-                              해당 리뷰 보러가기
+                              보러가기
                             </button>
                           </a>
                         </td>
