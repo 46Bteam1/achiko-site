@@ -63,12 +63,6 @@ public class ReviewService {
 		List<RoommateEntity> reviewerRoommates = roommateRepository.findByUserUserId(reviewerUserId);
 		List<RoommateEntity> reviewedRoommates = roommateRepository.findByUserUserId(reviewedUserId);
 
-		log.info("📌 리뷰어(Roommate) 정보: {}", reviewerRoommates);
-		log.info("📌 리뷰 대상(Roommate) 정보: {}", reviewedRoommates);
-
-		log.info("📌 ReviewUserId 정보: {}", reviewedUserId);
-		log.info("📌 ReviewerUserId 정보: {}", reviewerUserId);
-
 		// 두 사용자가 속한 공유 주거 공간(shareId) 찾기
 		Long shareId = reviewerRoommates.stream()
 				.flatMap(reviewer -> reviewedRoommates.stream()
@@ -81,8 +75,6 @@ public class ReviewService {
         return false;
     }	
 
-		log.info("✅ 공유 주거 공간 ID: {}", shareId);
-
 		// 리뷰 데이터 설정
 		reviewDTO.setReviewerId(reviewerUserId);
 		reviewDTO.setShareId(shareId);
@@ -92,8 +84,6 @@ public class ReviewService {
 		// DTO를 Entity로 변환 후 저장
 		ReviewEntity reviewEntity = ReviewEntity.toEntity(reviewDTO);
 		reviewRepository.save(reviewEntity);
-
-		log.info("✅ 리뷰 저장 완료 - ID: {}, 리뷰어: {}, 대상자: {}", reviewEntity.getReviewId(), reviewEntity.getReviewerId(), reviewEntity.getReviewedUserId());
 
 		return true;
 	}
@@ -122,7 +112,6 @@ public class ReviewService {
 
 	@Transactional
 	public void deleteReview(Long reviewId) {
-		System.out.println("🔍 실제 삭제 실행: 리뷰 ID = " + reviewId); // 디버깅 로그 추가
 		reviewRepository.deleteById(reviewId);
 	}
 

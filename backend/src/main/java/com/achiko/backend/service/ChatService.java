@@ -92,7 +92,6 @@ public class ChatService {
 
 	// 메세지 채팅방에 보내기 메서드
 	public void sendMessage(ChatMessageDTO chatMessage) {
-		log.info("service:{}", chatMessage.toString());
 		// DB에 메세지 저장
 		// user와 chatroom
 		Optional<UserEntity> temp1 = userRepository.findByNickname(chatMessage.getNickname());

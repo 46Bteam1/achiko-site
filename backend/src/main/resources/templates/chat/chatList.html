@@ -73,7 +73,6 @@
 
       // 메인 지도 초기화 함수 (Google Maps API의 콜백 함수)
       window.initMap = function () {
-        console.log("Google Maps API가 정상적으로 로드되었습니다.");
         var geocoder = new google.maps.Geocoder();
         window.mapObj = new google.maps.Map(document.getElementById("map"), {
           zoom: 13,
@@ -92,9 +91,7 @@
                   scaledSize: new google.maps.Size(40, 40),
                 },
               });
-            } else {
-              console.error("Geocode 실패: " + status);
-            }
+            } 
           }
         );
       };

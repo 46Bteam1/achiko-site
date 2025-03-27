@@ -32,7 +32,6 @@
     <script th:inline="javascript">
       var kakaoJavaScriptKey = /*[[${kakaoJavaScriptKey}]]*/ "";
       Kakao.init(kakaoJavaScriptKey);
-      console.log("Kakao SDK 초기화 상태: " + Kakao.isInitialized());
       window.profileImageUrl = /*[[${reviewedUser.profileImage}]]*/ "";
     </script>
   </head>

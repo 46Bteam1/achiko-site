@@ -247,9 +247,6 @@
             .then((result) => {
               window.location.href = `/chatList?chatroomId=${result}`;
             })
-            .catch((error) => {
-              console.error("Fetch 호출 중 에러 발생:", error);
-            });
         }
       });
     </script>

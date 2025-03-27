@@ -37,7 +37,6 @@ public class RoommateController {
 	// 룸메이트 조회
 	@GetMapping("/findRoommates")
 	public List<UserDTO> findRoommates(@RequestParam("chatRoomId")Long chatRoomId){
-		log.info("findRoommates:{}",chatRoomId);
 		List<UserDTO> list = roommateService.findRoommates(chatRoomId);
 		
 		return list;

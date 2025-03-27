@@ -47,9 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((result) => {
         window.location.href = `/chatList?chatroomId=${result}`;
       })
-      .catch((error) => {
-        console.error("Fetch 호출 중 에러 발생:", error);
-      });
   });
 
   // 공유하기 버튼 클릭 시 공유 모달 열기
@@ -117,11 +114,8 @@ document.addEventListener("DOMContentLoaded", function () {
             favoriteButton.setAttribute("data-is-favorite", "true");
             let currentCount = getCurrentFavoriteCount();
             updateFavoriteCount(currentCount + 1);
-          } else {
-            console.log("찜하기 실패");
-          }
+          } 
         })
-        .catch((err) => console.error(err));
     } else {
       fetch("/favorite/cancel?shareId=" + shareId, {
         method: "DELETE",
@@ -137,7 +131,6 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("찜 취소 실패!");
           }
         })
-        .catch((err) => console.error(err));
     }
   });
 
@@ -272,7 +265,6 @@ document.addEventListener("DOMContentLoaded", function () {
           alert("신고 접수 중 오류가 발생했습니다.");
         }
       })
-      .catch((error) => console.error("신고 오류:", error));
   });
 
   const roomPhotos = document.querySelector(".room-photos");
@@ -394,7 +386,6 @@ let facilityMap;
 let facilityMarkers = [];
   
 function initFacilityMap() {
-  console.log("편의시설 지도 초기화 시작");
   var geocoder = new google.maps.Geocoder();
   facilityMap = new google.maps.Map(document.getElementById("facilitymap"), {
     zoom: 16,
@@ -407,15 +398,12 @@ function initFacilityMap() {
         map: facilityMap,
         position: results[0].geometry.location,
       });
-    } else {
-      console.error("편의시설 지도 Geocode 실패: " + status);
-    }
+    } 
   });
 }
   
 function searchNearbyPlaces(keyword) {
   if (!facilityMap) {
-    console.error("편의시설 지도가 로드되지 않았습니다.");
     return;
   }
   facilityMap.setZoom(15);
@@ -428,7 +416,6 @@ function searchNearbyPlaces(keyword) {
   clearFacilityMarkers();
   service.nearbySearch(request, function (results, status) {
     if (status === google.maps.places.PlacesServiceStatus.OK) {
-      console.log("편의시설 검색 결과:", results);
       var placeList = document.getElementById("place-list");
       placeList.innerHTML = "";
       results.forEach((place) => {
@@ -470,9 +457,7 @@ function searchNearbyPlaces(keyword) {
         listItem.innerHTML = `<span style="${nameSpanStyle}">${formattedName}</span><br><span style="${vicinitySpanStyle}">${place.vicinity}</span>`;
         placeList.appendChild(listItem);
       });
-    } else {
-      console.error("근처 편의시설 검색 실패: " + status);
-    }
+    } 
   });
 }
   

@@ -327,14 +327,12 @@ function saveImageToServer(webpImage) {
     contentType: false, // 서버에 파일을 전송할 때 자동으로 콘텐츠 타입을 설정하지 않음
     success: function (response) {
       alert("이미지 업로드 성공!");
-      console.log(response);
       $("#registImageModal").removeClass("show").css("display", "none");
       $("#registImageModal").removeClass("modal-open");
       $("body").removeClass("modalopen").css("overflow-y", "auto");
     },
     error: function (error) {
       alert("이미지 업로드 실패!");
-      console.log(error);
       $("#registImageModal").removeClass("show").css("display", "none");
       $("#registImageModal").removeClass("modal-open");
       $("body").removeClass("modalopen").css("overflow-y", "auto");
@@ -465,7 +463,6 @@ function deleteRoom() {
 /* 채팅방 입장 함수 */
 function enterRoom() {
   let chatroomId = $(this).attr("data-seq");
-  console.log(chatroomId);
 
   $.ajax({
     url: "/chatList",

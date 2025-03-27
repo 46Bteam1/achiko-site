@@ -44,13 +44,11 @@
       window.shareDetail = /*[[${share.detailAddress}]]*/ "";
       // ★ fullAddress: 주소와 상세주소를 쉼표로 구분하여 결합 (예: "주소, 상세주소")
       window.fullAddress = window.shareAddress + ", " + window.shareDetail;
-      console.log("공유글 전체 주소: " + window.fullAddress);
 
       window.firstImageUrl = /*[[${firstImageUrl}]]*/ "";
 
       // 메인 지도 초기화 함수 (Google Maps API의 콜백 함수)
       window.initMap = function () {
-        console.log("Google Maps API가 정상적으로 로드되었습니다.");
         var geocoder = new google.maps.Geocoder();
         window.mapObj = new google.maps.Map(document.getElementById("map"), {
           zoom: 15,
@@ -69,9 +67,7 @@
                   scaledSize: new google.maps.Size(40, 40),
                 },
               });
-            } else {
-              console.error("Geocode 실패: " + status);
-            }
+            } 
           }
         );
       };
@@ -82,7 +78,6 @@
     <script th:inline="javascript">
       var kakaoJavaScriptKey = /*[[${kakaoJavaScriptKey}]]*/ "";
       Kakao.init(kakaoJavaScriptKey);
-      console.log("Kakao SDK 초기화 상태: " + Kakao.isInitialized());
     </script>
 
     <!-- jQuery 추가 -->

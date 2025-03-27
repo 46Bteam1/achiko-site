@@ -25,12 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // (1) 구글 맵 초기화 검사
   if (typeof google === "object" && typeof google.maps === "object") {
-    console.log("Google Maps API가 정상적으로 로드되었습니다.");
     initMap();
-  } else {
-    console.error("Google Maps API가 로드되지 않았습니다. API Key 확인 필요.");
   }
-
   // (2) 방 사진 영역을 드래그로 스크롤할 수 있게 만드는 코드
   //     .room-photos 요소에 마우스 다운/업/무브 이벤트를 걸어준다.
   const roomPhotos = document.querySelector(".room-photos");
@@ -102,7 +98,6 @@ function updateRegionSelect() {
           regionSelect.appendChild(option);
         });
       })
-      .catch((error) => console.error("Error fetching regions:", error));
   }
 }
 
@@ -127,7 +122,6 @@ function updateCitySelect() {
           citySelect.appendChild(option);
         });
       })
-      .catch((error) => console.error("Error fetching cities:", error));
   }
 }
 
@@ -149,7 +143,6 @@ function updateTownSelect() {
           townSelect.appendChild(option);
         });
       })
-      .catch((error) => console.error("Error fetching towns:", error));
   }
 }
 
@@ -157,7 +150,6 @@ function updateTownSelect() {
 // Google Maps API 관련 기능 구현
 // --------------------------------------------------------------------
 window.initMap = function () {
-  console.log("Google Maps API가 정상적으로 로드되었습니다.");
 
   // 기본 중심 위치 (도쿄)
   const defaultLocation = { lat: 35.6895, lng: 139.6917 };
@@ -228,12 +220,10 @@ function fetchEnglishAddress(lat, lng) {
       try {
         data = JSON.parse(text);
       } catch (e) {
-        console.error("JSON 파싱 오류:", e);
         document.getElementById("englishAddress").innerHTML =
           "영문 주소 로드 실패";
         return;
       }
-      console.log("Geocode API 응답:", data);
       if (data.status === "OK" && data.results.length > 0) {
         document.getElementById("englishAddress").innerHTML =
           data.results[0].formatted_address;
@@ -242,7 +232,6 @@ function fetchEnglishAddress(lat, lng) {
       }
     })
     .catch((error) => {
-      console.error("Error fetching English address:", error);
       document.getElementById("englishAddress").innerHTML =
         "영문 주소 로드 실패";
     });
@@ -345,13 +334,9 @@ function handlePhotoUpload(event) {
         return response.json();
       })
       .then((data) => {
-        console.log("파일 업로드 성공:", data);
         selectedFiles[currentCount + index].fileId = data.fileId;
         renderPhotoPreview();
       })
-      .catch((err) => {
-        console.error("파일 업로드 에러:", err);
-      });
   });
   event.target.value = "";
   renderPhotoPreview();
@@ -387,14 +372,10 @@ function modifyFile(index) {
               "기존 파일 삭제 실패. 상태코드: " + response.status
             );
           }
-          console.log("기존 파일 삭제 성공");
           selectedFiles[index].file = newFile;
           selectedFiles[index].fileId = null;
           uploadModifiedFile(index, newFile);
         })
-        .catch((err) => {
-          console.error("기존 파일 삭제 에러:", err);
-        });
     } else {
       selectedFiles[index].file = newFile;
       selectedFiles[index].fileId = null;
@@ -425,13 +406,9 @@ function uploadModifiedFile(index, file) {
       return response.json();
     })
     .then((data) => {
-      console.log("수정 파일 업로드 성공:", data);
       selectedFiles[index].fileId = data.fileId;
       renderPhotoPreview();
     })
-    .catch((err) => {
-      console.error("수정 파일 업로드 에러:", err);
-    });
 }
 
 // 삭제 기능: 해당 파일을 배열에서 제거하고 서버에 삭제 요청
@@ -454,13 +431,9 @@ function deleteFile(index) {
         return response.text();
       })
       .then((result) => {
-        console.log("파일 삭제 성공:", result);
         selectedFiles.splice(index, 1);
         renderPhotoPreview();
       })
-      .catch((err) => {
-        console.error("파일 삭제 에러:", err);
-      });
   } else {
     selectedFiles.splice(index, 1);
     renderPhotoPreview();

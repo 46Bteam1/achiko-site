@@ -44,7 +44,6 @@
     <script>
       window.onload = function () {
         if (typeof google === "object" && typeof google.maps === "object") {
-          console.log("Google Maps API 로드 완료. initMap 실행");
           initMap();
         } else {
           setTimeout(initMap, 1000);

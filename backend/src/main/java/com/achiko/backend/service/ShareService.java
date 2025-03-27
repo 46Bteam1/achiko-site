@@ -54,8 +54,6 @@ public class ShareService {
      */
     public ShareDTO getShareById(Long shareId) {
         Optional<ShareEntity> optionalShare = shareRepository.findById(shareId);
-        log.info("+++{}", shareRepository.findById(shareId).toString());
-        log.info("+++{}", optionalShare.isPresent());
         if (optionalShare.isPresent()) {
             ShareEntity entity = optionalShare.get();
             return convertToDTO(entity);
@@ -262,7 +260,6 @@ public class ShareService {
 	 */
 	public boolean checkAlreadyShare(Long userId) {
 		boolean result = shareRepository.existsByHost_UserIdAndStatus(userId, "open");
-		System.out.println("현재글 잇어?"+result);
 	    return !result;
 	}
 

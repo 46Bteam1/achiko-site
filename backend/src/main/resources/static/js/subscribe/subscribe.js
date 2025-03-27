@@ -8,9 +8,6 @@ $(document).ready(function () {
     success: function (response) {
       bootpayApplicationId = response.bootpayApplicationId;
     },
-    error: function (xhr) {
-      console.error("환경 변수 로드 실패:", xhr.responseText);
-    },
   });
 
   // PG와 결제 방법 매핑
@@ -78,12 +75,10 @@ $(document).ready(function () {
           },
           error: function (xhr) {
             alert("결제 상태 업데이트 실패");
-            console.log("결제 상태 업데이트 실패" + xhr.responseText);
           },
         });
       })
       .catch(function (err) {
-        console.log("결제 실패:", err);
         alert("결제 실패");
       });
   });
@@ -109,7 +104,6 @@ $(document).ready(function () {
         }
       },
       error: function (xhr) {
-        console.log("구독 취소 실패: " + xhr.responseText);
         alert("구독 취소 실패");
       },
     });

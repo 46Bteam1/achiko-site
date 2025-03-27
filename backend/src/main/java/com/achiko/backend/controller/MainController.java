@@ -43,7 +43,6 @@ public class MainController {
 
         // 로그인한 경우에만 각 게시글의 찜 여부를 체크
         if (isLoggedIn) {
-            log.info("principal={}", principal);
             UserEntity loggedUser = userRepository.findByLoginId(principal.getName());
             for (ShareDTO share : shareList) {
                 boolean isFav = favoriteService.isFavorite(share.getShareId(), loggedUser.getUserId());

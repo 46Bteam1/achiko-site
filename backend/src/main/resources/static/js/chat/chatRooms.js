@@ -74,7 +74,6 @@ function deleteRoom() {
 /* 채팅방 입장 함수 */
 function enterRoom() {
   let chatroomId = $(this).attr("data-seq");
-  console.log(chatroomId);
 
   $.ajax({
     url: "/chatList",

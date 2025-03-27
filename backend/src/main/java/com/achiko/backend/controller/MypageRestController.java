@@ -47,20 +47,12 @@ public class MypageRestController {
 	@Value("${app.upload.dir}")
 	private String uploadDir;
 
-	@PostConstruct
-	public void checkPath() {
-		System.out.println("=== uploadDir: [" + uploadDir + "]");
-	}
-
 	private final MypageService mypageService;
 
 	// 프로필 수정 처리 요청
 	@PostMapping("/profileUpdate")
 	public ResponseEntity<?> updateProfile(@RequestParam(name = "userId") Long userId,
-//			@RequestParam(name = "profileImage", required = false) MultipartFile profileImage,
 			@ModelAttribute UserDTO userDTO, @AuthenticationPrincipal PrincipalDetails loginUser) {
-//		System.out.println("===== profileImage ======" + profileImage);
-		System.out.println("===== controller에서 받은 데이터 ======" + userDTO.toString());
 		try {
 			mypageService.updateUserProfile(userId, userDTO);
 			loginUser.setNickname(userDTO.getNickname());

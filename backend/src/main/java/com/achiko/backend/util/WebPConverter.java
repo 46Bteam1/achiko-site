@@ -23,7 +23,5 @@ public class WebPConverter {
         
         // 2) WebP 포맷으로 저장 (기본: 무손실이 아닌 default 설정)
         image.output(WebpWriter.DEFAULT, outputFile);
-
-        System.out.println("WebP 변환 성공: " + outputFile.getAbsolutePath());
     }
 }

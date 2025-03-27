@@ -79,7 +79,6 @@ $(function () {
       stompClient.send("/app/chatLeaveRoom", {}, JSON.stringify(leaveMessage));
 
       stompClient.disconnect(() => {
-        console.log("WebSocket 연결 종료됨");
       });
     }
   }

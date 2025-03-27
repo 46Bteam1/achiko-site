@@ -108,13 +108,9 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         if (!data || data.length === 0) {
-          console.warn("숙소 데이터가 없습니다.");
           return;
         }
         updateMapWithSearchResults(data);
-      },
-      error: function () {
-        console.error("숙소 데이터를 불러오는 데 실패했습니다.");
       },
     });
   }
@@ -155,7 +151,6 @@ $(document).ready(function () {
 
           resolve(marker);
         } else {
-          console.error(`주소 변환 실패: ${fullAddress} (${status})`);
           reject(status);
         }
       });
@@ -185,7 +180,6 @@ $(document).ready(function () {
           map.fitBounds(bounds);
         }
       })
-      .catch((error) => console.error("마커 추가 중 오류 발생:", error));
   }
 
   function searchShares() {
@@ -210,7 +204,6 @@ $(document).ready(function () {
         updateListings(shares); // 목록 업데이트
         updateMapWithSearchResults(shares); // 지도 업데이트
       })
-      .catch((error) => console.error("Error fetching shares:", error));
   }
 
   // 검색 결과 업데이트 함수
@@ -394,9 +387,6 @@ $(document).ready(function () {
           button.addClass("active");
           button.find("i").removeClass("far").addClass("fas");
         },
-        error: function () {
-          console.error("찜하기 실패");
-        },
       });
     } else {
       $.ajax({
@@ -435,7 +425,6 @@ function updateRegionSelect() {
         return response.json();
       })
       .then((regions) => {
-        console.log("Fetched Regions:", regions);
         regions.forEach((region) => {
           const option = document.createElement("option");
           option.value = region.id;
@@ -443,7 +432,6 @@ function updateRegionSelect() {
           regionSelect.appendChild(option);
         });
       })
-      .catch((error) => console.error("Error fetching regions:", error));
   }
 }
 
@@ -468,7 +456,6 @@ function updateCitySelect() {
           citySelect.appendChild(option);
         });
       })
-      .catch((error) => console.error("Error fetching cities:", error));
   }
 }
 
@@ -490,6 +477,5 @@ function updateTownSelect() {
           townSelect.appendChild(option);
         });
       })
-      .catch((error) => console.error("Error fetching towns:", error));
   }
 }

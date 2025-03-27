@@ -70,11 +70,6 @@ public class MypageService {
 	@Value("${app.upload.dir}")
 	private String UPLOAD_DIR;
 
-	@PostConstruct
-	public void checkPath() {
-		System.out.println("=== uploadDir: [" + UPLOAD_DIR + "]");
-	}
-
 	// 특정 사용자의 데이터 조회
 	public UserDTO getMypage(Long userId) {
 		Optional<UserEntity> temp = userRepository.findByUserId(userId);
@@ -162,11 +157,9 @@ public class MypageService {
 	// 찜한 목록
 	public List<FavoriteDTO> getFavoriteList(Long userId) {
 		List<FavoriteEntity> favoriteEntityList = favoriteRepository.findByUser_userId(userId);
-		// log.info("favoriteEntityList 조회 결과: {}", favoriteEntityList);
 
 		List<FavoriteDTO> favoriteDTOList = new ArrayList<>();
 		favoriteEntityList.forEach((entity) -> favoriteDTOList.add(FavoriteDTO.toDTO(entity)));
-		// log.info("변환된 favoriteDTOList: {}", favoriteDTOList);
 		return favoriteDTOList;
 	}
 

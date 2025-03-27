@@ -33,11 +33,6 @@ public class ShareFilesService {
     @Value("${app.upload.dir}")
     private String uploadDir;
 
-    @PostConstruct
-    public void checkPath() {
-        System.out.println("=== uploadDir: [" + uploadDir + "]");
-    }
-
     /**
      * 1) MultipartFile을 받아 WebP로 변환 후 임시 업로드 (share_id 없이, sessionId와 displayOrder 세팅)
      */

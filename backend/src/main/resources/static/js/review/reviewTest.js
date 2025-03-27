@@ -58,7 +58,6 @@ $(document).ready(function () {
 // 리뷰 삭제 메서드
 function deleteReview() {
   let reviewId = $(this).attr("data-review-id");
-  console.log("삭제 버튼 클릭됨, 리뷰 ID:", reviewId);
 
   if (!reviewId) {
     alert("삭제할 리뷰 ID를 찾을 수 없습니다.");
@@ -71,12 +70,10 @@ function deleteReview() {
     url: `/review/delete/${reviewId}`,
     method: "DELETE",
     success: function () {
-      console.log(`리뷰 ${reviewId} 삭제 완료`);
       $(`#review-${reviewId}`).remove();
       updateReviewCount(-1);
     },
     error: function (xhr) {
-      console.error("삭제 오류:", xhr.responseText);
       alert("삭제 실패");
     },
   });
@@ -93,17 +90,14 @@ function updateReviewCount(change) {
 // 리뷰 정렬 기능
 function sortReviews() {
   let sortBy = $("#reviewFilter").val();
-  console.log("📢 정렬 방식 변경됨:", sortBy);
 
   $.ajax({
     url: `/review/sort?order=${sortBy}`,
     method: "GET",
     dataType: "json",
     success: function (sortedReviews) {
-      console.log("✅ 정렬된 리뷰 데이터 수신 완료", sortedReviews);
 
       if (!Array.isArray(sortedReviews)) {
-        console.error("❌ 잘못된 데이터 형식 수신:", sortedReviews);
         alert("서버 응답 오류: 리뷰 데이터를 불러올 수 없습니다.");
         return;
       }
@@ -144,7 +138,6 @@ function sortReviews() {
       });
     },
     error: function (xhr) {
-      console.error("❌ 리뷰 정렬 오류:", xhr.status, xhr.responseText);
       alert("리뷰 정렬 중 문제가 발생했습니다.");
     },
   });

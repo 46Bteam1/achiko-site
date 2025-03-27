@@ -41,7 +41,6 @@ public class ReviewRestController {
     @DeleteMapping("/delete/{reviewId}")
     public ResponseEntity<String> deleteReview(@PathVariable(name="reviewId") Long reviewId) {
         try {
-            System.out.println("🔍 삭제 요청된 리뷰 ID: " + reviewId); // 디버깅 로그 추가
             reviewService.deleteReview(reviewId);
             return ResponseEntity.ok("삭제 완료");
         } catch (Exception e) {
@@ -93,9 +92,7 @@ public class ReviewRestController {
     
     @GetMapping("/sort")
     public ResponseEntity<?> sortReviews(@RequestParam(name = "order", required = true) String order) {
-        System.out.println("🔄 정렬 요청 수신: " + order);
         List<ReviewDTO> sortedReviews = reviewService.getSortedReviews(order);
-        System.out.println("✅ 정렬된 리뷰 개수: " + sortedReviews.size());
         return ResponseEntity.ok(sortedReviews);
     }
     

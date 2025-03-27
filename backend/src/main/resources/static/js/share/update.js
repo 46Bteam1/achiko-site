@@ -77,7 +77,6 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       existing = JSON.parse(existing);
     } catch (e) {
-      console.error("existingFiles JSON 파싱 오류:", e);
       existing = [];
     }
   }
@@ -180,14 +179,10 @@ window.handlePhotoUpload = function (event) {
         return response.json();
       })
       .then((data) => {
-        console.log("파일 업로드 성공:", data);
         selectedFiles[currentCount + index].fileId = data.fileId;
         selectedFiles[currentCount + index].fileUrl = data.fileUrl;
         renderPhotoPreview();
       })
-      .catch((err) => {
-        console.error("파일 업로드 에러:", err);
-      });
   });
   event.target.value = "";
   renderPhotoPreview();
@@ -222,15 +217,11 @@ function modifyFile(index) {
               "기존 파일 삭제 실패. 상태코드: " + response.status
             );
           }
-          console.log("기존 파일 삭제 성공");
           selectedFiles[index].file = newFile;
           selectedFiles[index].fileId = null;
           selectedFiles[index].isNew = true;
           uploadModifiedFile(index, newFile);
         })
-        .catch((err) => {
-          console.error("기존 파일 삭제 에러:", err);
-        });
     } else {
       selectedFiles[index].file = newFile;
       selectedFiles[index].isNew = true;
@@ -264,14 +255,10 @@ function uploadModifiedFile(index, file) {
       return response.json();
     })
     .then((data) => {
-      console.log("수정 파일 업로드 성공:", data);
       selectedFiles[index].fileId = data.fileId;
       selectedFiles[index].fileUrl = data.fileUrl;
       renderPhotoPreview();
     })
-    .catch((err) => {
-      console.error("수정 파일 업로드 에러:", err);
-    });
 }
 
 // (G) 이미지 삭제 함수
@@ -292,13 +279,9 @@ function deleteFile(index) {
         return response.text();
       })
       .then((result) => {
-        console.log("파일 삭제 성공:", result);
         selectedFiles.splice(index, 1);
         renderPhotoPreview();
       })
-      .catch((err) => {
-        console.error("파일 삭제 에러:", err);
-      });
   } else {
     selectedFiles.splice(index, 1);
     renderPhotoPreview();
@@ -327,7 +310,6 @@ window.updateRegionSelect = function (callback) {
         });
         if (callback) callback();
       })
-      .catch((error) => console.error("Error fetching regions:", error));
   } else {
     if (callback) callback();
   }
@@ -352,7 +334,6 @@ window.updateCitySelect = function (callback) {
         });
         if (callback) callback();
       })
-      .catch((error) => console.error("Error fetching cities:", error));
   } else {
     if (callback) callback();
   }
@@ -375,7 +356,6 @@ window.updateTownSelect = function (callback) {
         });
         if (callback) callback();
       })
-      .catch((error) => console.error("Error fetching towns:", error));
   } else {
     if (callback) callback();
   }
@@ -484,9 +464,7 @@ function updateMapAndPostalCode() {
       alert(
         "입력하신 주소로 검색 결과가 없습니다. 유효한 주소를 입력해 주세요."
       );
-    } else {
-      console.error("Geocode 실패: " + status);
-    }
+    } 
   });
 }
 
@@ -517,7 +495,6 @@ function resetAddress() {
 }
 
 function initMap() {
-  console.log("Google Maps API가 정상적으로 로드되었습니다.");
   const defaultLocation = { lat: 35.6895, lng: 139.6917 };
   const mapContainer = document.getElementById("map");
   if (
@@ -541,7 +518,6 @@ function initMap() {
             draggable: false,
           });
         } else {
-          console.error("초기 주소 geocode 실패: " + status);
           map = new google.maps.Map(mapContainer, {
             center: defaultLocation,
             zoom: 13,
@@ -574,9 +550,6 @@ function initMap() {
 
 function onPlaceChanged() {
   if (!map || !marker) {
-    console.error(
-      "onPlaceChanged 호출 시 map이 초기화되지 않았습니다. 강제로 initMap()을 호출합니다."
-    );
     initMap();
     return;
   }
@@ -609,12 +582,10 @@ function fetchEnglishAddress(lat, lng) {
       try {
         data = JSON.parse(text);
       } catch (e) {
-        console.error("JSON 파싱 오류:", e);
         document.getElementById("englishAddress").innerHTML =
           "영문 주소 로드 실패";
         return;
       }
-      console.log("Geocode API 응답:", data);
       if (data.status === "OK" && data.results.length > 0) {
         document.getElementById("englishAddress").innerHTML =
           data.results[0].formatted_address;
@@ -623,7 +594,6 @@ function fetchEnglishAddress(lat, lng) {
       }
     })
     .catch((error) => {
-      console.error("Error fetching English address:", error);
       document.getElementById("englishAddress").innerHTML =
         "영문 주소 로드 실패";
     });

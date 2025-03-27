@@ -58,9 +58,6 @@ public class SubscribeRestController {
 		}
 		
 		Long userId = loginUser.getUserId();
-		System.out.println(receiptId+"control");
-		System.out.println(loginUser);
-		System.out.println(loginUser.getUserId());
 		try {
 			subscribeService.updateSubscriptionStatus(loginUser.getUserId(), receiptId);
 			return ResponseEntity

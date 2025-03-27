@@ -29,7 +29,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println(oAuth2User.getAttributes());
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();	// 네이버인지 구글인지 변수 받아옴
         OAuth2Response oAuth2Response = null;	// 네이버와 구글의 규격이 다르기 때문에 그걸 받을 수 있는 인터페이스 OAuth2Response

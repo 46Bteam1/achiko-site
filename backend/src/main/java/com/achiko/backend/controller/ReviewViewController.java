@@ -137,7 +137,6 @@ public class ReviewViewController {
 	// ✅ 특정 유저의 리뷰 조회 API
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<ReviewDTO>> getUserReviews(@PathVariable Long userId) {
-		System.out.println("🔍 요청된 userId: " + userId); // ✅ 디버깅용 로그 추가
 		return ResponseEntity.ok(reviewService.getUserReviews(userId));
 	}
 
@@ -156,7 +155,6 @@ public class ReviewViewController {
 			return "redirect:/review/reviewRegist?reviewedUserId=" + reviewedUserId + "&error=true";
 		}
 
-		log.info("✅ 리뷰 등록 성공: {}", reviewDTO);
 		return "redirect:/review/reviewPage?reviewedUserId=" + reviewedUserId;
 	}
 

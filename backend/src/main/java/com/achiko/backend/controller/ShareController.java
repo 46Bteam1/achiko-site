@@ -118,7 +118,6 @@ public class ShareController {
         
         // 확정된 룸메이트 찾기
         List<RoommateDTO> roommateList = shareService.findRoommate(shareId);
-        System.out.println(roommateList + "여긴강");
         model.addAttribute("roommateList", roommateList);
 
         // 모델에 공유글, 파일 목록, 첫 이미지 URL, API 키 등을 추가하여 뷰에 전달

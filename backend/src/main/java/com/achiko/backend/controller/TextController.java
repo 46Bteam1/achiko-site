@@ -37,21 +37,16 @@ public class TextController {
 	@GetMapping("/find/guest-to-host")
 	public String showGuestToHost(Model model) {
 		String loginId = getCurrentUserLoginId();
-		System.out.println("DEBUG: Retrieved loginId = " + loginId);
 		if (loginId == null) {
-			System.out.println("DEBUG: No logged-in user found.");
 			return "redirect:/"; // Redirect if not logged in
 		}
 
 		Integer isHost = userRepository.findIsHostByLoginId(loginId);
-		System.out.println("DEBUG: Retrieved isHost = " + isHost);
 		if (isHost == null) {
-			System.out.println("DEBUG: isHost is NULL for user " + loginId);
 			return "redirect:/";
 		}
 
 		if (isHost == 1) { // Hosts should NOT access guest-to-host recommendation
-			System.out.println("DEBUG: User is a host, redirecting from 'guest-to-host'.");
 			return "redirect:/";
 		}
 
@@ -65,19 +60,16 @@ public class TextController {
 		String loginId = getCurrentUserLoginId();
 
 		if (loginId == null) {
-			System.out.println("DEBUG: No logged-in user found.");
 			return "redirect:/"; // Redirect if not logged in
 		}
 
 		Integer isHost = userRepository.findIsHostByLoginId(loginId);
 
 		if (isHost == null) {
-			System.out.println("DEBUG: isHost is NULL for user " + loginId);
 			return "redirect:/";
 		}
 
 		if (isHost == 0) { // Guests should NOT access host-to-guest recommendation
-			System.out.println("DEBUG: User is a guest, redirecting from 'host-to-guest'.");
 			return "redirect:/";
 		}
 		
