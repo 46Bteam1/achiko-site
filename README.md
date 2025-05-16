@@ -119,5 +119,5 @@
 </table>
 
 <p align="center">
-<img src="https://github.com/46Bteam1/achiko-site/blob/develop/document/SCIT_46B_1Team_Member.png?raw=true">
+<img src="https://github.com/46Bteam1/achiko-site/blob/develop/document/SCIT_46B_1Team_Member.jpg?raw=true">
 </p>
