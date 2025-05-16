@@ -1,7 +1,7 @@
 # 🏠 あちこちうち (Achiko) 
 
 <p align="center">
-<img scr="https://github.com/46Bteam1/achiko-site/blob/develop/document/logo-achiko.png?raw=true">
+<img src="https://github.com/46Bteam1/achiko-site/blob/develop/document/logo-achiko.png?raw=true">
 </p>
 
 🔗 **サービスURL： [https://achiko.site](https://achiko.site)**
@@ -118,4 +118,6 @@
   </tr>
 </table>
 
-![Achiko Member](https://github.com/46Bteam1/achiko-site/blob/develop/document/SCIT_46B_1Team_Member.png?raw=true)
+<p align="center">
+<img src="https://github.com/46Bteam1/achiko-site/blob/develop/document/SCIT_46B_1Team_Member.png?raw=true">
+</p>
